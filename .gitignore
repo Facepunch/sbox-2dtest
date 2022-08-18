@@ -1,0 +1,4 @@
+obj/
+*.csproj
+launchSettings.json
+.editorconfig
