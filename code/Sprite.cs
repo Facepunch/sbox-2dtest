@@ -19,7 +19,7 @@ namespace Sandbox
 		[Net, Change]
 		public string TexturePath { get; set; }
 
-		[Net, Change]
+		[Net]
 		public new Vector2 Scale { get; set; }
 
 		public new Vector2 Position
@@ -59,12 +59,7 @@ namespace Sandbox
 			_materialInvalid = true;
 
 		}
-
-		private void OnScaleChanged()
-		{
-
-		}
-
+		
 		public Sprite()
 		{
 
@@ -79,7 +74,7 @@ namespace Sandbox
 			EnableDrawing = true;
 
 			Rotation = 0f;
-			Scale = new Vector2( 128f, 128f );
+			Scale = new Vector2( 1f, 1f );
 		}
 		
 		[Event.PreRender]

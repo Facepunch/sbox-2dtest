@@ -24,12 +24,12 @@ partial class Pawn : Sprite
 	{
 		base.Simulate( cl );
 		
-		Position += new Vector2( -Input.Left, Input.Forward ) * 256f * Time.Delta;
+		Position += new Vector2( -Input.Left, Input.Forward ) * 2f * Time.Delta;
 
 		if ( IsServer )
 		{
 			Rotation += Time.Delta * 90f;
-			Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 32f + 128f, MathF.Sin( Time.Now * 3f ) * 32f + 128f );
+			Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
 		}
 	}
 

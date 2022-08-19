@@ -31,7 +31,7 @@ public partial class MyGame : Sandbox.Game
 			{
 				var mummy = new Mummy
 				{
-					Position = new Vector2( Rand.Float( -512f, 512f ), Rand.Float( -384f, 384f ) ),
+					Position = new Vector2( Rand.Float( -8f, 8f ), Rand.Float( -4f, 4f ) ),
 					Depth = Rand.Float( -128f, 128f )
 				};
 			}
