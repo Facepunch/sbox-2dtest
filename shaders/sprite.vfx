@@ -1,0 +1,99 @@
+//=========================================================================================================================
+// Optional
+//=========================================================================================================================
+HEADER
+{
+	CompileTargets = ( IS_SM_50 && ( PC || VULKAN ) );
+	Description = "Template Shader for S&box";
+}
+
+//=========================================================================================================================
+// Optional
+//=========================================================================================================================
+FEATURES
+{
+    #include "common/features.hlsl"
+}
+
+//=========================================================================================================================
+COMMON
+{
+	#include "common/shared.hlsl"
+
+	// #define S_TRANSLUCENT 1
+}
+
+//=========================================================================================================================
+
+struct VertexInput
+{
+	#include "common/vertexinput.hlsl"
+};
+
+//=========================================================================================================================
+
+struct PixelInput
+{
+	#include "common/pixelinput.hlsl"
+};
+
+//=========================================================================================================================
+
+VS
+{
+	#include "common/vertex.hlsl"
+	
+	float2 g_vSpriteScale < UiType( VectorText ); Default2( 1.0, 1.0 ); UiGroup( "Transform,10/1" ); Attribute( "SpriteScale" ); >;
+	
+	//
+	// Main
+	//
+	PixelInput MainVs( INSTANCED_SHADER_PARAMS( VertexInput i ) )
+	{
+		i.vPositionOs.xy *= g_vSpriteScale;
+
+		PixelInput o = ProcessVertex( i );
+		
+		return FinalizeVertex( o );
+	}
+}
+
+//=========================================================================================================================
+
+PS
+{
+    CreateInputTexture2D( Texture, Srgb, 8, "", "", "Color", Default3( 1.0, 1.0, 1.0 ) );
+	CreateTexture2DInRegister( g_tColor, 0 ) < Channel( RGBA, None( Texture ), Srgb ); OutputFormat( DXT5 ); SrgbRead( true ); >;
+	TextureAttribute( RepresentativeTexture, g_tColor );
+
+    RenderState( BlendEnable, true );
+	RenderState( SrcBlend, SRC_ALPHA );
+	RenderState( DstBlend, INV_SRC_ALPHA );
+
+	RenderState( DepthEnable, false );
+	RenderState( DepthWriteEnable, false );
+
+	// Always write rgba
+	RenderState( ColorWriteEnable0, RGBA );
+	RenderState( FillMode, SOLID );
+
+	// Never cull
+	RenderState( CullMode, NONE );
+
+	struct PS_OUTPUT
+	{
+        float4 vColor : SV_Target0;
+	};
+    
+    //
+	// Main
+	//
+	PS_OUTPUT MainPs( PixelInput i )
+	{
+        PS_OUTPUT o;
+
+        o.vColor = Tex2D( g_tColor, i.vTextureCoords.xy ) * i.vVertexColor;
+
+        return o;
+	}
+}

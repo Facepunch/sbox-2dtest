@@ -2,3 +2,10 @@ obj/
 *.csproj
 launchSettings.json
 .editorconfig
+shaders/vfx/
+
+*.vtex_c
+
+*.vmat_c
+
+*.vmdl_c

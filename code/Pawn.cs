@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Sandbox;
@@ -13,7 +14,7 @@ partial class Pawn : Sprite
 	{
 		base.Spawn();
 
-		TexturePath = "textures/sprites/mummy_walk3.png";
+		TexturePath = "textures/sprites/chippy.png";
 	}
 
 	/// <summary>
@@ -22,8 +23,14 @@ partial class Pawn : Sprite
 	public override void Simulate( Client cl )
 	{
 		base.Simulate( cl );
+		
+		Position += new Vector2( -Input.Left, Input.Forward ) * 256f * Time.Delta;
 
-		Position += new Vector3( -Input.Left, -Input.Forward ) * 256f * Time.Delta;
+		if ( IsServer )
+		{
+			Rotation += Time.Delta * 90f;
+			Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 32f + 128f, MathF.Sin( Time.Now * 3f ) * 32f + 128f );
+		}
 	}
 
 	/// <summary>
@@ -33,8 +40,6 @@ partial class Pawn : Sprite
 	{
 		base.FrameSimulate( cl );
 
-		// Update rotation every frame, to keep things smooth
-		Rotation = Input.Rotation;
-		EyeRotation = Rotation;
+		MyGame.Current.MainCamera.Position = Position;
 	}
 }

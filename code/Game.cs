@@ -19,6 +19,25 @@ namespace Sandbox;
 /// </summary>
 public partial class MyGame : Sandbox.Game
 {
+	public new static MyGame Current => Sandbox.Game.Current as MyGame;
+
+	public OrthoCamera MainCamera { get; } = new OrthoCamera();
+
+	public MyGame()
+	{
+		if ( Host.IsServer )
+		{
+			for ( var i = 0; i < 50; ++i )
+			{
+				var mummy = new Mummy
+				{
+					Position = new Vector2( Rand.Float( -512f, 512f ), Rand.Float( -384f, 384f ) ),
+					Depth = Rand.Float( -128f, 128f )
+				};
+			}
+		}
+	}
+
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
 	/// </summary>
@@ -43,5 +62,10 @@ public partial class MyGame : Sandbox.Game
 			tx.Position = tx.Position + Vector3.Up * 50.0f; // raise it up
 			pawn.Transform = tx;
 		}
+	}
+
+	public override CameraMode FindActiveCamera()
+	{
+		return MainCamera;
 	}
 }

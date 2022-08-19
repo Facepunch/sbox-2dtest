@@ -7,59 +7,91 @@ using Sandbox.UI;
 
 namespace Sandbox
 {
-	public partial class Sprite : Entity
+	public partial class Sprite : ModelEntity
 	{
-		private readonly Panel _panel;
-		
+		private Material _material;
+		private bool _materialInvalid;
+		private Texture _texture;
+
+		private float _rotation;
+		private bool _firstFrame = true;
+
 		[Net, Change]
 		public string TexturePath { get; set; }
 
 		[Net, Change]
-		public Vector2 Size { get; set; }
+		public new Vector2 Scale { get; set; }
+
+		public new Vector2 Position
+		{
+			get => base.Position;
+			set => base.Position = new Vector3( value.x, value.y, base.Position.z );
+		}
+
+		public float Depth
+		{
+			get => base.Position.z;
+			set => base.Position = base.Position.WithZ( value );
+		}
+
+		public new float Rotation
+		{
+			get => _rotation;
+			set
+			{
+				_rotation = value;
+				base.Rotation = global::Rotation.FromYaw( Rotation - 90f );
+			}
+		}
+
+		internal Material Material
+		{
+			get => _material ??= Material.Load( "materials/test_sprite.vmat" ).CreateCopy();
+		}
 
 		private void OnTexturePathChanged()
 		{
-			_panel.Style.SetBackgroundImage( TexturePath );
+			_texture = string.IsNullOrEmpty( TexturePath )
+				? Texture.White
+				: Texture.Load( FileSystem.Mounted, TexturePath );
+
+			Material.OverrideTexture( "g_tColor", _texture );
+			_materialInvalid = true;
+
 		}
 
-		private void OnSizeChanged()
+		private void OnScaleChanged()
 		{
-			_panel.Style.Width = Length.Pixels( Size.x );
-			_panel.Style.Height = Length.Pixels( Size.y );
+
 		}
 
 		public Sprite()
 		{
-			if ( Host.IsClient )
-			{
-				_panel = Canvas.Instance.AddSpritePanel();
-				_panel.Style.Position = PositionMode.Absolute;
-				_panel.Style.BackgroundSizeX = Length.Percent( 100f );
-				_panel.Style.BackgroundSizeY = Length.Percent( 100f );
-			}
+
 		}
 
 		public override void Spawn()
 		{
 			base.Spawn();
 
-			EnableDrawing = false;
+			SetModel( "models/quad.vmdl" );
 
-			Size = new Vector2( 128f, 128f );
+			EnableDrawing = true;
+
+			Rotation = 0f;
+			Scale = new Vector2( 128f, 128f );
 		}
-
-		[Event.Frame]
-		private void ClientFrame()
+		
+		[Event.PreRender]
+		private void ClientPreRender()
 		{
-			_panel.Style.Left = Length.Pixels( Position.x );
-			_panel.Style.Top = Length.Pixels( Position.y );
-		}
+			SceneObject.Flags.IsTranslucent = true;
+			SceneObject.Attributes.Set( "SpriteScale", Scale / 100f );
 
-		protected override void OnDestroy()
-		{
-			base.OnDestroy();
-
-			_panel?.Delete();
+			if ( _material != null && _materialInvalid )
+			{
+				SetMaterialOverride( _material );
+			}
 		}
 	}
 }
