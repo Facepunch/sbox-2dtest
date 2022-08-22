@@ -7,39 +7,47 @@ namespace Sandbox;
 
 partial class Pawn : Sprite
 {
-	/// <summary>
-	/// Called when the entity is first created 
-	/// </summary>
+	public Vector2 MousePos { get; private set; }
+
 	public override void Spawn()
 	{
 		base.Spawn();
 
-		TexturePath = "textures/sprites/chippy.png";
+		TexturePath = "textures/sprites/head.png";
+
+		Scale = new Vector2(1f, 1f);
 	}
 
-	/// <summary>
-	/// Called every tick, clientside and serverside.
-	/// </summary>
 	public override void Simulate( Client cl )
 	{
 		base.Simulate( cl );
 		
 		Position += new Vector2( -Input.Left, Input.Forward ) * 2f * Time.Delta;
 
-		if ( IsServer )
-		{
-			Rotation += Time.Delta * 90f;
-			Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
-		}
+		var mouseOffset = MousePos - Position;
+		Rotation = (MathF.Atan2(mouseOffset.y, mouseOffset.x) * (180f / MathF.PI)) - 90f;
+		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
+
+		//DebugOverlay.Text(MousePos.ToString(), Position);
+		//DebugOverlay.Line(Position, MousePos, 0f, false);
 	}
 
-	/// <summary>
-	/// Called every frame on the client
-	/// </summary>
 	public override void FrameSimulate( Client cl )
 	{
 		base.FrameSimulate( cl );
 
 		MyGame.Current.MainCamera.Position = Position;
+
+		MousePos = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos);
+		SetMousePos(MousePos);
 	}
+
+	[ConCmd.Server]
+	public static void SetMousePos(Vector2 pos)
+    {
+		if (ConsoleSystem.Caller.Pawn is Pawn p)
+        {
+			p.MousePos = pos;
+        }
+    }
 }

@@ -44,5 +44,17 @@ namespace Sandbox
 			base.Rotation = global::Rotation.FromYaw( 90f + Rotation ) * global::Rotation.FromPitch( 90f );
 			base.Position = new Vector3( Position, Depth );
 		}
+
+		public Vector2 ScreenToWorld(Vector2 screenPos)
+        {
+			screenPos /= Screen.Size;
+			screenPos -= new Vector2(0.5f, 0.5f);
+			screenPos *= Size;
+			screenPos.x *= Screen.Aspect;
+			screenPos.y *= -1;
+			screenPos += Position;
+
+			return screenPos;
+        }
 	}
 }

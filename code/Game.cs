@@ -36,6 +36,11 @@ public partial class MyGame : Sandbox.Game
 				};
 			}
 		}
+
+		if (Host.IsClient)
+        {
+			_ = new MainHud();
+        }
 	}
 
 	/// <summary>
