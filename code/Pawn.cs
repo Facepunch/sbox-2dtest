@@ -7,7 +7,7 @@ namespace Sandbox;
 
 partial class Pawn : Sprite
 {
-	public Vector2 MousePos { get; private set; }
+	public Vector2 MouseOffset { get; private set; }
 
 	private Mummy _mummy;
 
@@ -24,6 +24,7 @@ partial class Pawn : Sprite
 			_mummy = new Mummy();
 			_mummy.Parent = this;
 			_mummy.LocalPosition = new Vector3(0.3f, 0f, 0f);
+			_mummy.Depth = 1.0f;
 		}
 	}
 
@@ -33,8 +34,7 @@ partial class Pawn : Sprite
 		
 		Position += new Vector2( -Input.Left, Input.Forward ) * 2f * Time.Delta;
 
-		var mouseOffset = MousePos - Position;
-		Rotation = (MathF.Atan2(mouseOffset.y, mouseOffset.x) * (180f / MathF.PI)) - 90f;
+		Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
 		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
 
 		//DebugOverlay.Text(MousePos.ToString(), Position);
@@ -43,7 +43,7 @@ partial class Pawn : Sprite
 		if(Host.IsServer)
         {
 			_mummy.LocalRotation += Time.Delta * 120f;
-
+			Scale = new Vector2(1f, 142f / 153f);
 		}
 	}
 
@@ -53,16 +53,16 @@ partial class Pawn : Sprite
 
 		MyGame.Current.MainCamera.Position = Position;
 
-		MousePos = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos);
-		SetMousePos(MousePos);
+		MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
+		SetMouseOffset(MouseOffset);
 	}
 
 	[ConCmd.Server]
-	public static void SetMousePos(Vector2 pos)
+	public static void SetMouseOffset(Vector2 offset)
     {
 		if (ConsoleSystem.Caller.Pawn is Pawn p)
         {
-			p.MousePos = pos;
+			p.MouseOffset = offset;
         }
     }
 }

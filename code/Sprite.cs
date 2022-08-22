@@ -96,7 +96,7 @@ namespace Sandbox
 		private void ClientPreRender()
 		{
 			SceneObject.Flags.IsTranslucent = true;
-			SceneObject.Attributes.Set( "SpriteScale", Scale / 100f );
+			SceneObject.Attributes.Set( "SpriteScale", new Vector2(Scale.y, Scale.x) / 100f );
 
 			if ( _material != null && _materialInvalid )
 			{
