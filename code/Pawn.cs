@@ -9,6 +9,8 @@ partial class Pawn : Sprite
 {
 	public Vector2 MousePos { get; private set; }
 
+	private Mummy _mummy;
+
 	public override void Spawn()
 	{
 		base.Spawn();
@@ -16,6 +18,13 @@ partial class Pawn : Sprite
 		TexturePath = "textures/sprites/head.png";
 
 		Scale = new Vector2(1f, 1f);
+
+		if (Host.IsServer)
+		{
+			_mummy = new Mummy();
+			_mummy.Parent = this;
+			_mummy.LocalPosition = new Vector3(0.3f, 0f, 0f);
+		}
 	}
 
 	public override void Simulate( Client cl )
@@ -30,6 +39,12 @@ partial class Pawn : Sprite
 
 		//DebugOverlay.Text(MousePos.ToString(), Position);
 		//DebugOverlay.Line(Position, MousePos, 0f, false);
+
+		if(Host.IsServer)
+        {
+			_mummy.LocalRotation += Time.Delta * 120f;
+
+		}
 	}
 
 	public override void FrameSimulate( Client cl )

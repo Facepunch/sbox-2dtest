@@ -13,7 +13,7 @@ namespace Sandbox
 		private bool _materialInvalid;
 		private Texture _texture;
 
-		private float _rotation;
+		private float _localRotation;
 		private bool _firstFrame = true;
 
 		[Net, Change]
@@ -28,6 +28,12 @@ namespace Sandbox
 			set => base.Position = new Vector3( value.x, value.y, base.Position.z );
 		}
 
+		public new Vector2 LocalPosition
+        {
+			get => base.LocalPosition;
+			set => base.LocalPosition = new Vector3(value.x, value.y, base.LocalPosition.z);
+		}
+
 		public float Depth
 		{
 			get => base.Position.z;
@@ -36,11 +42,20 @@ namespace Sandbox
 
 		public new float Rotation
 		{
-			get => _rotation;
+			get => base.Rotation.Angles().yaw + 90f;
 			set
 			{
-				_rotation = value;
-				base.Rotation = global::Rotation.FromYaw( Rotation - 90f );
+				base.Rotation = global::Rotation.FromYaw( value - 90f );
+			}
+		}
+
+		public new float LocalRotation
+		{
+			get => _localRotation;
+			set
+			{
+				_localRotation = value;
+				base.LocalRotation = global::Rotation.FromYaw(LocalRotation - 90f);
 			}
 		}
 
