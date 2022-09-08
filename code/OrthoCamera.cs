@@ -19,7 +19,7 @@ namespace Sandbox
 		/// <summary>
 		/// World space position of the center of the view.
 		/// </summary>
-		public Vector2 Position { get; set; }
+		public new Vector2 Position { get; set; }
 
 		/// <summary>
 		/// Height of the view in world space.
@@ -39,6 +39,7 @@ namespace Sandbox
 
 		public override void Update()
 		{
+			Size = 10f;
 			OrthoSize = Size / Screen.Height;
 
 			base.Rotation = global::Rotation.FromYaw( 90f + Rotation ) * global::Rotation.FromPitch( 90f );

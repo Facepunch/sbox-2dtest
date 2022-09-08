@@ -27,15 +27,15 @@ public partial class MyGame : Sandbox.Game
 	{
 		if ( Host.IsServer )
 		{
-			for ( var i = 0; i < 50; ++i )
-			{
-				var mummy = new Mummy
-				{
-					Position = new Vector2( Rand.Float( -8f, 8f ), Rand.Float( -4f, 4f ) ),
-					Depth = Rand.Float( -128f, 128f )
-				};
-			}
-		}
+			for (var i = 0; i < 50; ++i)
+            {
+                var mummy = new Mummy
+                {
+                    Position = new Vector2(Rand.Float(-8f, 8f), Rand.Float(-4f, 4f)),
+                    Depth = Rand.Float(-128f, 128f)
+                };
+            }
+        }
 
 		if (Host.IsClient)
         {

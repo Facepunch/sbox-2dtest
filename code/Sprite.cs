@@ -22,6 +22,8 @@ namespace Sandbox
 		[Net]
 		public new Vector2 Scale { get; set; }
 
+		public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
+
 		public new Vector2 Position
 		{
 			get => base.Position;

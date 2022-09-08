@@ -16,5 +16,11 @@ namespace Sandbox
 
 			RenderColor = Color.Random;
 		}
+
+		[Event.Tick.Server]
+		public void ServerTick()
+		{
+			Rotation = Time.Now * 8f;
+		}
 	}
 }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Sandbox;
 
-partial class Pawn : Sprite
+public partial class Pawn : Sprite
 {
 	public Vector2 MouseOffset { get; private set; }
 
@@ -17,7 +17,7 @@ partial class Pawn : Sprite
 
 		TexturePath = "textures/sprites/head.png";
 
-		Scale = new Vector2(1f, 1f);
+		Scale = new Vector2(1f, 142f / 153f);
 
 		if (Host.IsServer)
 		{
@@ -26,6 +26,8 @@ partial class Pawn : Sprite
 			_mummy.LocalPosition = new Vector3(0.3f, 0f, 0f);
 			_mummy.Depth = 1.0f;
 		}
+
+		Health = 100f;
 	}
 
 	public override void Simulate( Client cl )
@@ -43,7 +45,23 @@ partial class Pawn : Sprite
 		if(Host.IsServer)
         {
 			_mummy.LocalRotation += Time.Delta * 120f;
-			Scale = new Vector2(1f, 142f / 153f);
+
+			if (Input.Pressed(InputButton.Jump) || Input.Pressed(InputButton.PrimaryAttack))
+			{
+				//var mummy = new Mummy
+				//{
+				//	Position = Position + MouseOffset,
+				//	Depth = Rand.Float(-128f, 128f)
+				//};
+
+				var bullet = new Bullet
+				{
+					Position = Position,
+					Depth = -1f,
+					Velocity = Forward * 10f,
+					Shooter = this
+				};
+			}
 		}
 	}
 
@@ -64,5 +82,15 @@ partial class Pawn : Sprite
         {
 			p.MouseOffset = offset;
         }
+    }
+
+	public void Damage(float damage)
+    {
+		Health -= damage;
+
+		if(Health <= 0f)
+        {
+			Scale = new Vector2(2f, 1f);
+		}
     }
 }
