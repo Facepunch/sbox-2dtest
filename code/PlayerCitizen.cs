@@ -5,29 +5,34 @@ using System.Linq;
 
 namespace Sandbox;
 
-public partial class Pawn : Sprite
+public partial class PlayerCitizen : Sprite
 {
 	public Vector2 MouseOffset { get; private set; }
 
-	private Mummy _mummy;
+	//private Mummy _mummy;
+
+	public bool IsAlive { get; private set; }
 
 	public override void Spawn()
 	{
 		base.Spawn();
 
-		TexturePath = "textures/sprites/head.png";
+		//TexturePath = "textures/sprites/head.png";
+		TexturePath = "textures/sprites/citizen.png";
 
-		Scale = new Vector2(1f, 142f / 153f);
+		//Scale = new Vector2(1f, 142f / 153f);
+		Scale = new Vector2(1f, 35f / 16f) * 0.5f;
 
-		if (Host.IsServer)
-		{
-			_mummy = new Mummy();
-			_mummy.Parent = this;
-			_mummy.LocalPosition = new Vector3(0.3f, 0f, 0f);
-			_mummy.Depth = 1.0f;
-		}
+		//if (Host.IsServer)
+		//{
+		//	_mummy = new Mummy();
+		//	_mummy.Parent = this;
+		//	_mummy.LocalPosition = new Vector3(0.3f, 0f, 0f);
+		//	_mummy.Depth = 1.0f;
+		//}
 
 		Health = 100f;
+		IsAlive = true;
 	}
 
 	public override void Simulate( Client cl )
@@ -36,15 +41,18 @@ public partial class Pawn : Sprite
 		
 		Position += new Vector2( -Input.Left, Input.Forward ) * 2f * Time.Delta;
 
-		Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
+		if (MathF.Abs(Input.Left) > 0f)
+			Scale = new Vector2(1f * Input.Left < 0f ? -1f : 1f, 35f / 16f) * 0.5f;
+
+		//Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
 		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
-
+		
 		//DebugOverlay.Text(MousePos.ToString(), Position);
-		//DebugOverlay.Line(Position, MousePos, 0f, false);
+		//DebugOverlay.Line(Position, Position + new Vector2(1f, 1f), 0f, false);
 
-		if(Host.IsServer)
+		if (Host.IsServer)
         {
-			_mummy.LocalRotation += Time.Delta * 120f;
+			//_mummy.LocalRotation += Time.Delta * 120f;
 
 			if (Input.Pressed(InputButton.Jump) || Input.Pressed(InputButton.PrimaryAttack))
 			{
@@ -78,7 +86,7 @@ public partial class Pawn : Sprite
 	[ConCmd.Server]
 	public static void SetMouseOffset(Vector2 offset)
     {
-		if (ConsoleSystem.Caller.Pawn is Pawn p)
+		if (ConsoleSystem.Caller.Pawn is PlayerCitizen p)
         {
 			p.MouseOffset = offset;
         }

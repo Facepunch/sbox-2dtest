@@ -16,6 +16,8 @@ namespace Sandbox
 		private float _localRotation;
 		private bool _firstFrame = true;
 
+		public MyGame Game => MyGame.Current;
+
 		[Net, Change]
 		public string TexturePath { get; set; }
 
@@ -59,6 +61,12 @@ namespace Sandbox
 				_localRotation = value;
 				base.LocalRotation = global::Rotation.FromYaw(LocalRotation - 90f);
 			}
+		}
+
+		public new Vector2 Velocity
+		{
+			get => base.Velocity;
+			set => base.Velocity = new Vector3(value.x, value.y, 0f);
 		}
 
 		internal Material Material

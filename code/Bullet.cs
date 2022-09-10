@@ -10,7 +10,7 @@ namespace Sandbox
 	{
 		public TimeSince SpawnTime { get; private set; }
 
-		public Pawn Shooter { get; set; }
+		public PlayerCitizen Shooter { get; set; }
 
 		public float Damage { get; private set; }
 
@@ -37,7 +37,7 @@ namespace Sandbox
 			if (SpawnTime > 1f)
 				Delete();
 
-			var players = Entity.All.OfType<Pawn>().ToList();
+			var players = Entity.All.OfType<PlayerCitizen>().ToList();
 
 			foreach(var p in players)
             {

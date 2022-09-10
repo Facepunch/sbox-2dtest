@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using Sandbox.UI.Construct;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,18 +24,22 @@ public partial class MyGame : Sandbox.Game
 
 	public OrthoCamera MainCamera { get; } = new OrthoCamera();
 
+	private readonly List<Enemy> _enemies = new();
+
 	public MyGame()
 	{
 		if ( Host.IsServer )
 		{
-			for (var i = 0; i < 50; ++i)
+			for (var i = 0; i < 250; ++i)
             {
-                var mummy = new Mummy
+                var enemy = new Enemy
                 {
-                    Position = new Vector2(Rand.Float(-8f, 8f), Rand.Float(-4f, 4f)),
+                    Position = new Vector2(Rand.Float(-18f, 18f), Rand.Float(-14f, 14f)),
                     Depth = Rand.Float(-128f, 128f)
                 };
-            }
+
+				_enemies.Add(enemy);
+			}
         }
 
 		if (Host.IsClient)
@@ -42,6 +47,41 @@ public partial class MyGame : Sandbox.Game
 			_ = new MainHud();
         }
 	}
+
+	[Event.Tick.Server]
+	public void ServerTick()
+    {
+		var dt = Time.Delta;
+
+		var closestPlayer = GetClosestPlayer(new Vector2(0, 0));
+		if (closestPlayer == null)
+			return;
+
+		foreach (var enemy in _enemies)
+        {
+			enemy.Velocity += (closestPlayer.Position - enemy.Position).Normal * 0.5f * dt;
+
+            foreach (var other in _enemies)
+            {
+                if (enemy == other)
+                    continue;
+
+                var dist_sqr = (enemy.Position - other.Position).LengthSquared;
+                var total_radius_sqr = MathF.Pow(enemy.Radius + other.Radius, 2f);
+                if (dist_sqr < total_radius_sqr)
+                {
+                    enemy.Velocity += (enemy.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 1.99f) * dt;
+                }
+            }
+
+            enemy.Position += enemy.Velocity * dt;
+			enemy.Velocity *= 0.975f;
+
+			//DebugOverlay.Line(enemy.Position, enemy.Position + enemy.Radius, 0f, false);
+
+			//enemy.Scale = new Vector2(1f * enemy.Velocity.x < 0f ? -1f : 1f, 1f);
+        }
+    }
 
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
@@ -51,8 +91,8 @@ public partial class MyGame : Sandbox.Game
 		base.ClientJoined( client );
 
 		// Create a pawn for this client to play with
-		var pawn = new Pawn();
-		client.Pawn = pawn;
+		var player = new PlayerCitizen();
+		client.Pawn = player;
 
 		// Get all of the spawnpoints
 		var spawnpoints = Entity.All.OfType<SpawnPoint>();
@@ -65,12 +105,37 @@ public partial class MyGame : Sandbox.Game
 		{
 			var tx = randomSpawnPoint.Transform;
 			tx.Position = tx.Position + Vector3.Up * 50.0f; // raise it up
-			pawn.Transform = tx;
+			player.Transform = tx;
 		}
 	}
 
 	public override CameraMode FindActiveCamera()
 	{
 		return MainCamera;
+	}
+
+	public IEnumerable<PlayerCitizen> Players => Client.All
+		.Select(x => x.Pawn)
+		.OfType<PlayerCitizen>();
+
+	public IEnumerable<PlayerCitizen> AlivePlayers => Players
+		.Where(x => x.IsAlive);
+
+	private T GetClosest<T>(IEnumerable<T> enumerable, Vector3 pos, float maxRange, bool ignoreZ, T except)
+		where T : Entity
+	{
+		var dists = ignoreZ
+			? enumerable.Select(x => (Entity: x, DistSq: (x.Position - pos).WithZ(0f).LengthSquared))
+			: enumerable.Select(x => (Entity: x, DistSq: (x.Position - pos).LengthSquared));
+
+		return dists.OrderBy(x => x.DistSq)
+			.FirstOrDefault(x => x.DistSq <= maxRange * maxRange && x.Entity != except && (!ignoreZ || x.Entity.Parent == null))
+			.Entity;
+	}
+
+	public PlayerCitizen GetClosestPlayer(Vector3 pos, float maxRange = float.PositiveInfinity, bool alive = true, bool ignoreZ = true, PlayerCitizen except = null)
+	{
+		var players = alive ? AlivePlayers : Players;
+		return GetClosest(players, pos, maxRange, ignoreZ, except);
 	}
 }
