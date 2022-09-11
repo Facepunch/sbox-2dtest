@@ -13,6 +13,8 @@ public partial class PlayerCitizen : Sprite
 
 	public bool IsAlive { get; private set; }
 
+	public float FeetOffset { get; private set; }
+
 	public override void Spawn()
 	{
 		base.Spawn();
@@ -21,7 +23,7 @@ public partial class PlayerCitizen : Sprite
 		TexturePath = "textures/sprites/citizen.png";
 
 		//Scale = new Vector2(1f, 142f / 153f);
-		Scale = new Vector2(1f, 35f / 16f) * 0.5f;
+		//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
 
 		//if (Host.IsServer)
 		//{
@@ -40,15 +42,18 @@ public partial class PlayerCitizen : Sprite
 		base.Simulate( cl );
 		
 		Position += new Vector2( -Input.Left, Input.Forward ) * 2f * Time.Delta;
+		Depth = -(Position.y + FeetOffset);
 
 		if (MathF.Abs(Input.Left) > 0f)
-			Scale = new Vector2(1f * Input.Left < 0f ? -1f : 1f, 35f / 16f) * 0.5f;
+			Scale = new Vector2(1f * Input.Left < 0f ? -1f : 1f, 1f) * 1f;
 
 		//Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
 		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
-		
-		//DebugOverlay.Text(MousePos.ToString(), Position);
-		//DebugOverlay.Line(Position, Position + new Vector2(1f, 1f), 0f, false);
+
+		//DebugOverlay.Text(Position.y.ToString() + ", " + Depth.ToString(), Position);
+
+		//DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
+		//DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
 
 		if (Host.IsServer)
         {

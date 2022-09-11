@@ -25,17 +25,33 @@ public partial class MyGame : Sandbox.Game
 	public OrthoCamera MainCamera { get; } = new OrthoCamera();
 
 	private readonly List<Enemy> _enemies = new();
+	public Dictionary<(int, int), List<Enemy>> _enemyGridPositions = new Dictionary<(int, int), List<Enemy>>();
+
+	public float GRID_SIZE = 1f;
+	public Vector2 BOUNDS_MIN = new Vector2(-16f, -12f);
+	public Vector2 BOUNDS_MAX = new Vector2(16f, 12f);
 
 	public MyGame()
 	{
 		if ( Host.IsServer )
 		{
-			for (var i = 0; i < 250; ++i)
-            {
+			for (float x = BOUNDS_MIN.x; x <= BOUNDS_MAX.x; x += GRID_SIZE)
+			{
+				for (float y = BOUNDS_MIN.y; y <= BOUNDS_MAX.y; y += GRID_SIZE)
+				{
+					_enemyGridPositions.Add(GetGridSquareForPos(new Vector2(x, y)), new List<Enemy>());
+				}
+			}
+
+			for (var i = 0; i < 700; ++i)
+			//for (var i = 0; i < 5; ++i)
+			{
                 var enemy = new Enemy
                 {
                     Position = new Vector2(Rand.Float(-18f, 18f), Rand.Float(-14f, 14f)),
-                    Depth = Rand.Float(-128f, 128f)
+					//Position = new Vector2(Rand.Float(-2f, 2f), Rand.Float(-2f, 2f)),
+					//Depth = Rand.Float(-128f, 128f),
+					GridPos = (-999, -999),
                 };
 
 				_enemies.Add(enemy);
@@ -60,27 +76,65 @@ public partial class MyGame : Sandbox.Game
 		foreach (var enemy in _enemies)
         {
 			enemy.Velocity += (closestPlayer.Position - enemy.Position).Normal * 0.5f * dt;
-
-            foreach (var other in _enemies)
-            {
-                if (enemy == other)
-                    continue;
-
-                var dist_sqr = (enemy.Position - other.Position).LengthSquared;
-                var total_radius_sqr = MathF.Pow(enemy.Radius + other.Radius, 2f);
-                if (dist_sqr < total_radius_sqr)
-                {
-                    enemy.Velocity += (enemy.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 1.99f) * dt;
-                }
-            }
-
             enemy.Position += enemy.Velocity * dt;
 			enemy.Velocity *= 0.975f;
 
 			//DebugOverlay.Line(enemy.Position, enemy.Position + enemy.Radius, 0f, false);
 
-			//enemy.Scale = new Vector2(1f * enemy.Velocity.x < 0f ? -1f : 1f, 1f);
+			enemy.Scale = new Vector2(1f * enemy.Velocity.x < 0f ? 1f : -1f, 1f) * 0.8f;
+			enemy.Depth = -(enemy.Position.y + enemy.FeetOffset);
+
+			var gridPos = GetGridSquareForPos(enemy.Position);
+			if (gridPos != enemy.GridPos)
+            {
+				if(_enemyGridPositions.ContainsKey(enemy.GridPos) && _enemyGridPositions[enemy.GridPos].Contains(enemy))
+                {
+					_enemyGridPositions[enemy.GridPos].Remove(enemy);
+                }
+
+				enemy.GridPos = gridPos;
+
+				if(IsGridSquareInArena(gridPos))
+					_enemyGridPositions[gridPos].Add(enemy);
+            }
+
+			for(int dx = -1; dx <= 1; dx++)
+            {
+				for (int dy = -1; dy <= 1; dy++)
+				{
+					HandleCollisionForGridSquare(enemy, (enemy.GridPos.Item1 + dx, enemy.GridPos.Item2 + dy), dt);
+				}
+			}
         }
+
+		//for (float x = BOUNDS_MIN.x; x <= BOUNDS_MAX.x; x += GRID_SIZE)
+  //      {
+		//	for (float y = BOUNDS_MIN.y; y <= BOUNDS_MAX.y; y += GRID_SIZE)
+  //          {
+		//		DebugOverlay.Box(new Vector2(x, y), new Vector2(x + GRID_SIZE, y + GRID_SIZE), Color.White, 0f, false);
+		//		DebugOverlay.Text((new Vector2(x, y)).ToString(), new Vector2(x + 0.1f, y + 0.1f));
+		//	}
+		//}
+    }
+
+	void HandleCollisionForGridSquare(Enemy enemy, (int, int) gridSquare, float dt)
+    {
+		if (!_enemyGridPositions.ContainsKey(gridSquare))
+			return;
+
+		//Log.Info("HandleCollisionForGridSquare - " + _enemyGridPositions[gridSquare].Count);
+		foreach(Enemy other in _enemyGridPositions[gridSquare])
+        {
+			if (other == enemy)
+				continue;
+
+			var dist_sqr = (enemy.Position - other.Position).LengthSquared;
+			var total_radius_sqr = MathF.Pow(enemy.Radius + other.Radius, 2f);
+			if (dist_sqr < total_radius_sqr)
+			{
+				enemy.Velocity += (enemy.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 1.99f) * dt;
+			}
+		}
     }
 
 	/// <summary>
@@ -138,4 +192,24 @@ public partial class MyGame : Sandbox.Game
 		var players = alive ? AlivePlayers : Players;
 		return GetClosest(players, pos, maxRange, ignoreZ, except);
 	}
+
+	public (int, int) GetGridSquareForPos(Vector2 pos)
+    {
+		return ((int)MathF.Floor(pos.x), (int)MathF.Floor(pos.y));
+    }
+
+	public List<Enemy> GetEnemiesInGridSquare((int, int) gridSquare)
+    {
+		if(_enemyGridPositions.ContainsKey(gridSquare))
+        {
+			return _enemyGridPositions[gridSquare];
+        }
+
+		return null;
+    }
+
+	public bool IsGridSquareInArena((int, int) gridSquare)
+    {
+		return _enemyGridPositions.ContainsKey(gridSquare);
+    }
 }
