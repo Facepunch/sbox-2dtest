@@ -28,13 +28,13 @@ namespace Sandbox
 			Radius = 0.3f;
 		}
 
-		[Event.Tick.Server]
-		public void ServerTick()
-		{
-			//DebugOverlay.Text(GridPos.ToString(), Position);
-			//DebugOverlay.Text(Depth.ToString("#.#"), Position);
-			//FeetOffset = 0.35f;
-			//DebugOverlay.Line(Position + new Vector2(0.2f, -FeetOffset), Position + new Vector2(0.2f, 2f), 0f, false);
-		}
+		//[Event.Tick.Server]
+		//public void ServerTick()
+		//{
+		//	//DebugOverlay.Text(GridPos.ToString(), Position);
+		//	//DebugOverlay.Text(Depth.ToString("#.#"), Position);
+		//	//FeetOffset = 0.35f;
+		//	//DebugOverlay.Line(Position + new Vector2(0.2f, -FeetOffset), Position + new Vector2(0.2f, 2f), 0f, false);
+		//}
 	}
 }

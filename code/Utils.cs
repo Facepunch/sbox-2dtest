@@ -24,6 +24,23 @@ public enum EasingType
 
 public static class Utils
 {
+    public static float DynamicEaseTo(float current, float goal, float factorPercent, float dt, float referenceFrameRate = 60f)
+    {
+        if (float.IsPositiveInfinity(dt)) 
+            return goal;
+
+        return current + (goal - current) * (1f - MathF.Pow(1f - MathX.Clamp(factorPercent, 0f, 1f), dt * referenceFrameRate));
+    }
+
+    public static Vector2 DynamicEaseTo(Vector2 current, Vector2 goal, float factorPercent, float dt, float referenceFrameRate = 60f)
+    {
+        if (float.IsPositiveInfinity(dt))
+            return goal;
+        var diff = goal - current;
+
+        return current + diff * (1f - MathF.Pow(1f - MathX.Clamp(factorPercent, 0f, 1f), dt * referenceFrameRate));
+    }
+
     public static float EaseUnclamped(float value, EasingType easingType)
     {
         switch (easingType)

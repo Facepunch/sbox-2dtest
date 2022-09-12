@@ -15,6 +15,8 @@ public partial class PlayerCitizen : Sprite
 
 	public float FeetOffset { get; private set; }
 
+	public float Radius { get; private set; }
+
 	public override void Spawn()
 	{
 		base.Spawn();
@@ -35,13 +37,42 @@ public partial class PlayerCitizen : Sprite
 
 		Health = 100f;
 		IsAlive = true;
+		Radius = 0.3f;
 	}
 
 	public override void Simulate( Client cl )
 	{
 		base.Simulate( cl );
 		
-		Position += new Vector2( -Input.Left, Input.Forward ) * 2f * Time.Delta;
+		Velocity += new Vector2(-Input.Left, Input.Forward) * 30f * Time.Delta;
+		Position += Velocity * Time.Delta;
+		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, Time.Delta);
+
+		var BUFFER_X = Radius;
+		var BUFFER_Y = Radius * 1.5f;
+
+		if (Position.x < Game.BOUNDS_MIN.x + BUFFER_X)
+        {
+			Position = new Vector2(Game.BOUNDS_MIN.x + BUFFER_X, Position.y);
+			Velocity = new Vector2(Velocity.x * -1f, Velocity.y);
+		} 
+		else if (Position.x > Game.BOUNDS_MAX.x - BUFFER_X)
+		{
+			Position = new Vector2(Game.BOUNDS_MAX.x - BUFFER_X, Position.y);
+			Velocity = new Vector2(Velocity.x * -1f, Velocity.y);
+		}
+
+		if (Position.y < Game.BOUNDS_MIN.y + BUFFER_Y)
+		{
+			Position = new Vector2(Position.x, Game.BOUNDS_MIN.y + BUFFER_Y);
+			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
+		}
+		else if (Position.y > Game.BOUNDS_MAX.y - BUFFER_Y)
+		{
+			Position = new Vector2(Position.x, Game.BOUNDS_MAX.y - BUFFER_Y);
+			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
+		}
+
 		Depth = -(Position.y + FeetOffset);
 
 		if (MathF.Abs(Input.Left) > 0f)
@@ -82,7 +113,7 @@ public partial class PlayerCitizen : Sprite
 	{
 		base.FrameSimulate( cl );
 
-		MyGame.Current.MainCamera.Position = Position;
+		Game.MainCamera.Position = Position;
 
 		MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
 		SetMouseOffset(MouseOffset);
