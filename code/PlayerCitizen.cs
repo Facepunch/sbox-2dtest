@@ -81,7 +81,7 @@ public partial class PlayerCitizen : Sprite
 		//Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
 		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
 
-		//DebugOverlay.Text(Position.y.ToString() + ", " + Depth.ToString(), Position);
+		//DebugOverlay.Text(Position.ToString(), Position);
 
 		//DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
 		//DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
@@ -113,7 +113,8 @@ public partial class PlayerCitizen : Sprite
 	{
 		base.FrameSimulate( cl );
 
-		Game.MainCamera.Position = Position;
+		var DIST = 7.3f;
+		Game.MainCamera.Position = new Vector2(MathX.Clamp(Position.x, -DIST, DIST), MathX.Clamp(Position.y, -DIST, DIST));
 
 		MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
 		SetMouseOffset(MouseOffset);
