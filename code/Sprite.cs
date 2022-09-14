@@ -7,14 +7,19 @@ using Sandbox.UI;
 
 namespace Sandbox
 {
+    public enum SpriteFilter
+    {
+		Default,
+		Pixelated
+    }
+
 	public partial class Sprite : ModelEntity
 	{
 		private Material _material;
-		private bool _materialInvalid;
+		private bool _materialInvalid = true;
 		private Texture _texture;
 
 		private float _localRotation;
-		private bool _firstFrame = true;
 
 		public MyGame Game => MyGame.Current;
 
@@ -23,6 +28,9 @@ namespace Sandbox
 
 		[Net]
 		public new Vector2 Scale { get; set; }
+
+        [Net, Change]
+		public SpriteFilter Filter { get; set; }
 
 		public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
@@ -69,10 +77,25 @@ namespace Sandbox
 			set => base.Velocity = new Vector3(value.x, value.y, 0f);
 		}
 
-		internal Material Material
-		{
-			get => _material ??= Material.Load( "materials/test_sprite.vmat" ).CreateCopy();
-		}
+        private static Dictionary<(string TexturePath, SpriteFilter Filter), Material> MaterialDict { get; } = new();
+
+        private static Material GetMaterial( Texture texture, SpriteFilter filter )
+        {
+            if (MaterialDict.TryGetValue((texture.ResourcePath, filter), out var mat))
+            {
+                return mat;
+            }
+
+            var srcMat = Material.Load($"materials/sprite_{filter.ToString().ToLowerInvariant()}.vmat");
+			
+			mat = srcMat.CreateCopy();
+            mat.OverrideTexture("g_tColor", texture);
+
+			// TODO: this makes sprites render multiple times??
+			// MaterialDict[(texture.ResourcePath, filter)] = mat;
+
+            return mat;
+        }
 
 		private void OnTexturePathChanged()
 		{
@@ -80,10 +103,13 @@ namespace Sandbox
 				? Texture.White
 				: Texture.Load( FileSystem.Mounted, TexturePath );
 
-			Material.OverrideTexture( "g_tColor", _texture );
-			_materialInvalid = true;
+            _materialInvalid = true;
+        }
 
-		}
+        private void OnFilterChanged()
+        {
+            _materialInvalid = true;
+        }
 		
 		public Sprite()
 		{
@@ -92,14 +118,16 @@ namespace Sandbox
 
 		public override void Spawn()
 		{
-			base.Spawn();
-
-			SetModel( "models/quad.vmdl" );
+            SetModel( "models/quad.vmdl" );
 
 			EnableDrawing = true;
 
 			Rotation = 0f;
 			Scale = new Vector2( 1f, 1f );
+
+            PhysicsEnabled = false;
+
+            base.Spawn();
 		}
 		
 		[Event.PreRender]
@@ -107,10 +135,14 @@ namespace Sandbox
 		{
 			SceneObject.Flags.IsTranslucent = true;
 			SceneObject.Attributes.Set( "SpriteScale", new Vector2(Scale.y, Scale.x) / 100f );
+            SceneObject.Attributes.Set("TextureSize", _texture?.Size ?? new Vector2(1f, 1f));
 
-			if ( _material != null && _materialInvalid )
-			{
-				SetMaterialOverride( _material );
+			if (_materialInvalid)
+            {
+                _materialInvalid = false;
+                _material = GetMaterial(_texture ?? Texture.White, Filter);
+
+                SetMaterialOverride(_material);
 			}
 		}
 	}

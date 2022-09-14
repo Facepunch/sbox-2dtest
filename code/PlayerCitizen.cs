@@ -38,7 +38,9 @@ public partial class PlayerCitizen : Sprite
         Health = 100f;
 		IsAlive = true;
 		Radius = 0.3f;
-	}
+
+        Filter = SpriteFilter.Pixelated;
+    }
 
 	public override void Simulate( Client cl )
 	{
@@ -72,6 +74,8 @@ public partial class PlayerCitizen : Sprite
 			Position = new Vector2(Position.x, Game.BOUNDS_MAX.y - BUFFER_Y);
 			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
 		}
+
+        Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 4f) * 2f;
 
 		Depth = -Position.y * 10f;
 

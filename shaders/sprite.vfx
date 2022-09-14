@@ -13,6 +13,8 @@ HEADER
 FEATURES
 {
     #include "common/features.hlsl"
+
+	Feature(F_PIXELATED, 0..1, "Sprite");
 }
 
 //=========================================================================================================================
@@ -65,6 +67,10 @@ PS
     CreateInputTexture2D( Texture, Srgb, 8, "", "", "Color", Default3( 1.0, 1.0, 1.0 ) );
 	CreateTexture2DInRegister( g_tColor, 0 ) < Channel( RGBA, None( Texture ), Srgb ); OutputFormat( DXT5 ); SrgbRead( true ); >;
 	TextureAttribute( RepresentativeTexture, g_tColor );
+	
+	float2 g_vTextureSize < UiType( VectorText ); Default2( 1.0, 1.0 ); UiGroup( "Transform,10/2" ); Attribute( "TextureSize" ); >;
+
+	StaticCombo( S_PIXELATED, F_PIXELATED, Sys( ALL ) );
 
     RenderState( BlendEnable, true );
 	RenderState( SrcBlend, SRC_ALPHA );
@@ -91,8 +97,26 @@ PS
 	PS_OUTPUT MainPs( PixelInput i )
 	{
         PS_OUTPUT o;
+		
+		#if ( S_PIXELATED )
+			float2 texSize = g_vTextureSize;
 
-        o.vColor = Tex2D( g_tColor, i.vTextureCoords.xy ) * i.vVertexColor;
+			float2 texelScale = float2(
+				1.0 / length(float2(ddx(i.vTextureCoords.x), ddy(i.vTextureCoords.x))),
+				1.0 / length(float2(ddx(i.vTextureCoords.y), ddy(i.vTextureCoords.y))))
+				/ texSize;
+
+			float2 texel = i.vTextureCoords.xy * texSize;
+			float2 nearestEdge = floor(texel + 0.5);
+			float2 dist = (texel - nearestEdge) * texelScale;
+
+			float2 factor = clamp(dist * 2.0, -1.0, 1.0);
+			float2 aaTexel = (nearestEdge + 0.5 * factor) / texSize;
+
+			o.vColor = Tex2D( g_tColor, aaTexel ) * i.vVertexColor;
+		#else
+			o.vColor = Tex2D( g_tColor, i.vTextureCoords ) * i.vVertexColor;
+		#endif
 
         return o;
 	}

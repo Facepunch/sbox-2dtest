@@ -13,7 +13,7 @@
 						_class = "RenderPrimitivePlane"
 						name = "Quad"
 						parent_bone = ""
-						material_name = "materials/test_sprite.vmat"
+						material_name = "materials/sprite_default.vmat"
 						origin = [ 0.0, 0.0, 0.0 ]
 						angles = [ 0.0, 0.0, 0.0 ]
 						max_u = 1.0

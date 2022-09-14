@@ -28,7 +28,9 @@ namespace Sandbox
 			Radius = 0.3f;
 
 			Health = 40f;
-		}
+
+            Filter = SpriteFilter.Pixelated;
+        }
 
 		[Event.Tick.Server]
 		public void ServerTick()

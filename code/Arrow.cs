@@ -14,6 +14,8 @@ namespace Sandbox
 
 			TexturePath = "textures/sprites/arrow.png";
 			Scale = 0.4f;
-		}
+
+            Filter = SpriteFilter.Pixelated;
+        }
 	}
 }
