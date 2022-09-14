@@ -44,7 +44,7 @@ namespace Sandbox
 		public void Damage(float damage)
         {
 			Health -= damage;
-			DamageNumbers.Create(Position + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-2f, 2f)) * 0.2f, damage);
+			DamageNumbers.Create(Position + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-2f, 2f)) * 0.1f, damage);
 
 			if (Health <= 0f)
             {

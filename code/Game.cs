@@ -25,12 +25,16 @@ public partial class MyGame : Sandbox.Game
 	public OrthoCamera MainCamera { get; } = new OrthoCamera();
 
 	private readonly List<Enemy> _enemies = new();
+	public const float MAX_ENEMY_COUNT = 750;
+
 	public Dictionary<(int x, int y), List<Enemy>> _enemyGridPositions = new Dictionary<(int, int), List<Enemy>>();
 	//public record struct GridSquare (int x, int y);
 
 	public float GRID_SIZE = 1f;
 	public Vector2 BOUNDS_MIN = new Vector2(-16f, -12f);
 	public Vector2 BOUNDS_MAX = new Vector2(16f, 12f);
+
+	private TimeSince _enemySpawnTime;
 
 	public MyGame()
 	{
@@ -44,20 +48,10 @@ public partial class MyGame : Sandbox.Game
 				}
 			}
 
-			for (var i = 0; i < 750; ++i)
+			for (var i = 0; i < 500; ++i)
 			//for (var i = 0; i < 5; ++i)
 			{
-				var pos = new Vector2(Rand.Float(-18f, 18f), Rand.Float(-14f, 14f));
-				var gridPos = GetGridSquareForPos(pos);
-
-				var enemy = new Enemy
-                {
-                    Position = pos,
-					//Depth = Rand.Float(-128f, 128f),
-					GridPos = gridPos,
-                };
-
-				_enemies.Add(enemy);
+				SpawnEnemy();
 			}
         }
 
@@ -129,6 +123,35 @@ public partial class MyGame : Sandbox.Game
 		DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
 		DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
 		DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
+
+		HandleEnemySpawn();
+	}
+
+	void HandleEnemySpawn()
+    {
+		if(_enemySpawnTime > 0.1f)
+        {
+			SpawnEnemy();
+			_enemySpawnTime = 0f;
+        }
+    }
+
+	void SpawnEnemy()
+    {
+		if (_enemies.Count >= MAX_ENEMY_COUNT)
+			return;
+
+		var pos = new Vector2(Rand.Float(-18f, 18f), Rand.Float(-14f, 14f));
+		var gridPos = GetGridSquareForPos(pos);
+
+		var enemy = new Enemy
+		{
+			Position = pos,
+			//Depth = Rand.Float(-128f, 128f),
+			GridPos = gridPos,
+		};
+
+		_enemies.Add(enemy);
 	}
 
 	void HandleCollisionForGridSquare(Enemy enemy, (int, int) gridSquare, float dt)

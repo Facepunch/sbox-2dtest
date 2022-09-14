@@ -319,7 +319,7 @@
 			m_Gravity = [ 0.0, -10.0, 0.0 ]
 			m_fDrag = 0.02
 			m_flOpStartFadeInTime = 0.1
-			m_flOpEndFadeInTime = 0.3
+			m_flOpEndFadeInTime = 0.5
 		},
 	]
 	m_Constraints = 

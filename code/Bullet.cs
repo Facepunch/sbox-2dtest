@@ -26,7 +26,7 @@ namespace Sandbox
 
 			Scale = new Vector2(0.2f, 0.2f);
 			SpawnTime = 0f;
-			Damage = 15f;
+			Damage = 5f;
 		}
 
 		[Event.Tick.Server]
@@ -70,7 +70,7 @@ namespace Sandbox
 				var total_radius_sqr = MathF.Pow(enemy.Radius + 0.05f, 2f);
 				if (dist_sqr < total_radius_sqr)
 				{
-					enemy.Damage(Rand.Float(1f, 20f));
+					enemy.Damage(Damage);
 					Delete();
                     HasFinished = true;
                     return;
