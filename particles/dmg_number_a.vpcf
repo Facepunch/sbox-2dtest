@@ -383,10 +383,12 @@
 		},
 		{
 			_class = "C_OP_BasicMovement"
+			m_Gravity = [ 0.0, -330.0, 0.0 ]
 			m_fDrag = 0.1
 		},
 		{
 			_class = "C_OP_ColorInterpolate"
+			m_flFadeEndTime = 0.6
 		},
 		{
 			_class = "C_OP_InheritFromParentParticlesV2"

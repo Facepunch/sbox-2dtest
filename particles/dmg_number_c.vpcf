@@ -343,6 +343,7 @@
 		},
 		{
 			_class = "C_OP_ColorInterpolate"
+			m_flFadeEndTime = 0.6
 		},
 		{
 			_class = "C_OP_InheritFromParentParticlesV2"

@@ -26,6 +26,8 @@ namespace Sandbox
 			FeetOffset = 0.35f;
 
 			Radius = 0.3f;
+
+			Health = 40f;
 		}
 
 		[Event.Tick.Server]
@@ -37,10 +39,15 @@ namespace Sandbox
             //DebugOverlay.Line(Position, Position + Velocity, 0f, false);
 		}
 
-		public void Damage(float amount)
+		public void Damage(float damage)
         {
-            DamageNumbers.Create(Position, amount);
-			Remove();
+			Health -= damage;
+			DamageNumbers.Create(Position + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-2f, 2f)) * 0.2f, damage);
+
+			if (Health <= 0f)
+            {
+				Remove();
+			}
         }
 
 		public void Remove()

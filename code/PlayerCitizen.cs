@@ -95,7 +95,7 @@ public partial class PlayerCitizen : Sprite
 
 			//DebugOverlay.Text(MouseOffset.ToString(), Position + new Vector2(0.2f, 0f));
 
-			if (Input.Pressed(InputButton.Jump) || Input.Pressed(InputButton.PrimaryAttack))
+			if (Input.Down(InputButton.Jump) || Input.Down(InputButton.PrimaryAttack))
 			{
 				var bullet = new Bullet
 				{

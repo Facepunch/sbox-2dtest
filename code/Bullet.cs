@@ -70,11 +70,11 @@ namespace Sandbox
 				var total_radius_sqr = MathF.Pow(enemy.Radius + 0.05f, 2f);
 				if (dist_sqr < total_radius_sqr)
 				{
-					enemy.Damage(10f);
-					//Delete();
-					//HasFinished = true;
-					//return;
-				}
+					enemy.Damage(Rand.Float(1f, 20f));
+					Delete();
+                    HasFinished = true;
+                    return;
+                }
 			}
 		}
 	}
