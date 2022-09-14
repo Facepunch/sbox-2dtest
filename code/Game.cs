@@ -25,7 +25,8 @@ public partial class MyGame : Sandbox.Game
 	public OrthoCamera MainCamera { get; } = new OrthoCamera();
 
 	private readonly List<Enemy> _enemies = new();
-	public Dictionary<(int, int), List<Enemy>> _enemyGridPositions = new Dictionary<(int, int), List<Enemy>>();
+	public Dictionary<(int x, int y), List<Enemy>> _enemyGridPositions = new Dictionary<(int, int), List<Enemy>>();
+	//public record struct GridSquare (int x, int y);
 
 	public float GRID_SIZE = 1f;
 	public Vector2 BOUNDS_MIN = new Vector2(-16f, -12f);
@@ -90,7 +91,7 @@ public partial class MyGame : Sandbox.Game
 			//DebugOverlay.Line(enemy.Position, enemy.Position + enemy.Radius, 0f, false);
 
 			enemy.Scale = new Vector2(1f * enemy.Velocity.x < 0f ? 1f : -1f, 1f) * 0.8f;
-			enemy.Depth = -(enemy.Position.y + enemy.FeetOffset);
+			enemy.Depth = -enemy.Position.y * 10f;
 
 			var gridPos = GetGridSquareForPos(enemy.Position);
 			if (gridPos != enemy.GridPos)
@@ -110,7 +111,7 @@ public partial class MyGame : Sandbox.Game
             {
 				for (int dy = -1; dy <= 1; dy++)
 				{
-					HandleCollisionForGridSquare(enemy, (enemy.GridPos.Item1 + dx, enemy.GridPos.Item2 + dy), dt);
+					HandleCollisionForGridSquare(enemy, (enemy.GridPos.x + dx, enemy.GridPos.y + dy), dt);
 				}
 			}
         }
@@ -120,11 +121,11 @@ public partial class MyGame : Sandbox.Game
         //    for (float y = BOUNDS_MIN.y; y < BOUNDS_MAX.y; y += GRID_SIZE)
         //    {
         //        DebugOverlay.Box(new Vector2(x, y), new Vector2(x + GRID_SIZE, y + GRID_SIZE), Color.White, 0f, false);
-        //        //DebugOverlay.Text((new Vector2(x, y)).ToString(), new Vector2(x + 0.1f, y + 0.1f));
+        //        DebugOverlay.Text((new Vector2(x, y)).ToString(), new Vector2(x + 0.1f, y + 0.1f));
         //    }
         //}
 
-		DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
+        DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
 		DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
 		DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
 		DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
@@ -206,7 +207,7 @@ public partial class MyGame : Sandbox.Game
 		return GetClosest(players, pos, maxRange, ignoreZ, except);
 	}
 
-	public (int, int) GetGridSquareForPos(Vector2 pos)
+	public (int x, int y) GetGridSquareForPos(Vector2 pos)
     {
 		return ((int)MathF.Floor(pos.x), (int)MathF.Floor(pos.y));
     }
@@ -225,4 +226,14 @@ public partial class MyGame : Sandbox.Game
     {
 		return _enemyGridPositions.ContainsKey(gridSquare);
     }
+
+	public void RemoveEnemy(Enemy enemy)
+    {
+		_enemies.Remove(enemy);
+
+		if (_enemyGridPositions.ContainsKey(enemy.GridPos))
+		{
+			_enemyGridPositions[enemy.GridPos].Remove(enemy);
+		}
+	}
 }

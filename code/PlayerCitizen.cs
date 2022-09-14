@@ -9,9 +9,9 @@ public partial class PlayerCitizen : Sprite
 {
 	public Vector2 MouseOffset { get; private set; }
 
-	//private Mummy _mummy;
+	private Arrow _arrow;
 
-	public bool IsAlive { get; private set; }
+    public bool IsAlive { get; private set; }
 
 	public float FeetOffset { get; private set; }
 
@@ -24,18 +24,18 @@ public partial class PlayerCitizen : Sprite
 		//TexturePath = "textures/sprites/head.png";
 		TexturePath = "textures/sprites/citizen.png";
 
-		//Scale = new Vector2(1f, 142f / 153f);
-		//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
+        //Scale = new Vector2(1f, 142f / 153f);
+        //Scale = new Vector2(1f, 35f / 16f) * 0.5f;
 
-		//if (Host.IsServer)
-		//{
-		//	_mummy = new Mummy();
-		//	_mummy.Parent = this;
-		//	_mummy.LocalPosition = new Vector3(0.3f, 0f, 0f);
-		//	_mummy.Depth = 1.0f;
-		//}
+        if (Host.IsServer)
+        {
+			_arrow = new Arrow();
+            _arrow.Parent = this;
+			//_arrow.LocalPosition = new Vector3(0.3f, 0f, 0f);
+			_arrow.Depth = 100f;
+        }
 
-		Health = 100f;
+        Health = 100f;
 		IsAlive = true;
 		Radius = 0.3f;
 	}
@@ -73,7 +73,7 @@ public partial class PlayerCitizen : Sprite
 			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
 		}
 
-		Depth = -(Position.y + FeetOffset);
+		Depth = -Position.y * 10f;
 
 		if (MathF.Abs(Input.Left) > 0f)
 			Scale = new Vector2(1f * Input.Left < 0f ? -1f : 1f, 1f) * 1f;
@@ -88,21 +88,20 @@ public partial class PlayerCitizen : Sprite
 
 		if (Host.IsServer)
         {
-			//_mummy.LocalRotation += Time.Delta * 120f;
+			_arrow.LocalRotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI));
+			_arrow.Position = Position + MouseOffset.Normal * 0.65f;
+			_arrow.Depth = 100f;
+			//_arrow.LocalPosition = MouseOffset.Normal * 0.65f;
+
+			//DebugOverlay.Text(MouseOffset.ToString(), Position + new Vector2(0.2f, 0f));
 
 			if (Input.Pressed(InputButton.Jump) || Input.Pressed(InputButton.PrimaryAttack))
 			{
-				//var mummy = new Mummy
-				//{
-				//	Position = Position + MouseOffset,
-				//	Depth = Rand.Float(-128f, 128f)
-				//};
-
 				var bullet = new Bullet
 				{
 					Position = Position,
 					Depth = -1f,
-					Velocity = Forward * 10f,
+					Velocity = (_arrow.Position - Position).Normal * 10f,
 					Shooter = this
 				};
 			}
@@ -118,6 +117,8 @@ public partial class PlayerCitizen : Sprite
 
 		MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
 		SetMouseOffset(MouseOffset);
+
+		//PostProcess.Clear();
 	}
 
 	[ConCmd.Server]

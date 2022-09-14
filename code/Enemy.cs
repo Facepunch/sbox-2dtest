@@ -11,7 +11,7 @@ namespace Sandbox
 		public float Radius { get; private set; }
 		public float FeetOffset { get; private set; }
 
-		public (int, int) GridPos { get; set; }
+		public (int x, int y) GridPos { get; set; }
 
 		public override void Spawn()
 		{
@@ -28,13 +28,25 @@ namespace Sandbox
 			Radius = 0.3f;
 		}
 
-		//[Event.Tick.Server]
-		//public void ServerTick()
-		//{
-		//	//DebugOverlay.Text(GridPos.ToString(), Position);
-		//	//DebugOverlay.Text(Depth.ToString("#.#"), Position);
-		//	//FeetOffset = 0.35f;
-		//	//DebugOverlay.Line(Position + new Vector2(0.2f, -FeetOffset), Position + new Vector2(0.2f, 2f), 0f, false);
-		//}
+		[Event.Tick.Server]
+		public void ServerTick()
+		{
+            //DebugOverlay.Text(GridPos.ToString(), Position);
+            //DebugOverlay.Text(Depth.ToString("#.##"), Position);
+            //FeetOffset = 0.35f;
+            //DebugOverlay.Line(Position, Position + Velocity, 0f, false);
+		}
+
+		public void Damage(float amount)
+        {
+            DamageNumbers.Create(Position, amount);
+			Remove();
+        }
+
+		public void Remove()
+        {
+			Game.RemoveEnemy(this);
+			Delete();
+		}
 	}
 }
