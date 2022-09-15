@@ -30,6 +30,7 @@ namespace Sandbox
 			Health = 40f;
 
             Filter = SpriteFilter.Pixelated;
+            ColorFill = new ColorHsv(Rand.Float(0f, 360f), 0.5f, 1f, 0.125f);
         }
 
 		[Event.Tick.Server]

@@ -69,6 +69,7 @@ PS
 	TextureAttribute( RepresentativeTexture, g_tColor );
 	
 	float2 g_vTextureSize < UiType( VectorText ); Default2( 1.0, 1.0 ); UiGroup( "Transform,10/2" ); Attribute( "TextureSize" ); >;
+	float4 g_vColorFill < UiType( Color ); Default4( 0.0, 0.0, 0.0, 0.0 ); UiGroup( "Color,10/1" ); Attribute( "ColorFill" ); >;
 
 	StaticCombo( S_PIXELATED, F_PIXELATED, Sys( ALL ) );
 
@@ -117,6 +118,8 @@ PS
 		#else
 			o.vColor = Tex2D( g_tColor, i.vTextureCoords ) * i.vVertexColor;
 		#endif
+
+		o.vColor.rgb = lerp(o.vColor.rgb, g_vColorFill.rgb, g_vColorFill.a);
 
         return o;
 	}

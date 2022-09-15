@@ -32,6 +32,9 @@ namespace Sandbox
         [Net, Change]
 		public SpriteFilter Filter { get; set; }
 
+        [Net]
+		public Color ColorFill { get; set; }
+
 		public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
 		public new Vector2 Position
@@ -136,6 +139,7 @@ namespace Sandbox
 			SceneObject.Flags.IsTranslucent = true;
 			SceneObject.Attributes.Set( "SpriteScale", new Vector2(Scale.y, Scale.x) / 100f );
             SceneObject.Attributes.Set("TextureSize", _texture?.Size ?? new Vector2(1f, 1f));
+			SceneObject.Attributes.Set("ColorFill", ColorFill);
 
 			if (_materialInvalid)
             {
