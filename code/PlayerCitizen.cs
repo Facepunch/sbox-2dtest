@@ -75,7 +75,7 @@ public partial class PlayerCitizen : Sprite
 			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
 		}
 
-        Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 4f) * 2f;
+        Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 7f) * 2f;
 
 		Depth = -Position.y * 10f;
 

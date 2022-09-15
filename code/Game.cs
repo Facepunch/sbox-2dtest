@@ -77,14 +77,17 @@ public partial class MyGame : Sandbox.Game
 
 		foreach (var enemy in _enemies)
         {
-			enemy.Velocity += (closestPlayer.Position - enemy.Position).Normal * 0.5f * dt;
-            enemy.Position += enemy.Velocity * dt;
+			enemy.Velocity += (closestPlayer.Position - enemy.Position).Normal * 1.0f * dt;
+            enemy.Position += enemy.Velocity * dt * (0.75f + Utils.FastSin(enemy.MoveTimeOffset + Time.Now * 8f) * 0.25f);
 			enemy.Position = new Vector2(MathX.Clamp(enemy.Position.x, xMin, xMax), MathX.Clamp(enemy.Position.y, yMin, yMax));
 			enemy.Velocity *= 0.975f;
 
-			//DebugOverlay.Line(enemy.Position, enemy.Position + enemy.Radius, 0f, false);
+			//enemy.Rotation = enemy.Velocity.LengthSquared * Utils.FastSin(Time.Now * 12f);
+            //enemy.Rotation = enemy.Velocity.Length * Utils.FastSin(Time.Now * MathF.PI * 7f) * 4.5f;
 
-			enemy.Scale = new Vector2(1f * enemy.Velocity.x < 0f ? 1f : -1f, 1f) * 0.8f;
+            //DebugOverlay.Line(enemy.Position, enemy.Position + enemy.Radius, 0f, false);
+
+            enemy.Scale = new Vector2(1f * enemy.Velocity.x < 0f ? 1f : -1f, 1f) * 0.8f;
 			enemy.Depth = -enemy.Position.y * 10f;
 
 			var gridPos = GetGridSquareForPos(enemy.Position);
@@ -108,6 +111,8 @@ public partial class MyGame : Sandbox.Game
 					HandleCollisionForGridSquare(enemy, (enemy.GridPos.x + dx, enemy.GridPos.y + dy), dt);
 				}
 			}
+
+			enemy.TempWeight *= 0.92f;
         }
 
         //for (float x = BOUNDS_MIN.x; x < BOUNDS_MAX.x; x += GRID_SIZE)
@@ -169,7 +174,7 @@ public partial class MyGame : Sandbox.Game
 			var total_radius_sqr = MathF.Pow(enemy.Radius + other.Radius, 2f);
 			if (dist_sqr < total_radius_sqr)
 			{
-				enemy.Velocity += (enemy.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 10f) * dt;
+				enemy.Velocity += (enemy.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 10f) * (1f + other.TempWeight) * dt;
 			}
 		}
     }

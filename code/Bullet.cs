@@ -71,6 +71,10 @@ namespace Sandbox
 				if (dist_sqr < total_radius_sqr)
 				{
 					enemy.Damage(Damage);
+
+					enemy.Velocity += Velocity.Normal * 0.25f;
+					enemy.TempWeight += 2f;
+
 					Delete();
                     HasFinished = true;
                     return;
