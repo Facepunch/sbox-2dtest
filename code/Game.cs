@@ -24,13 +24,19 @@ public partial class MyGame : Sandbox.Game
 
 	public OrthoCamera MainCamera { get; } = new OrthoCamera();
 
+	private readonly List<PlayerCitizen> _players = new();
+
 	private readonly List<Enemy> _enemies = new();
+	public const float MAX_ENEMY_COUNT = 750;
+
 	public Dictionary<(int x, int y), List<Enemy>> _enemyGridPositions = new Dictionary<(int, int), List<Enemy>>();
 	//public record struct GridSquare (int x, int y);
 
 	public float GRID_SIZE = 1f;
 	public Vector2 BOUNDS_MIN = new Vector2(-16f, -12f);
 	public Vector2 BOUNDS_MAX = new Vector2(16f, 12f);
+
+	private TimeSince _enemySpawnTime;
 
 	public MyGame()
 	{
@@ -44,20 +50,10 @@ public partial class MyGame : Sandbox.Game
 				}
 			}
 
-			for (var i = 0; i < 750; ++i)
+			for (var i = 0; i < 500; ++i)
 			//for (var i = 0; i < 5; ++i)
 			{
-				var pos = new Vector2(Rand.Float(-18f, 18f), Rand.Float(-14f, 14f));
-				var gridPos = GetGridSquareForPos(pos);
-
-				var enemy = new Enemy
-                {
-                    Position = pos,
-					//Depth = Rand.Float(-128f, 128f),
-					GridPos = gridPos,
-                };
-
-				_enemies.Add(enemy);
+				SpawnEnemy();
 			}
         }
 
@@ -72,48 +68,9 @@ public partial class MyGame : Sandbox.Game
     {
 		var dt = Time.Delta;
 
-		var closestPlayer = GetClosestPlayer(new Vector2(0, 0));
-		if (closestPlayer == null)
-			return;
-
-		var xMin = BOUNDS_MIN.x + 0.3f;
-		var xMax = BOUNDS_MAX.x - 0.3f;
-		var yMin = BOUNDS_MIN.y + 0.3f;
-		var yMax = BOUNDS_MAX.y - 0.3f;
-
 		foreach (var enemy in _enemies)
         {
-			enemy.Velocity += (closestPlayer.Position - enemy.Position).Normal * 0.5f * dt;
-            enemy.Position += enemy.Velocity * dt;
-			enemy.Position = new Vector2(MathX.Clamp(enemy.Position.x, xMin, xMax), MathX.Clamp(enemy.Position.y, yMin, yMax));
-			enemy.Velocity *= 0.975f;
-
-			//DebugOverlay.Line(enemy.Position, enemy.Position + enemy.Radius, 0f, false);
-
-			enemy.Scale = new Vector2(1f * enemy.Velocity.x < 0f ? 1f : -1f, 1f) * 0.8f;
-			enemy.Depth = -enemy.Position.y * 10f;
-
-			var gridPos = GetGridSquareForPos(enemy.Position);
-			if (gridPos != enemy.GridPos)
-            {
-				if(_enemyGridPositions.ContainsKey(enemy.GridPos) && _enemyGridPositions[enemy.GridPos].Contains(enemy))
-                {
-					_enemyGridPositions[enemy.GridPos].Remove(enemy);
-                }
-
-				enemy.GridPos = gridPos;
-
-				if(IsGridSquareInArena(gridPos))
-					_enemyGridPositions[gridPos].Add(enemy);
-            }
-
-			for(int dx = -1; dx <= 1; dx++)
-            {
-				for (int dy = -1; dy <= 1; dy++)
-				{
-					HandleCollisionForGridSquare(enemy, (enemy.GridPos.x + dx, enemy.GridPos.y + dy), dt);
-				}
-			}
+			enemy.Update(dt);
         }
 
         //for (float x = BOUNDS_MIN.x; x < BOUNDS_MAX.x; x += GRID_SIZE)
@@ -129,9 +86,38 @@ public partial class MyGame : Sandbox.Game
 		DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
 		DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
 		DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
+
+		HandleEnemySpawn();
 	}
 
-	void HandleCollisionForGridSquare(Enemy enemy, (int, int) gridSquare, float dt)
+	void HandleEnemySpawn()
+    {
+		if(_enemySpawnTime > 0.1f)
+        {
+			SpawnEnemy();
+			_enemySpawnTime = 0f;
+        }
+    }
+
+	void SpawnEnemy()
+    {
+		if (_enemies.Count >= MAX_ENEMY_COUNT)
+			return;
+
+		var pos = new Vector2(Rand.Float(-18f, 18f), Rand.Float(-14f, 14f));
+		var gridPos = GetGridSquareForPos(pos);
+
+		var enemy = new Enemy
+		{
+			Position = pos,
+			//Depth = Rand.Float(-128f, 128f),
+			GridPos = gridPos,
+		};
+
+		_enemies.Add(enemy);
+	}
+
+	public void HandleCollisionForGridSquare(Enemy enemy, (int, int) gridSquare, float dt)
     {
 		if (!_enemyGridPositions.ContainsKey(gridSquare))
 			return;
@@ -146,7 +132,7 @@ public partial class MyGame : Sandbox.Game
 			var total_radius_sqr = MathF.Pow(enemy.Radius + other.Radius, 2f);
 			if (dist_sqr < total_radius_sqr)
 			{
-				enemy.Velocity += (enemy.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 10f) * dt;
+				enemy.Velocity += (enemy.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 10f) * (1f + other.TempWeight) * dt;
 			}
 		}
     }
@@ -161,6 +147,8 @@ public partial class MyGame : Sandbox.Game
 		// Create a pawn for this client to play with
 		var player = new PlayerCitizen();
 		client.Pawn = player;
+
+		_players.Add( player );
 
 		// Get all of the spawnpoints
 		var spawnpoints = Entity.All.OfType<SpawnPoint>();
@@ -226,6 +214,20 @@ public partial class MyGame : Sandbox.Game
     {
 		return _enemyGridPositions.ContainsKey(gridSquare);
     }
+
+	public void RegisterEnemyGridSquare(Enemy enemy, (int, int) gridSquare)
+	{
+		if (IsGridSquareInArena(gridSquare))
+			_enemyGridPositions[gridSquare].Add(enemy);
+	}
+
+	public void DeregisterEnemyGridSquare(Enemy enemy, (int, int) gridSquare)
+	{
+		if (_enemyGridPositions.ContainsKey(gridSquare) && _enemyGridPositions[gridSquare].Contains(enemy))
+		{
+			_enemyGridPositions[gridSquare].Remove(enemy);
+		}
+	}
 
 	public void RemoveEnemy(Enemy enemy)
     {

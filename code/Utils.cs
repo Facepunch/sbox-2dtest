@@ -24,6 +24,17 @@ public enum EasingType
 
 public static class Utils
 {
+    public static float FastSin(float input)
+    {
+        // wrap input angle to -PI..PI
+        while (input < -3.14159265f)
+            input += 6.28318531f;
+        while (input > 3.14159265f)
+            input -= 6.28318531f;
+
+        return 1.27323954f * input + 0.405284735f * (input < 0f ? 1f : -1f) * input * input;
+    }
+
     public static float DynamicEaseTo(float current, float goal, float factorPercent, float dt, float referenceFrameRate = 60f)
     {
         if (float.IsPositiveInfinity(dt)) 
