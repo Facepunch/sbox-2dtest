@@ -18,6 +18,9 @@ namespace Sandbox
 
 		public (int x, int y) GridPos { get; set; }
 
+		private float _flashTimer;
+		private bool _isFlashing;
+
 		public override void Spawn()
 		{
 			base.Spawn();
@@ -35,8 +38,9 @@ namespace Sandbox
 			MoveTimeSpeed = Rand.Float(6f, 9f);
 
             Filter = SpriteFilter.Pixelated;
-            ColorFill = new ColorHsv(Rand.Float(0f, 360f), 0.5f, 1f, 0.125f);
-        }
+			//ColorFill = new ColorHsv(Rand.Float(0f, 360f), 0.5f, 1f, 0.125f);
+			ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
+		}
 
 		[Event.Tick.Server]
 		public void ServerTick()
@@ -82,12 +86,26 @@ namespace Sandbox
 			}
 
 			TempWeight *= 0.92f;
-		}
+
+			if (_isFlashing)
+            {
+				_flashTimer -= dt;
+				if(_flashTimer < 0f)
+                {
+					_isFlashing = false;
+					ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
+				}
+            }
+			//ColorFill = new ColorHsv(2.5f, 0.3f, 113f, 1f);
+			//ColorFill = Color.White;
+			//ColorFill = new ColorHsv(1f, 0f, 0f, 0f);
+        }
 
 		public void Damage(float damage)
         {
 			Health -= damage;
 			DamageNumbers.Create(Position + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-2f, 2f)) * 0.1f, damage);
+			Flash(0.12f);
 
 			if (Health <= 0f)
             {
@@ -99,6 +117,16 @@ namespace Sandbox
         {
 			Game.RemoveEnemy(this);
 			Delete();
+		}
+
+		public void Flash(float time)
+        {
+			if (_isFlashing)
+				return;
+
+			ColorFill = new ColorHsv(1f, 0f, 15f, 1f);
+			_isFlashing = true;
+			_flashTimer = time;
 		}
 	}
 }
