@@ -72,7 +72,7 @@ namespace Sandbox
 				{
 					enemy.Damage(Damage);
 
-					enemy.Velocity += Velocity.Normal * 0.25f;
+					enemy.Velocity += Velocity.Normal * 0.75f;
 					enemy.TempWeight += 2f;
 
 					Delete();

@@ -101,13 +101,19 @@ public partial class PlayerCitizen : Sprite
 
 			if (Input.Pressed(InputButton.Jump) || Input.Pressed(InputButton.PrimaryAttack))
 			{
-				var bullet = new Bullet
-				{
-					Position = Position,
-					Depth = -1f,
-					Velocity = (_arrow.Position - Position).Normal * 10f,
-					Shooter = this
-				};
+				var dir = (_arrow.Position - Position).Normal;
+
+				for (int i = -5; i <= 5; i++)
+                {
+					var currDir = Utils.RotateVector(dir, i * 15f);
+					var bullet = new Bullet
+					{
+						Position = Position,
+						Depth = -1f,
+						Velocity = currDir * 10f,
+						Shooter = this
+					};
+				}
 			}
 		}
 	}

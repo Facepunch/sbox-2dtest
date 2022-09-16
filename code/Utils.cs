@@ -24,6 +24,18 @@ public enum EasingType
 
 public static class Utils
 {
+    public const float Deg2Rad = MathF.PI / 180f;
+    public const float Rad2Deg = 360f / (MathF.PI * 2f);
+
+    public static Vector2 RotateVector(Vector2 v, float degrees)
+    {
+        var rads = Deg2Rad * degrees;
+        var ca = MathF.Cos(rads);
+        var sa = MathF.Sin(rads);
+
+        return new Vector2(ca * v.x - sa * v.y, sa * v.x + ca * v.y);
+    }
+
     public static float FastSin(float input)
     {
         // wrap input angle to -PI..PI
