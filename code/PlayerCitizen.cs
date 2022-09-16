@@ -22,7 +22,7 @@ public partial class PlayerCitizen : Sprite
 		base.Spawn();
 
 		//TexturePath = "textures/sprites/head.png";
-		TexturePath = "textures/sprites/citizen.png";
+		SpriteTexture = "textures/sprites/citizen.png";
 
         //Scale = new Vector2(1f, 142f / 153f);
         //Scale = new Vector2(1f, 35f / 16f) * 0.5f;

@@ -25,8 +25,8 @@ namespace Sandbox
 		{
 			base.Spawn();
 
-			//TexturePath = "textures/sprites/mummy_walk3.png";
-			TexturePath = "textures/sprites/zombie.png";
+			// TexturePath = "textures/sprites/mummy_walk3.png";
+			SpriteTexture = "textures/sprites/zombie.png";
 
 			//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
 			//RenderColor = Color.Random;

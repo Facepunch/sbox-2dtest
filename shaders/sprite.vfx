@@ -46,6 +46,8 @@ VS
 	#include "common/vertex.hlsl"
 	
 	float2 g_vSpriteScale < UiType( VectorText ); Default2( 1.0, 1.0 ); UiGroup( "Transform,10/1" ); Attribute( "SpriteScale" ); >;
+	float2 g_vUvMin < UiType( VectorText ); Default2( 0.0, 0.0 ); UiGroup( "Transform,10/2" ); Attribute( "UvMin" ); >;
+	float2 g_vUvMax < UiType( VectorText ); Default2( 1.0, 1.0 ); UiGroup( "Transform,10/3" ); Attribute( "UvMax" ); >;
 	
 	//
 	// Main
@@ -55,6 +57,8 @@ VS
 		i.vPositionOs.xy *= g_vSpriteScale;
 
 		PixelInput o = ProcessVertex( i );
+
+		o.vTextureCoords.xy = g_vUvMin + o.vTextureCoords.xy * (g_vUvMax - g_vUvMin);
 		
 		return FinalizeVertex( o );
 	}
@@ -68,7 +72,7 @@ PS
 	CreateTexture2DInRegister( g_tColor, 0 ) < Channel( RGBA, None( Texture ), Srgb ); OutputFormat( DXT5 ); SrgbRead( true ); >;
 	TextureAttribute( RepresentativeTexture, g_tColor );
 	
-	float2 g_vTextureSize < UiType( VectorText ); Default2( 1.0, 1.0 ); UiGroup( "Transform,10/2" ); Attribute( "TextureSize" ); >;
+	float2 g_vTextureSize < UiType( VectorText ); Default2( 1.0, 1.0 ); UiGroup( "Transform,10/4" ); Attribute( "TextureSize" ); >;
 	float4 g_vColorFill < UiType( Color ); Default4( 0.0, 0.0, 0.0, 0.0 ); UiGroup( "Color,10/1" ); Attribute( "ColorFill" ); >;
 
 	StaticCombo( S_PIXELATED, F_PIXELATED, Sys( ALL ) );

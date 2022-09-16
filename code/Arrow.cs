@@ -12,7 +12,7 @@ namespace Sandbox
 		{
 			base.Spawn();
 
-			TexturePath = "textures/sprites/arrow.png";
+			SpriteTexture = "textures/sprites/arrow.png";
 			Scale = 0.4f;
 
             Filter = SpriteFilter.Pixelated;
