@@ -4,3 +4,4 @@ launchSettings.json
 .editorconfig
 
 *.generated.*
+*_c
