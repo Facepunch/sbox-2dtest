@@ -16,7 +16,6 @@ namespace Sandbox
 	public partial class Sprite : ModelEntity
 	{
 		private Material _material;
-		private bool _materialInvalid = true;
 		private Texture _texture;
 
 		private float _localRotation;
@@ -106,13 +105,17 @@ namespace Sandbox
 				? Texture.White
 				: Texture.Load( FileSystem.Mounted, TexturePath );
 
-            _materialInvalid = true;
-        }
+            _material = GetMaterial(_texture ?? Texture.White, Filter);
+
+            SetMaterialOverride(_material);
+		}
 
         private void OnFilterChanged()
-        {
-            _materialInvalid = true;
-        }
+		{
+			_material = GetMaterial(_texture ?? Texture.White, Filter);
+
+            SetMaterialOverride(_material);
+		}
 		
 		public Sprite()
 		{
@@ -140,14 +143,6 @@ namespace Sandbox
 			SceneObject.Attributes.Set( "SpriteScale", new Vector2(Scale.y, Scale.x) / 100f );
             SceneObject.Attributes.Set("TextureSize", _texture?.Size ?? new Vector2(1f, 1f));
 			SceneObject.Attributes.Set("ColorFill", ColorFill);
-
-			if (_materialInvalid)
-            {
-                _materialInvalid = false;
-                _material = GetMaterial(_texture ?? Texture.White, Filter);
-
-                SetMaterialOverride(_material);
-			}
 		}
 	}
 }
