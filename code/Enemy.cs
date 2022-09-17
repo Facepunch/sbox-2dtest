@@ -21,12 +21,15 @@ namespace Sandbox
 		private float _flashTimer;
 		private bool _isFlashing;
 
+		private Sprite _shadow;
+
 		public override void Spawn()
 		{
 			base.Spawn();
 
 			//TexturePath = "textures/sprites/mummy_walk3.png";
 			TexturePath = "textures/sprites/zombie.png";
+			//TexturePath = "textures/sprites/zombie_bw.png";
 
 			//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
 			//RenderColor = Color.Random;
@@ -40,6 +43,10 @@ namespace Sandbox
             Filter = SpriteFilter.Pixelated;
 			//ColorFill = new ColorHsv(Rand.Float(0f, 360f), 0.5f, 1f, 0.125f);
 			ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
+
+			//_shadow = new Shadow();
+			//_shadow.Parent = this;
+			//_shadow.LocalPosition = new Vector2(0.35f, 0f);
 		}
 
 		[Event.Tick.Server]
@@ -96,10 +103,21 @@ namespace Sandbox
 					ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
 				}
             }
-			//ColorFill = new ColorHsv(2.5f, 0.3f, 113f, 1f);
+
+			//ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
+			//ColorFill = new ColorHsv(0.5f + Utils.FastSin(Time.Now * 4f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 3f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 2f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 1f) * 0.5f);
+			//ColorFill = new ColorHsv(0.94f, 0.157f, 0.392f, 1f);
+			//ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
+
+
+
+			//ColorFill = new Color(0.2f, 0.2f, 1f) * 1.5f; // frozen
+			//ColorFill = new Color(1f, 1f, 0.1f) * 2.5f; // shock
+			//ColorFill = new Color(0.1f, 1f, 0.1f) * 2.5f; // poison
+
 			//ColorFill = Color.White;
 			//ColorFill = new ColorHsv(1f, 0f, 0f, 0f);
-        }
+		}
 
 		public void Damage(float damage)
         {

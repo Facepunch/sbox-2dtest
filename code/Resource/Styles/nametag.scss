@@ -1,0 +1,23 @@
+﻿$yellow2: #FAB002;
+
+NameTag {
+	justify-content: center;
+	align-items: center;
+	mix-blend-mode: lighten;
+
+	.title {
+		font-family: Roboto;
+		font-size: 36px;
+		white-space: nowrap;
+		color: $yellow2 ;
+		mix-blend-mode: lighten;
+	}
+
+	.avatar {
+		width: 36px;
+		height: 36px;
+		margin-right: 15px;
+		border-radius: 100px;
+		background-size: cover;
+	}
+}

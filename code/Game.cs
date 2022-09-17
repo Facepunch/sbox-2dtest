@@ -50,12 +50,16 @@ public partial class MyGame : Sandbox.Game
 				}
 			}
 
-			for (var i = 0; i < 500; ++i)
-			//for (var i = 0; i < 5; ++i)
+			for (var i = 0; i < 750; ++i)
+            {
+                SpawnEnemy();
+            }
+
+            _ = new Background()
 			{
-				SpawnEnemy();
-			}
-        }
+				Position = Vector2.Zero
+			};
+		}
 
 		if (Host.IsClient)
         {
@@ -101,7 +105,7 @@ public partial class MyGame : Sandbox.Game
 
 	void SpawnEnemy()
     {
-		if (_enemies.Count >= MAX_ENEMY_COUNT)
+		//if (_enemies.Count >= MAX_ENEMY_COUNT)
 			return;
 
 		var pos = new Vector2(Rand.Float(-18f, 18f), Rand.Float(-14f, 14f));
@@ -133,7 +137,10 @@ public partial class MyGame : Sandbox.Game
 			if (dist_sqr < total_radius_sqr)
 			{
 				enemy.Velocity += (enemy.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 10f) * (1f + other.TempWeight) * dt;
-			}
+
+				//if(other.TempWeight > 0f)
+				//	enemy.TempWeight += other.TempWeight * 0.1f;
+            }
 		}
     }
 

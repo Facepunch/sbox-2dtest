@@ -1,0 +1,71 @@
+﻿
+$yellow: #ff0;
+$orange: #f20;
+$yellow2: #FAB002;
+
+//@import "_crosshair.scss";
+//@import "_damageindicator.scss";
+//@import "_hitindicator.scss";
+//@import "_inventory.scss";
+//@import "_killfeed.scss";
+//@import "_pickupfeed.scss";
+//@import "_scoreboard.scss";
+//@import "_button.scss";
+//@import "styles/base.scss";
+//@import "styles/form.scss";
+
+MainHud {
+    background-color: rgba( #333, 0 );
+    transition: background-color 0.2s ease-in;
+    transform-origin: 50% 50%;
+
+    &.devcamera {
+        display: none;
+    }
+
+    .testlabel {
+        //padding: 0px;
+        //margin: 0px;
+        //font-size: 72px;
+        //font-weight: bolder;
+        color: $yellow2;
+        //min-width: 0px;
+        //text-align: center;
+        //align-items: center;
+        //display: none;
+    }
+
+    .testpanel {
+        width: 84px;
+        height: 116px;
+        background-color: rgb(85, 85, 85);
+    }
+
+    .testbutton {
+        width: 12px;
+        height: 12px;
+        background-color: rgb(185, 85, 85);
+        color: $yellow2;
+        //display: flex;
+        width: 100%;
+        font-size: 23px;
+        //color: #aaa;
+        //cursor: pointer;
+        //background-color: transparent;
+        //min-height: 0;
+        //padding-left: 42px;
+        //border-radius: 8px;
+
+        &:hover {
+            background-color: transparent;
+        }
+
+        &.active:hover, &.active {
+            background-color: #ff00dc;
+            color: white;
+            z-index: 1;
+        }
+    }
+}
+
+

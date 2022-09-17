@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sandbox.UI;
+using Sandbox.UI.Construct;
 
 namespace Sandbox
 {
@@ -11,15 +12,27 @@ namespace Sandbox
     {
         public static Vector2 MousePos { get; private set; }
 
+        public Label TestLabel { get; set; }
+        public Panel TestPanel { get; set; }
+        public Button TestButton { get; set; }
+
         public MainHud()
         {
             Style.PointerEvents = PointerEvents.All;
+
+            StyleSheet.Load("Resource/styles/hud.scss");
+            SetTemplate("Resource/templates/hud.html");
+
+            TestLabel = Add.Label("test", "testlabel");
+            TestPanel = Add.Panel("testpanel");
+            TestButton = TestPanel.Add.Button("T", () => { ButtonClicked(); });
         }
 
         public override void Tick()
         {
             base.Tick();
 
+            //TestLabel.Text = "test";
         }
 
         protected override void OnMouseMove(MousePanelEvent e)
@@ -29,6 +42,11 @@ namespace Sandbox
             MousePos = e.LocalPosition;
 
             //Log.Info(e.LocalPosition / Screen.Size);
+        }
+
+        public void ButtonClicked()
+        {
+            Log.Info("ButtonClicked");
         }
     }
 }
