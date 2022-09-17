@@ -16,6 +16,7 @@ public partial class PlayerCitizen : Sprite
 	public float FeetOffset { get; private set; }
 
 	public float Radius { get; private set; }
+	public (int x, int y) GridPos { get; set; }
 
 	public override void Spawn()
 	{
@@ -37,45 +38,26 @@ public partial class PlayerCitizen : Sprite
 
         Health = 100f;
 		IsAlive = true;
-		Radius = 0.3f;
-
+		Radius = 0.2f;
         Filter = SpriteFilter.Pixelated;
-    }
+		GridPos = Game.GetGridSquareForPos(Position);
+	}
 
 	public override void Simulate( Client cl )
 	{
 		base.Simulate( cl );
+
+		float dt = Time.Delta;
 		
 		Velocity += new Vector2(-Input.Left, Input.Forward) * 30f * Time.Delta;
 		Position += Velocity * Time.Delta;
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, Time.Delta);
 
-		var BUFFER_X = Radius;
-		var BUFFER_Y = Radius * 1.5f;
+		HandleBounds();
 
-		if (Position.x < Game.BOUNDS_MIN.x + BUFFER_X)
-        {
-			Position = new Vector2(Game.BOUNDS_MIN.x + BUFFER_X, Position.y);
-			Velocity = new Vector2(Velocity.x * -1f, Velocity.y);
-		} 
-		else if (Position.x > Game.BOUNDS_MAX.x - BUFFER_X)
-		{
-			Position = new Vector2(Game.BOUNDS_MAX.x - BUFFER_X, Position.y);
-			Velocity = new Vector2(Velocity.x * -1f, Velocity.y);
-		}
+		GridPos = Game.GetGridSquareForPos(Position);
 
-		if (Position.y < Game.BOUNDS_MIN.y + BUFFER_Y)
-		{
-			Position = new Vector2(Position.x, Game.BOUNDS_MIN.y + BUFFER_Y);
-			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
-		}
-		else if (Position.y > Game.BOUNDS_MAX.y - BUFFER_Y)
-		{
-			Position = new Vector2(Position.x, Game.BOUNDS_MAX.y - BUFFER_Y);
-			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
-		}
-
-        Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 7f) * 2f;
+		Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 7f) * 2f;
 
 		Depth = -Position.y * 10f;
 
@@ -89,6 +71,16 @@ public partial class PlayerCitizen : Sprite
 
 		//DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
 		//DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
+
+		for (int dx = -1; dx <= 1; dx++)
+		{
+			for (int dy = -1; dy <= 1; dy++)
+			{
+				CollideWithEnemies((GridPos.x + dx, GridPos.y + dy), dt);
+			}
+		}
+
+		CollideWithPlayers(dt);
 
 		if (Host.IsServer)
         {
@@ -115,6 +107,34 @@ public partial class PlayerCitizen : Sprite
 					};
 				}
 			}
+		}
+	}
+
+	void HandleBounds()
+    {
+		var BUFFER_X = Radius;
+		var BUFFER_Y = Radius * 1.5f;
+
+		if (Position.x < Game.BOUNDS_MIN.x + BUFFER_X)
+		{
+			Position = new Vector2(Game.BOUNDS_MIN.x + BUFFER_X, Position.y);
+			Velocity = new Vector2(Velocity.x * -1f, Velocity.y);
+		}
+		else if (Position.x > Game.BOUNDS_MAX.x - BUFFER_X)
+		{
+			Position = new Vector2(Game.BOUNDS_MAX.x - BUFFER_X, Position.y);
+			Velocity = new Vector2(Velocity.x * -1f, Velocity.y);
+		}
+
+		if (Position.y < Game.BOUNDS_MIN.y + BUFFER_Y)
+		{
+			Position = new Vector2(Position.x, Game.BOUNDS_MIN.y + BUFFER_Y);
+			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
+		}
+		else if (Position.y > Game.BOUNDS_MAX.y - BUFFER_Y)
+		{
+			Position = new Vector2(Position.x, Game.BOUNDS_MAX.y - BUFFER_Y);
+			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
 		}
 	}
 
@@ -147,6 +167,42 @@ public partial class PlayerCitizen : Sprite
 		if(Health <= 0f)
         {
 			Scale = new Vector2(2f, 1f);
+		}
+    }
+
+	void CollideWithEnemies((int, int) gridSquare, float dt)
+	{
+		if (!Game.EnemyGridPositions.ContainsKey(gridSquare))
+			return;
+
+		foreach (Enemy enemy in Game.EnemyGridPositions[gridSquare])
+		{
+			var dist_sqr = (Position - enemy.Position).LengthSquared;
+			var total_radius_sqr = MathF.Pow(Radius + enemy.Radius, 2f);
+			if (dist_sqr < total_radius_sqr)
+			{
+				Velocity += (Position - enemy.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 100f) * dt;
+
+				//DebugOverlay.Line(Position, enemy.Position, 0f, false);
+			}
+		}
+	}
+
+	void CollideWithPlayers(float dt)
+    {
+		foreach(PlayerCitizen other in Game.PlayerList)
+        {
+			if (other == this)
+				continue;
+
+			var dist_sqr = (Position - other.Position).LengthSquared;
+			var total_radius_sqr = MathF.Pow(Radius + other.Radius, 2f);
+			if (dist_sqr < total_radius_sqr)
+			{
+				Velocity += (Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 100f) * dt;
+
+				//DebugOverlay.Line(Position, enemy.Position, 0f, false);
+			}
 		}
     }
 }

@@ -12,7 +12,7 @@ namespace Sandbox
 		{
 			base.Spawn();
 
-			TexturePath = "textures/sprites/shadow3.png";
+			SpriteTexture = "textures/sprites/shadow3.png";
 			Depth = -50f;
 			Scale = 1f;
 			ColorFill = new Color(0f, 0f, 0f);

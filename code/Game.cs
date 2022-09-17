@@ -24,12 +24,12 @@ public partial class MyGame : Sandbox.Game
 
 	public OrthoCamera MainCamera { get; } = new OrthoCamera();
 
-	private readonly List<PlayerCitizen> _players = new();
+	public readonly List<PlayerCitizen> PlayerList = new();
 
 	private readonly List<Enemy> _enemies = new();
 	public const float MAX_ENEMY_COUNT = 750;
 
-	public Dictionary<(int x, int y), List<Enemy>> _enemyGridPositions = new Dictionary<(int, int), List<Enemy>>();
+	public Dictionary<(int x, int y), List<Enemy>> EnemyGridPositions = new Dictionary<(int, int), List<Enemy>>();
 	//public record struct GridSquare (int x, int y);
 
 	public float GRID_SIZE = 1f;
@@ -46,12 +46,13 @@ public partial class MyGame : Sandbox.Game
 			{
 				for (float y = BOUNDS_MIN.y; y < BOUNDS_MAX.y; y += GRID_SIZE)
 				{
-					_enemyGridPositions.Add(GetGridSquareForPos(new Vector2(x, y)), new List<Enemy>());
+					EnemyGridPositions.Add(GetGridSquareForPos(new Vector2(x, y)), new List<Enemy>());
 				}
 			}
 
-			for (var i = 0; i < 750; ++i)
-            {
+			//for (var i = 0; i < 750; ++i)
+			for (var i = 0; i < 5; ++i)
+			{
                 SpawnEnemy();
             }
 
@@ -60,14 +61,14 @@ public partial class MyGame : Sandbox.Game
 				Position = Vector2.Zero
 			};
 
-			var animTest = new Sprite
-			{
-				SpriteTexture = SpriteTexture.Atlas("textures/sprites/tile_test.png", 4, 4),
-				AnimationPath = "textures/sprites/tile_test.frames",
+			//var animTest = new Sprite
+			//{
+			//	SpriteTexture = SpriteTexture.Atlas("textures/sprites/tile_test.png", 4, 4),
+			//	AnimationPath = "textures/sprites/tile_test.frames",
 
-				Filter = SpriteFilter.Pixelated,
-				Scale = 8f
-			};
+			//	Filter = SpriteFilter.Pixelated,
+			//	Scale = 8f
+			//};
 		}
 
 		if (Host.IsClient)
@@ -114,7 +115,7 @@ public partial class MyGame : Sandbox.Game
 
 	void SpawnEnemy()
     {
-		//if (_enemies.Count >= MAX_ENEMY_COUNT)
+		if (_enemies.Count >= MAX_ENEMY_COUNT)
 			return;
 
 		var pos = new Vector2(Rand.Float(-18f, 18f), Rand.Float(-14f, 14f));
@@ -130,13 +131,13 @@ public partial class MyGame : Sandbox.Game
 		_enemies.Add(enemy);
 	}
 
-	public void HandleCollisionForGridSquare(Enemy enemy, (int, int) gridSquare, float dt)
+	public void HandleEnemyCollisionForGridSquare(Enemy enemy, (int, int) gridSquare, float dt)
     {
-		if (!_enemyGridPositions.ContainsKey(gridSquare))
+		if (!EnemyGridPositions.ContainsKey(gridSquare))
 			return;
 
 		//Log.Info("HandleCollisionForGridSquare - " + _enemyGridPositions[gridSquare].Count);
-		foreach(Enemy other in _enemyGridPositions[gridSquare])
+		foreach(Enemy other in EnemyGridPositions[gridSquare])
         {
 			if (other == enemy)
 				continue;
@@ -164,7 +165,7 @@ public partial class MyGame : Sandbox.Game
 		var player = new PlayerCitizen();
 		client.Pawn = player;
 
-		_players.Add( player );
+		PlayerList.Add( player );
 
 		// Get all of the spawnpoints
 		var spawnpoints = Entity.All.OfType<SpawnPoint>();
@@ -218,9 +219,9 @@ public partial class MyGame : Sandbox.Game
 
 	public List<Enemy> GetEnemiesInGridSquare((int, int) gridSquare)
     {
-		if(_enemyGridPositions.ContainsKey(gridSquare))
+		if(EnemyGridPositions.ContainsKey(gridSquare))
         {
-			return _enemyGridPositions[gridSquare];
+			return EnemyGridPositions[gridSquare];
         }
 
 		return null;
@@ -228,20 +229,20 @@ public partial class MyGame : Sandbox.Game
 
 	public bool IsGridSquareInArena((int, int) gridSquare)
     {
-		return _enemyGridPositions.ContainsKey(gridSquare);
+		return EnemyGridPositions.ContainsKey(gridSquare);
     }
 
 	public void RegisterEnemyGridSquare(Enemy enemy, (int, int) gridSquare)
 	{
 		if (IsGridSquareInArena(gridSquare))
-			_enemyGridPositions[gridSquare].Add(enemy);
+			EnemyGridPositions[gridSquare].Add(enemy);
 	}
 
 	public void DeregisterEnemyGridSquare(Enemy enemy, (int, int) gridSquare)
 	{
-		if (_enemyGridPositions.ContainsKey(gridSquare) && _enemyGridPositions[gridSquare].Contains(enemy))
+		if (EnemyGridPositions.ContainsKey(gridSquare) && EnemyGridPositions[gridSquare].Contains(enemy))
 		{
-			_enemyGridPositions[gridSquare].Remove(enemy);
+			EnemyGridPositions[gridSquare].Remove(enemy);
 		}
 	}
 
@@ -249,9 +250,9 @@ public partial class MyGame : Sandbox.Game
     {
 		_enemies.Remove(enemy);
 
-		if (_enemyGridPositions.ContainsKey(enemy.GridPos))
+		if (EnemyGridPositions.ContainsKey(enemy.GridPos))
 		{
-			_enemyGridPositions[enemy.GridPos].Remove(enemy);
+			EnemyGridPositions[enemy.GridPos].Remove(enemy);
 		}
 	}
 }

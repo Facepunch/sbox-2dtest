@@ -89,7 +89,7 @@ namespace Sandbox
 			{
 				for (int dy = -1; dy <= 1; dy++)
 				{
-					Game.HandleCollisionForGridSquare(this, (GridPos.x + dx, GridPos.y + dy), dt);
+					Game.HandleEnemyCollisionForGridSquare(this, (GridPos.x + dx, GridPos.y + dy), dt);
 				}
 			}
 

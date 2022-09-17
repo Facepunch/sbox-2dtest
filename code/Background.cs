@@ -12,7 +12,7 @@ namespace Sandbox
 		{
 			base.Spawn();
 
-			TexturePath = "textures/sprites/bg_square.png";
+			SpriteTexture = "textures/sprites/bg_square.png";
 			Scale = 33f;
 			Depth = -200f;
             Filter = SpriteFilter.Pixelated;
