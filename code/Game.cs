@@ -59,6 +59,15 @@ public partial class MyGame : Sandbox.Game
 			{
 				Position = Vector2.Zero
 			};
+
+			var animTest = new Sprite
+			{
+				SpriteTexture = SpriteTexture.Atlas("textures/sprites/tile_test.png", 4, 4),
+				AnimationPath = "textures/sprites/tile_test.frames",
+
+				Filter = SpriteFilter.Pixelated,
+				Scale = 8f
+			};
 		}
 
 		if (Host.IsClient)

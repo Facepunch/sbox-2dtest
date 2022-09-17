@@ -13,18 +13,72 @@ namespace Sandbox
 		Pixelated
     }
 
-	public partial class Sprite : ModelEntity
+    public readonly struct SpriteTexture
+    {
+        public static implicit operator SpriteTexture(string texturePath)
+        {
+            return new SpriteTexture(texturePath);
+        }
+
+        public static SpriteTexture Single(string texturePath)
+        {
+            return new SpriteTexture(texturePath);
+        }
+
+        public static SpriteTexture Atlas(string texturePath, int rows, int cols)
+        {
+            return new SpriteTexture(texturePath, rows, cols);
+        }
+
+        [ResourceType("png")]
+		public string TexturePath { get; }
+
+        public int AtlasRows { get; }
+		public int AtlasColumns { get; }
+
+        private SpriteTexture(string texturePath, int rows = 1, int cols = 1)
+        {
+            TexturePath = texturePath;
+            AtlasRows = rows;
+            AtlasColumns = cols;
+        }
+    }
+
+    public partial class Sprite : ModelEntity
 	{
 		private Material _material;
-		private bool _materialInvalid = true;
 		private Texture _texture;
+        private SpriteAnimation _anim;
 
 		private float _localRotation;
 
 		public MyGame Game => MyGame.Current;
 
-		[Net, Change]
-		public string TexturePath { get; set; }
+        public SpriteTexture SpriteTexture
+        {
+            get => SpriteTexture.Atlas(TexturePath, AtlasRows, AtlasColumns);
+            set
+            {
+                TexturePath = value.TexturePath;
+                AtlasRows = value.AtlasRows;
+                AtlasColumns = value.AtlasColumns;
+            }
+        }
+
+        [Net, Change]
+		private string TexturePath { get; set; }
+
+        [Net]
+		private int AtlasRows { get; set; }
+
+        [Net]
+        private int AtlasColumns { get; set; }
+
+        [Net, Change, ResourceType("frames")]
+		public string AnimationPath { get; set; }
+
+        [Net]
+		public TimeSince AnimationStart { get; set; }
 
 		[Net]
 		public new Vector2 Scale { get; set; }
@@ -100,19 +154,33 @@ namespace Sandbox
             return mat;
         }
 
+        private void UpdateMaterial()
+		{
+			_material = GetMaterial(_texture ?? Texture.White, Filter);
+
+            SetMaterialOverride(_material);
+		}
+
 		private void OnTexturePathChanged()
 		{
 			_texture = string.IsNullOrEmpty( TexturePath )
 				? Texture.White
 				: Texture.Load( FileSystem.Mounted, TexturePath );
 
-            _materialInvalid = true;
+            UpdateMaterial();
         }
 
-        private void OnFilterChanged()
+        private void OnAnimationPathChanged()
         {
-            _materialInvalid = true;
-        }
+            _anim = string.IsNullOrEmpty(AnimationPath)
+                ? null
+                : ResourceLibrary.Get<SpriteAnimation>(AnimationPath);
+		}
+
+        private void OnFilterChanged()
+		{
+            UpdateMaterial();
+		}
 		
 		public Sprite()
 		{
@@ -141,12 +209,17 @@ namespace Sandbox
             SceneObject.Attributes.Set("TextureSize", _texture?.Size ?? new Vector2(1f, 1f));
 			SceneObject.Attributes.Set("ColorFill", ColorFill);
 
-			if (_materialInvalid)
+            if (_anim != null)
             {
-                _materialInvalid = false;
-                _material = GetMaterial(_texture ?? Texture.White, Filter);
+                var (min, max) = _anim.GetFrameUvs( AnimationStart, AtlasRows, AtlasColumns );
 
-                SetMaterialOverride(_material);
+                SceneObject.Attributes.Set("UvMin", min);
+                SceneObject.Attributes.Set("UvMax", max);
+			}
+            else
+			{
+				SceneObject.Attributes.Set("UvMin", Vector2.Zero);
+                SceneObject.Attributes.Set("UvMax", Vector2.One);
 			}
 		}
 	}

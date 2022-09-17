@@ -20,7 +20,7 @@ namespace Sandbox
 		{
 			base.Spawn();
 
-			TexturePath = "textures/sprites/bullet.png";
+			SpriteTexture = "textures/sprites/bullet.png";
 
 			//RenderColor = Color.Random;
 
