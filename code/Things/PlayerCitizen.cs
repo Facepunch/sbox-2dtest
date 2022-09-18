@@ -116,7 +116,8 @@ public partial class PlayerCitizen : Thing
 				var dir = (_arrow.Position - Position).Normal;
 
 				for (int i = -5; i <= 5; i++)
-                {
+				//for (int i = 0; i <= 0; i++)
+				{
 					var currDir = Utils.RotateVector(dir, i * 15f);
 					var bullet = new Bullet
 					{

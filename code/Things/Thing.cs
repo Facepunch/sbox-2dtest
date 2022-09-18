@@ -40,4 +40,9 @@ public partial class Thing : Sprite
 		Game.RemoveThing(this);
 		Delete();
 	}
+
+	public void DebugText(string text)
+    {
+		DebugOverlay.Text(text, Position, 0f, float.MaxValue);
+    }
 }

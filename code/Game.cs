@@ -109,7 +109,7 @@ public partial class MyGame : Sandbox.Game
 
 	void HandleEnemySpawn()
     {
-		if(_enemySpawnTime > 0.1f)
+		if(_enemySpawnTime > 0.25f)
         {
 			SpawnEnemy();
 			_enemySpawnTime = 0f;
@@ -146,7 +146,10 @@ public partial class MyGame : Sandbox.Game
         {
 			if (i >= things.Count)
 				continue;
-				//Log.Info("!!! " + thing.Name + " --- " + i.ToString() + " count: " + things.Count);
+			//Log.Info("!!! " + thing.Name + " --- " + i.ToString() + " count: " + things.Count);
+
+			if (thing.IsRemoved)
+				return;
 
 			var other = things[i];
 			if (other == thing || other.IsRemoved)

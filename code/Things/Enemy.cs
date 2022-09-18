@@ -17,6 +17,8 @@ namespace Sandbox
 		private float _flashTimer;
 		private bool _isFlashing;
 
+		public float MaxHealth { get; private set; }
+
 		//private Sprite _shadow;
 
 		public override void Spawn()
@@ -34,6 +36,7 @@ namespace Sandbox
 			FeetOffset = 0.35f;
 			Radius = 0.3f;
 			Health = 40f;
+			MaxHealth = Health;
 			MoveTimeOffset = Rand.Float(0f, 4f);
 			MoveTimeSpeed = Rand.Float(6f, 9f);
 
@@ -60,6 +63,7 @@ namespace Sandbox
 			//enemy.Rotation = enemy.Velocity.Length * Utils.FastSin(Time.Now * MathF.PI * 7f) * 4.5f;
 
 			//DebugOverlay.Line(enemy.Position, enemy.Position + enemy.Radius, 0f, false);
+			//DebugText(Health.ToString("#.") + "/" + MaxHealth.ToString("#."));
 
 			Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * 0.8f;
 			Depth = -Position.y * 10f;

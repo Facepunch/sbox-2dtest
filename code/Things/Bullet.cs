@@ -15,8 +15,6 @@ namespace Sandbox
 
 		public float Damage { get; private set; }
 
-		public bool HasFinished { get; private set; }
-
 		public override void Spawn()
 		{
 			base.Spawn();
@@ -33,9 +31,6 @@ namespace Sandbox
 
 		public override void Update(float dt)
 		{
-			if (HasFinished)
-				return;
-
 			base.Update(dt);
 
 			Position += (Vector2)Velocity * Time.Delta;
@@ -60,7 +55,7 @@ namespace Sandbox
 				{
 					Game.HandleThingCollisionForGridSquare(this, new GridSquare(GridPos.x + dx, GridPos.y + dy), dt);
 
-					if (HasFinished)
+					if (IsRemoved)
 						return;
 				}
 			}
@@ -77,7 +72,6 @@ namespace Sandbox
 				enemy.Velocity += Velocity.Normal * 0.75f;
 				enemy.TempWeight += 2f;
 
-                HasFinished = true;
 				Remove();
                 return;
 			}
