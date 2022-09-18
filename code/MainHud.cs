@@ -26,6 +26,8 @@ namespace Sandbox
             TestLabel = Add.Label("test", "testlabel");
             TestPanel = Add.Panel("testpanel");
             TestButton = TestPanel.Add.Button("T", () => { ButtonClicked(); });
+
+            AddChild<Modal>();
         }
 
         public override void Tick()

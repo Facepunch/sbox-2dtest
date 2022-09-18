@@ -26,11 +26,12 @@ public partial class MyGame : Sandbox.Game
 
 	public readonly List<PlayerCitizen> PlayerList = new();
 
-	private readonly List<Enemy> _enemies = new();
+	public int EnemyCount { get; private set; }
 	public const float MAX_ENEMY_COUNT = 750;
 
-	public Dictionary<(int x, int y), List<Enemy>> EnemyGridPositions = new Dictionary<(int, int), List<Enemy>>();
-	//public record struct GridSquare (int x, int y);
+	private readonly List<Thing> _things = new();
+	public record struct GridSquare(int x, int y);
+	public Dictionary<GridSquare, List<Thing>> ThingGridPositions = new Dictionary<GridSquare, List<Thing>>();
 
 	public float GRID_SIZE = 1f;
 	public Vector2 BOUNDS_MIN = new Vector2(-16f, -12f);
@@ -46,7 +47,7 @@ public partial class MyGame : Sandbox.Game
 			{
 				for (float y = BOUNDS_MIN.y; y < BOUNDS_MAX.y; y += GRID_SIZE)
 				{
-					EnemyGridPositions.Add(GetGridSquareForPos(new Vector2(x, y)), new List<Enemy>());
+					ThingGridPositions.Add(GetGridSquareForPos(new Vector2(x, y)), new List<Thing>());
 				}
 			}
 
@@ -82,10 +83,12 @@ public partial class MyGame : Sandbox.Game
     {
 		var dt = Time.Delta;
 
-		foreach (var enemy in _enemies)
+		for(int i = _things.Count - 1; i >= 0; i--)
         {
-			enemy.Update(dt);
-        }
+			var thing = _things[i];
+			if (!thing.IsRemoved)
+				thing.Update(dt);
+		}
 
         //for (float x = BOUNDS_MIN.x; x < BOUNDS_MAX.x; x += GRID_SIZE)
         //{
@@ -115,44 +118,50 @@ public partial class MyGame : Sandbox.Game
 
 	void SpawnEnemy()
     {
-		if (_enemies.Count >= MAX_ENEMY_COUNT)
+		if (EnemyCount >= MAX_ENEMY_COUNT)
 			return;
 
 		var pos = new Vector2(Rand.Float(-18f, 18f), Rand.Float(-14f, 14f));
-		var gridPos = GetGridSquareForPos(pos);
 
 		var enemy = new Enemy
 		{
 			Position = pos,
 			//Depth = Rand.Float(-128f, 128f),
-			GridPos = gridPos,
 		};
 
-		_enemies.Add(enemy);
+		AddThing(enemy);
+		EnemyCount++;
 	}
 
-	public void HandleEnemyCollisionForGridSquare(Enemy enemy, (int, int) gridSquare, float dt)
-    {
-		if (!EnemyGridPositions.ContainsKey(gridSquare))
+	public void HandleThingCollisionForGridSquare(Thing thing, GridSquare gridSquare, float dt)
+	{
+		if (!ThingGridPositions.ContainsKey(gridSquare))
 			return;
 
-		//Log.Info("HandleCollisionForGridSquare - " + _enemyGridPositions[gridSquare].Count);
-		foreach(Enemy other in EnemyGridPositions[gridSquare])
+		var things = ThingGridPositions[gridSquare];
+		if (things.Count == 0)
+			return;
+
+		for(int i = things.Count - 1; i >= 0; i--)
         {
-			if (other == enemy)
+			if (i >= things.Count)
+				continue;
+				//Log.Info("!!! " + thing.Name + " --- " + i.ToString() + " count: " + things.Count);
+
+			var other = things[i];
+			if (other == thing || other.IsRemoved)
 				continue;
 
-			var dist_sqr = (enemy.Position - other.Position).LengthSquared;
-			var total_radius_sqr = MathF.Pow(enemy.Radius + other.Radius, 2f);
+			var dist_sqr = (thing.Position - other.Position).LengthSquared;
+			var total_radius_sqr = MathF.Pow(thing.Radius + other.Radius, 2f);
 			if (dist_sqr < total_radius_sqr)
 			{
-				enemy.Velocity += (enemy.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 10f) * (1f + other.TempWeight) * dt;
-
-				//if(other.TempWeight > 0f)
-				//	enemy.TempWeight += other.TempWeight * 0.1f;
-            }
+				float percent = Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 1f);
+				//thing.Velocity += (thing.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 10f) * (1f + other.TempWeight) * dt;
+				thing.Collide(other, percent, dt);
+			}
 		}
-    }
+	}
 
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
@@ -164,8 +173,6 @@ public partial class MyGame : Sandbox.Game
 		// Create a pawn for this client to play with
 		var player = new PlayerCitizen();
 		client.Pawn = player;
-
-		PlayerList.Add( player );
 
 		// Get all of the spawnpoints
 		var spawnpoints = Entity.All.OfType<SpawnPoint>();
@@ -180,6 +187,9 @@ public partial class MyGame : Sandbox.Game
 			tx.Position = tx.Position + Vector3.Up * 50.0f; // raise it up
 			player.Transform = tx;
 		}
+
+		PlayerList.Add(player);
+		AddThing(player);
 	}
 
 	public override CameraMode FindActiveCamera()
@@ -212,47 +222,55 @@ public partial class MyGame : Sandbox.Game
 		return GetClosest(players, pos, maxRange, ignoreZ, except);
 	}
 
-	public (int x, int y) GetGridSquareForPos(Vector2 pos)
+	public GridSquare GetGridSquareForPos(Vector2 pos)
     {
-		return ((int)MathF.Floor(pos.x), (int)MathF.Floor(pos.y));
+		return new GridSquare((int)MathF.Floor(pos.x), (int)MathF.Floor(pos.y));
     }
 
-	public List<Enemy> GetEnemiesInGridSquare((int, int) gridSquare)
+	public List<Thing> GetThingsInGridSquare(GridSquare gridSquare)
     {
-		if(EnemyGridPositions.ContainsKey(gridSquare))
+		if(ThingGridPositions.ContainsKey(gridSquare))
         {
-			return EnemyGridPositions[gridSquare];
+			return ThingGridPositions[gridSquare];
         }
 
 		return null;
     }
 
-	public bool IsGridSquareInArena((int, int) gridSquare)
+	public bool IsGridSquareInArena(GridSquare gridSquare)
     {
-		return EnemyGridPositions.ContainsKey(gridSquare);
+		return ThingGridPositions.ContainsKey(gridSquare);
     }
 
-	public void RegisterEnemyGridSquare(Enemy enemy, (int, int) gridSquare)
+	public void RegisterThingGridSquare(Thing thing, GridSquare gridSquare)
 	{
 		if (IsGridSquareInArena(gridSquare))
-			EnemyGridPositions[gridSquare].Add(enemy);
+			ThingGridPositions[gridSquare].Add(thing);
 	}
 
-	public void DeregisterEnemyGridSquare(Enemy enemy, (int, int) gridSquare)
+	public void DeregisterThingGridSquare(Thing thing, GridSquare gridSquare)
 	{
-		if (EnemyGridPositions.ContainsKey(gridSquare) && EnemyGridPositions[gridSquare].Contains(enemy))
+		if (ThingGridPositions.ContainsKey(gridSquare) && ThingGridPositions[gridSquare].Contains(thing))
 		{
-			EnemyGridPositions[gridSquare].Remove(enemy);
+			ThingGridPositions[gridSquare].Remove(thing);
 		}
 	}
 
-	public void RemoveEnemy(Enemy enemy)
+	public void AddThing(Thing thing)
     {
-		_enemies.Remove(enemy);
+		_things.Add(thing);
+		thing.GridPos = GetGridSquareForPos(thing.Position);
+		RegisterThingGridSquare(thing, thing.GridPos);
+	}
 
-		if (EnemyGridPositions.ContainsKey(enemy.GridPos))
+	public void RemoveThing(Thing thing)
+    {
+		if (ThingGridPositions.ContainsKey(thing.GridPos))
 		{
-			EnemyGridPositions[enemy.GridPos].Remove(enemy);
+			ThingGridPositions[thing.GridPos].Remove(thing);
 		}
+
+		if (thing is Enemy)
+			EnemyCount--;
 	}
 }

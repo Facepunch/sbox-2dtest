@@ -2,10 +2,11 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using static Sandbox.MyGame;
 
 namespace Sandbox;
 
-public partial class PlayerCitizen : Sprite
+public partial class PlayerCitizen : Thing
 {
 	public Vector2 MouseOffset { get; private set; }
 
@@ -14,9 +15,6 @@ public partial class PlayerCitizen : Sprite
     public bool IsAlive { get; private set; }
 
 	public float FeetOffset { get; private set; }
-
-	public float Radius { get; private set; }
-	public (int x, int y) GridPos { get; set; }
 
 	public override void Spawn()
 	{
@@ -55,8 +53,6 @@ public partial class PlayerCitizen : Sprite
 
 		HandleBounds();
 
-		GridPos = Game.GetGridSquareForPos(Position);
-
 		Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 7f) * 2f;
 
 		Depth = -Position.y * 10f;
@@ -72,15 +68,39 @@ public partial class PlayerCitizen : Sprite
 		//DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
 		//DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
 
+		var gridPos = Game.GetGridSquareForPos(Position);
+		if (gridPos != GridPos)
+		{
+			Game.DeregisterThingGridSquare(this, GridPos);
+			Game.RegisterThingGridSquare(this, gridPos);
+			GridPos = gridPos;
+		}
+
 		for (int dx = -1; dx <= 1; dx++)
 		{
 			for (int dy = -1; dy <= 1; dy++)
 			{
-				CollideWithEnemies((GridPos.x + dx, GridPos.y + dy), dt);
+				Game.HandleThingCollisionForGridSquare(this, new GridSquare(GridPos.x + dx, GridPos.y + dy), dt);
 			}
 		}
 
-		CollideWithPlayers(dt);
+		for (int dx = -1; dx <= 1; dx++)
+		{
+			for (int dy = -1; dy <= 1; dy++)
+			{
+				Game.HandleThingCollisionForGridSquare(this, new GridSquare(GridPos.x + dx, GridPos.y + dy), dt);
+			}
+		}
+
+		//for (int dx = -1; dx <= 1; dx++)
+		//{
+		//	for (int dy = -1; dy <= 1; dy++)
+		//	{
+		//		CollideWithEnemies((GridPos.x + dx, GridPos.y + dy), dt);
+		//	}
+		//}
+
+		//CollideWithPlayers(dt);
 
 		if (Host.IsServer)
         {
@@ -105,6 +125,8 @@ public partial class PlayerCitizen : Sprite
 						Velocity = currDir * 10f,
 						Shooter = this
 					};
+
+					Game.AddThing(bullet);
 				}
 			}
 		}
@@ -170,39 +192,13 @@ public partial class PlayerCitizen : Sprite
 		}
     }
 
-	void CollideWithEnemies((int, int) gridSquare, float dt)
+	public override void Collide(Thing other, float percent, float dt)
 	{
-		if (!Game.EnemyGridPositions.ContainsKey(gridSquare))
-			return;
+		base.Collide(other, percent, dt);
 
-		foreach (Enemy enemy in Game.EnemyGridPositions[gridSquare])
+		if (other is Enemy || other is PlayerCitizen)
 		{
-			var dist_sqr = (Position - enemy.Position).LengthSquared;
-			var total_radius_sqr = MathF.Pow(Radius + enemy.Radius, 2f);
-			if (dist_sqr < total_radius_sqr)
-			{
-				Velocity += (Position - enemy.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 100f) * dt;
-
-				//DebugOverlay.Line(Position, enemy.Position, 0f, false);
-			}
+			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * dt;
 		}
 	}
-
-	void CollideWithPlayers(float dt)
-    {
-		foreach(PlayerCitizen other in Game.PlayerList)
-        {
-			if (other == this)
-				continue;
-
-			var dist_sqr = (Position - other.Position).LengthSquared;
-			var total_radius_sqr = MathF.Pow(Radius + other.Radius, 2f);
-			if (dist_sqr < total_radius_sqr)
-			{
-				Velocity += (Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 100f) * dt;
-
-				//DebugOverlay.Line(Position, enemy.Position, 0f, false);
-			}
-		}
-    }
 }

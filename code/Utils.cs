@@ -24,6 +24,33 @@ public enum EasingType
 
 public static class Utils
 {
+ //   func drawcircle(pos, radius, num_segments, starting_angle, color, width):
+	//var step = 2 * PI / float(num_segments)
+	
+	//for i in range(1, num_segments + 1):
+	//	var to_angle = i * step + starting_angle
+	//	var to_point = Vector2(pos.x + radius * cos(to_angle), pos.y + radius * sin(to_angle))
+		
+	//	var from_angle = (i - 1) * step + starting_angle
+	//	var from_point = Vector2(pos.x + radius * cos(from_angle), pos.y + radius * sin(from_angle))
+		
+	//	draw_line(from_point, to_point, color, width)
+
+    public static void DrawCircle(Vector2 pos, float radius, int num_segments, float starting_angle, Color color)
+    {
+        var step = 2f * MathF.PI / (float)num_segments;
+        for(int i = 1; i < num_segments + 1; i++)
+        {
+            var to_angle = i * step + starting_angle;
+            var to_point = new Vector2(pos.x + radius * MathF.Cos(to_angle), pos.y + radius * MathF.Sin(to_angle));
+
+            var from_angle = (i - 1) * step + starting_angle;
+            var from_point = new Vector2(pos.x + radius * MathF.Cos(from_angle), pos.y + radius * MathF.Sin(from_angle));
+
+            DebugOverlay.Line(from_point, to_point, color, 0f, false);
+        }
+    }
+
     public const float Deg2Rad = MathF.PI / 180f;
     public const float Rad2Deg = 360f / (MathF.PI * 2f);
 

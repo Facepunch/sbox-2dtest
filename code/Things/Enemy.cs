@@ -3,25 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Sandbox.MyGame;
 
 namespace Sandbox
 {
-	public partial class Enemy : Sprite
+	public partial class Enemy : Thing
 	{
-		public float Radius { get; private set; }
-		public float TempWeight { get; set; }
 		public float FeetOffset { get; private set; }
 
 		public float MoveTimeOffset { get; set; }
 		public float MoveTimeSpeed { get; set; }
 
-
-		public (int x, int y) GridPos { get; set; }
-
 		private float _flashTimer;
 		private bool _isFlashing;
 
-		private Sprite _shadow;
+		//private Sprite _shadow;
 
 		public override void Spawn()
 		{
@@ -50,19 +46,10 @@ namespace Sandbox
 			//_shadow.LocalPosition = new Vector2(0.35f, 0f);
 		}
 
-		[Event.Tick.Server]
-		public void ServerTick()
-		{
-			//if(TempWeight > 0.01f)
-			//	DebugOverlay.Text(TempWeight.ToString(), Position);
-
-            //DebugOverlay.Text(Depth.ToString("#.##"), Position);
-            //FeetOffset = 0.35f;
-            //DebugOverlay.Line(Position, Position + Velocity, 0f, false);
-		}
-
-		public void Update(float dt)
+		public override void Update(float dt)
         {
+			base.Update(dt);
+
 			var closestPlayer = Game.GetClosestPlayer(Position);
 			Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
 			Position += Velocity * dt * (0.75f + Utils.FastSin(MoveTimeOffset + Time.Now * MoveTimeSpeed) * 0.25f);
@@ -80,8 +67,8 @@ namespace Sandbox
 			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
 			{
-				Game.DeregisterEnemyGridSquare(this, GridPos);
-				Game.RegisterEnemyGridSquare(this, gridPos);
+				Game.DeregisterThingGridSquare(this, GridPos);
+				Game.RegisterThingGridSquare(this, gridPos);
 				GridPos = gridPos;
 			}
 
@@ -89,7 +76,7 @@ namespace Sandbox
 			{
 				for (int dy = -1; dy <= 1; dy++)
 				{
-					Game.HandleEnemyCollisionForGridSquare(this, (GridPos.x + dx, GridPos.y + dy), dt);
+					Game.HandleThingCollisionForGridSquare(this, new GridSquare(GridPos.x + dx, GridPos.y + dy), dt);
 				}
 			}
 
@@ -110,8 +97,6 @@ namespace Sandbox
 			//ColorFill = new ColorHsv(0.94f, 0.157f, 0.392f, 1f);
 			//ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
 
-
-
 			//ColorFill = new Color(0.2f, 0.2f, 1f) * 1.5f; // frozen
 			//ColorFill = new Color(1f, 1f, 0.1f) * 2.5f; // shock
 			//ColorFill = new Color(0.1f, 1f, 0.1f) * 2.5f; // poison
@@ -120,7 +105,17 @@ namespace Sandbox
 			//ColorFill = new ColorHsv(1f, 0f, 0f, 0f);
 		}
 
-		public void Damage(float damage)
+        public override void Collide(Thing other, float percent, float dt)
+        {
+            base.Collide(other, percent, dt);
+
+			if (other is Enemy || other is PlayerCitizen)
+            {
+				Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 10f) * (1f + other.TempWeight) * dt;
+			}
+        }
+
+        public void Damage(float damage)
         {
 			Health -= damage;
 			DamageNumbers.Create(Position + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-2f, 2f)) * 0.1f, damage);
@@ -128,15 +123,9 @@ namespace Sandbox
 
 			if (Health <= 0f)
             {
-				Remove();
+                Remove();
 			}
         }
-
-		public void Remove()
-        {
-			Game.RemoveEnemy(this);
-			Delete();
-		}
 
 		public void Flash(float time)
         {
