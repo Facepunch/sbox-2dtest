@@ -18,8 +18,17 @@ public partial class PlayerCitizen : Thing
 
 	public float FeetOffset { get; private set; }
 
-	public List<Weapon> _weapons = new List<Weapon>();
+	public float Timer { get; protected set; }
+	public float ShotDelay { get; protected set; }
+	public int AmmoCount { get; protected set; }
+	public int MaxAmmoCount { get; protected set; }
+
+	public bool IsReloading { get; protected set; }
+	public float ReloadTime { get; protected set; }
+
 	public float AttackSpeed { get; private set; }
+	public float ReloadSpeed { get; private set; }
+
 
 	public override void Spawn()
 	{
@@ -27,28 +36,34 @@ public partial class PlayerCitizen : Thing
 
 		//TexturePath = "textures/sprites/head.png";
 		SpriteTexture = "textures/sprites/citizen.png";
+		Filter = SpriteFilter.Pixelated;
+		//Scale = new Vector2(1f, 142f / 153f);
+		//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
 
-        //Scale = new Vector2(1f, 142f / 153f);
-        //Scale = new Vector2(1f, 35f / 16f) * 0.5f;
-
-        if (Host.IsServer)
+		if (Host.IsServer)
         {
             ArrowAimer = new Arrow();
             ArrowAimer.Parent = this;
 			//_arrow.LocalPosition = new Vector3(0.3f, 0f, 0f);
 			ArrowAimer.Depth = 100f;
 			ArrowAimer.Owner = this;
-        }
 
-        Health = 100f;
-		IsAlive = true;
-		Radius = 0.2f;
-        Filter = SpriteFilter.Pixelated;
-		GridPos = Game.GetGridSquareForPos(Position);
-		AttackSpeed = 1f;
-		AimDir = Vector2.Up;
+			Timer = ShotDelay = 0.125f;
+			AmmoCount = MaxAmmoCount = 6;
+			ReloadTime = 1.25f;
+			ReloadSpeed = 1f;
+			AttackSpeed = 1f;
 
-		AddWeapon(new Pistol(this));
+			Health = 100f;
+			IsAlive = true;
+			Radius = 0.2f;
+			GridPos = Game.GetGridSquareForPos(Position);
+			AimDir = Vector2.Up;
+
+			SetProperty("AttackSpeed", 10f);
+			SetProperty("MaxAmmoCount", 40);
+			SetProperty("ReloadTime", 12f);
+		}
 	}
 
 	public override void Simulate( Client cl )
@@ -139,18 +154,60 @@ public partial class PlayerCitizen : Thing
 				}
 			}
 
-			UpdateWeapons(dt);
+			HandleShooting(dt);
 		}
 	}
 
-	void UpdateWeapons(float dt)
+	void HandleShooting(float dt)
     {
-		for(int i = _weapons.Count - 1; i >= 0; i--)
+		if (IsReloading)
+		{
+			Timer -= dt * ReloadSpeed;
+			if (Timer <= 0f)
+			{
+				IsReloading = false;
+				AmmoCount = MaxAmmoCount;
+			}
+		}
+		else
         {
-			var weapon = _weapons[i];
-			weapon.Update(dt);
-        }
-    }
+			Timer -= dt * AttackSpeed;
+			if (Timer <= 0f)
+            {
+				Shoot();
+				AmmoCount--;
+
+				if (AmmoCount <= 0)
+				{
+					IsReloading = true;
+					Timer += ReloadTime;
+				}
+				else
+				{
+					Timer += ShotDelay;
+				}
+			}
+		}
+
+		DebugText(AmmoCount.ToString());
+	}
+
+	void Shoot()
+	{
+		var bullet = new Bullet
+		{
+			Position = Position,
+			Depth = -1f,
+			Velocity = AimDir * 7.5f,
+			Shooter = this,
+			Damage = 10f,
+			Force = 2.25f,
+			TempWeight = 3f,
+			Lifetime = 1.5f,
+		};
+
+		Game.AddThing(bullet);
+	}
 
 	void HandleBounds()
     {
@@ -222,8 +279,27 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
-	public void AddWeapon(Weapon weapon)
+	void SetProperty(string propertyName, float value)
     {
-		_weapons.Add(weapon);
-    }
+		var property = TypeLibrary.GetDescription<PlayerCitizen>().GetProperty(propertyName);
+		if (property == null)
+        {
+			Log.Error("property " + propertyName + " doesn't exist!");
+			return;
+        }
+
+		TypeLibrary.SetProperty(this, propertyName, value);
+	}
+
+	void SetProperty(string propertyName, int value)
+	{
+		var property = TypeLibrary.GetDescription<PlayerCitizen>().GetProperty(propertyName);
+		if (property == null)
+		{
+			Log.Error("property " + propertyName + " doesn't exist!");
+			return;
+		}
+
+		TypeLibrary.SetProperty(this, propertyName, value);
+	}
 }
