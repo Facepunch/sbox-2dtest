@@ -27,7 +27,7 @@ public partial class MyGame : Sandbox.Game
 	public readonly List<PlayerCitizen> PlayerList = new();
 
 	public int EnemyCount { get; private set; }
-	public const float MAX_ENEMY_COUNT = 750;
+	public const float MAX_ENEMY_COUNT = 350;
 
 	private readonly List<Thing> _things = new();
 	public record struct GridSquare(int x, int y);
@@ -52,7 +52,7 @@ public partial class MyGame : Sandbox.Game
 			}
 
 			//for (var i = 0; i < 750; ++i)
-			for (var i = 0; i < 5; ++i)
+			for (var i = 0; i < 300; ++i)
 			{
                 SpawnEnemy();
             }
@@ -63,14 +63,14 @@ public partial class MyGame : Sandbox.Game
 			};
 
 			//var animTest = new Sprite
-			//{
-			//	SpriteTexture = SpriteTexture.Atlas("textures/sprites/tile_test.png", 4, 4),
-			//	AnimationPath = "textures/sprites/tile_test.frames",
+   //         {
+   //             SpriteTexture = SpriteTexture.Atlas("textures/sprites/tile_test.png", 4, 4),
+   //             AnimationPath = "textures/sprites/tile_test.frames",
 
-			//	Filter = SpriteFilter.Pixelated,
-			//	Scale = 8f
-			//};
-		}
+   //             Filter = SpriteFilter.Pixelated,
+   //             Scale = 4f
+   //         };
+        }
 
 		if (Host.IsClient)
         {

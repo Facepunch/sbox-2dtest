@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using static Sandbox.MyGame;
+using System.Collections.Generic;
 
 namespace Sandbox;
 
@@ -10,11 +11,15 @@ public partial class PlayerCitizen : Thing
 {
 	public Vector2 MouseOffset { get; private set; }
 
-	private Arrow _arrow;
+	[Net, Predicted] public Arrow ArrowAimer { get; private set; }
+	public Vector2 AimDir { get; private set; }
 
-    public bool IsAlive { get; private set; }
+	public bool IsAlive { get; private set; }
 
 	public float FeetOffset { get; private set; }
+
+	public List<Weapon> _weapons = new List<Weapon>();
+	public float AttackSpeed { get; private set; }
 
 	public override void Spawn()
 	{
@@ -28,10 +33,11 @@ public partial class PlayerCitizen : Thing
 
         if (Host.IsServer)
         {
-			_arrow = new Arrow();
-            _arrow.Parent = this;
+            ArrowAimer = new Arrow();
+            ArrowAimer.Parent = this;
 			//_arrow.LocalPosition = new Vector3(0.3f, 0f, 0f);
-			_arrow.Depth = 100f;
+			ArrowAimer.Depth = 100f;
+			ArrowAimer.Owner = this;
         }
 
         Health = 100f;
@@ -39,6 +45,10 @@ public partial class PlayerCitizen : Thing
 		Radius = 0.2f;
         Filter = SpriteFilter.Pixelated;
 		GridPos = Game.GetGridSquareForPos(Position);
+		AttackSpeed = 1f;
+		AimDir = Vector2.Up;
+
+		AddWeapon(new Pistol(this));
 	}
 
 	public override void Simulate( Client cl )
@@ -68,52 +78,50 @@ public partial class PlayerCitizen : Thing
 		//DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
 		//DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
 
-		var gridPos = Game.GetGridSquareForPos(Position);
-		if (gridPos != GridPos)
-		{
-			Game.DeregisterThingGridSquare(this, GridPos);
-			Game.RegisterThingGridSquare(this, gridPos);
-			GridPos = gridPos;
-		}
+		ArrowAimer.LocalRotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI));
+		ArrowAimer.Position = Position + MouseOffset.Normal * 0.65f;
 
-		for (int dx = -1; dx <= 1; dx++)
-		{
-			for (int dy = -1; dy <= 1; dy++)
-			{
-				Game.HandleThingCollisionForGridSquare(this, new GridSquare(GridPos.x + dx, GridPos.y + dy), dt);
-			}
-		}
-
-		for (int dx = -1; dx <= 1; dx++)
-		{
-			for (int dy = -1; dy <= 1; dy++)
-			{
-				Game.HandleThingCollisionForGridSquare(this, new GridSquare(GridPos.x + dx, GridPos.y + dy), dt);
-			}
-		}
-
-		//for (int dx = -1; dx <= 1; dx++)
-		//{
-		//	for (int dy = -1; dy <= 1; dy++)
-		//	{
-		//		CollideWithEnemies((GridPos.x + dx, GridPos.y + dy), dt);
-		//	}
-		//}
-
-		//CollideWithPlayers(dt);
+		if (cl.IsBot)
+        {
+			MouseOffset = new Vector2(Rand.Float(-10f, 10f), Rand.Float(-10f, 10f));
+        }
 
 		if (Host.IsServer)
         {
-			_arrow.LocalRotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI));
-			_arrow.Position = Position + MouseOffset.Normal * 0.65f;
-			_arrow.Depth = 100f;
+			var gridPos = Game.GetGridSquareForPos(Position);
+			if (gridPos != GridPos)
+			{
+				Game.DeregisterThingGridSquare(this, GridPos);
+				Game.RegisterThingGridSquare(this, gridPos);
+				GridPos = gridPos;
+			}
+
+			for (int dx = -1; dx <= 1; dx++)
+			{
+				for (int dy = -1; dy <= 1; dy++)
+				{
+					Game.HandleThingCollisionForGridSquare(this, new GridSquare(GridPos.x + dx, GridPos.y + dy), dt);
+				}
+			}
+
+			for (int dx = -1; dx <= 1; dx++)
+			{
+				for (int dy = -1; dy <= 1; dy++)
+				{
+					Game.HandleThingCollisionForGridSquare(this, new GridSquare(GridPos.x + dx, GridPos.y + dy), dt);
+				}
+			}
+
+			//ArrowAimer.Depth = 100f;
+
+			AimDir = (ArrowAimer.Position - Position).Normal;
 			//_arrow.LocalPosition = MouseOffset.Normal * 0.65f;
 
 			//DebugOverlay.Text(MouseOffset.ToString(), Position + new Vector2(0.2f, 0f));
 
 			if (Input.Pressed(InputButton.Jump) || Input.Pressed(InputButton.PrimaryAttack))
 			{
-				var dir = (_arrow.Position - Position).Normal;
+				var dir = (ArrowAimer.Position - Position).Normal;
 
 				for (int i = -5; i <= 5; i++)
 				//for (int i = 0; i <= 0; i++)
@@ -130,8 +138,19 @@ public partial class PlayerCitizen : Thing
 					Game.AddThing(bullet);
 				}
 			}
+
+			UpdateWeapons(dt);
 		}
 	}
+
+	void UpdateWeapons(float dt)
+    {
+		for(int i = _weapons.Count - 1; i >= 0; i--)
+        {
+			var weapon = _weapons[i];
+			weapon.Update(dt);
+        }
+    }
 
 	void HandleBounds()
     {
@@ -202,4 +221,9 @@ public partial class PlayerCitizen : Thing
 			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * dt;
 		}
 	}
+
+	public void AddWeapon(Weapon weapon)
+    {
+		_weapons.Add(weapon);
+    }
 }

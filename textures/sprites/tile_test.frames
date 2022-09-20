@@ -6,10 +6,14 @@
 		Sequences = 
 		[
 			{
+				PlaybackRate = 1
+				Repetitions = 1
 				LastFrameIndex = 14
 				TotalFrameCount = 15
 			},
 			{
+				PlaybackRate = 1
+				Repetitions = 1
 				FirstFrameIndex = 15
 				LastFrameIndex = 1
 				TotalFrameCount = 15

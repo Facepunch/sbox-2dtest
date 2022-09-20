@@ -6,7 +6,9 @@
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "ResourcePaths": [],
+  "ResourcePaths": [
+    "/textures/sprites/*"
+  ],
   "HasCode": true,
   "CodePath": "/code/",
   "RootNamespace": null,

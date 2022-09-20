@@ -204,6 +204,9 @@ namespace Sandbox
 		[Event.PreRender]
 		private void ClientPreRender()
 		{
+			if (SceneObject == null)
+				return;
+
 			SceneObject.Flags.IsTranslucent = true;
 			SceneObject.Attributes.Set( "SpriteScale", new Vector2(Scale.y, Scale.x) / 100f );
             SceneObject.Attributes.Set("TextureSize", _texture?.Size ?? new Vector2(1f, 1f));

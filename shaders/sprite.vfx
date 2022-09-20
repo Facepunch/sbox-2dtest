@@ -124,7 +124,7 @@ PS
 		#endif
 
 		o.vColor.rgb = lerp(o.vColor.rgb, g_vColorFill.rgb, g_vColorFill.a);
-
+		
         return o;
 	}
 }

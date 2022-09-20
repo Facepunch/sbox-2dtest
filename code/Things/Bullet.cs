@@ -13,7 +13,10 @@ namespace Sandbox
 
 		public PlayerCitizen Shooter { get; set; }
 
-		public float Damage { get; private set; }
+		public float Damage { get; set; }
+		public float Force { get; set; }
+		public float AddTempWeight { get; set; }
+		public float Lifetime { get; set; }
 
 		public override void Spawn()
 		{
@@ -26,7 +29,10 @@ namespace Sandbox
 			Scale = new Vector2(0.2f, 0.2f);
 			SpawnTime = 0f;
 			Damage = 5f;
+			AddTempWeight = 2f;
+			Force = 0.75f;
 			Radius = 0.1f;
+			Lifetime = 1f;
 		}
 
 		public override void Update(float dt)
@@ -35,7 +41,7 @@ namespace Sandbox
 
 			Position += (Vector2)Velocity * Time.Delta;
 
-			if (SpawnTime > 1f)
+			if (SpawnTime > Lifetime)
             {
 				Remove();
 				return;
@@ -69,8 +75,8 @@ namespace Sandbox
 			{
 				enemy.Damage(Damage);
 
-				enemy.Velocity += Velocity.Normal * 0.75f;
-				enemy.TempWeight += 2f;
+				enemy.Velocity += Velocity.Normal * Force;
+				enemy.TempWeight += AddTempWeight;
 
 				Remove();
                 return;
