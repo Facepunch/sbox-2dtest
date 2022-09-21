@@ -41,7 +41,8 @@ public partial class PlayerCitizen : Thing
 	public float ReloadTime { get; protected set; }
 	public float ReloadSpeed { get; private set; }
 	public int AmmoCount { get; protected set; }
-	public int MaxAmmoCount { get; protected set; }
+	public float MaxAmmoCount { get; protected set; }
+	public float NumBullets { get; protected set; }
 
 	// STATUS
 	private List<Status> _statuses = new List<Status>();
@@ -69,7 +70,8 @@ public partial class PlayerCitizen : Thing
 			ArrowAimer.Owner = this;
 
 			Timer = AttackTime = 1f;
-			AmmoCount = MaxAmmoCount = 5;
+			AmmoCount = 5;
+			MaxAmmoCount = AmmoCount;
 			ReloadTime = 1.25f;
 			ReloadSpeed = 1f;
 			AttackSpeed = 0.99f;
@@ -187,12 +189,18 @@ public partial class PlayerCitizen : Thing
 
 	void HandleStatuses(float dt)
     {
-		foreach(Status status in _statuses)
-        {
+		string debug = "";
+		for(int i = _statuses.Count - 1; i >= 0; i--)
+		{
+			Status status = _statuses[i];
 			if (status.ShouldUpdate)
 				status.Update(dt);
+
+			debug += status.ToString() + ": " + status.ElapsedTime + "\n";
         }
-    }
+
+		DebugText(debug);
+	}
 
 	void HandleShooting(float dt)
     {
@@ -202,7 +210,7 @@ public partial class PlayerCitizen : Thing
 			if (Timer <= 0f)
 			{
 				IsReloading = false;
-				AmmoCount = MaxAmmoCount;
+				AmmoCount = (int)MaxAmmoCount;
 			}
 		}
 		else
@@ -225,7 +233,7 @@ public partial class PlayerCitizen : Thing
 			}
 		}
 
-		DebugText(AmmoCount.ToString() + "\nreloading: " + IsReloading + "\ntimer: " + Timer + "\nShotDelay: " + AttackTime + "\nReloadTime: " + ReloadTime + "\nAttackSpeed: " + AttackSpeed);
+		//DebugText(AmmoCount.ToString() + "\nreloading: " + IsReloading + "\ntimer: " + Timer + "\nShotDelay: " + AttackTime + "\nReloadTime: " + ReloadTime + "\nAttackSpeed: " + AttackSpeed);
 	}
 
 	void Shoot()
@@ -386,6 +394,28 @@ public partial class PlayerCitizen : Thing
 		SetProperty(propertyName, curr_value);
     }
 
+	public void RemoveStatus(Status status)
+    {
+		Log.Info("RemoveStatus: " + status);
+		RemoveModifiers(status);
+		_statuses.Remove(status);
+    }
+
+	public void RemoveModifiers(Status status)
+    {
+		if (!_modifiers.ContainsKey(status))
+			return;
+
+		var dict = _modifiers[status];
+		foreach(string propertyName in dict.Keys)
+        {
+			dict.Remove(propertyName);
+			UpdateProperty(propertyName);
+        }
+
+        _modifiers.Remove(status);
+    }
+
 	void SetProperty(string propertyName, float value)
     {
 		var property = TypeLibrary.GetDescription<PlayerCitizen>().GetProperty(propertyName);
@@ -395,18 +425,6 @@ public partial class PlayerCitizen : Thing
 			return;
         }
 
-		TypeLibrary.SetProperty(this, propertyName, value);
-	}
-
-	void SetProperty(string propertyName, int value)
-	{
-		var property = TypeLibrary.GetDescription<PlayerCitizen>().GetProperty(propertyName);
-		if (property == null)
-		{
-			Log.Error("property " + propertyName + " doesn't exist!");
-			return;
-		}
-		
 		TypeLibrary.SetProperty(this, propertyName, value);
 	}
 }

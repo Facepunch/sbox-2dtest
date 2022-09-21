@@ -19,12 +19,12 @@ public class ExampleStatus : Status
 
 	public override void Update(float dt)
 	{
-
+		base.Update(dt);
 	}
 
 	public override void Remove()
 	{
-
+		base.Remove();
 	}
 }
 
@@ -34,16 +34,17 @@ public class ExampleStatus2 : Status
 	{
 		base.Init(player);
 
-		player.Modify(this, "AttackSpeed", 2f, ModifierType.Mult);
+		player.Modify(this, "AttackSpeed", 6f, ModifierType.Mult);
+		player.Modify(this, "ReloadSpeed", 6f, ModifierType.Mult);
 	}
 
 	public override void Update(float dt)
 	{
-
+		base.Update(dt);
 	}
 
 	public override void Remove()
 	{
-
+		base.Remove();
 	}
 }

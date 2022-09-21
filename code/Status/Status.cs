@@ -12,6 +12,7 @@ public class Status
 	public bool ShouldUpdate { get; protected set; }
 	public PlayerCitizen Player { get; protected set; }
 	public int Level { get; protected set; }
+	public TimeSince ElapsedTime { get; protected set; }
 
 	public Status()
 	{
@@ -21,12 +22,15 @@ public class Status
 	public virtual void Init(PlayerCitizen player)
     {
 		Player = player;
-    }
+		ElapsedTime = Time.Now;
+		ShouldUpdate = true;
+	}
 
 	public virtual void Update(float dt)
     {
-
-    }
+		if (ElapsedTime > 3f)
+			Player.RemoveStatus(this);
+	}
 
 	public virtual void Remove()
     {
