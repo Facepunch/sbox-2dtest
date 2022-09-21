@@ -323,7 +323,7 @@ public partial class PlayerCitizen : Thing
 
 	public void Modify(Status caller, string propertyName, float value, ModifierType type, float priority = 0f, bool update = true)
     {
-		Log.Info("Modify - caller: " + caller + ", " + propertyName + ", " + value + ", " + type);
+		Log.Info("------------- Modify - caller: " + caller + ", " + propertyName + ", " + value + ", " + type);
 
 		if (!_modifiers.ContainsKey(caller))
 			_modifiers.Add(caller, new Dictionary<string, ModifierData>());
@@ -336,8 +336,6 @@ public partial class PlayerCitizen : Thing
 
 	void UpdateProperty(string propertyName)
     {
-		Log.Info("UpdateProperty: " + propertyName);
-
 		if (!_original_properties.ContainsKey(propertyName))
 		{
 			var property = TypeLibrary.GetDescription<PlayerCitizen>().GetProperty(propertyName);
@@ -361,7 +359,7 @@ public partial class PlayerCitizen : Thing
 				switch (mod_data.type)
 				{
 					case ModifierType.Set:
-						if (mod_data.priority > curr_priority)
+						if (mod_data.priority >= curr_priority)
 						{
 							curr_set = mod_data.value;
 							curr_priority = mod_data.priority;
@@ -384,6 +382,7 @@ public partial class PlayerCitizen : Thing
 		curr_value += total_add;
 		curr_value *= total_mult;
 
+		Log.Info("UpdateProperty: " + propertyName + ": " + curr_value);
 		SetProperty(propertyName, curr_value);
     }
 

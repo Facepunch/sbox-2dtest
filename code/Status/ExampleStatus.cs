@@ -14,6 +14,7 @@ public class ExampleStatus : Status
 		base.Init(player);
 
 		player.Modify(this, "AttackSpeed", 0.01f, ModifierType.Add);
+		player.Modify(this, "AttackSpeed", 4f, ModifierType.Set);
 	}
 
 	public override void Update(float dt)
