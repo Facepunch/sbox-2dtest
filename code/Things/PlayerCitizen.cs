@@ -7,6 +7,22 @@ using System.Collections.Generic;
 
 namespace Sandbox;
 
+public enum ModifierType { Set, Add, Mult }
+
+public class ModifierData
+{
+	public float value;
+	public ModifierType type;
+	public float priority;
+
+	public ModifierData(float _value, ModifierType _type, float _priority = 0f)
+    {
+		value = _value;
+		type = _type;
+		priority = _priority;
+    }
+}
+
 public partial class PlayerCitizen : Thing
 {
 	public Vector2 MouseOffset { get; private set; }
@@ -19,16 +35,20 @@ public partial class PlayerCitizen : Thing
 	public float FeetOffset { get; private set; }
 
 	public float Timer { get; protected set; }
-	public float ShotDelay { get; protected set; }
+	public float AttackTime { get; protected set; }
+	public float AttackSpeed { get; private set; }
+	public bool IsReloading { get; protected set; }
+	public float ReloadTime { get; protected set; }
+	public float ReloadSpeed { get; private set; }
 	public int AmmoCount { get; protected set; }
 	public int MaxAmmoCount { get; protected set; }
 
-	public bool IsReloading { get; protected set; }
-	public float ReloadTime { get; protected set; }
+	// STATUS
+	private List<Status> _statuses = new List<Status>();
 
-	public float AttackSpeed { get; private set; }
-	public float ReloadSpeed { get; private set; }
-
+	// MODIFIERS
+	private Dictionary<Status, Dictionary<string, ModifierData>> _modifiers = new Dictionary<Status, Dictionary<string, ModifierData>>();
+	private Dictionary<string, float> _original_properties = new Dictionary<string, float>();
 
 	public override void Spawn()
 	{
@@ -48,11 +68,11 @@ public partial class PlayerCitizen : Thing
 			ArrowAimer.Depth = 100f;
 			ArrowAimer.Owner = this;
 
-			Timer = ShotDelay = 0.125f;
-			AmmoCount = MaxAmmoCount = 6;
+			Timer = AttackTime = 1f;
+			AmmoCount = MaxAmmoCount = 5;
 			ReloadTime = 1.25f;
 			ReloadSpeed = 1f;
-			AttackSpeed = 1f;
+			AttackSpeed = 0.99f;
 
 			Health = 100f;
 			IsAlive = true;
@@ -60,9 +80,15 @@ public partial class PlayerCitizen : Thing
 			GridPos = Game.GetGridSquareForPos(Position);
 			AimDir = Vector2.Up;
 
-			SetProperty("AttackSpeed", 10f);
-			SetProperty("MaxAmmoCount", 40);
-			SetProperty("ReloadTime", 12f);
+			//SetProperty("AttackSpeed", 1f);
+			//SetProperty("MaxAmmoCount", 3);
+			//SetProperty("ReloadTime", 1f);
+
+			//Modify("AttackSpeed", 0.5f, ModifierType.Add);
+			//Modify("AttackSpeed", 2f, ModifierType.Mult);
+
+			AddStatus(new ExampleStatus());
+			AddStatus(new ExampleStatus2());
 		}
 	}
 
@@ -154,9 +180,19 @@ public partial class PlayerCitizen : Thing
 				}
 			}
 
+			HandleStatuses(dt);
 			HandleShooting(dt);
 		}
 	}
+
+	void HandleStatuses(float dt)
+    {
+		foreach(Status status in _statuses)
+        {
+			if (status.ShouldUpdate)
+				status.Update(dt);
+        }
+    }
 
 	void HandleShooting(float dt)
     {
@@ -184,12 +220,12 @@ public partial class PlayerCitizen : Thing
 				}
 				else
 				{
-					Timer += ShotDelay;
+					Timer += AttackTime;
 				}
 			}
 		}
 
-		DebugText(AmmoCount.ToString());
+		DebugText(AmmoCount.ToString() + "\nreloading: " + IsReloading + "\ntimer: " + Timer + "\nShotDelay: " + AttackTime + "\nReloadTime: " + ReloadTime + "\nAttackSpeed: " + AttackSpeed);
 	}
 
 	void Shoot()
@@ -279,6 +315,78 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
+	public void AddStatus(Status status)
+    {
+		_statuses.Add(status);
+		status.Init(this);
+    }
+
+	public void Modify(Status caller, string propertyName, float value, ModifierType type, float priority = 0f, bool update = true)
+    {
+		Log.Info("Modify - caller: " + caller + ", " + propertyName + ", " + value + ", " + type);
+
+		if (!_modifiers.ContainsKey(caller))
+			_modifiers.Add(caller, new Dictionary<string, ModifierData>());
+
+		_modifiers[caller][propertyName] = new ModifierData(value, type, priority);
+
+		if (update)
+			UpdateProperty(propertyName);
+    }
+
+	void UpdateProperty(string propertyName)
+    {
+		Log.Info("UpdateProperty: " + propertyName);
+
+		if (!_original_properties.ContainsKey(propertyName))
+		{
+			var property = TypeLibrary.GetDescription<PlayerCitizen>().GetProperty(propertyName);
+			_original_properties.Add(propertyName, (float)property.GetValue(this));
+			Log.Info ("... storing original property... - " + propertyName + ": " + ((float)property.GetValue(this)));
+		}
+
+		float curr_value = _original_properties[propertyName];
+		float curr_set = curr_value;
+		bool should_set = false;
+		float curr_priority = 0f;
+		float total_add = 0f;
+		float total_mult = 1f;
+
+		foreach (Status caller in _modifiers.Keys)
+        {
+			var dict = _modifiers[caller];
+			if (dict.ContainsKey(propertyName))
+			{
+				var mod_data = dict[propertyName];
+				switch (mod_data.type)
+				{
+					case ModifierType.Set:
+						if (mod_data.priority > curr_priority)
+						{
+							curr_set = mod_data.value;
+							curr_priority = mod_data.priority;
+							should_set = true;
+						}
+						break;
+					case ModifierType.Add:
+						total_add += mod_data.value;
+						break;
+					case ModifierType.Mult:
+						total_mult *= mod_data.value;
+						break;
+				}
+			}
+		}
+
+		if (should_set)
+			curr_value = curr_set;
+
+		curr_value += total_add;
+		curr_value *= total_mult;
+
+		SetProperty(propertyName, curr_value);
+    }
+
 	void SetProperty(string propertyName, float value)
     {
 		var property = TypeLibrary.GetDescription<PlayerCitizen>().GetProperty(propertyName);
@@ -299,7 +407,7 @@ public partial class PlayerCitizen : Thing
 			Log.Error("property " + propertyName + " doesn't exist!");
 			return;
 		}
-
+		
 		TypeLibrary.SetProperty(this, propertyName, value);
 	}
 }
