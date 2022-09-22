@@ -48,7 +48,7 @@ namespace Sandbox
 	{
 		private Material _material;
 		private Texture _texture;
-        private SpriteAnimation _anim;
+		private SpriteAnimation _anim;
 
 		private float _localRotation;
 
@@ -77,8 +77,10 @@ namespace Sandbox
         [Net, Change, ResourceType("frames")]
 		public string AnimationPath { get; set; }
 
-        [Net]
-		public TimeSince AnimationStart { get; set; }
+		public float AnimationTimeElapsed { get; set; }
+
+		[Net]
+		public float AnimationSpeed { get; set; }
 
 		[Net]
 		public new Vector2 Scale { get; set; }
@@ -175,6 +177,8 @@ namespace Sandbox
             _anim = string.IsNullOrEmpty(AnimationPath)
                 ? null
                 : ResourceLibrary.Get<SpriteAnimation>(AnimationPath);
+
+			AnimationTimeElapsed = 0f;
 		}
 
         private void OnFilterChanged()
@@ -192,11 +196,11 @@ namespace Sandbox
             SetModel( "models/quad.vmdl" );
 
 			EnableDrawing = true;
+			PhysicsEnabled = false;
 
 			Rotation = 0f;
 			Scale = new Vector2( 1f, 1f );
-
-            PhysicsEnabled = false;
+			AnimationSpeed = 1f;
 
             base.Spawn();
 		}
@@ -214,7 +218,8 @@ namespace Sandbox
 
             if (_anim != null)
             {
-                var (min, max) = _anim.GetFrameUvs( AnimationStart, AtlasRows, AtlasColumns );
+				AnimationTimeElapsed += Time.Delta * AnimationSpeed;
+				var (min, max) = _anim.GetFrameUvs(AnimationTimeElapsed, AtlasRows, AtlasColumns);
 
                 SceneObject.Attributes.Set("UvMin", min);
                 SceneObject.Attributes.Set("UvMax", max);
