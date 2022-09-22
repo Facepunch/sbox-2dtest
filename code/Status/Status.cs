@@ -28,7 +28,7 @@ public class Status
 
 	public virtual void Update(float dt)
     {
-		if (ElapsedTime > 3f)
+		if (ElapsedTime > 10f)
 			Player.RemoveStatus(this);
 	}
 

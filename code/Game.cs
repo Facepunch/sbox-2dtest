@@ -21,6 +21,8 @@ namespace Sandbox;
 public partial class MyGame : Sandbox.Game
 {
 	public new static MyGame Current => Sandbox.Game.Current as MyGame;
+	
+	public HUD Hud { get; private set; }
 
 	public OrthoCamera MainCamera { get; } = new OrthoCamera();
 
@@ -74,8 +76,9 @@ public partial class MyGame : Sandbox.Game
 
 		if (Host.IsClient)
         {
-			_ = new MainHud();
-        }
+			//_ = new MainHud();
+            Hud = new HUD();
+		}
 	}
 
 	[Event.Tick.Server]
@@ -99,10 +102,10 @@ public partial class MyGame : Sandbox.Game
         //    }
         //}
 
-        DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
-		DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
-		DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
-		DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
+  //      DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
+		//DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
+		//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
+		//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
 
 		HandleEnemySpawn();
 	}

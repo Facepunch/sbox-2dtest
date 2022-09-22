@@ -1,0 +1,71 @@
+RootPanel {
+    display: flex;
+    cursor: default;
+    height: 100%;
+    width: 100%;
+    pointer-events: all; 
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: stretch;
+    flex-wrap: nowrap;
+    padding: 0px 0px 0px 0px;
+
+    .tools {
+        flex-direction: column;
+        flex-grow: 0;
+        flex-shrink: 0;
+        width: 100px;
+        height: 100%;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 0px 20px 0px 20px;
+
+        .buttons {
+            cursor: pointer;
+            color: white;
+            border: 2px solid white;
+            border-radius: 15px;
+            height: 80px;
+            width: 80px;
+            justify-content: center;
+            mix-blend-mode: color;
+
+            .play {
+                font-size: 55px;
+                font-family: Arial;
+                color: white;
+                padding-right: 2px;
+            }
+
+            .next {
+                font-size: 45px;
+                font-family: Arial;
+                color: white;
+                padding-top: 6px;
+                padding-right: 3px;
+            }
+
+            .clear {
+                font-size: 43px;
+                font-family: Arial;
+                color: white;
+                padding-top: 7px;
+                padding-right: 3px;
+            }
+
+            &:hover {
+                background-color: #301B3F99;
+            }
+
+            &.active, &:active {
+                background-color: #3C415Cbb;
+            }
+        }
+    }
+
+    .info {
+        z-index: 10;
+        position: absolute;
+    }
+}

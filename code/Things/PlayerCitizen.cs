@@ -43,6 +43,8 @@ public partial class PlayerCitizen : Thing
 	public int AmmoCount { get; protected set; }
 	public float MaxAmmoCount { get; protected set; }
 	public float NumBullets { get; protected set; }
+	public float MoveSpeed { get; protected set; }
+	public const float BASE_MOVE_SPEED = 30f;
 
 	// STATUS
 	private List<Status> _statuses = new List<Status>();
@@ -75,6 +77,7 @@ public partial class PlayerCitizen : Thing
 			ReloadTime = 1.25f;
 			ReloadSpeed = 1f;
 			AttackSpeed = 0.99f;
+			MoveSpeed = 1f;
 
 			Health = 100f;
 			IsAlive = true;
@@ -100,7 +103,7 @@ public partial class PlayerCitizen : Thing
 
 		float dt = Time.Delta;
 		
-		Velocity += new Vector2(-Input.Left, Input.Forward) * 30f * Time.Delta;
+		Velocity += new Vector2(-Input.Left, Input.Forward) * MoveSpeed * BASE_MOVE_SPEED * Time.Delta;
 		Position += Velocity * Time.Delta;
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, Time.Delta);
 
@@ -199,7 +202,7 @@ public partial class PlayerCitizen : Thing
 			debug += status.ToString() + ": " + status.ElapsedTime + "\n";
         }
 
-		DebugText(debug);
+		//DebugText(debug);
 	}
 
 	void HandleShooting(float dt)
@@ -288,7 +291,8 @@ public partial class PlayerCitizen : Thing
 		var DIST = 7.3f;
 		Game.MainCamera.Position = new Vector2(MathX.Clamp(Position.x, -DIST, DIST), MathX.Clamp(Position.y, -DIST, DIST));
 
-		MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
+		//MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
+		//MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.RootPanel.MousePosition) - Position;
 		SetMouseOffset(MouseOffset);
 
 		//PostProcess.Clear();

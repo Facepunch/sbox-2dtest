@@ -26,7 +26,8 @@ public partial class Thing : Sprite
 
 	public virtual void Update(float dt)
     {
-		//Utils.DrawCircle(Position, Radius, 10, Time.Now, Color.Red);
+        Utils.DrawCircle(Position, Radius, 7, Time.Now, Color.Red);
+		DebugText(Depth.ToString("#.#"));
 	}
 
 	public virtual void Collide(Thing other, float percent, float dt)
