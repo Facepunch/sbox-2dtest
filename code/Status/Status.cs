@@ -28,9 +28,9 @@ public class Status
 
 	public virtual void Update(float dt)
     {
-		if (ElapsedTime > 10f)
-			Player.RemoveStatus(this);
-	}
+        //if (ElapsedTime > 10f)
+        //    Player.RemoveStatus(this);
+    }
 
 	public virtual void Remove()
     {

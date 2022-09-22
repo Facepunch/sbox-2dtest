@@ -28,17 +28,24 @@ namespace Sandbox
 			//TexturePath = "textures/sprites/mummy_walk3.png";
 			//TexturePath = "textures/sprites/zombie_bw.png";
 			// TexturePath = "textures/sprites/mummy_walk3.png";
-			SpriteTexture = "textures/sprites/zombie.png";
+			//SpriteTexture = "textures/sprites/zombie.png";
+
+			if (Host.IsServer)
+            {
+				SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie_walk.png", 1, 2);
+				AnimationPath = "textures/sprites/zombie_walk.frames";
+
+				FeetOffset = 0.35f;
+				Radius = 0.3f;
+				Health = 40f;
+				MaxHealth = Health;
+				MoveTimeOffset = Rand.Float(0f, 4f);
+				MoveTimeSpeed = Rand.Float(6f, 9f);
+			}
 
 			//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
 			//RenderColor = Color.Random;
 			//Rotation = Time.Now * 0.1f;
-			FeetOffset = 0.35f;
-			Radius = 0.3f;
-			Health = 40f;
-			MaxHealth = Health;
-			MoveTimeOffset = Rand.Float(0f, 4f);
-			MoveTimeSpeed = Rand.Float(6f, 9f);
 
             Filter = SpriteFilter.Pixelated;
 			//ColorFill = new ColorHsv(Rand.Float(0f, 360f), 0.5f, 1f, 0.125f);
@@ -49,15 +56,30 @@ namespace Sandbox
 			//_shadow.LocalPosition = new Vector2(0.35f, 0f);
 		}
 
-		public override void Update(float dt)
+		[Event.Tick.Client]
+        public void ClientTick()
+        {
+            //DebugText(AnimationTimeElapsed.ToString());
+        }
+
+        //[Event.Tick.Server]
+        //public void ServerTick()
+        //{
+        //	//DebugText((_anim != null).ToString());
+        //}
+
+        public override void Update(float dt)
         {
 			base.Update(dt);
 
 			var closestPlayer = Game.GetClosestPlayer(Position);
 			Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
-			Position += Velocity * dt * (0.75f + Utils.FastSin(MoveTimeOffset + Time.Now * MoveTimeSpeed) * 0.25f);
+			float speed = 0.7f + Utils.FastSin(MoveTimeOffset + Time.Now * MoveTimeSpeed) * 0.3f;
+			Position += Velocity * dt * speed;
 			Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
 			Velocity *= 0.975f;
+
+			AnimationSpeed = Utils.Map(speed, 0.4f, 1f, 0.75f, 3f, EasingType.ExpoIn);
 
 			//enemy.Rotation = enemy.Velocity.LengthSquared * Utils.FastSin(Time.Now * 12f);
 			//enemy.Rotation = enemy.Velocity.Length * Utils.FastSin(Time.Now * MathF.PI * 7f) * 4.5f;

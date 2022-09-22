@@ -30,6 +30,7 @@ public partial class MyGame : Sandbox.Game
 
 	public int EnemyCount { get; private set; }
 	public const float MAX_ENEMY_COUNT = 350;
+	//public const float MAX_ENEMY_COUNT = 1;   
 
 	private readonly List<Thing> _things = new();
 	public record struct GridSquare(int x, int y);
@@ -64,14 +65,14 @@ public partial class MyGame : Sandbox.Game
 				Position = Vector2.Zero
 			};
 
-			//var animTest = new Sprite
-   //         {
-   //             SpriteTexture = SpriteTexture.Atlas("textures/sprites/tile_test.png", 4, 4),
-   //             AnimationPath = "textures/sprites/tile_test.frames",
+			var animTest = new Sprite
+            {
+                SpriteTexture = SpriteTexture.Atlas("textures/sprites/tile_test.png", 4, 4),
+                AnimationPath = "textures/sprites/tile_test.frames",
 
-   //             Filter = SpriteFilter.Pixelated,
-   //             Scale = 4f
-   //         };
+                Filter = SpriteFilter.Pixelated,
+                Scale = 4f
+            };
         }
 
 		if (Host.IsClient)

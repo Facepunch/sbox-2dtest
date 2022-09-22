@@ -24,16 +24,19 @@ public class PlayerCursor : Panel
 
 }
 
-public partial class HUD : Sandbox.HudEntity<RootPanel>
+//public partial class HUD : Sandbox.HudEntity<RootPanel>
+public partial class HUD : RootPanel
 {
 	public static Vector2 MousePos { get; private set; }
 
 	public HUD()
 	{
-		if ( !IsClient ) return;
+		//RootPanel.StyleSheet.Load("ui/HUD.scss");
+  //      RootPanel.AddChild<ToolsPanel>("tools");
+  //      RootPanel.AddChild<ToolsPanel>("tools");
 
-		RootPanel.StyleSheet.Load( "ui/HUD.scss" );
-		RootPanel.AddChild<ToolsPanel>( "tools" );
-		RootPanel.AddChild<ToolsPanel>("tools");
-	}
+        StyleSheet.Load("ui/HUD.scss");
+        AddChild<ToolsPanel>("tools");
+        AddChild<ToolsPanel>("tools");
+    }
 }

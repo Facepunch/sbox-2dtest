@@ -42,9 +42,11 @@ public partial class PlayerCitizen : Thing
 	public float ReloadSpeed { get; private set; }
 	public int AmmoCount { get; protected set; }
 	public float MaxAmmoCount { get; protected set; }
-	public float NumBullets { get; protected set; }
 	public float MoveSpeed { get; protected set; }
 	public const float BASE_MOVE_SPEED = 30f;
+	public float NumBullets { get; protected set; }
+	public float BulletSpread { get; protected set; }
+	public float BulletSpeed { get; protected set; }
 
 	// STATUS
 	private List<Status> _statuses = new List<Status>();
@@ -78,6 +80,9 @@ public partial class PlayerCitizen : Thing
 			ReloadSpeed = 1f;
 			AttackSpeed = 0.99f;
 			MoveSpeed = 1f;
+			NumBullets = 1f;
+			BulletSpread = 35f;
+			BulletSpeed = 7.5f;
 
 			Health = 100f;
 			IsAlive = true;
@@ -199,14 +204,17 @@ public partial class PlayerCitizen : Thing
 			if (status.ShouldUpdate)
 				status.Update(dt);
 
-			debug += status.ToString() + ": " + status.ElapsedTime + "\n";
-        }
+			debug += status.ToString() + "\n";
+			//debug += ": " + status.ElapsedTime + "\n";
+		}
 
-		//DebugText(debug);
-	}
+		DebugText(debug);
+    }
 
 	void HandleShooting(float dt)
     {
+		NumBullets = 9f;
+
 		if (IsReloading)
 		{
 			Timer -= dt * ReloadSpeed;
@@ -241,19 +249,28 @@ public partial class PlayerCitizen : Thing
 
 	void Shoot()
 	{
-		var bullet = new Bullet
-		{
-			Position = Position,
-			Depth = -1f,
-			Velocity = AimDir * 7.5f,
-			Shooter = this,
-			Damage = 10f,
-			Force = 2.25f,
-			TempWeight = 3f,
-			Lifetime = 1.5f,
-		};
+		return;
+		int num_bullets_int = (int)NumBullets;
+		float currAngleOffset = num_bullets_int == 1 ? 0f : -BulletSpread * 0.5f;
+		float increment = num_bullets_int == 1 ? 0f : BulletSpread / (float)(num_bullets_int - 1);
 
-		Game.AddThing(bullet);
+		for (int i = 0; i < num_bullets_int; i++)
+		{
+			var dir = Utils.RotateVector(AimDir, currAngleOffset + increment * i);
+			var bullet = new Bullet
+			{
+				Position = Position,
+				Depth = -1f,
+				Velocity = dir * BulletSpeed,
+				Shooter = this,
+				Damage = 10f,
+				Force = 2.25f,
+				TempWeight = 3f,
+				Lifetime = 1.5f,
+			};
+
+			Game.AddThing(bullet);
+		}
 	}
 
 	void HandleBounds()
@@ -292,8 +309,11 @@ public partial class PlayerCitizen : Thing
 		Game.MainCamera.Position = new Vector2(MathX.Clamp(Position.x, -DIST, DIST), MathX.Clamp(Position.y, -DIST, DIST));
 
 		//MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
+
+		MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition) - Position;
 		//MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.RootPanel.MousePosition) - Position;
-		SetMouseOffset(MouseOffset);
+
+        SetMouseOffset(MouseOffset);
 
 		//PostProcess.Clear();
 	}
