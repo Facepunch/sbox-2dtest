@@ -19,6 +19,9 @@ namespace Sandbox
 
 		public float MaxHealth { get; private set; }
 
+		public bool IsSpawning { get; private set; }
+		public float ElapsedTime { get; private set; }
+
 		//private Sprite _shadow;
 
 		public override void Spawn()
@@ -32,8 +35,9 @@ namespace Sandbox
 
 			if (Host.IsServer)
             {
-				SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie_walk.png", 1, 2);
-				AnimationPath = "textures/sprites/zombie_walk.frames";
+				SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie_spritesheet.png", 4, 5);
+				AnimationPath = "textures/sprites/zombie_spawn.frames";
+				AnimationSpeed = 2f;
 
 				FeetOffset = 0.35f;
 				Radius = 0.3f;
@@ -41,6 +45,9 @@ namespace Sandbox
 				MaxHealth = Health;
 				MoveTimeOffset = Rand.Float(0f, 4f);
 				MoveTimeSpeed = Rand.Float(6f, 9f);
+
+				IsSpawning = true;
+				ElapsedTime = 0f;
 			}
 
 			//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
@@ -51,9 +58,7 @@ namespace Sandbox
 			//ColorFill = new ColorHsv(Rand.Float(0f, 360f), 0.5f, 1f, 0.125f);
 			ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
 
-			//_shadow = new Shadow();
-			//_shadow.Parent = this;
-			//_shadow.LocalPosition = new Vector2(0.35f, 0f);
+			Scale = new Vector2(1f, 1f) * 0.8f;
 		}
 
 		[Event.Tick.Client]
@@ -62,15 +67,32 @@ namespace Sandbox
             //DebugText(AnimationTimeElapsed.ToString());
         }
 
-        //[Event.Tick.Server]
-        //public void ServerTick()
-        //{
-        //	//DebugText((_anim != null).ToString());
-        //}
+        [Event.Tick.Server]
+        public void ServerTick()
+        {
+			//DebugText(SinceSpawning.Absolute.ToString("#.##"));
+		}
 
         public override void Update(float dt)
         {
 			base.Update(dt);
+			ElapsedTime += dt;
+
+			if (IsSpawning)
+            {
+				Depth = -Position.y * 10f;
+
+				if (ElapsedTime > 1.75f)
+                {
+					IsSpawning = false;
+					AnimationPath = "textures/sprites/zombie_walk.frames";
+				} 
+				else
+                {
+					return;
+                }
+			}
+				
 
 			var closestPlayer = Game.GetClosestPlayer(Position);
 			Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
@@ -87,7 +109,13 @@ namespace Sandbox
 			//DebugOverlay.Line(enemy.Position, enemy.Position + enemy.Radius, 0f, false);
 			//DebugText(Health.ToString("#.") + "/" + MaxHealth.ToString("#."));
 
-			Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * 0.8f;
+			//DebugText(MathF.Abs(Velocity.x).ToString("#.#"));
+
+			if(MathF.Abs(Velocity.x) > 0.2f)
+            {
+				Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * 0.8f;
+			}
+            
 			Depth = -Position.y * 10f;
 
 			var gridPos = Game.GetGridSquareForPos(Position);

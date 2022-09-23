@@ -28,7 +28,7 @@ namespace Sandbox
 
 			Scale = new Vector2(0.2f, 0.2f);
 			SpawnTime = 0f;
-			Damage = 5f;
+			Damage = 15f;
 			AddTempWeight = 2f;
 			Force = 0.75f;
 			Radius = 0.1f;
@@ -71,7 +71,7 @@ namespace Sandbox
 		{
 			base.Collide(other, percent, dt);
 
-			if (other is Enemy enemy)
+			if (other is Enemy enemy && !enemy.IsSpawning)
 			{
 				enemy.Damage(Damage);
 

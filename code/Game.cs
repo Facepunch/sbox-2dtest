@@ -55,7 +55,7 @@ public partial class MyGame : Sandbox.Game
 			}
 
 			//for (var i = 0; i < 750; ++i)
-			for (var i = 0; i < 300; ++i)
+			for (var i = 0; i < 5; ++i)
 			{
                 SpawnEnemy();
             }
