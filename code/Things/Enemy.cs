@@ -21,6 +21,11 @@ namespace Sandbox
 
 		public bool IsSpawning { get; private set; }
 		public float ElapsedTime { get; private set; }
+		public bool IsDying { get; private set; }
+		public float DeathTimeElapsed { get; private set; }
+		private Vector2 _deathScale;
+
+		public static float SCALE_FACTOR = 0.8f;
 
 		//private Sprite _shadow;
 
@@ -35,7 +40,7 @@ namespace Sandbox
 
 			if (Host.IsServer)
             {
-				SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie_spritesheet.png", 4, 5);
+				SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie_spritesheet2.png", 5, 5);
 				AnimationPath = "textures/sprites/zombie_spawn.frames";
 				AnimationSpeed = 2f;
 
@@ -58,7 +63,7 @@ namespace Sandbox
 			//ColorFill = new ColorHsv(Rand.Float(0f, 360f), 0.5f, 1f, 0.125f);
 			ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
 
-			Scale = new Vector2(1f, 1f) * 0.8f;
+			Scale = new Vector2(1f, 1f) * SCALE_FACTOR;
 		}
 
 		[Event.Tick.Client]
@@ -78,7 +83,19 @@ namespace Sandbox
 			base.Update(dt);
 			ElapsedTime += dt;
 
-			if (IsSpawning)
+			if(IsDying)
+            {
+                DeathTimeElapsed += dt;
+				Scale = _deathScale * Utils.Map(DeathTimeElapsed, 0f, 0.3f, 1f, 1.2f);
+
+                if (DeathTimeElapsed > 0.3f)
+                {
+                    Remove();
+                }
+				return;
+            }
+
+            if (IsSpawning)
             {
 				Depth = -Position.y * 10f;
 
@@ -92,7 +109,6 @@ namespace Sandbox
 					return;
                 }
 			}
-				
 
 			var closestPlayer = Game.GetClosestPlayer(Position);
 			Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
@@ -113,7 +129,7 @@ namespace Sandbox
 
 			if(MathF.Abs(Velocity.x) > 0.2f)
             {
-				Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * 0.8f;
+				Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * SCALE_FACTOR;
 			}
             
 			Depth = -Position.y * 10f;
@@ -163,7 +179,7 @@ namespace Sandbox
         {
             base.Collide(other, percent, dt);
 
-			if (other is Enemy || other is PlayerCitizen)
+			if ((other is Enemy enemy && !enemy.IsDying) || other is PlayerCitizen)
             {
 				Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 10f) * (1f + other.TempWeight) * dt;
 			}
@@ -171,15 +187,31 @@ namespace Sandbox
 
         public void Damage(float damage)
         {
+			if (IsDying)
+				return;
+
 			Health -= damage;
 			DamageNumbers.Create(Position + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-2f, 2f)) * 0.1f, damage);
 			Flash(0.12f);
 
 			if (Health <= 0f)
             {
-                Remove();
+				StartDying();
 			}
         }
+
+		public void StartDying()
+        {
+			IsDying = true;
+			DeathTimeElapsed = 0f;
+			AnimationPath = "textures/sprites/zombie_die.frames";
+			AnimationSpeed = 5.5f;
+
+			_isFlashing = false;
+			ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
+
+			_deathScale = Scale;
+		}
 
 		public void Flash(float time)
         {

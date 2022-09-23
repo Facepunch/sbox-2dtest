@@ -133,6 +133,10 @@ public partial class MyGame : Sandbox.Game
 			//Depth = Rand.Float(-128f, 128f),
 		};
 
+		var closestPlayer = GetClosestPlayer(pos);
+		if (closestPlayer?.Position.x > pos.x)
+			enemy.Scale = new Vector2(-1f, 1f) * Enemy.SCALE_FACTOR;
+
 		AddThing(enemy);
 		EnemyCount++;
 	}

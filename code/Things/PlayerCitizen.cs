@@ -266,6 +266,7 @@ public partial class PlayerCitizen : Thing
 	void Shoot()
 	{
 		return;
+
 		int num_bullets_int = (int)NumBullets;
 		float currAngleOffset = num_bullets_int == 1 ? 0f : -BulletSpread * 0.5f;
 		float increment = num_bullets_int == 1 ? 0f : BulletSpread / (float)(num_bullets_int - 1);
@@ -357,7 +358,7 @@ public partial class PlayerCitizen : Thing
 	{
 		base.Collide(other, percent, dt);
 
-		if (other is Enemy || other is PlayerCitizen)
+		if ((other is Enemy enemy && !enemy.IsDying) || other is PlayerCitizen)
 		{
 			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * dt;
 		}
