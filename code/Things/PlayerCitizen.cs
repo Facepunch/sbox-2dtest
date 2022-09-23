@@ -49,7 +49,7 @@ public partial class PlayerCitizen : Thing
 	public float BulletSpeed { get; protected set; }
 
 	// STATUS
-	private List<Status> _statuses = new List<Status>();
+	[Net] public IList<Status> Statuses { get; private set; }
 
 	// MODIFIERS
 	private Dictionary<Status, Dictionary<string, ModifierData>> _modifiers = new Dictionary<Status, Dictionary<string, ModifierData>>();
@@ -100,10 +100,24 @@ public partial class PlayerCitizen : Thing
 
 			//Modify("AttackSpeed", 0.5f, ModifierType.Add);
 			//Modify("AttackSpeed", 2f, ModifierType.Mult);
-
+			Statuses = new List<Status>();
 			AddStatus(new ExampleStatus());
 			AddStatus(new ExampleStatus2());
 		}
+	}
+
+	[Event.Tick.Client]
+	public void ClientTick()
+	{
+		//Log.Info("local player: " + (Game.Client != null));
+		//DebugText(AnimationTimeElapsed.ToString());
+	}
+
+	[Event.Tick.Server]
+	public void ServerTick()
+	{
+		//Log.Info("local player: " + (Game.Client != null));
+		//DebugText(SinceSpawning.Absolute.ToString("#.##"));
 	}
 
 	public override void Simulate( Client cl )
@@ -209,14 +223,18 @@ public partial class PlayerCitizen : Thing
 			HandleStatuses(dt);
 			HandleShooting(dt);
 		}
+		else // Client
+        {
+			Game.Hud.Tools.Refresh();
+        }
 	}
 
 	void HandleStatuses(float dt)
     {
 		string debug = "";
-		for(int i = _statuses.Count - 1; i >= 0; i--)
+		for(int i = Statuses.Count - 1; i >= 0; i--)
 		{
-			Status status = _statuses[i];
+			Status status = Statuses[i];
 			if (status.ShouldUpdate)
 				status.Update(dt);
 
@@ -224,7 +242,7 @@ public partial class PlayerCitizen : Thing
 			//debug += ": " + status.ElapsedTime + "\n";
 		}
 
-		//DebugText(debug);
+		DebugText(debug);
     }
 
 	void HandleShooting(float dt)
@@ -366,7 +384,7 @@ public partial class PlayerCitizen : Thing
 
 	public void AddStatus(Status status)
     {
-		_statuses.Add(status);
+		Statuses.Add(status);
 		status.Init(this);
     }
 
@@ -439,7 +457,7 @@ public partial class PlayerCitizen : Thing
     {
 		Log.Info("RemoveStatus: " + status);
 		RemoveModifiers(status);
-		_statuses.Remove(status);
+		Statuses.Remove(status);
     }
 
 	public void RemoveModifiers(Status status)

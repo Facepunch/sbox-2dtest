@@ -7,12 +7,13 @@ using static Sandbox.MyGame;
 
 namespace Sandbox;
 
-public class Status
+public partial class Status : BaseNetworkable
 {
 	public bool ShouldUpdate { get; protected set; }
 	public PlayerCitizen Player { get; protected set; }
-	public int Level { get; protected set; }
+	[Net] public int Level { get; protected set; }
 	public TimeSince ElapsedTime { get; protected set; }
+	[Net] public string Description { get; protected set; }
 
 	public Status()
 	{

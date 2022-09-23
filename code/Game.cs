@@ -24,6 +24,8 @@ public partial class MyGame : Sandbox.Game
 	
 	public HUD Hud { get; private set; }
 
+	public PlayerCitizen LocalPlayer => Local.Client.Pawn as PlayerCitizen;
+
 	public OrthoCamera MainCamera { get; } = new OrthoCamera();
 
 	public readonly List<PlayerCitizen> PlayerList = new();
@@ -180,6 +182,8 @@ public partial class MyGame : Sandbox.Game
 	public override void ClientJoined( Client client )
 	{
 		base.ClientJoined( client );
+
+		Log.Info("ClientJoined");
 
 		// Create a pawn for this client to play with
 		var player = new PlayerCitizen();
