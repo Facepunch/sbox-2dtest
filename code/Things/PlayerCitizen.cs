@@ -60,14 +60,18 @@ public partial class PlayerCitizen : Thing
 		base.Spawn();
 
 		//TexturePath = "textures/sprites/head.png";
-		SpriteTexture = "textures/sprites/citizen.png";
+		//SpriteTexture = "textures/sprites/citizen.png";
 		Filter = SpriteFilter.Pixelated;
 		//Scale = new Vector2(1f, 142f / 153f);
 		//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
 
 		if (Host.IsServer)
         {
-            ArrowAimer = new Arrow();
+			SpriteTexture = SpriteTexture.Atlas("textures/sprites/player_spritesheet.png", 2, 2);
+			AnimationPath = "textures/sprites/player_idle.frames";
+			AnimationSpeed = 0.66f;
+
+			ArrowAimer = new Arrow();
             ArrowAimer.Parent = this;
 			//_arrow.LocalPosition = new Vector3(0.3f, 0f, 0f);
 			ArrowAimer.Depth = 100f;
@@ -107,14 +111,26 @@ public partial class PlayerCitizen : Thing
 		base.Simulate( cl );
 
 		float dt = Time.Delta;
-		
-		Velocity += new Vector2(-Input.Left, Input.Forward) * MoveSpeed * BASE_MOVE_SPEED * Time.Delta;
+
+		Vector2 inputVector = new Vector2(-Input.Left, Input.Forward);
+		Velocity += inputVector * MoveSpeed * BASE_MOVE_SPEED * Time.Delta;
 		Position += Velocity * Time.Delta;
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, Time.Delta);
 
+		if(Velocity.LengthSquared > 0.01f && inputVector.LengthSquared > 0.1f)
+        {
+			AnimationPath = "textures/sprites/player_walk.frames";
+			AnimationSpeed = Utils.Map(Velocity.Length, 0f, 2f, 1.5f, 2f);
+		} 
+		else
+        {
+			AnimationPath = "textures/sprites/player_idle.frames";
+			AnimationSpeed = 0.66f;
+		}
+
 		HandleBounds();
 
-		Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 7f) * 2f;
+		Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 7f) * 1.5f;
 
 		Depth = -Position.y * 10f;
 
@@ -208,7 +224,7 @@ public partial class PlayerCitizen : Thing
 			//debug += ": " + status.ElapsedTime + "\n";
 		}
 
-		DebugText(debug);
+		//DebugText(debug);
     }
 
 	void HandleShooting(float dt)
