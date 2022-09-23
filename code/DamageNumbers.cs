@@ -76,20 +76,19 @@ internal static class DamageNumbers
 			particle.SetPositionComponent( 22, 1, 1 );
 
 			number /= 10;
-			particle.SetPositionComponent( 21, 0, number % 10 );
+			particle.SetPositionComponent( 21, 0, MathF.Floor(number % 10) );
 		}
 		else
 		{
-			particle.SetPositionComponent( 21, 2, number % 1 );
+			particle.SetPositionComponent( 21, 2, number % 10 );
 			particle.SetPositionComponent( 22, 2, 1 );
 
 			number /= 10;
-			particle.SetPositionComponent( 21, 1, number % 10 );
+			particle.SetPositionComponent( 21, 1, MathF.Floor(number % 10));
 			particle.SetPositionComponent( 22, 1, 1 );
 
 			number /= 10;
-
-			particle.SetPositionComponent( 21, 0, number % 100 );
+			particle.SetPositionComponent( 21, 0, MathF.Floor(number % 100));
 			particle.SetPositionComponent( 22, 0, 1 );
 		}
 	}

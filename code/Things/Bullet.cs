@@ -73,7 +73,7 @@ namespace Sandbox
 
 			if (other is Enemy enemy && !enemy.IsSpawning && !enemy.IsDying)
 			{
-				enemy.Damage(Damage);
+				enemy.Damage(16f);
 
 				enemy.Velocity += Velocity.Normal * Force;
 				enemy.TempWeight += AddTempWeight;
