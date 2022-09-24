@@ -53,6 +53,11 @@ namespace Sandbox
 
 				IsSpawning = true;
 				ElapsedTime = 0f;
+				
+				Scale = new Vector2(1f, 1f) * SCALE_FACTOR;
+
+				CollideWith.Add(typeof(Enemy));
+				CollideWith.Add(typeof(PlayerCitizen));
 			}
 
 			//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
@@ -62,8 +67,6 @@ namespace Sandbox
             Filter = SpriteFilter.Pixelated;
 			//ColorFill = new ColorHsv(Rand.Float(0f, 360f), 0.5f, 1f, 0.125f);
 			ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
-
-			Scale = new Vector2(1f, 1f) * SCALE_FACTOR;
 		}
 
 		[Event.Tick.Client]

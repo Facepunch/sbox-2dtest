@@ -14,6 +14,8 @@ public partial class Thing : Sprite
 	public GridSquare GridPos { get; set; }
 	public bool IsRemoved { get; private set; }
 
+	public List<Type> CollideWith = new List<Type>();
+
 	public Thing()
     {
 
@@ -26,8 +28,8 @@ public partial class Thing : Sprite
 
 	public virtual void Update(float dt)
     {
-        //Utils.DrawCircle(Position, Radius, 7, Time.Now, Color.Red);
-		//DebugText(Depth.ToString("#.#"));
+  //      Utils.DrawCircle(Position, Radius, 7, Time.Now, Color.Red);
+		//DebugText(Radius.ToString("#.#"));
 	}
 
 	public virtual void Collide(Thing other, float percent, float dt)

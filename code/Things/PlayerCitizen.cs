@@ -48,6 +48,8 @@ public partial class PlayerCitizen : Thing
 	public float BulletSpread { get; protected set; }
 	public float BulletSpeed { get; protected set; }
 
+	private int _shotNum;
+
 	// STATUS
 	[Net] public IList<Status> Statuses { get; private set; }
 
@@ -93,6 +95,9 @@ public partial class PlayerCitizen : Thing
 			Radius = 0.2f;
 			GridPos = Game.GetGridSquareForPos(Position);
 			AimDir = Vector2.Up;
+
+			CollideWith.Add(typeof(Enemy));
+			CollideWith.Add(typeof(PlayerCitizen));
 
 			//SetProperty("AttackSpeed", 1f);
 			//SetProperty("MaxAmmoCount", 3);
@@ -247,15 +252,12 @@ public partial class PlayerCitizen : Thing
 
 	void HandleShooting(float dt)
     {
-		NumBullets = 9f;
-
 		if (IsReloading)
 		{
 			Timer -= dt * ReloadSpeed;
 			if (Timer <= 0f)
 			{
-				IsReloading = false;
-				AmmoCount = (int)MaxAmmoCount;
+				Reload();
 			}
 		}
 		else
@@ -283,7 +285,9 @@ public partial class PlayerCitizen : Thing
 
 	void Shoot()
 	{
-		return;
+		//return;
+
+		float start_angle = MathF.Sin(-_shotNum * 2f) * 10f;
 
 		int num_bullets_int = (int)NumBullets;
 		float currAngleOffset = num_bullets_int == 1 ? 0f : -BulletSpread * 0.5f;
@@ -291,7 +295,7 @@ public partial class PlayerCitizen : Thing
 
 		for (int i = 0; i < num_bullets_int; i++)
 		{
-			var dir = Utils.RotateVector(AimDir, currAngleOffset + increment * i);
+			var dir = Utils.RotateVector(AimDir, start_angle + currAngleOffset + increment * i);
 			var bullet = new Bullet
 			{
 				Position = Position,
@@ -306,6 +310,15 @@ public partial class PlayerCitizen : Thing
 
 			Game.AddThing(bullet);
 		}
+
+		_shotNum++;
+	}
+
+	void Reload()
+    {
+		AmmoCount = (int)MaxAmmoCount;
+		IsReloading = false;
+		_shotNum = 0;
 	}
 
 	void HandleBounds()

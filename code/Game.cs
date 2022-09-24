@@ -34,6 +34,9 @@ public partial class MyGame : Sandbox.Game
 	public const float MAX_ENEMY_COUNT = 350;
 	//public const float MAX_ENEMY_COUNT = 1;   
 
+	public int CoinCount { get; private set; }
+	public const float MAX_COIN_COUNT = 100;
+
 	private readonly List<Thing> _things = new();
 	public record struct GridSquare(int x, int y);
 	public Dictionary<GridSquare, List<Thing>> ThingGridPositions = new Dictionary<GridSquare, List<Thing>>();
@@ -115,7 +118,7 @@ public partial class MyGame : Sandbox.Game
 
 	void HandleEnemySpawn()
     {
-		if(_enemySpawnTime > 0.25f)
+		if(_enemySpawnTime > Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.25f, EasingType.QuadOut))
         {
 			SpawnEnemy();
 			_enemySpawnTime = 0f;
@@ -127,7 +130,7 @@ public partial class MyGame : Sandbox.Game
 		if (EnemyCount >= MAX_ENEMY_COUNT)
 			return;
 
-		var pos = new Vector2(Rand.Float(-18f, 18f), Rand.Float(-14f, 14f));
+		var pos = new Vector2(Rand.Float(BOUNDS_MIN.x, BOUNDS_MAX.x), Rand.Float(BOUNDS_MIN.y, BOUNDS_MAX.y));
 
 		var enemy = new Enemy
 		{
@@ -141,6 +144,24 @@ public partial class MyGame : Sandbox.Game
 
 		AddThing(enemy);
 		EnemyCount++;
+
+		SpawnCoin();
+	}
+
+	void SpawnCoin()
+    {
+		if (CoinCount >= MAX_ENEMY_COUNT)
+			return;
+
+		var pos = new Vector2(Rand.Float(BOUNDS_MIN.x, BOUNDS_MAX.x), Rand.Float(BOUNDS_MIN.y, BOUNDS_MAX.y));
+
+		var coin = new Coin()
+		{
+			Position = pos,
+		};
+
+		AddThing(coin);
+		CoinCount++;
 	}
 
 	public void HandleThingCollisionForGridSquare(Thing thing, GridSquare gridSquare, float dt)
@@ -162,7 +183,7 @@ public partial class MyGame : Sandbox.Game
 				return;
 
 			var other = things[i];
-			if (other == thing || other.IsRemoved)
+			if (other == thing || other.IsRemoved || !thing.CollideWith.Contains(other.GetType()))
 				continue;
 
 			var dist_sqr = (thing.Position - other.Position).LengthSquared;

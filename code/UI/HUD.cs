@@ -40,5 +40,7 @@ public partial class HUD : RootPanel
         StyleSheet.Load("ui/HUD.scss");
         Tools = AddChild<ToolsPanel>("tools");
 		Tools.Hud = this;
-    }
+
+		//AddChild<PlayerCursor>("cursor");
+	}
 }

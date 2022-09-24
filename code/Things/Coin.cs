@@ -7,7 +7,7 @@ using static Sandbox.MyGame;
 
 namespace Sandbox
 {
-	public partial class Bullet : Thing
+	public partial class Coin : Thing
 	{
 		public TimeSince SpawnTime { get; private set; }
 
@@ -22,21 +22,23 @@ namespace Sandbox
 		{
 			base.Spawn();
 
-			if(Host.IsServer)
-            {
-				SpriteTexture = "textures/sprites/bullet.png";
+			if (Host.IsServer)
+			{
+				SpriteTexture = SpriteTexture.Atlas("textures/sprites/coin.png", 3, 3);
+				AnimationPath = "textures/sprites/coin_idle.frames";
+				AnimationSpeed = 3f;
 
-				//RenderColor = Color.Random;
-
-				Scale = new Vector2(0.2f, 0.2f);
+				Scale = new Vector2(1f, 1f) * 0.4f;
 				SpawnTime = 0f;
 				Damage = 10f;
 				AddTempWeight = 2f;
 				Force = 0.75f;
-				Radius = 0.1f;
+				Radius = 0.125f;
 				Lifetime = 1f;
 
 				CollideWith.Add(typeof(Enemy));
+				CollideWith.Add(typeof(PlayerCitizen));
+				CollideWith.Add(typeof(Coin));
 			}
 
 			Filter = SpriteFilter.Pixelated;
@@ -47,12 +49,7 @@ namespace Sandbox
 			base.Update(dt);
 
 			Position += Velocity * dt;
-
-			if (SpawnTime > Lifetime)
-            {
-				Remove();
-				return;
-			}
+			Velocity *= 0.985f;
 
 			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
@@ -72,21 +69,23 @@ namespace Sandbox
 						return;
 				}
 			}
-        }
+		}
 
 		public override void Collide(Thing other, float percent, float dt)
 		{
 			base.Collide(other, percent, dt);
 
-			if (other is Enemy enemy && !enemy.IsSpawning && !enemy.IsDying)
+			if (other is Enemy enemy && !enemy.IsDying)
 			{
-				enemy.Damage(Damage);
-
-				enemy.Velocity += Velocity.Normal * Force;
-				enemy.TempWeight += AddTempWeight;
-
+				Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 10f) * (1f + other.TempWeight) * dt;
+			} 
+			else if (other is PlayerCitizen player)
+			{
 				Remove();
-                return;
+			}
+			else if (other is Coin coin)
+			{
+				Remove();
 			}
 		}
 	}
