@@ -80,7 +80,7 @@ namespace Sandbox
 		{
 			base.Collide(other, percent, dt);
 
-			if (other is Enemy enemy && !enemy.IsSpawning && !enemy.IsDying)
+			if (other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime > 1.5f))
 			{
 				enemy.Damage(Damage, Shooter);
 

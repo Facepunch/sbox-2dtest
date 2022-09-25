@@ -29,7 +29,9 @@ public partial class HUD : RootPanel
 {
 	//public static Vector2 MousePos { get; private set; }
 
-	public ToolsPanel Tools { get; private set; }
+	public ToolsPanel ToolsPanel { get; private set; }
+	public InfoPanel InfoPanel { get; private set; }
+	public XpBarPanel XpBarPanel { get; private set; }
 
 	public HUD()
 	{
@@ -38,8 +40,10 @@ public partial class HUD : RootPanel
   //      RootPanel.AddChild<ToolsPanel>("tools");
 
         StyleSheet.Load("ui/HUD.scss");
-        Tools = AddChild<ToolsPanel>("tools");
-		Tools.Hud = this;
+
+		ToolsPanel = AddChild<ToolsPanel>("tools");
+		InfoPanel = AddChild<InfoPanel>("info_panel");
+		XpBarPanel = AddChild<XpBarPanel>("xp_bar_panel");
 
 		//AddChild<PlayerCursor>("cursor");
 	}

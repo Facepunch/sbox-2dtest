@@ -91,6 +91,7 @@ namespace Sandbox
 			} 
 			else if (other is PlayerCitizen player)
 			{
+				player.AddExperience(Value);
 				Remove();
 			}
 			else if (other is Coin coin)

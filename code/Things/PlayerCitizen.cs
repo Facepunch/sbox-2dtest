@@ -35,24 +35,31 @@ public partial class PlayerCitizen : Thing
 	public float FeetOffset { get; private set; }
 
 	public float Timer { get; protected set; }
-	public float AttackTime { get; protected set; }
-	public float AttackSpeed { get; private set; }
+	[Net] public float AttackTime { get; protected set; }
+	[Net] public float AttackSpeed { get; private set; }
 	public bool IsReloading { get; protected set; }
-	public float ReloadTime { get; protected set; }
-	public float ReloadSpeed { get; private set; }
-	public int AmmoCount { get; protected set; }
-	public float MaxAmmoCount { get; protected set; }
-	public float MoveSpeed { get; protected set; }
+	[Net] public float ReloadTime { get; protected set; }
+	[Net] public float ReloadSpeed { get; private set; }
+	[Net] public int AmmoCount { get; protected set; }
+	[Net] public float MaxAmmoCount { get; protected set; }
+	[Net] public float Dmg { get; protected set; }
+	[Net] public float MoveSpeed { get; protected set; }
 	public const float BASE_MOVE_SPEED = 30f;
-	public float NumBullets { get; protected set; }
-	public float BulletSpread { get; protected set; }
-	public float BulletSpeed { get; protected set; }
+	[Net] public float NumBullets { get; protected set; }
+	[Net] public float BulletSpread { get; protected set; }
+	[Net] public float BulletSpeed { get; protected set; }
 
 	private int _shotNum;
 
-	public float CoinAttractRange { get; protected set; }
-	public float CoinAttractStrength { get; protected set; }
-	public float Luck { get; protected set; }
+	[Net] public float CoinAttractRange { get; protected set; }
+	[Net] public float CoinAttractStrength { get; protected set; }
+	[Net] public float Luck { get; protected set; }
+
+	[Net] public int Level { get; protected set; }
+	[Net] public int ExperienceTotal { get; protected set; }
+	[Net] public int ExperienceCurrent { get; protected set; }
+	[Net] public int ExperienceRequired { get; protected set; }
+	[Net] public float MaxHp { get; protected set; }
 
 	// STATUS
 	[Net] public IList<Status> Statuses { get; private set; }
@@ -83,19 +90,24 @@ public partial class PlayerCitizen : Thing
 			ArrowAimer.Depth = 100f;
 			ArrowAimer.Owner = this;
 
-			Timer = AttackTime = 1f;
+			AttackTime = 1f;
+			Timer = AttackTime;
 			AmmoCount = 5;
 			MaxAmmoCount = AmmoCount;
 			ReloadTime = 1.25f;
 			ReloadSpeed = 1f;
-			AttackSpeed = 0.99f;
+			AttackSpeed = 1f;
+			Dmg = 10f;
 			MoveSpeed = 1f;
 			NumBullets = 1f;
 			BulletSpread = 35f;
 			BulletSpeed = 7.5f;
 			Luck = 1f;
+			Level = 0;
+			ExperienceRequired = GetExperienceReqForLevel(Level + 1);
 
 			Health = 100f;
+			MaxHp = 100f;
 			IsAlive = true;
 			Radius = 0.2f;
 			HitboxOffset = -0.3f;
@@ -239,7 +251,7 @@ public partial class PlayerCitizen : Thing
 		}
 		else // Client
         {
-			Game.Hud.Tools.Refresh();
+			Game.Hud.ToolsPanel.Refresh();
         }
 	}
 
@@ -311,7 +323,7 @@ public partial class PlayerCitizen : Thing
 				Depth = -1f,
 				Velocity = dir * BulletSpeed,
 				Shooter = this,
-				Damage = 10f,
+				Damage = Dmg,
 				Force = 2.25f,
 				TempWeight = 3f,
 				Lifetime = 1.5f,
@@ -507,5 +519,28 @@ public partial class PlayerCitizen : Thing
         }
 
 		TypeLibrary.SetProperty(this, propertyName, value);
+	}
+
+	public void AddExperience(int xp)
+    {
+		ExperienceTotal += xp;
+		ExperienceCurrent += xp;
+
+		if(ExperienceCurrent >= ExperienceRequired)
+			LevelUp();
+    }
+
+	public void LevelUp()
+    {
+		ExperienceCurrent -= ExperienceRequired;
+
+		Level++;
+		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
+    }
+
+	public int GetExperienceReqForLevel(int level)
+    {
+		//return 3 + level + (int)MathF.Round(Utils.Map(level, 1, 100, 0f, 1000f, EasingType.SineIn));
+		return (int)MathF.Round(Utils.Map(level, 1, 100, 3f, 1500f, EasingType.SineIn));
 	}
 }

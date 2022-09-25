@@ -78,7 +78,7 @@
     height: 100%;
     justify-content: flex-end;
     align-items: center;
-    padding: 0px 20px 0px 20px;
+    padding: 0px 20px 20px 20px;
 
     .buttons {
         cursor: pointer;
@@ -135,3 +135,40 @@
     z-index: 10;
     //position:relative;
 }
+
+.info_panel {
+    position: absolute;
+    width: 180px;
+    height: 100%;
+    right: 0px;
+    align-self: flex-end;
+    background-color: #00005533;
+    pointer-events: none;
+    justify-content: flex-start;
+    flex-direction: column;
+
+    .info_name {
+        color: #ffffff77;
+    }
+
+    .stats_label {
+
+    }
+}
+
+.xp_bar_panel {
+    position: absolute;
+    width: 100%;
+    height: 16px;
+    bottom: 0px;
+    background-color: #00000033;
+
+    .overlay_panel {
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff66;
+    }
+}
+
+
+

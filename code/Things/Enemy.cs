@@ -87,7 +87,17 @@ namespace Sandbox
 			base.Update(dt);
 			ElapsedTime += dt;
 
-			if(IsDying)
+			if (_isFlashing)
+			{
+				_flashTimer -= dt;
+				if (_flashTimer < 0f)
+				{
+					_isFlashing = false;
+					ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
+				}
+			}
+
+			if (IsDying)
             {
                 DeathTimeElapsed += dt;
 				Scale = _deathScale * Utils.Map(DeathTimeElapsed, 0f, 0.3f, 1f, 1.2f);
@@ -156,16 +166,6 @@ namespace Sandbox
 			}
 
 			TempWeight *= 0.92f;
-
-			if (_isFlashing)
-            {
-				_flashTimer -= dt;
-				if(_flashTimer < 0f)
-                {
-					_isFlashing = false;
-					ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
-				}
-            }
 
 			//ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
 			//ColorFill = new ColorHsv(0.5f + Utils.FastSin(Time.Now * 4f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 3f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 2f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 1f) * 0.5f);
