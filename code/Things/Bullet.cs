@@ -34,6 +34,7 @@ namespace Sandbox
 				AddTempWeight = 2f;
 				Force = 0.75f;
 				Radius = 0.1f;
+				HitboxOffset = -0.25f;
 				Lifetime = 1f;
 
 				CollideWith.Add(typeof(Enemy));
@@ -47,6 +48,7 @@ namespace Sandbox
 			base.Update(dt);
 
 			Position += Velocity * dt;
+			Depth = -HitboxPos.y * 10f;
 
 			if (SpawnTime > Lifetime)
             {
@@ -54,7 +56,7 @@ namespace Sandbox
 				return;
 			}
 
-			var gridPos = Game.GetGridSquareForPos(Position);
+			var gridPos = Game.GetGridSquareForPos(HitboxPos);
 			if (gridPos != GridPos)
 			{
 				Game.DeregisterThingGridSquare(this, GridPos);
@@ -80,7 +82,7 @@ namespace Sandbox
 
 			if (other is Enemy enemy && !enemy.IsSpawning && !enemy.IsDying)
 			{
-				enemy.Damage(Damage);
+				enemy.Damage(Damage, Shooter);
 
 				enemy.Velocity += Velocity.Normal * Force;
 				enemy.TempWeight += AddTempWeight;

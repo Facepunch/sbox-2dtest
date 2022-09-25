@@ -45,7 +45,8 @@ namespace Sandbox
 				AnimationSpeed = 2f;
 
 				FeetOffset = 0.35f;
-				Radius = 0.3f;
+				Radius = 0.25f;
+				HitboxOffset = -0.275f;
 				Health = 40f;
 				MaxHealth = Health;
 				MoveTimeOffset = Rand.Float(0f, 4f);
@@ -100,7 +101,7 @@ namespace Sandbox
 
             if (IsSpawning)
             {
-				Depth = -Position.y * 10f;
+				Depth = -HitboxPos.y * 10f;
 
 				if (ElapsedTime > 1.75f)
                 {
@@ -113,12 +114,13 @@ namespace Sandbox
                 }
 			}
 
-			var closestPlayer = Game.GetClosestPlayer(Position);
-			Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
+			var closestPlayer = Game.GetClosestPlayer(HitboxPos);
+			Velocity += (closestPlayer.HitboxPos - HitboxPos).Normal * 1.0f * dt;
 			float speed = 0.7f + Utils.FastSin(MoveTimeOffset + Time.Now * MoveTimeSpeed) * 0.3f;
 			Position += Velocity * dt * speed;
-			Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
-			Velocity *= 0.975f;
+			//Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
+			HitboxPos = new Vector2(MathX.Clamp(HitboxPos.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(HitboxPos.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
+			Velocity *= (1f - dt * 1.47f);
 
 			AnimationSpeed = Utils.Map(speed, 0.4f, 1f, 0.75f, 3f, EasingType.ExpoIn);
 
@@ -135,9 +137,9 @@ namespace Sandbox
 				Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * SCALE_FACTOR;
 			}
             
-			Depth = -Position.y * 10f;
+			Depth = -HitboxPos.y * 10f;
 
-			var gridPos = Game.GetGridSquareForPos(Position);
+			var gridPos = Game.GetGridSquareForPos(HitboxPos);
 			if (gridPos != GridPos)
 			{
 				Game.DeregisterThingGridSquare(this, GridPos);
@@ -184,11 +186,11 @@ namespace Sandbox
 
 			if ((other is Enemy enemy && !enemy.IsDying) || other is PlayerCitizen)
             {
-				Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 10f) * (1f + other.TempWeight) * dt;
+				Velocity += (HitboxPos - other.HitboxPos).Normal * Utils.Map(percent, 0f, 1f, 0f, 10f) * (1f + other.TempWeight) * dt;
 			}
         }
 
-        public void Damage(float damage)
+        public void Damage(float damage, PlayerCitizen shooter)
         {
 			if (IsDying)
 				return;
@@ -199,11 +201,11 @@ namespace Sandbox
 
 			if (Health <= 0f)
             {
-				StartDying();
+				StartDying(shooter);
 			}
         }
 
-		public void StartDying()
+		public void StartDying(PlayerCitizen shooter)
         {
 			IsDying = true;
 			DeathTimeElapsed = 0f;
@@ -214,6 +216,10 @@ namespace Sandbox
 			ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
 
 			_deathScale = Scale;
+
+			var coin_chance = shooter != null ? Utils.Map(shooter.Luck, 0f, 10f, 0.45f, 1f) : 0.5f;
+			if(Rand.Float(0f, 1f) < coin_chance)
+				Game.SpawnCoin(HitboxPos);
 		}
 
 		public void Flash(float time)

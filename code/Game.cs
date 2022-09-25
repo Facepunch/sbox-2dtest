@@ -42,13 +42,16 @@ public partial class MyGame : Sandbox.Game
 	public Dictionary<GridSquare, List<Thing>> ThingGridPositions = new Dictionary<GridSquare, List<Thing>>();
 
 	public float GRID_SIZE = 1f;
-	public Vector2 BOUNDS_MIN = new Vector2(-16f, -12f);
-	public Vector2 BOUNDS_MAX = new Vector2(16f, 12f);
+	public Vector2 BOUNDS_MIN;
+	public Vector2 BOUNDS_MAX;
 
 	private TimeSince _enemySpawnTime;
 
 	public MyGame()
 	{
+		BOUNDS_MIN = new Vector2(-16f, -12f);
+		BOUNDS_MAX = new Vector2(16f, 12f);
+
 		if ( Host.IsServer )
 		{
 			for (float x = BOUNDS_MIN.x; x < BOUNDS_MAX.x; x += GRID_SIZE)
@@ -144,16 +147,12 @@ public partial class MyGame : Sandbox.Game
 
 		AddThing(enemy);
 		EnemyCount++;
-
-		SpawnCoin();
 	}
 
-	void SpawnCoin()
+	public void SpawnCoin(Vector2 pos)
     {
 		if (CoinCount >= MAX_ENEMY_COUNT)
 			return;
-
-		var pos = new Vector2(Rand.Float(BOUNDS_MIN.x, BOUNDS_MAX.x), Rand.Float(BOUNDS_MIN.y, BOUNDS_MAX.y));
 
 		var coin = new Coin()
 		{
@@ -186,7 +185,7 @@ public partial class MyGame : Sandbox.Game
 			if (other == thing || other.IsRemoved || !thing.CollideWith.Contains(other.GetType()))
 				continue;
 
-			var dist_sqr = (thing.Position - other.Position).LengthSquared;
+			var dist_sqr = (thing.HitboxPos - other.HitboxPos).LengthSquared;
 			var total_radius_sqr = MathF.Pow(thing.Radius + other.Radius, 2f);
 			if (dist_sqr < total_radius_sqr)
 			{
@@ -295,7 +294,7 @@ public partial class MyGame : Sandbox.Game
 	public void AddThing(Thing thing)
     {
 		_things.Add(thing);
-		thing.GridPos = GetGridSquareForPos(thing.Position);
+		thing.GridPos = GetGridSquareForPos(thing.HitboxPos);
 		RegisterThingGridSquare(thing, thing.GridPos);
 	}
 

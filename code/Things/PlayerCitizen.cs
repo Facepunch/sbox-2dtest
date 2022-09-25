@@ -50,6 +50,10 @@ public partial class PlayerCitizen : Thing
 
 	private int _shotNum;
 
+	public float CoinAttractRange { get; protected set; }
+	public float CoinAttractStrength { get; protected set; }
+	public float Luck { get; protected set; }
+
 	// STATUS
 	[Net] public IList<Status> Statuses { get; private set; }
 
@@ -89,12 +93,17 @@ public partial class PlayerCitizen : Thing
 			NumBullets = 1f;
 			BulletSpread = 35f;
 			BulletSpeed = 7.5f;
+			Luck = 1f;
 
 			Health = 100f;
 			IsAlive = true;
 			Radius = 0.2f;
-			GridPos = Game.GetGridSquareForPos(Position);
+			HitboxOffset = -0.3f;
+			GridPos = Game.GetGridSquareForPos(HitboxPos);
 			AimDir = Vector2.Up;
+
+			CoinAttractRange = 1.7f;
+			CoinAttractStrength = 1.5f;
 
 			CollideWith.Add(typeof(Enemy));
 			CollideWith.Add(typeof(PlayerCitizen));
@@ -151,7 +160,7 @@ public partial class PlayerCitizen : Thing
 
 		Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 7f) * 1.5f;
 
-		Depth = -Position.y * 10f;
+		Depth = -HitboxPos.y * 10f;
 
 		if (MathF.Abs(Input.Left) > 0f)
 			Scale = new Vector2(1f * Input.Left < 0f ? -1f : 1f, 1f) * 1f;
@@ -174,7 +183,7 @@ public partial class PlayerCitizen : Thing
 
 		if (Host.IsServer)
         {
-			var gridPos = Game.GetGridSquareForPos(Position);
+			var gridPos = Game.GetGridSquareForPos(HitboxPos);
 			if (gridPos != GridPos)
 			{
 				Game.DeregisterThingGridSquare(this, GridPos);
@@ -247,7 +256,7 @@ public partial class PlayerCitizen : Thing
 			//debug += ": " + status.ElapsedTime + "\n";
 		}
 
-		DebugText(debug);
+		//DebugText(debug);
     }
 
 	void HandleShooting(float dt)
@@ -389,9 +398,9 @@ public partial class PlayerCitizen : Thing
 	{
 		base.Collide(other, percent, dt);
 
-		if ((other is Enemy enemy && !enemy.IsDying) || other is PlayerCitizen)
+		if ((other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime < 0.5f)) || other is PlayerCitizen)
 		{
-			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * dt;
+			Velocity += (HitboxPos - other.HitboxPos).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * dt;
 		}
 	}
 
