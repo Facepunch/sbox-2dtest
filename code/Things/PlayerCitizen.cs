@@ -26,8 +26,8 @@ public class ModifierData
 public partial class PlayerCitizen : Thing
 {
 	public Vector2 MouseOffset { get; private set; }
-
-	[Net, Predicted] public Arrow ArrowAimer { get; private set; }
+	
+    public Arrow ArrowAimer { get; private set; }
 	public Vector2 AimDir { get; private set; }
 
 	public bool IsAlive { get; private set; }
@@ -84,12 +84,6 @@ public partial class PlayerCitizen : Thing
 			AnimationPath = "textures/sprites/player_idle.frames";
 			AnimationSpeed = 0.66f;
 
-			ArrowAimer = new Arrow();
-            ArrowAimer.Parent = this;
-			//_arrow.LocalPosition = new Vector3(0.3f, 0f, 0f);
-			ArrowAimer.Depth = 100f;
-			ArrowAimer.Owner = this;
-
 			AttackTime = 1f;
 			Timer = AttackTime;
 			AmmoCount = 5;
@@ -132,7 +126,19 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
-	[Event.Tick.Client]
+    public override void ClientSpawn()
+    {
+        base.ClientSpawn();
+		
+        ArrowAimer = new Arrow
+        {
+            Parent = this,
+            //LocalPosition = new Vector3(0.3f, 0f, 0f);
+            Depth = 100f
+        };
+    }
+
+    [Event.Tick.Client]
 	public void ClientTick()
 	{
 		//Log.Info("local player: " + (Game.Client != null));
@@ -185,8 +191,13 @@ public partial class PlayerCitizen : Thing
 		//DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
 		//DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
 
-		ArrowAimer.LocalRotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI));
-		ArrowAimer.Position = Position + MouseOffset.Normal * 0.65f;
+        AimDir = MouseOffset.Normal;
+
+        if (ArrowAimer != null)
+        {
+            ArrowAimer.LocalRotation = (MathF.Atan2(AimDir.y, AimDir.x) * (180f / MathF.PI));
+            ArrowAimer.Position = Position + AimDir * 0.65f;
+        }
 
 		if (cl.IsBot)
         {
@@ -221,14 +232,11 @@ public partial class PlayerCitizen : Thing
 
 			//ArrowAimer.Depth = 100f;
 
-			AimDir = (ArrowAimer.Position - Position).Normal;
-			//_arrow.LocalPosition = MouseOffset.Normal * 0.65f;
-
 			//DebugOverlay.Text(MouseOffset.ToString(), Position + new Vector2(0.2f, 0f));
 
 			if (Input.Pressed(InputButton.Jump) || Input.Pressed(InputButton.PrimaryAttack))
 			{
-				var dir = (ArrowAimer.Position - Position).Normal;
+				var dir = AimDir;
 
 				for (int i = -5; i <= 5; i++)
 				//for (int i = 0; i <= 0; i++)
