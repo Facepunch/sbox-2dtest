@@ -91,6 +91,9 @@ namespace Sandbox
         [Net]
 		public Color ColorFill { get; set; }
 
+		[Net]
+		public Color ColorTint { get; set; }
+
 		public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
 		public new Vector2 Position
@@ -215,6 +218,7 @@ namespace Sandbox
 			SceneObject.Attributes.Set( "SpriteScale", new Vector2(Scale.y, Scale.x) / 100f );
             SceneObject.Attributes.Set("TextureSize", _texture?.Size ?? new Vector2(1f, 1f));
 			SceneObject.Attributes.Set("ColorFill", ColorFill);
+            SceneObject.Attributes.Set("ColorMultiply", ColorTint);
 
             if (_anim != null)
             {
