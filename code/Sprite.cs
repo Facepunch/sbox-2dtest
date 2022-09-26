@@ -85,14 +85,16 @@ namespace Sandbox
 		[Net]
 		public new Vector2 Scale { get; set; }
 
+		[Net]
+        public Vector2 Pivot { get; set; } = new Vector2(0.5f, 0.5f);
+
         [Net, Change]
 		public SpriteFilter Filter { get; set; }
 
         [Net]
 		public Color ColorFill { get; set; }
 
-		[Net]
-		public Color ColorTint { get; set; }
+        [Net] public Color ColorTint { get; set; } = Color.White;
 
 		public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
@@ -216,6 +218,7 @@ namespace Sandbox
 
 			SceneObject.Flags.IsTranslucent = true;
 			SceneObject.Attributes.Set( "SpriteScale", new Vector2(Scale.y, Scale.x) / 100f );
+            SceneObject.Attributes.Set("SpritePivot", new Vector2(Pivot.y, Pivot.x));
             SceneObject.Attributes.Set("TextureSize", _texture?.Size ?? new Vector2(1f, 1f));
 			SceneObject.Attributes.Set("ColorFill", ColorFill);
             SceneObject.Attributes.Set("ColorMultiply", ColorTint);

@@ -46,6 +46,7 @@ VS
 	#include "common/vertex.hlsl"
 	
 	float2 g_vSpriteScale < UiType( VectorText ); Default2( 1.0, 1.0 ); UiGroup( "Transform,10/10" ); Attribute( "SpriteScale" ); >;
+	float2 g_vSpritePivot < UiType( VectorText ); Default2( 0.5, 0.5 ); UiGroup( "Transform,10/20" ); Attribute( "SpritePivot" ); >;
 	float2 g_vUvMin < UiType( VectorText ); Default2( 0.0, 0.0 ); UiGroup( "Transform,10/20" ); Attribute( "UvMin" ); >;
 	float2 g_vUvMax < UiType( VectorText ); Default2( 1.0, 1.0 ); UiGroup( "Transform,10/30" ); Attribute( "UvMax" ); >;
 	
@@ -54,6 +55,7 @@ VS
 	//
 	PixelInput MainVs( INSTANCED_SHADER_PARAMS( VertexInput i ) )
 	{
+		i.vPositionOs.xy += (g_vSpritePivot - float2(0.5, 0.5)) * 100.0;
 		i.vPositionOs.xy *= g_vSpriteScale;
 
 		PixelInput o = ProcessVertex( i );
