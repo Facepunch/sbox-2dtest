@@ -63,6 +63,9 @@ public partial class PlayerCitizen : Thing
 
 	[Net] public float DashRecoveryTime { get; protected set; }
 
+	private float _flashTimer;
+	private bool _isFlashing;
+
 	// STATUS
 	[Net] public IList<Status> Statuses { get; private set; }
 
@@ -259,6 +262,7 @@ public partial class PlayerCitizen : Thing
 
 			HandleStatuses(dt);
 			HandleShooting(dt);
+			HandleFlashing(dt);
 		}
 		else // Client
         {
@@ -313,6 +317,19 @@ public partial class PlayerCitizen : Thing
 		}
 
 		//DebugText(AmmoCount.ToString() + "\nreloading: " + IsReloading + "\ntimer: " + Timer + "\nShotDelay: " + AttackTime + "\nReloadTime: " + ReloadTime + "\nAttackSpeed: " + AttackSpeed);
+	}
+
+	void HandleFlashing(float dt)
+    {
+		if (_isFlashing)
+		{
+			_flashTimer -= dt;
+			if (_flashTimer < 0f)
+			{
+				_isFlashing = false;
+				ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
+			}
+		}
 	}
 
 	void Shoot()
@@ -410,6 +427,7 @@ public partial class PlayerCitizen : Thing
 	public void Damage(float damage)
     {
 		Health -= damage;
+		Flash(0.1f);
 
 		if(Health <= 0f)
         {
@@ -553,5 +571,15 @@ public partial class PlayerCitizen : Thing
     {
 		//return 3 + level + (int)MathF.Round(Utils.Map(level, 1, 100, 0f, 1000f, EasingType.SineIn));
 		return (int)MathF.Round(Utils.Map(level, 1, 100, 3f, 1500f, EasingType.SineIn));
+	}
+
+	public void Flash(float time)
+	{
+		if (_isFlashing)
+			return;
+
+		ColorFill = new Color(1f, 0f, 0f);
+		_isFlashing = true;
+		_flashTimer = time;
 	}
 }
