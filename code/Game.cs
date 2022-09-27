@@ -185,7 +185,7 @@ public partial class MyGame : Sandbox.Game
 			if (other == thing || other.IsRemoved || !thing.CollideWith.Contains(other.GetType()))
 				continue;
 
-			var dist_sqr = (thing.HitboxPos - other.HitboxPos).LengthSquared;
+			var dist_sqr = (thing.Position - other.Position).LengthSquared;
 			var total_radius_sqr = MathF.Pow(thing.Radius + other.Radius, 2f);
 			if (dist_sqr < total_radius_sqr)
 			{
@@ -294,7 +294,7 @@ public partial class MyGame : Sandbox.Game
 	public void AddThing(Thing thing)
     {
 		_things.Add(thing);
-		thing.GridPos = GetGridSquareForPos(thing.HitboxPos);
+		thing.GridPos = GetGridSquareForPos(thing.Position);
 		RegisterThingGridSquare(thing, thing.GridPos);
 	}
 

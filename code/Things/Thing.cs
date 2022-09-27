@@ -16,14 +16,6 @@ public partial class Thing : Sprite
 
 	public List<Type> CollideWith = new List<Type>();
 
-	public float HitboxOffset { get; protected set; }
-
-	public Vector2 HitboxPos
-	{
-		get { return Position + new Vector2(0f, HitboxOffset); }
-		set { Position = value - new Vector2(0f, HitboxOffset); }
-	}
-
 	public Thing()
     {
 
@@ -36,7 +28,7 @@ public partial class Thing : Sprite
 
 	public virtual void Update(float dt)
     {
-        //Utils.DrawCircle(HitboxPos, 2.5f, 8, Time.Now, Color.Red);
+        //Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
 		//DebugText(Radius.ToString("#.#"));
 	}
 

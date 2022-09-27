@@ -34,7 +34,7 @@ namespace Sandbox
 				AddTempWeight = 2f;
 				Force = 0.75f;
 				Radius = 0.1f;
-				HitboxOffset = -0.25f;
+				Pivot = new Vector2(0.5f, -1.2f);
 				Lifetime = 1f;
 
 				CollideWith.Add(typeof(Enemy));
@@ -48,7 +48,7 @@ namespace Sandbox
 			base.Update(dt);
 
 			Position += Velocity * dt;
-			Depth = -HitboxPos.y * 10f;
+			Depth = -Position.y * 10f;
 
 			if (SpawnTime > Lifetime)
             {
@@ -56,7 +56,7 @@ namespace Sandbox
 				return;
 			}
 
-			var gridPos = Game.GetGridSquareForPos(HitboxPos);
+			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
 			{
 				Game.DeregisterThingGridSquare(this, GridPos);

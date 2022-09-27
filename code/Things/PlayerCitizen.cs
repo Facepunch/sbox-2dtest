@@ -85,6 +85,7 @@ public partial class PlayerCitizen : Thing
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/player_spritesheet.png", 2, 2);
 			AnimationPath = "textures/sprites/player_idle.frames";
 			AnimationSpeed = 0.66f;
+			Pivot = new Vector2(0.5f, 0.05f);
 
 			AttackTime = 1f;
 			Timer = AttackTime;
@@ -106,8 +107,7 @@ public partial class PlayerCitizen : Thing
 			MaxHp = 100f;
 			IsAlive = true;
 			Radius = 0.2f;
-			HitboxOffset = -0.3f;
-			GridPos = Game.GetGridSquareForPos(HitboxPos);
+			GridPos = Game.GetGridSquareForPos(Position);
 			AimDir = Vector2.Up;
 
 			CoinAttractRange = 1.7f;
@@ -181,7 +181,7 @@ public partial class PlayerCitizen : Thing
 
 		Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 7f) * 1.5f;
 
-		Depth = -HitboxPos.y * 10f;
+		Depth = -Position.y * 10f;
 
 		if (MathF.Abs(Input.Left) > 0f)
 			Scale = new Vector2(1f * Input.Left < 0f ? -1f : 1f, 1f) * 1f;
@@ -209,7 +209,7 @@ public partial class PlayerCitizen : Thing
 
 		if (Host.IsServer)
         {
-			var gridPos = Game.GetGridSquareForPos(HitboxPos);
+			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
 			{
 				Game.DeregisterThingGridSquare(this, GridPos);
@@ -423,7 +423,7 @@ public partial class PlayerCitizen : Thing
 
 		if ((other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime < 0.5f)) || other is PlayerCitizen)
 		{
-			Velocity += (HitboxPos - other.HitboxPos).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * dt;
+			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * dt;
 		}
 	}
 

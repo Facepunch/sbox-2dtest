@@ -29,6 +29,7 @@ namespace Sandbox
 				SpriteTexture = SpriteTexture.Atlas("textures/sprites/xp.png", 5, 4);
 				AnimationPath = "textures/sprites/xp_1.frames";
 				AnimationSpeed = 3f;
+				Pivot = new Vector2(0.5f, 0.3f);
 
 				Scale = new Vector2(1f, 1f) * 0.4f;
 				SpawnTime = 0f;
@@ -64,12 +65,12 @@ namespace Sandbox
 			base.Update(dt);
 
 			Position += Velocity * dt;
-			HitboxPos = new Vector2(MathX.Clamp(HitboxPos.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(HitboxPos.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
+			Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
 			Velocity *= (1f - dt * 0.92f);
 
-			Depth = -HitboxPos.y * 10f;
+			Depth = -Position.y * 10f;
 
-			var gridPos = Game.GetGridSquareForPos(HitboxPos);
+			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
 			{
 				Game.DeregisterThingGridSquare(this, GridPos);
@@ -79,11 +80,11 @@ namespace Sandbox
 
 			foreach (PlayerCitizen player in Game.AlivePlayers)
             {
-				var dist_sqr = (HitboxPos - player.HitboxPos).LengthSquared;
+				var dist_sqr = (Position - player.Position).LengthSquared;
 				var req_dist_sqr = MathF.Pow(player.CoinAttractRange, 2f);
 				if (dist_sqr < req_dist_sqr)
 				{
-					Velocity += (player.HitboxPos - HitboxPos).Normal * Utils.Map(dist_sqr, req_dist_sqr, 0f, 0f, 1f, EasingType.Linear) * player.CoinAttractStrength * dt;
+					Velocity += (player.Position - Position).Normal * Utils.Map(dist_sqr, req_dist_sqr, 0f, 0f, 1f, EasingType.Linear) * player.CoinAttractStrength * dt;
 				}
 			}
 
@@ -107,7 +108,7 @@ namespace Sandbox
 
 			if (other is Enemy enemy && !enemy.IsDying)
 			{
-				Velocity += (HitboxPos - other.HitboxPos).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 20f * (1f + other.TempWeight) * dt;
+				Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 20f * (1f + other.TempWeight) * dt;
 			} 
 			else if (other is PlayerCitizen player)
 			{

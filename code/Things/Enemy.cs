@@ -49,10 +49,10 @@ namespace Sandbox
 				SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie_spritesheet3.png", 5, 6);
 				AnimationPath = "textures/sprites/zombie_spawn.frames";
 				AnimationSpeed = 2f;
+				Pivot = new Vector2(0.5f, 0.05f);
 
 				FeetOffset = 0.35f;
 				Radius = 0.25f;
-				HitboxOffset = -0.275f;
 				Health = 40f;
 				MaxHealth = Health;
 				MoveTimeOffset = Rand.Float(0f, 4f);
@@ -118,7 +118,7 @@ namespace Sandbox
 
             if (IsSpawning)
             {
-				Depth = -HitboxPos.y * 10f;
+				Depth = -Position.y * 10f;
 
 				if (ElapsedTime > 1.75f)
                 {
@@ -131,12 +131,12 @@ namespace Sandbox
                 }
 			}
 
-			var closestPlayer = Game.GetClosestPlayer(HitboxPos);
-			Velocity += (closestPlayer.HitboxPos - HitboxPos).Normal * 1.0f * dt;
+			var closestPlayer = Game.GetClosestPlayer(Position);
+			Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
 			float speed = 0.7f + Utils.FastSin(MoveTimeOffset + Time.Now * MoveTimeSpeed) * 0.3f * (IsAttacking ? 1.25f : 1f);
 			Position += Velocity * dt * speed;
 			//Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
-			HitboxPos = new Vector2(MathX.Clamp(HitboxPos.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(HitboxPos.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
+			Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
 			Velocity *= (1f - dt * 1.47f);
 
 			//if (MathF.Abs(Velocity.x) > 0.2f)
@@ -150,9 +150,9 @@ namespace Sandbox
 
 			//DebugText(MathF.Abs(Velocity.x).ToString("#.#"));
 
-			Depth = -HitboxPos.y * 10f;
+			Depth = -Position.y * 10f;
 
-			var gridPos = Game.GetGridSquareForPos(HitboxPos);
+			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
 			{
 				Game.DeregisterThingGridSquare(this, GridPos);
@@ -170,7 +170,7 @@ namespace Sandbox
 
 			TempWeight *= (1f - dt * 4.7f);
 
-			float dist_sqr = (closestPlayer.HitboxPos - HitboxPos).LengthSquared;
+			float dist_sqr = (closestPlayer.Position - Position).LengthSquared;
 			float attack_dist_sqr = MathF.Pow(AGGRO_RANGE, 2f);
 
 			if (!IsAttacking)
@@ -216,7 +216,7 @@ namespace Sandbox
 					_aggroTimer = 0f;
 				}
 
-				Scale = new Vector2(1f * closestPlayer.HitboxPos.x < HitboxPos.x ? 1f : -1f, 1f) * SCALE_FACTOR;
+				Scale = new Vector2(1f * closestPlayer.Position.x < Position.x ? 1f : -1f, 1f) * SCALE_FACTOR;
 			}
 
 			//ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
@@ -238,11 +238,11 @@ namespace Sandbox
 
 			if (other is Enemy enemy && !enemy.IsDying)
 			{
-				Velocity += (HitboxPos - enemy.HitboxPos).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 10f * (1f + enemy.TempWeight) * dt;
+				Velocity += (Position - enemy.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 10f * (1f + enemy.TempWeight) * dt;
 			}
 			else if (other is PlayerCitizen player)
 			{
-				Velocity += (HitboxPos - player.HitboxPos).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * dt;
+				Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * dt;
 
 				if(IsAttacking)
                 {
@@ -280,7 +280,7 @@ namespace Sandbox
 
 			var coin_chance = shooter != null ? Utils.Map(shooter.Luck, 0f, 10f, 0.45f, 1f) : 0.5f;
 			if(Rand.Float(0f, 1f) < coin_chance)
-				Game.SpawnCoin(HitboxPos);
+				Game.SpawnCoin(Position);
 		}
 
 		public void Flash(float time)
