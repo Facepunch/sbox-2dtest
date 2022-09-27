@@ -103,8 +103,7 @@ namespace Sandbox
 
         public float AnimationTimeElapsed { get; set; }
 
-		[Net]
-		public float AnimationSpeed { get; set; }
+        [Net] public float AnimationSpeed { get; set; }
 
         [Net, Predicted] public new Vector2 Scale { get; set; } = new Vector2(1f, 1f);
 
@@ -233,9 +232,17 @@ namespace Sandbox
 
                 EnableDrawing = true;
                 PhysicsEnabled = false;
+            }
+        }
 
-                Rotation = 0f;
+        public override void Spawn()
+        {
+            base.Spawn();
+
+            if (IsServer || IsClientOnly)
+            {
                 AnimationSpeed = 1f;
+                Rotation = 0f;
             }
         }
 

@@ -15,6 +15,11 @@ namespace Sandbox
 
 		public int Value { get; set; }
 
+		public Coin()
+        {
+
+        }
+
 		public override void Spawn()
 		{
 			base.Spawn();
@@ -38,6 +43,20 @@ namespace Sandbox
 			}
 
 			Filter = SpriteFilter.Pixelated;
+		}
+
+		[Event.Tick.Client]
+		public void ClientTick()
+		{
+			//DebugText("\nclient: " + AnimationSpeed.ToString());
+		}
+
+		[Event.Tick.Server]
+		public void ServerTick()
+		{
+			//DebugText("server: " + AnimationSpeed.ToString());
+			//DebugText(IsAttacking.ToString());
+			//DebugText(SinceSpawning.Absolute.ToString("#.##"));
 		}
 
 		public override void Update(float dt)

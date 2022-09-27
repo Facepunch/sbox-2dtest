@@ -133,7 +133,7 @@ namespace Sandbox
 
 			var closestPlayer = Game.GetClosestPlayer(HitboxPos);
 			Velocity += (closestPlayer.HitboxPos - HitboxPos).Normal * 1.0f * dt;
-			float speed = 0.7f + Utils.FastSin(MoveTimeOffset + Time.Now * MoveTimeSpeed) * 0.3f;
+			float speed = 0.7f + Utils.FastSin(MoveTimeOffset + Time.Now * MoveTimeSpeed) * 0.3f * (IsAttacking ? 1.25f : 1f);
 			Position += Velocity * dt * speed;
 			//Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
 			HitboxPos = new Vector2(MathX.Clamp(HitboxPos.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(HitboxPos.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
@@ -243,6 +243,11 @@ namespace Sandbox
 			else if (other is PlayerCitizen player)
 			{
 				Velocity += (HitboxPos - player.HitboxPos).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * dt;
+
+				if(IsAttacking)
+                {
+					player.Damage(10f * dt);
+                }
 			}
 		}
 

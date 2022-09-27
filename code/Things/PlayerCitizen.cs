@@ -150,9 +150,9 @@ public partial class PlayerCitizen : Thing
 	[Event.Tick.Server]
 	public void ServerTick()
 	{
-		Utils.DrawCircle(HitboxPos, 1.4f, 18, Time.Now, Color.Red);
+		//Utils.DrawCircle(HitboxPos, 1.4f, 18, Time.Now, Color.Red);
 		//Log.Info("local player: " + (Game.Client != null));
-		//DebugText(SinceSpawning.Absolute.ToString("#.##"));
+		//DebugText(AnimationPath + ", " + AnimationSpeed.ToString());
 	}
 
 	public override void Simulate( Client cl )
@@ -413,7 +413,7 @@ public partial class PlayerCitizen : Thing
 
 		if(Health <= 0f)
         {
-			Scale = new Vector2(2f, 1f);
+			
 		}
     }
 

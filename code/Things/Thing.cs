@@ -9,7 +9,7 @@ namespace Sandbox;
 
 public partial class Thing : Sprite
 {
-	public float Radius { get; protected set; }
+	[Net] public float Radius { get; protected set; }
 	public float TempWeight { get; set; }
 	public GridSquare GridPos { get; set; }
 	public bool IsRemoved { get; private set; }

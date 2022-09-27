@@ -34,7 +34,7 @@ public class InfoPanel : Panel
 		stats += "LEVEL: " + player.Level + "\n";
 		stats += "XP: " + player.ExperienceCurrent + " / " + player.ExperienceRequired + "\n\n";
 
-		stats += "HP: " + player.Health + " / " + player.MaxHp + "\n";
+		stats += "HP: " + player.Health.ToString("#.#") + " / " + player.MaxHp + "\n";
 		stats += "DMG: " + player.Dmg + "\n";
 		stats += "AMMO : " + player.AmmoCount + " / " + player.MaxAmmoCount + "\n";
 		stats += "NUM BULLETS: " + player.NumBullets + "\n";
