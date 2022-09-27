@@ -8,12 +8,10 @@ namespace Sandbox
 {
 	public partial class Arrow : Sprite
 	{
-		public override void Spawn()
-		{
-			base.Spawn();
-
-			SpriteTexture = "textures/sprites/arrow.png";
-			Scale = 0.4f;
+        public Arrow()
+        {
+            SpriteTexture = "textures/sprites/arrow.png";
+            Scale = 0.4f;
 
             Filter = SpriteFilter.Pixelated;
         }

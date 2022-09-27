@@ -56,40 +56,82 @@ namespace Sandbox
 
         public SpriteTexture SpriteTexture
         {
-            get => SpriteTexture.Atlas(TexturePath, AtlasRows, AtlasColumns);
+            get => SpriteTexture.Atlas(NetTexturePath, NetAtlasRows, NetAtlasColumns);
             set
             {
-                TexturePath = value.TexturePath;
-                AtlasRows = value.AtlasRows;
-                AtlasColumns = value.AtlasColumns;
+                NetTexturePath = value.TexturePath;
+                NetAtlasRows = value.AtlasRows;
+                NetAtlasColumns = value.AtlasColumns;
+
+                if (this is Arrow)
+                {
+                    Log.Info($"hello {NetTexturePath} {value.TexturePath}");
+                }
+
+                if (IsClient)
+                {
+					OnNetTexturePathChanged();
+                }
             }
         }
 
-        [Net, Change]
-		private string TexturePath { get; set; }
+        [Net, Change, Predicted]
+		private string NetTexturePath { get; set; }
 
-        [Net]
-		private int AtlasRows { get; set; }
+        [Net, Predicted]
+		private int NetAtlasRows { get; set; }
 
-        [Net]
-        private int AtlasColumns { get; set; }
+        [Net, Predicted]
+        private int NetAtlasColumns { get; set; }
 
-        [Net, Change, ResourceType("frames")]
-		public string AnimationPath { get; set; }
+        [Net, Change, ResourceType("frames"), Predicted]
+		private string NetAnimationPath { get; set; }
 
-		public float AnimationTimeElapsed { get; set; }
+        public string AnimationPath
+        {
+            get => NetAnimationPath;
+            set
+            {
+                NetAnimationPath = value;
+
+                if (IsClient)
+                {
+                    OnNetAnimationPathChanged();
+                }
+            }
+        }
+
+        public float AnimationTimeElapsed { get; set; }
 
 		[Net]
 		public float AnimationSpeed { get; set; }
 
-		[Net]
-		public new Vector2 Scale { get; set; }
+        [Net, Predicted] public new Vector2 Scale { get; set; } = new Vector2(1f, 1f);
 
-        [Net, Change]
-		public SpriteFilter Filter { get; set; }
+		[Net, Predicted]
+        public Vector2 Pivot { get; set; } = new Vector2(0.5f, 0.5f);
 
-        [Net]
+        [Net, Change, Predicted]
+        private SpriteFilter NetFilter { get; set; }
+
+        public SpriteFilter Filter
+        {
+            get => NetFilter;
+            set
+            {
+                NetFilter = value;
+
+                if (IsClient)
+                {
+                    OnNetFilterChanged();
+                }
+            }
+        }
+
+        [Net, Predicted]
 		public Color ColorFill { get; set; }
+
+        [Net, Predicted] public Color ColorTint { get; set; } = Color.White;
 
 		public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
@@ -114,11 +156,8 @@ namespace Sandbox
 		public new float Rotation
 		{
 			get => base.Rotation.Angles().yaw + 90f;
-			set
-			{
-				base.Rotation = global::Rotation.FromYaw( value - 90f );
-			}
-		}
+			set => base.Rotation = global::Rotation.FromYaw( value - 90f );
+        }
 
 		public new float LocalRotation
 		{
@@ -163,16 +202,16 @@ namespace Sandbox
             SetMaterialOverride(_material);
 		}
 
-		private void OnTexturePathChanged()
+		private void OnNetTexturePathChanged()
 		{
-			_texture = string.IsNullOrEmpty( TexturePath )
+			_texture = string.IsNullOrEmpty(NetTexturePath)
 				? Texture.White
-				: Texture.Load( FileSystem.Mounted, TexturePath );
+				: Texture.Load( FileSystem.Mounted, NetTexturePath);
 
             UpdateMaterial();
         }
 
-        private void OnAnimationPathChanged()
+        private void OnNetAnimationPathChanged()
         {
             _anim = string.IsNullOrEmpty(AnimationPath)
                 ? null
@@ -181,31 +220,26 @@ namespace Sandbox
 			AnimationTimeElapsed = 0f;
 		}
 
-        private void OnFilterChanged()
+        private void OnNetFilterChanged()
 		{
             UpdateMaterial();
 		}
 		
 		public Sprite()
-		{
+        {
+            if (IsServer || IsClientOnly)
+            {
+                SetModel("models/quad.vmdl");
 
-		}
+                EnableDrawing = true;
+                PhysicsEnabled = false;
 
-		public override void Spawn()
-		{
-            SetModel( "models/quad.vmdl" );
+                Rotation = 0f;
+                AnimationSpeed = 1f;
+            }
+        }
 
-			EnableDrawing = true;
-			PhysicsEnabled = false;
-
-			Rotation = 0f;
-			Scale = new Vector2( 1f, 1f );
-			AnimationSpeed = 1f;
-
-            base.Spawn();
-		}
-		
-		[Event.PreRender]
+        [Event.PreRender]
 		private void ClientPreRender()
 		{
 			if (SceneObject == null)
@@ -213,13 +247,15 @@ namespace Sandbox
 
 			SceneObject.Flags.IsTranslucent = true;
 			SceneObject.Attributes.Set( "SpriteScale", new Vector2(Scale.y, Scale.x) / 100f );
+            SceneObject.Attributes.Set("SpritePivot", new Vector2(Pivot.y, Pivot.x));
             SceneObject.Attributes.Set("TextureSize", _texture?.Size ?? new Vector2(1f, 1f));
 			SceneObject.Attributes.Set("ColorFill", ColorFill);
+            SceneObject.Attributes.Set("ColorMultiply", ColorTint);
 
             if (_anim != null)
             {
 				AnimationTimeElapsed += Time.Delta * AnimationSpeed;
-				var (min, max) = _anim.GetFrameUvs(AnimationTimeElapsed, AtlasRows, AtlasColumns);
+				var (min, max) = _anim.GetFrameUvs(AnimationTimeElapsed, NetAtlasRows, NetAtlasColumns);
 
                 SceneObject.Attributes.Set("UvMin", min);
                 SceneObject.Attributes.Set("UvMax", max);
