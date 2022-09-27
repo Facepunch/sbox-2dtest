@@ -8,8 +8,6 @@ namespace Sandbox;
 
 public class ToolsPanel : Panel
 {
-	public HUD Hud { get; set; }
-
 	public bool IsDirty { get; private set; }
 
 	public ToolsPanel()

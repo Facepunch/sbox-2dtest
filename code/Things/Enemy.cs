@@ -25,6 +25,12 @@ namespace Sandbox
 		public float DeathTimeElapsed { get; private set; }
 		private Vector2 _deathScale;
 
+		public bool IsAttacking { get; private set; }
+		private float _aggroTimer;
+		private const float AGGRO_RANGE = 1.4f;
+		private const float AGGRO_START_TIME = 0.2f;
+		private const float AGGRO_LOSE_TIME = 0.4f;
+
 		public static float SCALE_FACTOR = 0.8f;
 
 		//private Sprite _shadow;
@@ -35,12 +41,12 @@ namespace Sandbox
 
 			//TexturePath = "textures/sprites/mummy_walk3.png";
 			//TexturePath = "textures/sprites/zombie_bw.png";
-			// TexturePath = "textures/sprites/mummy_walk3.png";
+			//TexturePath = "textures/sprites/mummy_walk3.png";
 			//SpriteTexture = "textures/sprites/zombie.png";
 
 			if (Host.IsServer)
             {
-				SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie_spritesheet2.png", 5, 5);
+				SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie_spritesheet3.png", 5, 6);
 				AnimationPath = "textures/sprites/zombie_spawn.frames";
 				AnimationSpeed = 2f;
 
@@ -79,10 +85,11 @@ namespace Sandbox
         [Event.Tick.Server]
         public void ServerTick()
         {
+			//DebugText(IsAttacking.ToString());
 			//DebugText(SinceSpawning.Absolute.ToString("#.##"));
 		}
 
-        public override void Update(float dt)
+		public override void Update(float dt)
         {
 			base.Update(dt);
 			ElapsedTime += dt;
@@ -132,7 +139,8 @@ namespace Sandbox
 			HitboxPos = new Vector2(MathX.Clamp(HitboxPos.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(HitboxPos.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
 			Velocity *= (1f - dt * 1.47f);
 
-			AnimationSpeed = Utils.Map(speed, 0.4f, 1f, 0.75f, 3f, EasingType.ExpoIn);
+			//if (MathF.Abs(Velocity.x) > 0.2f)
+			//	Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * SCALE_FACTOR;
 
 			//enemy.Rotation = enemy.Velocity.LengthSquared * Utils.FastSin(Time.Now * 12f);
 			//enemy.Rotation = enemy.Velocity.Length * Utils.FastSin(Time.Now * MathF.PI * 7f) * 4.5f;
@@ -142,11 +150,6 @@ namespace Sandbox
 
 			//DebugText(MathF.Abs(Velocity.x).ToString("#.#"));
 
-			if(MathF.Abs(Velocity.x) > 0.2f)
-            {
-				Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * SCALE_FACTOR;
-			}
-            
 			Depth = -HitboxPos.y * 10f;
 
 			var gridPos = Game.GetGridSquareForPos(HitboxPos);
@@ -165,7 +168,56 @@ namespace Sandbox
 				}
 			}
 
-			TempWeight *= 0.92f;
+			TempWeight *= (1f - dt * 4.7f);
+
+			float dist_sqr = (closestPlayer.HitboxPos - HitboxPos).LengthSquared;
+			float attack_dist_sqr = MathF.Pow(AGGRO_RANGE, 2f);
+
+			if (!IsAttacking)
+			{
+				if (dist_sqr < attack_dist_sqr)
+				{
+					_aggroTimer += dt;
+					if(_aggroTimer > AGGRO_START_TIME)
+                    {
+						IsAttacking = true;
+						AnimationPath = "textures/sprites/zombie_attack.frames";
+						_aggroTimer = 0f;
+					}
+				}
+				else
+				{
+					//DebugText(IsAttacking.ToString() + ", " + MathF.Abs(Velocity.x).ToString("#.##"));
+					AnimationSpeed = Utils.Map(speed, 0.4f, 1f, 0.75f, 3f, EasingType.ExpoIn);
+					_aggroTimer = 0f;
+				}
+
+				if (MathF.Abs(Velocity.x) > 0.175f)
+					Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * SCALE_FACTOR;
+			}
+			else
+			{
+				if (dist_sqr > attack_dist_sqr)
+				{
+					//DebugText(_lastAggroTime.Relative.ToString("#.##"));
+					_aggroTimer += dt;
+					if (_aggroTimer > AGGRO_LOSE_TIME)
+					{
+						IsAttacking = false;
+						AnimationPath = "textures/sprites/zombie_walk.frames";
+					}
+
+					//IsAttacking = false;
+					//AnimationPath = "textures/sprites/zombie_walk.frames";
+				}
+				else
+				{
+					AnimationSpeed = Utils.Map(dist_sqr, attack_dist_sqr, 0f, 1f, 4f, EasingType.Linear);
+					_aggroTimer = 0f;
+				}
+
+				Scale = new Vector2(1f * closestPlayer.HitboxPos.x < HitboxPos.x ? 1f : -1f, 1f) * SCALE_FACTOR;
+			}
 
 			//ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
 			//ColorFill = new ColorHsv(0.5f + Utils.FastSin(Time.Now * 4f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 3f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 2f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 1f) * 0.5f);
@@ -180,15 +232,19 @@ namespace Sandbox
 			//ColorFill = new ColorHsv(1f, 0f, 0f, 0f);
 		}
 
-        public override void Collide(Thing other, float percent, float dt)
+        public override void Colliding(Thing other, float percent, float dt)
         {
-            base.Collide(other, percent, dt);
+            base.Colliding(other, percent, dt);
 
-			if ((other is Enemy enemy && !enemy.IsDying) || other is PlayerCitizen)
-            {
-				Velocity += (HitboxPos - other.HitboxPos).Normal * Utils.Map(percent, 0f, 1f, 0f, 10f) * (1f + other.TempWeight) * dt;
+			if (other is Enemy enemy && !enemy.IsDying)
+			{
+				Velocity += (HitboxPos - enemy.HitboxPos).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 10f * (1f + enemy.TempWeight) * dt;
 			}
-        }
+			else if (other is PlayerCitizen player)
+			{
+				Velocity += (HitboxPos - player.HitboxPos).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * dt;
+			}
+		}
 
         public void Damage(float damage, PlayerCitizen shooter)
         {

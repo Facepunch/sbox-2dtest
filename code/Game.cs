@@ -191,7 +191,7 @@ public partial class MyGame : Sandbox.Game
 			{
 				float percent = Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 1f);
 				//thing.Velocity += (thing.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 10f) * (1f + other.TempWeight) * dt;
-				thing.Collide(other, percent, dt);
+				thing.Colliding(other, percent, dt);
 			}
 		}
 	}
@@ -307,5 +307,7 @@ public partial class MyGame : Sandbox.Game
 
 		if (thing is Enemy)
 			EnemyCount--;
+		else if (thing is Coin)
+			CoinCount--;
 	}
 }

@@ -61,6 +61,8 @@ public partial class PlayerCitizen : Thing
 	[Net] public int ExperienceRequired { get; protected set; }
 	[Net] public float MaxHp { get; protected set; }
 
+	[Net] public float DashRecoveryTime { get; protected set; }
+
 	// STATUS
 	[Net] public IList<Status> Statuses { get; private set; }
 
@@ -142,6 +144,7 @@ public partial class PlayerCitizen : Thing
 	[Event.Tick.Server]
 	public void ServerTick()
 	{
+		Utils.DrawCircle(HitboxPos, 1.4f, 18, Time.Now, Color.Red);
 		//Log.Info("local player: " + (Game.Client != null));
 		//DebugText(SinceSpawning.Absolute.ToString("#.##"));
 	}
@@ -406,9 +409,9 @@ public partial class PlayerCitizen : Thing
 		}
     }
 
-	public override void Collide(Thing other, float percent, float dt)
+	public override void Colliding(Thing other, float percent, float dt)
 	{
-		base.Collide(other, percent, dt);
+		base.Colliding(other, percent, dt);
 
 		if ((other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime < 0.5f)) || other is PlayerCitizen)
 		{

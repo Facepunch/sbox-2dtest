@@ -25,5 +25,6 @@ public class XpBarPanel : Panel
 
 		float xp_percent = player.ExperienceCurrent / (float)player.ExperienceRequired;
 		OverlayPanel.Style.Width = Length.Percent(xp_percent * 100f);
+		//OverlayPanel.AddClass(
 	}
 }

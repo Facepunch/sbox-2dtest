@@ -36,11 +36,11 @@ public partial class Thing : Sprite
 
 	public virtual void Update(float dt)
     {
-        //Utils.DrawCircle(HitboxPos, Radius, 8, Time.Now, Color.Red);
+        //Utils.DrawCircle(HitboxPos, 2.5f, 8, Time.Now, Color.Red);
 		//DebugText(Radius.ToString("#.#"));
 	}
 
-	public virtual void Collide(Thing other, float percent, float dt)
+	public virtual void Colliding(Thing other, float percent, float dt)
     {
 
     }
@@ -54,6 +54,6 @@ public partial class Thing : Sprite
 
 	public void DebugText(string text)
     {
-		DebugOverlay.Text(text, Position, 0f, float.MaxValue);
+		DebugOverlay.Text(text, Position + new Vector2(0.1f, -0.1f), 0f, float.MaxValue);
     }
 }

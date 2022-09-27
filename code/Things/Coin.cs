@@ -21,8 +21,8 @@ namespace Sandbox
 
 			if (Host.IsServer)
 			{
-				SpriteTexture = SpriteTexture.Atlas("textures/sprites/coin.png", 3, 3);
-				AnimationPath = "textures/sprites/coin_idle.frames";
+				SpriteTexture = SpriteTexture.Atlas("textures/sprites/xp.png", 5, 4);
+				AnimationPath = "textures/sprites/xp_1.frames";
 				AnimationSpeed = 3f;
 
 				Scale = new Vector2(1f, 1f) * 0.4f;
@@ -33,7 +33,8 @@ namespace Sandbox
 				CollideWith.Add(typeof(PlayerCitizen));
 				CollideWith.Add(typeof(Coin));
 
-				SetValue(1);
+                SetValue(1);
+				//SetValue(Rand.Int(1, 7));
 			}
 
 			Filter = SpriteFilter.Pixelated;
@@ -78,12 +79,12 @@ namespace Sandbox
 				}
 			}
 
-			DebugText(Value.ToString());
+			//DebugText(Value.ToString());
 		}
 
-		public override void Collide(Thing other, float percent, float dt)
+		public override void Colliding(Thing other, float percent, float dt)
 		{
-			base.Collide(other, percent, dt);
+			base.Colliding(other, percent, dt);
 
 			if (other is Enemy enemy && !enemy.IsDying)
 			{
@@ -104,6 +105,49 @@ namespace Sandbox
 		public void SetValue(int value)
         {
 			Value = value;
-        }
+
+			int tier_shape = 1 + MathX.FloorToInt((value - 1)/ 5f);
+			int tier_color = value % 5;
+
+			switch (tier_shape)
+            {
+				case 1:
+					AnimationPath = "textures/sprites/xp_1.frames";
+					break;
+				case 2:
+					AnimationPath = "textures/sprites/xp_2.frames";
+					break;
+				case 3:
+					AnimationPath = "textures/sprites/xp_3.frames";	
+					break;
+				case 4:
+					AnimationPath = "textures/sprites/xp_4.frames";
+					break;
+				case 5:
+				default:
+					AnimationPath = "textures/sprites/xp_5.frames";
+					break;
+			}
+
+			switch (tier_color)
+			{
+				case 1:
+                    ColorFill = new Color(0.2f, 0.2f, 1f) * 1.3f;
+					break;
+				case 2:
+					ColorFill = new Color(1f, 0.2f, 0.2f) * 2f;
+					break;
+				case 3:
+					ColorFill = new Color(1f, 1f, 0.2f) * 2.3f;
+					break;
+				case 4:
+					ColorFill = new Color(0.2f, 1f, 0.3f) * 1.7f;
+					break;
+				case 5:
+				default:
+					ColorFill = new Color(1f, 1f, 1f) * 1.8f;
+					break;
+			}
+		}
 	}
 }

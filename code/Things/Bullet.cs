@@ -76,9 +76,9 @@ namespace Sandbox
 			}
         }
 
-		public override void Collide(Thing other, float percent, float dt)
+		public override void Colliding(Thing other, float percent, float dt)
 		{
-			base.Collide(other, percent, dt);
+			base.Colliding(other, percent, dt);
 
 			if (other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime > 1.5f))
 			{
