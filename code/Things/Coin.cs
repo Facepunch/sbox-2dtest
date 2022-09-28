@@ -152,20 +152,20 @@ namespace Sandbox
 			switch (tier_color)
 			{
 				case 1:
-                    ColorFill = new Color(0.2f, 0.2f, 1f) * 1.3f;
+                    ColorTint = new Color(0.2f, 0.2f, 1f);
 					break;
 				case 2:
-					ColorFill = new Color(1f, 0.2f, 0.2f) * 2f;
+					ColorTint = new Color(1f, 0.2f, 0.2f);
 					break;
 				case 3:
-					ColorFill = new Color(1f, 1f, 0.2f) * 2.3f;
+					ColorTint = new Color(1f, 1f, 0.2f);
 					break;
 				case 4:
-					ColorFill = new Color(0.2f, 1f, 0.3f) * 1.7f;
+					ColorTint = new Color(0.2f, 1f, 0.3f);
 					break;
 				case 5:
 				default:
-					ColorFill = new Color(1f, 1f, 1f) * 1.8f;
+					ColorTint = new Color(1f, 1f, 1f) * 2f;
 					break;
 			}
 		}

@@ -31,6 +31,8 @@ namespace Sandbox
 		private const float AGGRO_START_TIME = 0.2f;
 		private const float AGGRO_LOSE_TIME = 0.4f;
 
+		public float DamageToPlayer { get; private set; }
+
 		public static float SCALE_FACTOR = 0.8f;
 
 		//private Sprite _shadow;
@@ -57,6 +59,7 @@ namespace Sandbox
 				MaxHealth = Health;
 				MoveTimeOffset = Rand.Float(0f, 4f);
 				MoveTimeSpeed = Rand.Float(6f, 9f);
+				DamageToPlayer = 5f;
 
 				IsSpawning = true;
 				ElapsedTime = 0f;
@@ -242,11 +245,11 @@ namespace Sandbox
 			}
 			else if (other is PlayerCitizen player)
 			{
-				Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * dt;
+				Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * (1f + player.TempWeight) * dt;
 
 				if(IsAttacking)
                 {
-					player.Damage(10f * dt);
+					player.Damage(DamageToPlayer * dt);
                 }
 			}
 		}
