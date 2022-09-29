@@ -35,11 +35,13 @@ public partial class HUD : RootPanel
 
 	public HUD()
 	{
-		//RootPanel.StyleSheet.Load("ui/HUD.scss");
-  //      RootPanel.AddChild<ToolsPanel>("tools");
-  //      RootPanel.AddChild<ToolsPanel>("tools");
+		Local.Hud = this;
 
-        StyleSheet.Load("ui/HUD.scss");
+		//RootPanel.StyleSheet.Load("ui/HUD.scss");
+		//      RootPanel.AddChild<ToolsPanel>("tools");
+		//      RootPanel.AddChild<ToolsPanel>("tools");
+
+		StyleSheet.Load("ui/HUD.scss");
 
 		ToolsPanel = AddChild<ToolsPanel>("tools");
 		InfoPanel = AddChild<InfoPanel>("info_panel");

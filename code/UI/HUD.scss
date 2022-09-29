@@ -97,29 +97,13 @@
             padding-right: 2px;
         }
 
-        .next {
-            font-size: 45px;
-            font-family: Arial;
-            color: white;
-            padding-top: 6px;
-            padding-right: 3px;
-        }
-
-        .clear {
-            font-size: 43px;
-            font-family: Arial;
-            color: white;
-            padding-top: 7px;
-            padding-right: 3px;
-        }
-
         &:hover {
             background-color: #301B3F99;
         }
 
-        &.active, &:active {
-            background-color: #3C415Cbb;
-        }
+        //&.active, &:active {
+        //    background-color: #3C415Cbb;
+        //}
     }
 }
 

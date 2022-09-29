@@ -8,44 +8,58 @@ namespace Sandbox;
 
 public class ToolsPanel : Panel
 {
-	public bool IsDirty { get; private set; }
+	private List<StatusIcon> _statusIcons = new List<StatusIcon>();
 
 	public ToolsPanel()
 	{
-		IsDirty = true;
+		
 	}
 
 	public void Refresh()
     {
-		if (!IsDirty)
+		var statuses = MyGame.Current.LocalPlayer.Statuses;
+		Log.Info("ToolsPanel - num statuses: " + statuses.Count);
+
+		for(int i = _statusIcons.Count - 1; i >= 0; i--)
+        {
+			var icon = _statusIcons[i];
+			icon.Delete();
+        }
+		_statusIcons.Clear();
+
+		foreach(var status in statuses)
+        {
+			var icon = new StatusIcon();
+			icon.AddClass("tools");
+			icon.AddClass("buttons");
+			icon.Add.Label("᱿", "play");
+			AddChild(icon);
+
+			icon.Title = status.ClassName;
+			icon.Description = "Description for this status effect.";
+
+			//icon.AddEventListener("onclick", () =>
+			//{
+			//	Log.Info("play");
+			//});
+
+			_statusIcons.Add(icon);
+		}
+	}
+}
+
+public class StatusIcon : Panel
+{
+	public string Title;
+	public string Description;
+
+	protected override void OnMouseOver(MousePanelEvent e)
+	{
+		base.OnMouseOver(e);
+
+		if (string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(Description))
 			return;
 
-		Log.Info("ToolsPanel - num statuses: " + MyGame.Current.LocalPlayer.Statuses.Count);
-
-		// [PLAY] button
-		var play = Add.Button("", "buttons");
-		play.Add.Label("᱿", "play");
-		play.AddEventListener("onclick", () =>
-		{
-			Log.Info("play");
-		});
-
-		// [NEXT] button
-		var next = Add.Button("", "buttons");
-		next.Add.Label("⇥", "next");
-		next.AddEventListener("onclick", () =>
-		{
-			Log.Info("next");
-		});
-
-		// [CLEAR] button
-		var clear = Add.Button("", "buttons");
-		clear.Add.Label("⨯", "clear");
-		clear.AddEventListener("onclick", () =>
-		{
-			Log.Info("clear");
-		});
-
-		IsDirty = false;
+		Tippy.Create(this, Tippy.Pivots.TopRight).WithContent(Title, Description);
 	}
 }

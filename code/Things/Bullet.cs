@@ -30,7 +30,7 @@ namespace Sandbox
 
 				Scale = new Vector2(0.2f, 0.2f);
 				SpawnTime = 0f;
-				Damage = 10f;
+				Damage = 1f;
 				AddTempWeight = 2f;
 				Force = 0.75f;
 				Radius = 0.1f;

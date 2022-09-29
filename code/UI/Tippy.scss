@@ -1,0 +1,28 @@
+﻿
+//@import "../_vars.scss";
+
+Tippy {
+    position: absolute;
+    pointer-events: none;
+    z-index: 9999;
+    border: 1px solid #00000022;
+    width: 200px;
+    background-color: #00000099;
+    font-size: 22px;
+    color: #ffffffaa;
+    margin-left: 6px;
+    margin-top: 6px;
+    flex-direction: column;
+
+    &.unset {
+        opacity: 0;
+    }
+
+    .tippy_title {
+        color: #66ff66;
+    }
+
+    .tippy_description {
+        font-style: italic;
+    }
+}

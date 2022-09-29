@@ -48,6 +48,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float NumBullets { get; protected set; }
 	[Net] public float BulletSpread { get; protected set; }
 	[Net] public float BulletSpeed { get; protected set; }
+	[Net] public float BulletLifetime { get; protected set; }
 
 	private int _shotNum;
 
@@ -63,8 +64,10 @@ public partial class PlayerCitizen : Thing
 
 	[Net] public float DashCooldown { get; private set; }
 	private float _dashTimer;
-	public bool IsDashing => _dashTimer > 0f;
+	public bool IsDashing { get; private set; }
 	private Vector2 _dashVelocity;
+	private float _dashInvulnTimer;
+	[Net] public float DashInvulnTime { get; private set; }
 
 	private float _flashTimer;
 	private bool _isFlashing;
@@ -105,10 +108,12 @@ public partial class PlayerCitizen : Thing
 			NumBullets = 1f;
 			BulletSpread = 35f;
 			BulletSpeed = 7.5f;
+			BulletLifetime = 0.8f;
 			Luck = 1f;
 			Level = 0;
 			ExperienceRequired = GetExperienceReqForLevel(Level + 1);
-			DashCooldown = 0.5f;
+			DashCooldown = 1f;
+			DashInvulnTime = 0.25f;
 
 			Health = 100f;
 			MaxHp = 100f;
@@ -118,7 +123,7 @@ public partial class PlayerCitizen : Thing
 			AimDir = Vector2.Up;
 
 			CoinAttractRange = 1.7f;
-			CoinAttractStrength = 1.5f;
+			CoinAttractStrength = 2.2f;
 
 			CollideWith.Add(typeof(Enemy));
 			CollideWith.Add(typeof(PlayerCitizen));
@@ -159,7 +164,7 @@ public partial class PlayerCitizen : Thing
 	{
 		//Utils.DrawCircle(HitboxPos, 1.4f, 18, Time.Now, Color.Red);
 		//Log.Info("local player: " + (Game.Client != null));
-		DebugText(IsDashing.ToString() + "\n" + _dashVelocity + "\ntemp weight: " + TempWeight);
+		//DebugText(IsDashing.ToString() + "\n" + _dashVelocity + "\ntemp weight: " + TempWeight);
 	}
 
 	public override void Simulate( Client cl )
@@ -172,7 +177,7 @@ public partial class PlayerCitizen : Thing
 		Velocity += inputVector * MoveSpeed * BASE_MOVE_SPEED * dt;
 		Position += (Velocity + _dashVelocity) * dt;
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, dt);
-		_dashVelocity *= (1f - dt * 3.95f);
+		_dashVelocity *= (1f - dt * 7.95f);
 		TempWeight *= (1f - dt * 4.7f);
 
 		if (Velocity.LengthSquared > 0.01f && inputVector.LengthSquared > 0.1f)
@@ -208,7 +213,7 @@ public partial class PlayerCitizen : Thing
         if (ArrowAimer != null)
         {
             ArrowAimer.LocalRotation = (MathF.Atan2(AimDir.y, AimDir.x) * (180f / MathF.PI));
-            ArrowAimer.Position = Position + AimDir * 0.65f;
+            ArrowAimer.Position = Position + new Vector2(0f, 0.4f) + AimDir * 0.65f;
         }
 
 		if (cl.IsBot)
@@ -254,34 +259,59 @@ public partial class PlayerCitizen : Thing
 					DashRecharged();
 				}
 			}
-			if (Input.Pressed(InputButton.Jump) || Input.Pressed(InputButton.PrimaryAttack))
-				Dash();
 
+			HandleDashing(dt);
 			HandleStatuses(dt);
 			HandleShooting(dt);
 			HandleFlashing(dt);
 		}
-		else // Client
+	}
+
+	void HandleDashing(float dt)
+    {
+		if(_dashInvulnTimer > 0f)
         {
-			Game.Hud.ToolsPanel.Refresh();
-        }
+			_dashInvulnTimer -= dt;
+			if (_dashInvulnTimer <= 0f)
+            {
+				IsDashing = false;
+				ColorTint = Color.White;
+			} else
+            {
+				var rand = Rand.Float(0.5f, 1f);
+                ColorTint = new Color(rand, rand, rand / 2f);
+			}
+		}
+
+		if (Input.Pressed(InputButton.Jump) || Input.Pressed(InputButton.PrimaryAttack))
+			Dash();
 	}
 
 	public void Dash()
     {
-		if (IsDashing)
+		if (_dashTimer > 0f)
 			return;
 
 		Vector2 dashDir = Velocity.LengthSquared > 0f ? Velocity.Normal : AimDir;
-		_dashVelocity = dashDir * 5f;
-		TempWeight = 54f;
+		_dashVelocity = dashDir * 7f;
+		TempWeight = 15f;
 		_dashTimer = DashCooldown;
-    }
+		IsDashing = true;
+		_dashInvulnTimer = DashInvulnTime;
+
+		RefreshStatusHud();
+	}
 
 	public void DashRecharged()
     {
 
     }
+
+	[ClientRpc]
+	public void RefreshStatusHud()
+	{
+		Game.Hud.ToolsPanel.Refresh();
+	}
 
 	void HandleStatuses(float dt)
     {
@@ -340,7 +370,7 @@ public partial class PlayerCitizen : Thing
 			if (_flashTimer < 0f)
 			{
 				_isFlashing = false;
-				ColorTint = new Color(1f, 1f, 1f);
+				ColorTint = Color.White;
 			}
 		}
 	}
@@ -367,7 +397,7 @@ public partial class PlayerCitizen : Thing
 				Damage = Dmg,
 				Force = 2.25f,
 				TempWeight = 3f,
-				Lifetime = 1.5f,
+				Lifetime = BulletLifetime,
 			};
 
 			Game.AddThing(bullet);
@@ -439,6 +469,10 @@ public partial class PlayerCitizen : Thing
 
 	public void Damage(float damage)
     {
+		if (IsDashing)
+			// show DODGED! floater
+			return;
+
 		Health -= damage;
 		Flash(0.125f);
 
@@ -451,6 +485,9 @@ public partial class PlayerCitizen : Thing
 	public override void Colliding(Thing other, float percent, float dt)
 	{
 		base.Colliding(other, percent, dt);
+
+		//if (IsDashing)
+		//	return;
 
 		if ((other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime < 0.5f)) || other is PlayerCitizen)
 		{

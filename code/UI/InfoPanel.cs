@@ -42,12 +42,12 @@ public class InfoPanel : Panel
 		stats += "RELOAD SPD: " + player.ReloadSpeed + "\n";
 		stats += "INACCURACY: " + player.BulletSpread + "\n";
 		stats += "BULLET SPD: " + player.BulletSpeed + "\n";
+		stats += "BULLET LIFETIME: " + player.BulletLifetime + "\n";
 		stats += "MOVE SPD: " + player.MoveSpeed + "\n";
 		stats += "ATTRACT RANGE: " + player.CoinAttractRange + "\n";
 		stats += "ATTRACT POWER: " + player.CoinAttractStrength + "\n";
 		stats += "LUCK: " + player.Luck + "\n";
 		stats += "SIZE: " + player.Radius + "\n";
-
 
 		StatsLabel.Text = stats;
 	}
