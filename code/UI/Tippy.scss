@@ -6,13 +6,13 @@ Tippy {
     pointer-events: none;
     z-index: 9999;
     border: 1px solid #00000022;
-    width: 200px;
+    //width: 200px;
     background-color: #00000099;
-    font-size: 22px;
     color: #ffffffaa;
     margin-left: 6px;
     margin-top: 6px;
     flex-direction: column;
+    padding: 4px 4px 4px 4px;
 
     &.unset {
         opacity: 0;
@@ -20,9 +20,11 @@ Tippy {
 
     .tippy_title {
         color: #66ff66;
+        font-size: 22px;
     }
 
     .tippy_description {
         font-style: italic;
+        font-size: 18px;
     }
 }

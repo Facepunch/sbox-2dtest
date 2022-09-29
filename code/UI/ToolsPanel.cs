@@ -32,8 +32,13 @@ public class ToolsPanel : Panel
 			var icon = new StatusIcon();
 			icon.AddClass("tools");
 			icon.AddClass("buttons");
-			icon.Add.Label("᱿", "play");
+
+			icon.Style.SetBackgroundImage("/textures/icons/bullets.png");
+			//icon.Add.Image("/textures/icons/bullets.png");
+			//icon.Style.Set("background-image: url(textures/icons/bullets.png);");
+			//icon.Add.Label("᱿", "play");
 			AddChild(icon);
+			
 
 			icon.Title = status.ClassName;
 			icon.Description = "Description for this status effect.";

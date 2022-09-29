@@ -69,7 +69,6 @@
     cursor: default;
     pointer-events: all;
     align-content: stretch;
-
     flex-wrap: nowrap;
     flex-direction: column;
     flex-grow: 0;
@@ -79,16 +78,19 @@
     justify-content: flex-end;
     align-items: center;
     padding: 0px 20px 20px 20px;
+    margin: 2px;
 
     .buttons {
         cursor: pointer;
         color: white;
         border: 2px solid white;
-        border-radius: 15px;
+        border-radius: 5px;
         height: 80px;
         width: 80px;
         justify-content: center;
         mix-blend-mode: color;
+        background-size: cover;
+        background-position: center center;
 
         .play {
             font-size: 55px;
@@ -100,7 +102,6 @@
         &:hover {
             background-color: #301B3F99;
         }
-
         //&.active, &:active {
         //    background-color: #3C415Cbb;
         //}
