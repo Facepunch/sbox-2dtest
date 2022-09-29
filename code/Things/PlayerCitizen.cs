@@ -135,8 +135,14 @@ public partial class PlayerCitizen : Thing
 			//Modify("AttackSpeed", 0.5f, ModifierType.Add);
 			//Modify("AttackSpeed", 2f, ModifierType.Mult);
 			Statuses = new List<Status>();
-			AddStatus(new ExampleStatus());
-			AddStatus(new ExampleStatus2());
+			
+			for(int i = 0; i < 2; i++)
+            {
+				AddStatus(new ExampleStatus());
+				AddStatus(new ExampleStatus2());
+			}
+
+			RefreshStatusHud();
 		}
 	}
 
@@ -298,6 +304,12 @@ public partial class PlayerCitizen : Thing
 		_dashTimer = DashCooldown;
 		IsDashing = true;
 		_dashInvulnTimer = DashInvulnTime;
+
+		for (int i = 0; i < 2; i++)
+		{
+			AddStatus(new ExampleStatus());
+			AddStatus(new ExampleStatus2());
+		}
 
 		RefreshStatusHud();
 	}

@@ -13,6 +13,10 @@ public class ExampleStatus : Status
 	{
 		base.Init(player);
 
+		Title = "Example 1";
+		Description = "Example 1 description.";
+		IconPath = "textures/icons/bullets.png";
+
 		//player.Modify(this, "AttackSpeed", 0.01f, ModifierType.Add);
 		//player.Modify(this, "AttackSpeed", 4f, ModifierType.Set);
 		//player.Modify(this, "MoveSpeed", 5f, ModifierType.Mult);
@@ -32,11 +36,17 @@ public class ExampleStatus : Status
 
 public class ExampleStatus2 : Status
 {
+	float AtkSpdMultiplier = 1.5f;
+
 	public override void Init(PlayerCitizen player)
 	{
 		base.Init(player);
 
-		player.Modify(this, "AttackSpeed", 4f, ModifierType.Mult);
+		Title = "Example 2";
+		Description = "Increase ATK SPD by " + AtkSpdMultiplier.ToString("#.#") + "x.";
+		IconPath = "textures/icons/background.png";
+
+		player.Modify(this, "AttackSpeed", AtkSpdMultiplier, ModifierType.Mult);
 		//player.Modify(this, "ReloadSpeed", 6f, ModifierType.Mult);
 	}
 

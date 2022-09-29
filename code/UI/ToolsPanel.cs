@@ -33,15 +33,14 @@ public class ToolsPanel : Panel
 			icon.AddClass("tools");
 			icon.AddClass("buttons");
 
-			icon.Style.SetBackgroundImage("/textures/icons/bullets.png");
+			icon.Style.SetBackgroundImage(status.IconPath);
 			//icon.Add.Image("/textures/icons/bullets.png");
 			//icon.Style.Set("background-image: url(textures/icons/bullets.png);");
 			//icon.Add.Label("᱿", "play");
 			AddChild(icon);
 			
-
-			icon.Title = status.ClassName;
-			icon.Description = "Description for this status effect.";
+			icon.Title = status.Title;
+			icon.Description = status.Description;
 
 			//icon.AddEventListener("onclick", () =>
 			//{
@@ -67,4 +66,11 @@ public class StatusIcon : Panel
 
 		Tippy.Create(this, Tippy.Pivots.TopRight).WithContent(Title, Description);
 	}
+
+    public override void OnMouseWheel(float value)
+    {
+        base.OnMouseWheel(value);
+
+		Parent.OnMouseWheel(value);
+    }
 }

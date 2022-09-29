@@ -13,7 +13,9 @@ public partial class Status : BaseNetworkable
 	public PlayerCitizen Player { get; protected set; }
 	[Net] public int Level { get; protected set; }
 	public TimeSince ElapsedTime { get; protected set; }
+	[Net] public string Title { get; protected set; }
 	[Net] public string Description { get; protected set; }
+	[Net] public string IconPath { get; protected set; }
 
 	public Status()
 	{
