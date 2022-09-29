@@ -56,48 +56,53 @@ namespace Sandbox
 
         public SpriteTexture SpriteTexture
         {
-            get => SpriteTexture.Atlas(NetTexturePath, NetAtlasRows, NetAtlasColumns);
+            get => IsClientOnly ? LocalSpriteTexture : SpriteTexture.Atlas(NetTexturePath, NetAtlasRows, NetAtlasColumns);
             set
             {
-                NetTexturePath = value.TexturePath;
-                NetAtlasRows = value.AtlasRows;
-                NetAtlasColumns = value.AtlasColumns;
+	            if ( IsClientOnly )
+	            {
+		            LocalSpriteTexture = value;
 
-                if (this is Arrow)
-                {
-                    Log.Info($"hello {NetTexturePath} {value.TexturePath}");
-                }
-
-                if (IsClient)
-                {
-					OnNetTexturePathChanged();
-                }
+		            OnNetTexturePathChanged();
+				}
+	            else
+				{
+					NetTexturePath = value.TexturePath;
+					NetAtlasRows = value.AtlasRows;
+					NetAtlasColumns = value.AtlasColumns;
+				}
             }
         }
 
-        [Net, Change, Predicted]
+        [Net, Change]
 		private string NetTexturePath { get; set; }
 
-        [Net, Predicted]
+        [Net]
 		private int NetAtlasRows { get; set; }
 
-        [Net, Predicted]
+        [Net]
         private int NetAtlasColumns { get; set; }
 
-        [Net, Change, ResourceType("frames"), Predicted]
+		private SpriteTexture LocalSpriteTexture { get; set; }
+
+        [Net, Change, ResourceType("frames")]
 		private string NetAnimationPath { get; set; }
+		private string LocalAnimationPath { get; set; }
 
         public string AnimationPath
         {
-            get => NetAnimationPath;
+            get => IsClientOnly ? LocalAnimationPath : NetAnimationPath;
             set
             {
-                NetAnimationPath = value;
-
-                if (IsClient)
-                {
-                    OnNetAnimationPathChanged();
+                if ( IsClientOnly )
+				{
+					LocalAnimationPath = value;
+					OnNetAnimationPathChanged();
                 }
+                else
+                {
+	                NetAnimationPath = value;
+				}
             }
         }
 
@@ -110,7 +115,7 @@ namespace Sandbox
 		[Net, Predicted]
         public Vector2 Pivot { get; set; } = new Vector2(0.5f, 0.5f);
 
-        [Net, Change, Predicted]
+        [Net, Change]
         private SpriteFilter NetFilter { get; set; }
 
         public SpriteFilter Filter
@@ -127,10 +132,10 @@ namespace Sandbox
             }
         }
 
-        [Net, Predicted]
+        [Net]
 		public Color ColorFill { get; set; }
 
-        [Net, Predicted] public Color ColorTint { get; set; } = Color.White;
+        [Net] public Color ColorTint { get; set; } = Color.White;
 
 		public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
@@ -203,9 +208,9 @@ namespace Sandbox
 
 		private void OnNetTexturePathChanged()
 		{
-			_texture = string.IsNullOrEmpty(NetTexturePath)
+			_texture = string.IsNullOrEmpty(SpriteTexture.TexturePath)
 				? Texture.White
-				: Texture.Load( FileSystem.Mounted, NetTexturePath);
+				: Texture.Load( FileSystem.Mounted, SpriteTexture.TexturePath );
 
             UpdateMaterial();
         }
