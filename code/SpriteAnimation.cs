@@ -13,6 +13,8 @@ namespace Sandbox
         
         public List<SpriteSequence> Sequences { get; set; }
 
+        public bool Looping { get; set; } = true;
+
         public (Vector2 Min, Vector2 Max) GetFrameUvs(float time, int rows, int cols)
         {
             var totalDuration = 0f;
@@ -23,7 +25,14 @@ namespace Sandbox
                 totalDuration += sequence.Repetitions * frameTime * sequence.TotalFrameCount;
             }
 
-            time -= MathF.Floor(time / totalDuration) * totalDuration;
+            if ( Looping )
+			{
+				time -= MathF.Floor( time / totalDuration ) * totalDuration;
+			}
+            else
+            {
+	            time = Math.Clamp( time, 0f, totalDuration );
+            }
 
             foreach (var sequence in Sequences)
             {
@@ -45,7 +54,7 @@ namespace Sandbox
                 return sequence.GetFrameUvs(frame, rows, cols);
             }
 
-            return (default, default);
+            return Sequences.LastOrDefault()?.GetLastFrameUvs(rows, cols) ?? (default, default);
         }
     }
 
@@ -79,6 +88,11 @@ namespace Sandbox
             if (FlipY) (min.y, max.y) = (max.y, min.y);
 
             return (min, max);
+        }
+
+        public (Vector2 Min, Vector2 Max) GetLastFrameUvs( int rows, int cols )
+        {
+	        return GetFrameUvs( LastFrameIndex, rows, cols );
         }
     }
 }

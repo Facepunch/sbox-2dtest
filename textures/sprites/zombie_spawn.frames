@@ -13,5 +13,6 @@
 				TotalFrameCount = 15
 			},
 		]
+		Looping = false
 	}
 }
