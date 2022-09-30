@@ -15,17 +15,28 @@ namespace Sandbox
 
         public bool Looping { get; set; } = true;
 
+        public float Duration
+        {
+	        get
+			{
+				var totalDuration = 0f;
+
+				foreach ( var sequence in Sequences )
+				{
+					var frameTime = 1f / (FrameRate * sequence.PlaybackRate);
+					totalDuration += sequence.Repetitions * frameTime * sequence.TotalFrameCount;
+				}
+
+				return totalDuration;
+			}
+        }
+
         public (Vector2 Min, Vector2 Max) GetFrameUvs(float time, int rows, int cols)
         {
-            var totalDuration = 0f;
+	        var totalDuration = Duration;
 
-            foreach (var sequence in Sequences)
-            {
-                var frameTime = 1f / (FrameRate * sequence.PlaybackRate);
-                totalDuration += sequence.Repetitions * frameTime * sequence.TotalFrameCount;
-            }
 
-            if ( Looping )
+			if ( Looping )
 			{
 				time -= MathF.Floor( time / totalDuration ) * totalDuration;
 			}
