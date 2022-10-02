@@ -181,9 +181,19 @@
         height: 600px;
         background-color: #00000033;
         border: 3px solid white;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+
+        .choice_lvl_label {
+            color: #66ffaa;
+            font-size: 32px;
+            margin: 13px;
+        }
+
+        .choice_button_container {
+            flex-direction: row;
+        }
 
         .choice_button {
             width: 300px;

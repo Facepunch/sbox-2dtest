@@ -47,10 +47,14 @@ public partial class HUD : RootPanel
 		StatusPanel = AddChild<StatusPanel>("status_panel");
 		InfoPanel = AddChild<InfoPanel>("info_panel");
 		XpBarPanel = AddChild<XpBarPanel>("xp_bar_panel");
-		ChoicePanel = AddChild<ChoicePanel>("choice_panel_root");
 
 		//var modal = AddChild<Modal>("modal");
 
 		//AddChild<PlayerCursor>("cursor");
+	}
+
+	public void SpawnChoicePanel()
+    {
+		ChoicePanel = AddChild<ChoicePanel>("choice_panel_root");
 	}
 }

@@ -55,11 +55,11 @@ namespace Sandbox
 
 				FeetOffset = 0.35f;
 				Radius = 0.25f;
-				Health = 40f;
+				Health = 30f;
 				MaxHealth = Health;
 				MoveTimeOffset = Rand.Float(0f, 4f);
 				MoveTimeSpeed = Rand.Float(6f, 9f);
-				DamageToPlayer = 5f;
+				DamageToPlayer = 10f;
 
 				IsSpawning = true;
 				ElapsedTime = 0f;

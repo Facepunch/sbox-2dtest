@@ -104,7 +104,7 @@ public partial class PlayerCitizen : Thing
 			ReloadTime = 1.25f;
 			ReloadSpeed = 1f;
 			AttackSpeed = 1f;
-			Dmg = 5f;
+			Dmg = 55.5f;
 			MoveSpeed = 1f;
 			NumBullets = 1f;
 			BulletSpread = 35f;
@@ -137,14 +137,6 @@ public partial class PlayerCitizen : Thing
 			//Modify("AttackSpeed", 0.5f, ModifierType.Add);
 			//Modify("AttackSpeed", 2f, ModifierType.Mult);
 			Statuses = new List<Status>();
-			
-			//for(int i = 0; i < 2; i++)
-   //         {
-			//	AddStatus(new ExampleStatus());
-			//	AddStatus(new ExampleStatus2());
-			//}
-
-			RefreshStatusHud();
 		}
 	}
 
@@ -306,14 +298,6 @@ public partial class PlayerCitizen : Thing
 		_dashTimer = DashCooldown;
 		IsDashing = true;
 		_dashInvulnTimer = DashInvulnTime;
-
-		for (int i = 0; i < 2; i++)
-		{
-			AddStatus(new ExampleStatus());
-			AddStatus(new ExampleStatus2());
-		}
-
-		RefreshStatusHud();
 	}
 
 	public void DashRecharged()
@@ -509,11 +493,12 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
+	[ConCmd.Server]
 	public void AddStatus(Status status)
     {
 		Statuses.Add(status);
 		status.Init(this);
-    }
+	}
 
 	public void Modify(Status caller, string propertyName, float value, ModifierType type, float priority = 0f, bool update = true)
     {
@@ -629,7 +614,15 @@ public partial class PlayerCitizen : Thing
 
 		Level++;
 		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
+
+		LevelUpClient();
     }
+
+	[ClientRpc]
+	public void LevelUpClient()
+    {
+		Game.Hud.SpawnChoicePanel();
+	}
 
 	public int GetExperienceReqForLevel(int level)
     {
