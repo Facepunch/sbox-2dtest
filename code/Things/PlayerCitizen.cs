@@ -37,7 +37,7 @@ public partial class PlayerCitizen : Thing
 	public float Timer { get; protected set; }
 	[Net] public float AttackTime { get; protected set; }
 	[Net] public float AttackSpeed { get; private set; }
-	public bool IsReloading { get; protected set; }
+	[Net] public bool IsReloading { get; protected set; }
 	[Net] public float ReloadTime { get; protected set; }
 	[Net] public float ReloadSpeed { get; private set; }
 	[Net] public int AmmoCount { get; protected set; }
@@ -47,6 +47,7 @@ public partial class PlayerCitizen : Thing
 	public const float BASE_MOVE_SPEED = 30f;
 	[Net] public float NumBullets { get; protected set; }
 	[Net] public float BulletSpread { get; protected set; }
+	[Net] public float BulletInaccuracy { get; protected set; }
 	[Net] public float BulletSpeed { get; protected set; }
 	[Net] public float BulletLifetime { get; protected set; }
 
@@ -96,17 +97,18 @@ public partial class PlayerCitizen : Thing
 			AnimationSpeed = 0.66f;
 			Pivot = new Vector2(0.5f, 0.05f);
 
-			AttackTime = 1f;
+			AttackTime = 0.15f;
 			Timer = AttackTime;
 			AmmoCount = 5;
 			MaxAmmoCount = AmmoCount;
 			ReloadTime = 1.25f;
 			ReloadSpeed = 1f;
 			AttackSpeed = 1f;
-			Dmg = 10f;
+			Dmg = 5f;
 			MoveSpeed = 1f;
 			NumBullets = 1f;
 			BulletSpread = 35f;
+			BulletInaccuracy = 10f;
 			BulletSpeed = 7.5f;
 			BulletLifetime = 0.8f;
 			Luck = 1f;
@@ -136,11 +138,11 @@ public partial class PlayerCitizen : Thing
 			//Modify("AttackSpeed", 2f, ModifierType.Mult);
 			Statuses = new List<Status>();
 			
-			for(int i = 0; i < 2; i++)
-            {
-				AddStatus(new ExampleStatus());
-				AddStatus(new ExampleStatus2());
-			}
+			//for(int i = 0; i < 2; i++)
+   //         {
+			//	AddStatus(new ExampleStatus());
+			//	AddStatus(new ExampleStatus2());
+			//}
 
 			RefreshStatusHud();
 		}
@@ -322,7 +324,7 @@ public partial class PlayerCitizen : Thing
 	[ClientRpc]
 	public void RefreshStatusHud()
 	{
-		Game.Hud.ToolsPanel.Refresh();
+		Game.Hud.StatusPanel.Refresh();
 	}
 
 	void HandleStatuses(float dt)
@@ -391,7 +393,7 @@ public partial class PlayerCitizen : Thing
 	{
 		//return;
 
-		float start_angle = MathF.Sin(-_shotNum * 2f) * 10f;
+		float start_angle = MathF.Sin(-_shotNum * 2f) * BulletInaccuracy;
 
 		int num_bullets_int = (int)NumBullets;
 		float currAngleOffset = num_bullets_int == 1 ? 0f : -BulletSpread * 0.5f;

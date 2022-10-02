@@ -6,11 +6,11 @@ using System.Collections.Generic;
 
 namespace Sandbox;
 
-public class ToolsPanel : Panel
+public class StatusPanel : Panel
 {
 	private List<StatusIcon> _statusIcons = new List<StatusIcon>();
 
-	public ToolsPanel()
+	public StatusPanel()
 	{
 		
 	}
@@ -18,7 +18,7 @@ public class ToolsPanel : Panel
 	public void Refresh()
     {
 		var statuses = MyGame.Current.LocalPlayer.Statuses;
-		Log.Info("ToolsPanel - num statuses: " + statuses.Count);
+		Log.Info("StatusPanel - num statuses: " + statuses.Count);
 
 		for(int i = _statusIcons.Count - 1; i >= 0; i--)
         {
@@ -30,8 +30,8 @@ public class ToolsPanel : Panel
 		foreach(var status in statuses)
         {
 			var icon = new StatusIcon();
-			icon.AddClass("tools");
-			icon.AddClass("buttons");
+			icon.AddClass("status_panel");
+			icon.AddClass("status_icon");
 
 			icon.Style.SetBackgroundImage(status.IconPath);
 			//icon.Add.Image("/textures/icons/bullets.png");

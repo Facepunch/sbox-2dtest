@@ -9,18 +9,27 @@ namespace Sandbox;
 
 public class ExampleStatus : Status
 {
+	float ReloadSpdMultiplier = 1.1f;
+
+	public ExampleStatus()
+    {
+		Title = "Example 1";
+		Description = "Increase reload speed.";
+		IconPath = "textures/icons/bullets.png";
+	}
+
 	public override void Init(PlayerCitizen player)
 	{
 		base.Init(player);
 
-		Title = "Example 1";
-		Description = "Example 1 description.";
-		IconPath = "textures/icons/bullets.png";
+		Description = "Multiply RELOAD SPD by " + ReloadSpdMultiplier.ToString("#.#") + "x.";
 
 		//player.Modify(this, "AttackSpeed", 0.01f, ModifierType.Add);
 		//player.Modify(this, "AttackSpeed", 4f, ModifierType.Set);
 		//player.Modify(this, "MoveSpeed", 5f, ModifierType.Mult);
-		player.Modify(this, "AttackSpeed", 2f, ModifierType.Mult);
+		//player.Modify(this, "AttackSpeed", 2f, ModifierType.Mult);
+		player.Modify(this, "ReloadSpeed", 1.1f, ModifierType.Mult);
+		player.Modify(this, "BulletInaccuracy", 0.5f, ModifierType.Mult);
 	}
 
 	public override void Update(float dt)
@@ -36,15 +45,20 @@ public class ExampleStatus : Status
 
 public class ExampleStatus2 : Status
 {
-	float AtkSpdMultiplier = 1.5f;
+	float AtkSpdMultiplier = 1.1f;
+
+	public ExampleStatus2()
+	{
+		Title = "Example Status 2";
+		Description = "Increase attack speed.";
+		IconPath = "textures/icons/background.png";
+	}
 
 	public override void Init(PlayerCitizen player)
 	{
 		base.Init(player);
 
-		Title = "Example 2";
 		Description = "Increase ATK SPD by " + AtkSpdMultiplier.ToString("#.#") + "x.";
-		IconPath = "textures/icons/background.png";
 
 		player.Modify(this, "AttackSpeed", AtkSpdMultiplier, ModifierType.Mult);
 		//player.Modify(this, "ReloadSpeed", 6f, ModifierType.Mult);

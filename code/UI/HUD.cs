@@ -29,9 +29,10 @@ public partial class HUD : RootPanel
 {
 	//public static Vector2 MousePos { get; private set; }
 
-	public ToolsPanel ToolsPanel { get; private set; }
+	public StatusPanel StatusPanel { get; private set; }
 	public InfoPanel InfoPanel { get; private set; }
 	public XpBarPanel XpBarPanel { get; private set; }
+	public ChoicePanel ChoicePanel { get; private set; }
 
 	public HUD()
 	{
@@ -43,9 +44,12 @@ public partial class HUD : RootPanel
 
 		StyleSheet.Load("ui/HUD.scss");
 
-		ToolsPanel = AddChild<ToolsPanel>("tools");
+		StatusPanel = AddChild<StatusPanel>("status_panel");
 		InfoPanel = AddChild<InfoPanel>("info_panel");
 		XpBarPanel = AddChild<XpBarPanel>("xp_bar_panel");
+		ChoicePanel = AddChild<ChoicePanel>("choice_panel_root");
+
+		//var modal = AddChild<Modal>("modal");
 
 		//AddChild<PlayerCursor>("cursor");
 	}
