@@ -24,7 +24,7 @@ public partial class MyGame : Sandbox.Game
 	
 	public HUD Hud { get; private set; }
 
-	public PlayerCitizen LocalPlayer => Local.Client.Pawn as PlayerCitizen;
+	public PlayerCitizen LocalPlayer => Local.Client.Pawn as PlayerCitizen; // ONLY FOR CLIENT
 
 	public OrthoCamera MainCamera { get; } = new OrthoCamera();
 

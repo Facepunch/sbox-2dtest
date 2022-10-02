@@ -18,7 +18,7 @@ public class StatusPanel : Panel
 	public void Refresh()
     {
 		var statuses = MyGame.Current.LocalPlayer.Statuses;
-		Log.Info("StatusPanel - num statuses: " + statuses.Count);
+		//Log.Info("StatusPanel Refresh() - num statuses: " + statuses.Count);
 
 		for(int i = _statusIcons.Count - 1; i >= 0; i--)
         {

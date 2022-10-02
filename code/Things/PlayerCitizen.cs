@@ -61,6 +61,8 @@ public partial class PlayerCitizen : Thing
 	[Net] public int ExperienceTotal { get; protected set; }
 	[Net] public int ExperienceCurrent { get; protected set; }
 	[Net] public int ExperienceRequired { get; protected set; }
+	[Net] public bool IsChoosingLevelUpReward { get; protected set; }
+
 	[Net] public float MaxHp { get; protected set; }
 
 	[Net] public float DashCooldown { get; private set; }
@@ -137,6 +139,8 @@ public partial class PlayerCitizen : Thing
 			//Modify("AttackSpeed", 0.5f, ModifierType.Add);
 			//Modify("AttackSpeed", 2f, ModifierType.Mult);
 			Statuses = new List<Status>();
+
+			AddExperience(500);
 		}
 	}
 
@@ -164,7 +168,7 @@ public partial class PlayerCitizen : Thing
 	{
 		//Utils.DrawCircle(HitboxPos, 1.4f, 18, Time.Now, Color.Red);
 		//Log.Info("local player: " + (Game.Client != null));
-		//DebugText(IsDashing.ToString() + "\n" + _dashVelocity + "\ntemp weight: " + TempWeight);
+		DebugText("IsChoosingLevelUpReward: " + IsChoosingLevelUpReward);
 	}
 
 	public override void Simulate( Client cl )
@@ -493,16 +497,34 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
-	[ConCmd.Server]
+	[ConCmd.Server("add_status")]
+	public static void AddStatusCmd(string statusName)
+    {
+		Log.Info("AddStatusCmd");
+
+		var player = ConsoleSystem.Caller.Pawn as PlayerCitizen;
+		var status = TypeLibrary.Create<Status>(statusName);
+
+		//Log.Info("AddStatusCmd - player: " + player + " status: " + status + " IsServer: " + Host.IsServer);
+
+		player.AddStatus(status);
+	}
+
 	public void AddStatus(Status status)
     {
 		Statuses.Add(status);
 		status.Init(this);
+		RefreshStatusHud();
+
+		//Log.Info("AddStatus - status: " + status + " IsServer: " + Host.IsServer);
+
+		IsChoosingLevelUpReward = false;
+		CheckForLevelUp();
 	}
 
 	public void Modify(Status caller, string propertyName, float value, ModifierType type, float priority = 0f, bool update = true)
     {
-		Log.Info("------------- Modify - caller: " + caller + ", " + propertyName + ", " + value + ", " + type);
+		//Log.Info("------------- Modify - caller: " + caller + ", " + propertyName + ", " + value + ", " + type);
 
 		if (!_modifiers.ContainsKey(caller))
 			_modifiers.Add(caller, new Dictionary<string, ModifierData>());
@@ -519,7 +541,7 @@ public partial class PlayerCitizen : Thing
 		{
 			var property = TypeLibrary.GetDescription<PlayerCitizen>().GetProperty(propertyName);
 			_original_properties.Add(propertyName, (float)property.GetValue(this));
-			Log.Info ("... storing original property... - " + propertyName + ": " + ((float)property.GetValue(this)));
+			//Log.Info ("... storing original property... - " + propertyName + ": " + ((float)property.GetValue(this)));
 		}
 
 		float curr_value = _original_properties[propertyName];
@@ -561,7 +583,7 @@ public partial class PlayerCitizen : Thing
 		curr_value += total_add;
 		curr_value *= total_mult;
 
-		Log.Info("UpdateProperty: " + propertyName + ": " + curr_value);
+		//Log.Info("UpdateProperty: " + propertyName + ": " + curr_value);
 		SetProperty(propertyName, curr_value);
     }
 
@@ -601,19 +623,34 @@ public partial class PlayerCitizen : Thing
 
 	public void AddExperience(int xp)
     {
+		Host.AssertServer();
+
 		ExperienceTotal += xp;
 		ExperienceCurrent += xp;
 
-		if(ExperienceCurrent >= ExperienceRequired)
-			LevelUp();
+		if (!IsChoosingLevelUpReward)
+			CheckForLevelUp();
     }
+
+	public void CheckForLevelUp()
+    {
+		//Log.Info("CheckForLevelUp: " + ExperienceCurrent + " / " + ExperienceRequired + " IsServer: " + Host.IsServer + " Level: " + Level);
+		if (ExperienceCurrent >= ExperienceRequired)
+			LevelUp();
+	}
 
 	public void LevelUp()
     {
+		Host.AssertServer();
+
 		ExperienceCurrent -= ExperienceRequired;
 
 		Level++;
 		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
+
+		//Log.Info("Level Up - now level: " + Level + " IsServer: " + Host.IsServer);
+
+		IsChoosingLevelUpReward = true;
 
 		LevelUpClient();
     }

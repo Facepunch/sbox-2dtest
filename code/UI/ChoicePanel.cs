@@ -17,11 +17,12 @@ public class ChoicePanel : Panel
 		AddChild(icon);
 	}
 
-	public void OnChoiceMade(Status status)
+	public void OnChoiceMade(string statusName)
 	{
-		var player = MyGame.Current.LocalPlayer;
-		player.AddStatus(status);
-		MyGame.Current.Hud.StatusPanel.Refresh();
+		Log.Info("OnChoiceMade: " + statusName);
+
+		ConsoleSystem.Run("add_status", statusName);
+		//PlayerCitizen.AddStatusCmd(statusName);
 		Delete();
 	}
 }
@@ -53,15 +54,17 @@ public class ChoiceModal : Panel
 		//var button0 = TypeLibrary.Create("b0", TypeLibrary.GetDescription("ChoiceButton").TargetType) as ChoiceButton;
 		//var button0 = TypeLibrary.Create<Panel>("ChoiceButton");
 
-		List<Status> statuses = new List<Status>() { TypeLibrary.Create<Status>("ExampleStatus"), TypeLibrary.Create<Status>("ExampleStatus"), TypeLibrary.Create<Status>("ExampleStatus2") };
+		List<string> statusNames = new List<string>() { "ExampleStatus", "ExampleStatus", "ExampleStatus2" };
 
 		int NUM_CHOICES = 3;
 		for(int i = 0; i < NUM_CHOICES; i++)
         {
-			var status = statuses[i];
+			var statusName = statusNames[i];
+			var status = TypeLibrary.Create<Status>(statusName);
 			var button = new ChoiceButton(status);
 			button.AddClass("choice_button");
-			button.AddEventListener("onclick", () => ChoicePanel.OnChoiceMade(status));
+			button.AddEventListener("onclick", () => ChoicePanel.OnChoiceMade(statusName));
+			button.status = status;
 			buttonContainer.AddChild(button);
 		}
 	}
@@ -71,8 +74,8 @@ public class ChoiceButton : Panel
 {
 	public Status status { get; set; }
 
-	public string Title;
-	public string Description;
+	//public string Title;
+	//public string Description;
 
     public ChoiceButton(Status status)
 	{
@@ -94,13 +97,13 @@ public class ChoiceButton : Panel
 		AddChild(descriptionLabel);
 	}
 
- //   protected override void OnMouseOver(MousePanelEvent e)
-	//{
-	//	base.OnMouseOver(e);
+    //protected override void OnMouseOver(MousePanelEvent e)
+    //{
+    //    base.OnMouseOver(e);
 
-	//	if (string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(Description))
-	//		return;
+    //    if (status == null || string.IsNullOrEmpty(status.Title) || string.IsNullOrEmpty(status.Description))
+    //        return;
 
-	//	Tippy.Create(this, Tippy.Pivots.TopRight).WithContent(Title, Description);
-	//}
+    //    Tippy.Create(this, Tippy.Pivots.TopRight).WithContent(status.Title, status.Description);
+    //}
 }
