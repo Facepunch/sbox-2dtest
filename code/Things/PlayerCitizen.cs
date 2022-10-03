@@ -1,4 +1,4 @@
-﻿using Sandbox;
+using Sandbox;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -452,8 +452,11 @@ public partial class PlayerCitizen : Thing
 	{
 		base.BuildInput(inputBuilder);
 
+		// To account for bullets being raised off the ground
+		var aimOffset = new Vector2( 0f, 0.4f );
+
 		// garry: use put the mouse offset in the input
-        MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition) - Position;
+        MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition) - Position - aimOffset;
 		inputBuilder.Cursor = new Ray(0, MouseOffset);
     }
 
