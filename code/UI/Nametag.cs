@@ -24,7 +24,7 @@ public partial class Nametag : Panel
 
         NameLabel.Text = Player.Client.Name;
 
-        var screenPos = MyGame.Current.MainCamera.WorldToScreen(Player.Position);
+        var screenPos = MyGame.Current.MainCamera.WorldToScreen(Player.Position) * ScaleFromScreen;
 
         //Style.Top = Parent.MousePosition.y * ScaleToScreen;
         //Style.Left = Parent.MousePosition.x * ScaleToScreen;
