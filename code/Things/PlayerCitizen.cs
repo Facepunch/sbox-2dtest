@@ -179,7 +179,10 @@ public partial class PlayerCitizen : Thing
 
 		float dt = Time.Delta;
 
-		Vector2 inputVector = new Vector2(-Input.Left, Input.Forward);
+		// garry: pass the mouse offset/aim in the Input command instead of by console command
+		MouseOffset = Input.Cursor.Direction;
+
+        Vector2 inputVector = new Vector2(-Input.Left, Input.Forward);
 		Velocity += inputVector * MoveSpeed * BASE_MOVE_SPEED * dt;
 		Position += (Velocity + _dashVelocity) * dt;
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, dt);
@@ -445,6 +448,15 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
+	public override void BuildInput(InputBuilder inputBuilder)
+	{
+		base.BuildInput(inputBuilder);
+
+		// garry: use put the mouse offset in the input
+        MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition) - Position;
+		inputBuilder.Cursor = new Ray(0, MouseOffset);
+    }
+
 	public override void FrameSimulate( Client cl )
 	{
 		base.FrameSimulate( cl );
@@ -454,10 +466,10 @@ public partial class PlayerCitizen : Thing
 
 		//MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
 
-		MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition) - Position;
+		
 		//MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.RootPanel.MousePosition) - Position;
 
-        SetMouseOffset(MouseOffset);
+		//SetMouseOffset(MouseOffset);
 
 		//PostProcess.Clear();
 	}
