@@ -110,9 +110,9 @@ public partial class PlayerCitizen : Thing
 			MoveSpeed = 1f;
 			NumBullets = 1f;
 			BulletSpread = 35f;
-			BulletInaccuracy = 10f;
+			BulletInaccuracy = 0f;
 			BulletSpeed = 7.5f;
-			BulletLifetime = 0.8f;
+			BulletLifetime = 10.8f;
 			Luck = 1f;
 			Level = 0;
 			ExperienceRequired = GetExperienceReqForLevel(Level + 1);
@@ -140,7 +140,7 @@ public partial class PlayerCitizen : Thing
 			//Modify("AttackSpeed", 2f, ModifierType.Mult);
 			Statuses = new List<Status>();
 
-			AddExperience(500);
+			//AddExperience(500);
 		}
 	}
 
@@ -154,7 +154,9 @@ public partial class PlayerCitizen : Thing
             //LocalPosition = new Vector3(0.3f, 0f, 0f);
             Depth = 100f
         };
-    }
+
+		Game.Hud.SpawnNametag(this);
+	}
 
     [Event.Tick.Client]
 	public void ClientTick()

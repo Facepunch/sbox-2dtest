@@ -57,5 +57,17 @@ namespace Sandbox
 
 			return screenPos;
         }
+
+		public Vector2 WorldToScreen(Vector2 worldPos)
+		{
+			worldPos -= Position;
+			worldPos.y *= -1;
+			worldPos.x /= Screen.Aspect;
+			worldPos /= Size;
+			worldPos += new Vector2(0.5f, 0.5f);
+			worldPos *= Screen.Size;
+			
+			return worldPos;
+		}
 	}
 }
