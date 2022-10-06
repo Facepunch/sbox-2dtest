@@ -9,8 +9,6 @@ namespace Sandbox
 {
 	public partial class Enemy : Thing
 	{
-		public float FeetOffset { get; private set; }
-
 		public float MoveTimeOffset { get; set; }
 		public float MoveTimeSpeed { get; set; }
 
@@ -53,7 +51,6 @@ namespace Sandbox
 				AnimationSpeed = 2f;
 				Pivot = new Vector2(0.5f, 0.05f);
 
-				FeetOffset = 0.35f;
 				Radius = 0.25f;
 				Health = 30f;
 				MaxHealth = Health;

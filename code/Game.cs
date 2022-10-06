@@ -24,7 +24,7 @@ public partial class MyGame : Sandbox.Game
 	
 	public HUD Hud { get; private set; }
 
-	public PlayerCitizen LocalPlayer => Local.Client.Pawn as PlayerCitizen; // ONLY FOR CLIENT
+	public PlayerCitizen LocalPlayer => Local.Client.Pawn as PlayerCitizen; // ONLY FOR CLIENT USE
 
 	public OrthoCamera MainCamera { get; } = new OrthoCamera();
 
@@ -32,7 +32,7 @@ public partial class MyGame : Sandbox.Game
 
 	public int EnemyCount { get; private set; }
 	//public const float MAX_ENEMY_COUNT = 350;
-	public const float MAX_ENEMY_COUNT = 29;
+	public const float MAX_ENEMY_COUNT = 55;
 
     public int CoinCount { get; private set; }
 	public const float MAX_COIN_COUNT = 100;
@@ -102,21 +102,21 @@ public partial class MyGame : Sandbox.Game
 				thing.Update(dt);
 		}
 
-        //for (float x = BOUNDS_MIN.x; x < BOUNDS_MAX.x; x += GRID_SIZE)
-        //{
-        //    for (float y = BOUNDS_MIN.y; y < BOUNDS_MAX.y; y += GRID_SIZE)
-        //    {
-        //        DebugOverlay.Box(new Vector2(x, y), new Vector2(x + GRID_SIZE, y + GRID_SIZE), Color.White, 0f, false);
-        //        DebugOverlay.Text((new Vector2(x, y)).ToString(), new Vector2(x + 0.1f, y + 0.1f));
-        //    }
-        //}
+			//for (float x = BOUNDS_MIN.x; x < BOUNDS_MAX.x; x += GRID_SIZE)
+			//{
+			//    for (float y = BOUNDS_MIN.y; y < BOUNDS_MAX.y; y += GRID_SIZE)
+			//    {
+			//        DebugOverlay.Box(new Vector2(x, y), new Vector2(x + GRID_SIZE, y + GRID_SIZE), Color.White, 0f, false);
+			//        DebugOverlay.Text((new Vector2(x, y)).ToString(), new Vector2(x + 0.1f, y + 0.1f));
+			//    }
+			//}
 
-  //      DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
-		//DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
-		//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
-		//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
+			//      DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
+			//DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
+			//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
+			//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
 
-		HandleEnemySpawn();
+			HandleEnemySpawn();
 	}
 
 	void HandleEnemySpawn()
@@ -178,11 +178,11 @@ public partial class MyGame : Sandbox.Game
 				continue;
 			//Log.Info("!!! " + thing.Name + " --- " + i.ToString() + " count: " + things.Count);
 
-			if (thing.IsRemoved)
+			if (thing == null || !thing.IsValid || thing.IsRemoved)
 				return;
 
 			var other = things[i];
-			if (other == thing || other.IsRemoved || !thing.CollideWith.Contains(other.GetType()))
+			if (other == thing || other.IsRemoved || !other.IsValid || !thing.CollideWith.Contains(other.GetType()))
 				continue;
 
 			var dist_sqr = (thing.Position - other.Position).LengthSquared;
@@ -309,5 +309,36 @@ public partial class MyGame : Sandbox.Game
 			EnemyCount--;
 		else if (thing is Coin)
 			CoinCount--;
+	}
+
+	public void Restart()
+	{
+		for (int i = _things.Count - 1; i >= 0; i--)
+		{
+			var thing = _things[i];
+			if(thing is not PlayerCitizen)
+            {
+				thing.Delete();
+            }
+		}
+
+		_things.Clear();
+
+		for (int i = 0; i < PlayerList.Count; i++)
+		{
+			var player = PlayerList[i];
+			player.InitializeStats();
+			player.Position = new Vector2(Utils.Map(i, 0, PlayerList.Count - 1, -2f, 2f), 0f);
+			_things.Add(player);
+		}
+
+		foreach (KeyValuePair<GridSquare, List<Thing>> pair in ThingGridPositions)
+        {
+			pair.Value.Clear();
+        }
+
+		EnemyCount = 0;
+		CoinCount = 0;
+		_enemySpawnTime = 0f;
 	}
 }

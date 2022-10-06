@@ -32,8 +32,6 @@ public partial class PlayerCitizen : Thing
 
 	public bool IsAlive { get; private set; }
 
-	public float FeetOffset { get; private set; }
-
 	public float Timer { get; protected set; }
 	[Net] public float AttackTime { get; protected set; }
 	[Net] public float AttackSpeed { get; private set; }
@@ -96,54 +94,65 @@ public partial class PlayerCitizen : Thing
 		if (Host.IsServer)
         {
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/player_spritesheet.png", 2, 2);
-			AnimationPath = "textures/sprites/player_idle.frames";
-			AnimationSpeed = 0.66f;
 			Pivot = new Vector2(0.5f, 0.05f);
-
-			AttackTime = 0.15f;
-			Timer = AttackTime;
-			AmmoCount = 5;
-			MaxAmmoCount = AmmoCount;
-			ReloadTime = 1.25f;
-			ReloadSpeed = 1f;
-			AttackSpeed = 1f;
-			Dmg = 5f;
-			MoveSpeed = 1f;
-			NumBullets = 1f;
-			BulletSpread = 35f;
-			BulletInaccuracy = 10f;
-			BulletSpeed = 7.5f;
-			BulletLifetime = 0.8f;
-			Luck = 1f;
-			Level = 0;
-			ExperienceRequired = GetExperienceReqForLevel(Level + 1);
-			DashCooldown = 1f;
-			DashInvulnTime = 0.25f;
-			BulletNumPiercing = 1f;
-
-			Health = 100f;
-			MaxHp = 100f;
-			IsAlive = true;
-			Radius = 0.2f;
-			GridPos = Game.GetGridSquareForPos(Position);
-			AimDir = Vector2.Up;
-
-			CoinAttractRange = 1.7f;
-			CoinAttractStrength = 2.2f;
 
 			CollideWith.Add(typeof(Enemy));
 			CollideWith.Add(typeof(PlayerCitizen));
 
-			//SetProperty("AttackSpeed", 1f);
-			//SetProperty("MaxAmmoCount", 3);
-			//SetProperty("ReloadTime", 1f);
-
-			//Modify("AttackSpeed", 0.5f, ModifierType.Add);
-			//Modify("AttackSpeed", 2f, ModifierType.Mult);
 			Statuses = new List<Status>();
 
-            //AddExperience(500);
+			InitializeStats();
 		}
+	}
+
+	public void InitializeStats()
+    {
+		AnimationPath = "textures/sprites/player_idle.frames";
+		AnimationSpeed = 0.66f;
+		
+		Level = 0;
+		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
+		ExperienceTotal = 0;
+		ExperienceCurrent = 0;
+		AttackTime = 0.15f;
+		Timer = AttackTime;
+		AmmoCount = 5;
+		MaxAmmoCount = AmmoCount;
+		ReloadTime = 1.25f;
+		ReloadSpeed = 1f;
+		AttackSpeed = 1f;
+		Dmg = 5f;
+		MoveSpeed = 1f;
+		NumBullets = 1f;
+		BulletSpread = 35f;
+		BulletInaccuracy = 10f;
+		BulletSpeed = 7.5f;
+		BulletLifetime = 0.8f;
+		Luck = 1f;
+
+		DashCooldown = 1f;
+		DashInvulnTime = 0.25f;
+		BulletNumPiercing = 0f;
+
+		Health = 100f;
+		MaxHp = 100f;
+		IsAlive = true;
+		Radius = 0.2f;
+		GridPos = Game.GetGridSquareForPos(Position);
+		AimDir = Vector2.Up;
+
+		CoinAttractRange = 1.7f;
+		CoinAttractStrength = 2.2f;
+
+		Statuses.Clear();
+
+		_isFlashing = false;
+		ColorTint = Color.White;
+		IsChoosingLevelUpReward = false;
+		IsDashing = false;
+		IsReloading = false;
+		TempWeight = 0f;
+		_shotNum = 0;
 	}
 
     public override void ClientSpawn()
@@ -234,6 +243,12 @@ public partial class PlayerCitizen : Thing
 
 		if (Host.IsServer)
         {
+			if (Input.Pressed(InputButton.Duck))
+			{
+				Game.Restart();
+				return;
+			}
+
 			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
 			{
