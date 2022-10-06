@@ -15,7 +15,7 @@ Nametag {
 
     .name {
         opacity: 1;
-        color: #00000088;
+        color: #00000044;
         font-size: 24px;
         align-self: center;
     }
@@ -27,7 +27,7 @@ Nametag {
         background-color: #00000099;
         align-self: center;
         position: absolute;
-        bottom: 28px;
+        bottom: -12px;
     }
 
     .hpbaroverlay {
@@ -37,10 +37,11 @@ Nametag {
         background-color: green;
         //text-anchor: initial;
         position: absolute;
-        bottom: 28px;
+        bottom: -12px;
         align-self: center;
         transform-origin: left;
         //transform: scaleX(0.5);
         transition: transform 0.4s ease-out, opacity 0.25s linear, background-color 0.25s linear;
+        opacity: 0.8;
     }
 }

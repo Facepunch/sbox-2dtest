@@ -23,16 +23,11 @@ public partial class Nametag : Panel
 
         if (Player == null)
             return;
-        //Style.Left = 100;
-        //Style.Bottom = 100;
 
         var name = Player.Client.Name;
         NameLabel.Text = name[..Math.Min(name.Length, 16)];
 
-        var screenPos = MyGame.Current.MainCamera.WorldToScreen(Player.Position + new Vector2(0f, 1.33f)) * ScaleFromScreen;
-
-        //Style.Top = Parent.MousePosition.y * ScaleToScreen;
-        //Style.Left = Parent.MousePosition.x * ScaleToScreen;
+        var screenPos = MyGame.Current.MainCamera.WorldToScreen(Player.Position + new Vector2(0f, 1.375f)) * ScaleFromScreen;
 
         Style.Left = screenPos.x - 150;
         Style.Top = screenPos.y;
@@ -46,12 +41,25 @@ public partial class Nametag : Panel
         var tr = new PanelTransform();
         tr.AddScale(new Vector3(player_health_ratio, 1f, 1f));
         HpBarOverlay.Style.Transform = tr;
-        //HpBarOverlay.Style.Dirty();
-        //HpBarOverlay.Style.Width = player_health_ratio * BAR_WIDTH;
 
-        //Log.Info(screenPos.ToString());
+        //var colors = new List<Color>() { Color.Green, Color.Yellow, Color.Red };
+        //var t = 1f - player_health_ratio;
+        //float scaledTime = t * 2f;
+        //Color oldColor = colors[(int)scaledTime];
+        //Color newColor = colors[(int)(scaledTime + 1f)];
+        //float newT = scaledTime - MathF.Round(scaledTime);
+        //var color = Color.Lerp(oldColor, newColor, newT);
 
-        //Style.Left = MousePosition.x;
-        //Style.Bottom = MousePosition.y;
+        var color = Lerp3(Color.Green, Color.Yellow, Color.Red, 1f - player_health_ratio);
+
+        HpBarOverlay.Style.BackgroundColor = color;
+    }
+
+    Color Lerp3(Color a, Color b, Color c, float t)
+    {
+        if (t < 0.5f) // 0.0 to 0.5 goes to a -> b
+            return Color.Lerp(a, b, t / 0.5f);
+        else // 0.5 to 1.0 goes to b -> c
+            return Color.Lerp(b, c, (t - 0.5f) / 0.5f);
     }
 }
