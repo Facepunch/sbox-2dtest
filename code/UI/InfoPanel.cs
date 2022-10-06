@@ -44,6 +44,7 @@ public class InfoPanel : Panel
 		stats += "INACCURACY: " + player.BulletInaccuracy + "\n";
 		stats += "BULLET SPD: " + player.BulletSpeed + "\n";
 		stats += "BULLET LIFETIME: " + player.BulletLifetime + "\n";
+		stats += "PIERCING: " + (int)MathF.Round(player.BulletNumPiercing) + "\n";
 		stats += "MOVE SPD: " + player.MoveSpeed + "\n";
 		stats += "ATTRACT RANGE: " + player.CoinAttractRange + "\n";
 		stats += "ATTRACT POWER: " + player.CoinAttractStrength + "\n";

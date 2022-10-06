@@ -50,6 +50,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float BulletInaccuracy { get; protected set; }
 	[Net] public float BulletSpeed { get; protected set; }
 	[Net] public float BulletLifetime { get; protected set; }
+	[Net] public float BulletNumPiercing { get; protected set; }
 
 	private int _shotNum;
 
@@ -106,18 +107,19 @@ public partial class PlayerCitizen : Thing
 			ReloadTime = 1.25f;
 			ReloadSpeed = 1f;
 			AttackSpeed = 1f;
-			Dmg = 55.5f;
+			Dmg = 5f;
 			MoveSpeed = 1f;
 			NumBullets = 1f;
 			BulletSpread = 35f;
-			BulletInaccuracy = 0f;
+			BulletInaccuracy = 10f;
 			BulletSpeed = 7.5f;
-			BulletLifetime = 10.8f;
+			BulletLifetime = 0.8f;
 			Luck = 1f;
 			Level = 0;
 			ExperienceRequired = GetExperienceReqForLevel(Level + 1);
 			DashCooldown = 1f;
 			DashInvulnTime = 0.25f;
+			BulletNumPiercing = 1f;
 
 			Health = 100f;
 			MaxHp = 100f;
@@ -140,7 +142,7 @@ public partial class PlayerCitizen : Thing
 			//Modify("AttackSpeed", 2f, ModifierType.Mult);
 			Statuses = new List<Status>();
 
-			//AddExperience(500);
+            //AddExperience(500);
 		}
 	}
 
@@ -170,7 +172,7 @@ public partial class PlayerCitizen : Thing
 	{
 		//Utils.DrawCircle(HitboxPos, 1.4f, 18, Time.Now, Color.Red);
 		//Log.Info("local player: " + (Game.Client != null));
-		DebugText("IsChoosingLevelUpReward: " + IsChoosingLevelUpReward);
+		//DebugText("IsChoosingLevelUpReward: " + IsChoosingLevelUpReward);
 	}
 
 	public override void Simulate( Client cl )
@@ -405,6 +407,7 @@ public partial class PlayerCitizen : Thing
 				Force = 2.25f,
 				TempWeight = 3f,
 				Lifetime = BulletLifetime,
+				NumPiercing = (int)MathF.Round(BulletNumPiercing),
 			};
 
 			Game.AddThing(bullet);

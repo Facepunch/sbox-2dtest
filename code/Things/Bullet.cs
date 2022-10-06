@@ -17,6 +17,9 @@ namespace Sandbox
 		public float Force { get; set; }
 		public float AddTempWeight { get; set; }
 		public float Lifetime { get; set; }
+		public int NumPiercing { get; set; }
+
+		public List<Thing> _hitThings = new List<Thing>();
 
 		public override void Spawn()
 		{
@@ -36,6 +39,7 @@ namespace Sandbox
 				Radius = 0.1f;
 				Pivot = new Vector2(0.5f, -1.2f);
 				Lifetime = 1f;
+				NumPiercing = 0;
 
 				CollideWith.Add(typeof(Enemy));
 			}
@@ -82,13 +86,24 @@ namespace Sandbox
 
 			if (other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime > 1.5f))
 			{
+				if (_hitThings.Contains(enemy))
+					return;
+
 				enemy.Damage(Damage, Shooter);
 
 				enemy.Velocity += Velocity.Normal * Force;
 				enemy.TempWeight += AddTempWeight;
 
-				Remove();
-                return;
+				if(NumPiercing > 0)
+                {
+					NumPiercing--;
+					_hitThings.Add(enemy);
+                } 
+				else
+                {
+					Remove();
+					return;
+				}
 			}
 		}
 	}
