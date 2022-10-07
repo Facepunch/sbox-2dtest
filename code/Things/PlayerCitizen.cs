@@ -245,7 +245,7 @@ public partial class PlayerCitizen : Thing
         {
 			if (Input.Pressed(InputButton.Duck))
 			{
-				Game.Restart();
+				//Game.Restart();
 				return;
 			}
 
@@ -440,31 +440,33 @@ public partial class PlayerCitizen : Thing
 
 	void HandleBounds()
     {
-		var BUFFER_X = Radius;
-		var BUFFER_Y = Radius * 1.5f;
+		var x_min = Game.BOUNDS_MIN.x + Radius;
+		var x_max = Game.BOUNDS_MAX.x - Radius;
+		var y_min = Game.BOUNDS_MIN.y;
+		var y_max = Game.BOUNDS_MAX.y - Radius * 5.2f;
 
-		if (Position.x < Game.BOUNDS_MIN.x + BUFFER_X)
+		if (Position.x < x_min)
 		{
-			Position = new Vector2(Game.BOUNDS_MIN.x + BUFFER_X, Position.y);
+			Position = new Vector2(x_min, Position.y);
 			Velocity = new Vector2(Velocity.x * -1f, Velocity.y);
 		}
-		else if (Position.x > Game.BOUNDS_MAX.x - BUFFER_X)
+		else if (Position.x > x_max)
 		{
-			Position = new Vector2(Game.BOUNDS_MAX.x - BUFFER_X, Position.y);
+			Position = new Vector2(x_max, Position.y);
 			Velocity = new Vector2(Velocity.x * -1f, Velocity.y);
 		}
 
-		if (Position.y < Game.BOUNDS_MIN.y + BUFFER_Y)
+		if (Position.y < y_min)
 		{
-			Position = new Vector2(Position.x, Game.BOUNDS_MIN.y + BUFFER_Y);
+			Position = new Vector2(Position.x, y_min);
 			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
 		}
-		else if (Position.y > Game.BOUNDS_MAX.y - BUFFER_Y)
-		{
-			Position = new Vector2(Position.x, Game.BOUNDS_MAX.y - BUFFER_Y);
-			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
-		}
-	}
+		else if (Position.y > y_max)
+        {
+            Position = new Vector2(Position.x, y_max);
+            Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
+        }
+    }
 
 	public override void BuildInput(InputBuilder inputBuilder)
 	{
@@ -515,7 +517,7 @@ public partial class PlayerCitizen : Thing
 
 		if(Health <= 0f)
         {
-			
+			Game.GameOver();
 		}
     }
 

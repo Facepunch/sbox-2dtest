@@ -47,6 +47,8 @@ public partial class MyGame : Sandbox.Game
 
 	private TimeSince _enemySpawnTime;
 
+	public bool IsGameOver { get; private set; }
+
 	public MyGame()
 	{
 		BOUNDS_MIN = new Vector2(-16f, -12f);
@@ -311,6 +313,11 @@ public partial class MyGame : Sandbox.Game
 			CoinCount--;
 	}
 
+	[ConCmd.Server]
+	public static void RestartCmd()
+	{
+		Current.Restart();
+	}
 	public void Restart()
 	{
 		for (int i = _things.Count - 1; i >= 0; i--)
@@ -340,5 +347,21 @@ public partial class MyGame : Sandbox.Game
 		EnemyCount = 0;
 		CoinCount = 0;
 		_enemySpawnTime = 0f;
+		IsGameOver = false;
+	}
+
+	public void GameOver()
+    {
+		if (IsGameOver)
+			return;
+
+		IsGameOver = true;
+		GameOverClient();
+	}
+
+	[ClientRpc]
+	public void GameOverClient()
+	{
+		Hud.AddChild<DeathPanel>("death_panel_root");
 	}
 }

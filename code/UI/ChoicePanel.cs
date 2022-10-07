@@ -12,9 +12,9 @@ public class ChoicePanel : Panel
 
 	public ChoicePanel()
 	{
-		var icon = new ChoiceModal(this);
-		icon.AddClass("choice_modal");
-		AddChild(icon);
+		var modal = new ChoiceModal(this);
+		modal.AddClass("choice_modal");
+		AddChild(modal);
 	}
 
 	public void OnChoiceMade(string statusName)
@@ -24,6 +24,7 @@ public class ChoicePanel : Panel
 		ConsoleSystem.Run("add_status", statusName);
 		//PlayerCitizen.AddStatusCmd(statusName);
 		Delete();
+		MyGame.Current.Hud.ChoicePanel = null;
 	}
 }
 

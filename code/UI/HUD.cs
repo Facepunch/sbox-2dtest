@@ -32,7 +32,7 @@ public partial class HUD : RootPanel
 	public StatusPanel StatusPanel { get; private set; }
 	public InfoPanel InfoPanel { get; private set; }
 	public XpBarPanel XpBarPanel { get; private set; }
-	public ChoicePanel ChoicePanel { get; private set; }
+	public ChoicePanel ChoicePanel { get; set; }
 
 	public HUD()
 	{
@@ -47,7 +47,6 @@ public partial class HUD : RootPanel
 		StatusPanel = AddChild<StatusPanel>("status_panel");
 		InfoPanel = AddChild<InfoPanel>("info_panel");
 		XpBarPanel = AddChild<XpBarPanel>("xp_bar_panel");
-
 		//var modal = AddChild<Modal>("modal");
 
 		//AddChild<PlayerCursor>("cursor");
