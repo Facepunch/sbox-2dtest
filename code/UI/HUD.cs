@@ -57,9 +57,10 @@ public partial class HUD : RootPanel
 		ChoicePanel = AddChild<ChoicePanel>("choice_panel_root");
 	}
 
-	public void SpawnNametag(PlayerCitizen player)
+	public Nametag SpawnNametag(PlayerCitizen player)
     {
 		var nametag = AddChild<Nametag>();
 		nametag.Player = player;
+		return nametag;
 	}
 }

@@ -239,7 +239,7 @@ public partial class MyGame : Sandbox.Game
 		.OfType<PlayerCitizen>();
 
 	public IEnumerable<PlayerCitizen> AlivePlayers => Players
-		.Where(x => x.IsAlive);
+		.Where(x => !x.IsDead);
 
 	private T GetClosest<T>(IEnumerable<T> enumerable, Vector3 pos, float maxRange, bool ignoreZ, T except)
 		where T : Entity
@@ -348,6 +348,15 @@ public partial class MyGame : Sandbox.Game
 		CoinCount = 0;
 		_enemySpawnTime = 0f;
 		IsGameOver = false;
+	}
+
+	public void PlayerDied(PlayerCitizen player)
+    {
+		int numPlayersAlive = Players.Where(x => !x.IsDead).Count();
+		if(numPlayersAlive == 0)
+        {
+			GameOver();
+        }
 	}
 
 	public void GameOver()

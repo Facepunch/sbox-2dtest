@@ -12,6 +12,9 @@ Nametag {
     //align-items: center;
     justify-content: center;
 
+    &.invisible {
+        display: none;
+    }
 
     .name {
         opacity: 1;

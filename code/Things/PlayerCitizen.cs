@@ -30,7 +30,7 @@ public partial class PlayerCitizen : Thing
     public Arrow ArrowAimer { get; private set; }
 	public Vector2 AimDir { get; private set; }
 
-	public bool IsAlive { get; private set; }
+	public bool IsDead { get; private set; }
 
 	public float Timer { get; protected set; }
 	[Net] public float AttackTime { get; protected set; }
@@ -73,6 +73,8 @@ public partial class PlayerCitizen : Thing
 
 	private float _flashTimer;
 	private bool _isFlashing;
+
+	public Nametag Nametag { get; private set; }
 
 	// STATUS
 	[Net] public IList<Status> Statuses { get; private set; }
@@ -136,7 +138,7 @@ public partial class PlayerCitizen : Thing
 
 		Health = 100f;
 		MaxHp = 100f;
-		IsAlive = true;
+		IsDead = false;
 		Radius = 0.2f;
 		GridPos = Game.GetGridSquareForPos(Position);
 		AimDir = Vector2.Up;
@@ -153,9 +155,17 @@ public partial class PlayerCitizen : Thing
 		IsReloading = false;
 		TempWeight = 0f;
 		_shotNum = 0;
+
+		InitializeStatsClient();
 	}
 
-    public override void ClientSpawn()
+	[ClientRpc]
+	public void InitializeStatsClient()
+    {
+		Nametag?.SetVisible(true);
+	}
+
+	public override void ClientSpawn()
     {
         base.ClientSpawn();
 		
@@ -166,7 +176,7 @@ public partial class PlayerCitizen : Thing
             Depth = 100f
         };
 
-		Game.Hud.SpawnNametag(this);
+		Nametag = Game.Hud.SpawnNametag(this);
 	}
 
     [Event.Tick.Client]
@@ -517,9 +527,26 @@ public partial class PlayerCitizen : Thing
 
 		if(Health <= 0f)
         {
-			Game.GameOver();
+			Die();
 		}
     }
+
+	public void Die()
+    {
+		if (IsDead)
+			return;
+
+		IsDead = true;
+		Game.PlayerDied(this);
+		ColorTint = new Color(0f, 0f, 0f, 0f);
+		DieClient();
+	}
+
+	[ClientRpc]
+	public void DieClient()
+    {
+		Nametag.SetVisible(false);
+	}
 
 	public override void Colliding(Thing other, float percent, float dt)
 	{

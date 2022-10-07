@@ -132,6 +132,9 @@ namespace Sandbox
 			}
 
 			var closestPlayer = Game.GetClosestPlayer(Position);
+			if (closestPlayer == null)
+				return;
+
 			Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
 			float speed = 0.7f + Utils.FastSin(MoveTimeOffset + Time.Now * MoveTimeSpeed) * 0.3f * (IsAttacking ? 1.25f : 1f);
 			Position += Velocity * dt * speed;

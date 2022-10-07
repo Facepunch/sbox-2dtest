@@ -62,4 +62,12 @@ public partial class Nametag : Panel
         else // 0.5 to 1.0 goes to b -> c
             return Color.Lerp(b, c, (t - 0.5f) / 0.5f);
     }
+
+    public void SetVisible(bool visible)
+    {
+        if (visible)
+            RemoveClass("invisible");
+        else
+            AddClass("invisible");
+    }
 }
