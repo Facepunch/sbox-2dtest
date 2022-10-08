@@ -156,7 +156,11 @@ public partial class PlayerCitizen : Thing
 		TempWeight = 0f;
 		_shotNum = 0;
 
-		AddStatus(new MovespeedStatus());
+		//AddStatus("MovespeedStatus");
+		//AddStatus("MovespeedStatus");
+		//AddStatus("MovespeedStatus");
+		//AddStatus("MovespeedStatus");
+		//AddStatus("MovespeedStatus");
 
 		InitializeStatsClient();
 		RefreshStatusHud();
@@ -256,10 +260,11 @@ public partial class PlayerCitizen : Thing
 
 		if (Host.IsServer)
         {
-			if (Input.Pressed(InputButton.Duck))
+			if (Input.Pressed(InputButton.Run))
 			{
 				//Game.Restart();
-				return;
+				AddStatus("MovespeedStatus");
+                return;
 			}
 
 			var gridPos = Game.GetGridSquareForPos(Position);
@@ -567,23 +572,33 @@ public partial class PlayerCitizen : Thing
 	[ConCmd.Server("add_status")]
 	public static void AddStatusCmd(string statusName)
     {
-		Log.Info("AddStatusCmd");
-
 		var player = ConsoleSystem.Caller.Pawn as PlayerCitizen;
-		var status = TypeLibrary.Create<Status>(statusName);
-
-		//Log.Info("AddStatusCmd - player: " + player + " status: " + status + " IsServer: " + Host.IsServer);
-
-		player.AddStatus(status);
+		player.AddStatus(statusName);
 	}
 
-	public void AddStatus(Status status)
+	public void AddStatus(string statusName)
     {
-		Statuses.Add(status);
-		status.Init(this);
-		RefreshStatusHud();
+		Status status = null;
 
-		//Log.Info("AddStatus - status: " + status + " IsServer: " + Host.IsServer);
+        foreach (var s in Statuses)
+        {
+			var typeString = s.GetType().ToString();
+			if(typeString.Contains(statusName))
+            {
+				status = s;
+				status.Level++;
+            }
+        }
+
+		if (status == null)
+        {
+			status = TypeLibrary.Create<Status>(statusName);
+			Statuses.Add(status);
+			status.Init(this);
+		}
+
+		status.Refresh();
+		RefreshStatusHud();
 
 		IsChoosingLevelUpReward = false;
 		CheckForLevelUp();

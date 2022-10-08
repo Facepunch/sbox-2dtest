@@ -9,6 +9,10 @@ namespace Test2D;
 [UseTemplate]
 internal class Tippy : Panel
 {
+	public Label TitleLabel { get; set; }
+	public Label LevelLabel { get; set; }
+	public Label DescLabel { get; set; }
+
 
 	private Panel Target;
 	private Pivots Pivot;
@@ -32,17 +36,11 @@ internal class Tippy : Panel
 	//	Add.Label(description)
 	//);
 
-	public Tippy WithContent( string title, string description )
+	public Tippy WithContent( string title, string description, int level )
 	{
-		Label titleLabel = new Label();
-		titleLabel.AddClass("tippy_title");
-		titleLabel.Text = title;
-		AddChild(titleLabel);
-
-		Label descriptionLabel = new Label();
-		descriptionLabel.AddClass("tippy_description");
-		descriptionLabel.Text = description;
-		AddChild(descriptionLabel);
+		TitleLabel.Text = title;
+		LevelLabel.Text = level > 1 ? "(" + level.ToString() + ")" : "";
+		DescLabel.Text = description;
 
 		return this;
 	}

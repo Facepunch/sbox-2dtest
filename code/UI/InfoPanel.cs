@@ -45,7 +45,7 @@ public class InfoPanel : Panel
 		stats += "BULLET SPD: " + player.BulletSpeed + "\n";
 		stats += "BULLET LIFETIME: " + player.BulletLifetime + "\n";
 		stats += "PIERCING: " + (int)MathF.Round(player.BulletNumPiercing) + "\n";
-		stats += "MOVE SPD: " + player.MoveSpeed + "\n";
+		stats += "MOVE SPD: " + player.MoveSpeed.ToString("#.##") + "\n";
 		stats += "ATTRACT RANGE: " + player.CoinAttractRange + "\n";
 		stats += "ATTRACT POWER: " + player.CoinAttractStrength + "\n";
 		stats += "LUCK: " + player.Luck + "\n";

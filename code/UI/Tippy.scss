@@ -14,6 +14,10 @@ Tippy {
     flex-direction: column;
     padding: 4px 4px 4px 4px;
 
+    .title_bar {
+        flex-direction: row;
+    }
+
     &.unset {
         opacity: 0;
     }
@@ -21,6 +25,12 @@ Tippy {
     .tippy_title {
         color: #66ff66;
         font-size: 22px;
+    }
+
+    .tippy_level {
+        color: #ffffff55;
+        font-size: 22px;
+        padding-left: 8px;
     }
 
     .tippy_description {

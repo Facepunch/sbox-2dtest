@@ -12,7 +12,7 @@ public partial class Status : BaseNetworkable
 {
 	public bool ShouldUpdate { get; protected set; }
 	public PlayerCitizen Player { get; protected set; }
-	[Net] public int Level { get; protected set; }
+	[Net] public int Level { get; set; }
 	public TimeSince ElapsedTime { get; protected set; }
 	[Net] public string Title { get; protected set; }
 	[Net] public string Description { get; protected set; }
@@ -29,6 +29,12 @@ public partial class Status : BaseNetworkable
 		ElapsedTime = Time.Now;
 		ShouldUpdate = false;
 	}
+
+	// when gaining or leveling up
+	public virtual void Refresh()
+    {
+
+    }
 
 	public virtual void Update(float dt)
     {

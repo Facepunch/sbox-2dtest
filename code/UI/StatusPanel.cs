@@ -41,6 +41,7 @@ public class StatusPanel : Panel
 			
 			icon.Title = status.Title;
 			icon.Description = status.Description;
+			icon.Level = status.Level;
 			icon.LevelLabel.Text = status.Level > 1 ? status.Level.ToString() : "";
 
 			//icon.AddEventListener("onclick", () =>
@@ -58,6 +59,7 @@ public class StatusIcon : Panel
 	public string Title;
 	public string Description;
 
+	public int Level { get; set; }
 	public Label LevelLabel;
 
 	public StatusIcon()
@@ -74,7 +76,7 @@ public class StatusIcon : Panel
 		if (string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(Description))
 			return;
 
-		Tippy.Create(this, Tippy.Pivots.TopRight).WithContent(Title, Description);
+		Tippy.Create(this, Tippy.Pivots.TopRight).WithContent(Title, Description, Level);
 	}
 
     public override void OnMouseWheel(float value)
