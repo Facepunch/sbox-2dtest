@@ -61,6 +61,9 @@ public class ChoiceModal : Panel
         {
 			var statusName = statusNames[i];
 			var status = TypeLibrary.Create<Status>(statusName);
+			var currLevel = player.GetStatusLevel(statusName);
+			status.Level = currLevel + 1;
+
 			var button = new ChoiceButton(status);
 			button.AddClass("choice_button");
 			button.AddEventListener("onclick", () => ChoicePanel.OnChoiceMade(statusName));
@@ -81,7 +84,7 @@ public class ChoiceButton : Panel
 	{
 		Label titleLabel = new Label();
 		titleLabel.AddClass("choice_title");
-		titleLabel.Text = status.Title;
+		titleLabel.Text = status.Title + (status.Level > 1 ? " (Level " + status.Level + ")" : "");
         //titleLabel.Text = "Title";
 		AddChild(titleLabel);
 
@@ -92,7 +95,7 @@ public class ChoiceButton : Panel
 
 		Label descriptionLabel = new Label();
 		descriptionLabel.AddClass("choice_description");
-		descriptionLabel.Text = status.Description;
+		descriptionLabel.Text = status.GetUpgradeDescription(status.Level);
         //descriptionLabel.Text = "Status description goes here.";
 		AddChild(descriptionLabel);
 	}

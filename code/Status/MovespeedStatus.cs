@@ -7,12 +7,9 @@ namespace Test2D;
 
 public class MovespeedStatus : Status
 {
-	float _mult;
-
 	public MovespeedStatus()
     {
 		Title = "Fast Shoes";
-		Description = "Increase move speed";
 		IconPath = "textures/icons/shoe.png";
 	}
 
@@ -23,9 +20,18 @@ public class MovespeedStatus : Status
 
 	public override void Refresh()
     {
-		_mult = 1f + 0.2f * Level;
-		Description = "Increase move speed by " + _mult.ToString("#.#") + "x.";
+		Description = string.Format("Increase movespeed by {0}x", GetMultForLevel(Level));
 
-		Player.Modify(this, "MoveSpeed", _mult, ModifierType.Mult);
+		Player.Modify(this, "MoveSpeed", GetMultForLevel(Level), ModifierType.Mult);
 	}
+
+	public override string GetUpgradeDescription(int newLevel)
+    {
+		return newLevel > 1 ? string.Format("Increase movespeed by {0}x -> {1}x", GetMultForLevel(newLevel - 1), GetMultForLevel(newLevel)) : string.Format("Increase movespeed by {0}x", GetMultForLevel(newLevel));
+	}
+
+	public float GetMultForLevel(int level)
+    {
+		return 1f + 0.2f * level;
+    }
 }

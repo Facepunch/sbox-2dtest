@@ -147,6 +147,7 @@ public partial class PlayerCitizen : Thing
 		CoinAttractStrength = 2.2f;
 
 		Statuses.Clear();
+		_modifiers.Clear();
 
 		_isFlashing = false;
 		ColorTint = Color.White;
@@ -263,7 +264,8 @@ public partial class PlayerCitizen : Thing
 			if (Input.Pressed(InputButton.Run))
 			{
 				//Game.Restart();
-				AddStatus("MovespeedStatus");
+				//AddStatus("MovespeedStatus");
+				LevelUp();
                 return;
 			}
 
@@ -604,6 +606,20 @@ public partial class PlayerCitizen : Thing
 		CheckForLevelUp();
 	}
 
+	public int GetStatusLevel(string statusName)
+    {
+		foreach (var s in Statuses)
+		{
+			var typeString = s.GetType().ToString();
+			if (typeString.Contains(statusName))
+			{
+				return s.Level;
+			}
+		}
+
+		return 0;
+	}
+
 	public void Modify(Status caller, string propertyName, float value, ModifierType type, float priority = 0f, bool update = true)
     {
 		//Log.Info("------------- Modify - caller: " + caller + ", " + propertyName + ", " + value + ", " + type);
@@ -665,7 +681,6 @@ public partial class PlayerCitizen : Thing
 		curr_value += total_add;
 		curr_value *= total_mult;
 
-		//Log.Info("UpdateProperty: " + propertyName + ": " + curr_value);
 		SetProperty(propertyName, curr_value);
     }
 
