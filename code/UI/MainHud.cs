@@ -5,50 +5,50 @@ using System.Text;
 using System.Threading.Tasks;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
+using Sandbox;
 
-namespace Sandbox
+namespace Test2D;
+
+public class MainHud : RootPanel
 {
-    public class MainHud : RootPanel
+    public static Vector2 MousePos { get; private set; }
+
+    public Label TestLabel { get; set; }
+    public Panel TestPanel { get; set; }
+    public Button TestButton { get; set; }
+
+    public MainHud()
     {
-        public static Vector2 MousePos { get; private set; }
+        Style.PointerEvents = PointerEvents.All;
 
-        public Label TestLabel { get; set; }
-        public Panel TestPanel { get; set; }
-        public Button TestButton { get; set; }
+        StyleSheet.Load("Resource/styles/hud.scss");
+        SetTemplate("Resource/templates/hud.html");
 
-        public MainHud()
-        {
-            Style.PointerEvents = PointerEvents.All;
+        TestLabel = Add.Label("test", "testlabel");
+        TestPanel = Add.Panel("testpanel");
+        TestButton = TestPanel.Add.Button("T", () => { ButtonClicked(); });
 
-            StyleSheet.Load("Resource/styles/hud.scss");
-            SetTemplate("Resource/templates/hud.html");
+        AddChild<Modal>();
+    }
 
-            TestLabel = Add.Label("test", "testlabel");
-            TestPanel = Add.Panel("testpanel");
-            TestButton = TestPanel.Add.Button("T", () => { ButtonClicked(); });
+    public override void Tick()
+    {
+        base.Tick();
 
-            AddChild<Modal>();
-        }
+        //TestLabel.Text = "test";
+    }
 
-        public override void Tick()
-        {
-            base.Tick();
+    protected override void OnMouseMove(MousePanelEvent e)
+    {
+        base.OnMouseMove(e);
 
-            //TestLabel.Text = "test";
-        }
+        MousePos = e.LocalPosition;
 
-        protected override void OnMouseMove(MousePanelEvent e)
-        {
-            base.OnMouseMove(e);
+        //Log.Info(e.LocalPosition / Screen.Size);
+    }
 
-            MousePos = e.LocalPosition;
-
-            //Log.Info(e.LocalPosition / Screen.Size);
-        }
-
-        public void ButtonClicked()
-        {
-            Log.Info("ButtonClicked");
-        }
+    public void ButtonClicked()
+    {
+        Log.Info("ButtonClicked");
     }
 }

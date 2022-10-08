@@ -4,7 +4,7 @@ using Sandbox.UI.Construct;
 using System;
 using System.Collections.Generic;
 
-namespace Sandbox;
+namespace Test2D;
 
 public class ChoicePanel : Panel
 {
@@ -41,7 +41,6 @@ public class ChoiceModal : Panel
 		Label lvlLabel = new Label();
 		lvlLabel.AddClass("choice_lvl_label");
 		lvlLabel.Text = "Level " + player.Level;
-		//titleLabel.Text = "Title";
 		AddChild(lvlLabel);
 
 		Panel buttonContainer = new Panel();
@@ -55,7 +54,7 @@ public class ChoiceModal : Panel
 		//var button0 = TypeLibrary.Create("b0", TypeLibrary.GetDescription("ChoiceButton").TargetType) as ChoiceButton;
 		//var button0 = TypeLibrary.Create<Panel>("ChoiceButton");
 
-		List<string> statusNames = new List<string>() { "ExampleStatus", "ExampleStatus", "ExampleStatus2" };
+		List<string> statusNames = new List<string>() { "ExampleStatus", "MovespeedStatus", "ExampleStatus2" };
 
 		int NUM_CHOICES = 3;
 		for(int i = 0; i < NUM_CHOICES; i++)

@@ -2,10 +2,10 @@ using Sandbox;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using static Sandbox.MyGame;
+using static Test2D.MyGame;
 using System.Collections.Generic;
 
-namespace Sandbox;
+namespace Test2D;
 
 public enum ModifierType { Set, Add, Mult }
 
@@ -42,7 +42,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float MaxAmmoCount { get; protected set; }
 	[Net] public float Dmg { get; protected set; }
 	[Net] public float MoveSpeed { get; protected set; }
-	public const float BASE_MOVE_SPEED = 30f;
+	public const float BASE_MOVE_SPEED = 20f;
 	[Net] public float NumBullets { get; protected set; }
 	[Net] public float BulletSpread { get; protected set; }
 	[Net] public float BulletInaccuracy { get; protected set; }
@@ -156,7 +156,10 @@ public partial class PlayerCitizen : Thing
 		TempWeight = 0f;
 		_shotNum = 0;
 
+		AddStatus(new MovespeedStatus());
+
 		InitializeStatsClient();
+		RefreshStatusHud();
 	}
 
 	[ClientRpc]

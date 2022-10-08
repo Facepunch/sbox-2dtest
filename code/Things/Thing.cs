@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Sandbox.MyGame;
+using static Test2D.MyGame;
+using Sandbox;
 
-namespace Sandbox;
+namespace Test2D;
 
 public partial class Thing : Sprite
 {

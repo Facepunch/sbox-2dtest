@@ -4,7 +4,7 @@ using Sandbox.UI.Construct;
 using System;
 using System.Collections.Generic;
 
-namespace Sandbox;
+namespace Test2D;
 
 public class DeathPanel : Panel
 {

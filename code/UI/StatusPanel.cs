@@ -4,7 +4,7 @@ using Sandbox.UI.Construct;
 using System;
 using System.Collections.Generic;
 
-namespace Sandbox;
+namespace Test2D;
 
 public class StatusPanel : Panel
 {
@@ -41,6 +41,7 @@ public class StatusPanel : Panel
 			
 			icon.Title = status.Title;
 			icon.Description = status.Description;
+			icon.LevelLabel.Text = status.Level > 1 ? status.Level.ToString() : "";
 
 			//icon.AddEventListener("onclick", () =>
 			//{
@@ -56,6 +57,15 @@ public class StatusIcon : Panel
 {
 	public string Title;
 	public string Description;
+
+	public Label LevelLabel;
+
+	public StatusIcon()
+    {
+		LevelLabel = new Label();
+		LevelLabel.AddClass("status_level_label");
+		AddChild(LevelLabel);
+    }
 
 	protected override void OnMouseOver(MousePanelEvent e)
 	{

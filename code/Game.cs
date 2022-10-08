@@ -6,10 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-//
-// You don't need to put things in a namespace, but it doesn't hurt.
-//
-namespace Sandbox;
+namespace Test2D;
 
 /// <summary>
 /// This is your game class. This is an entity that is created serverside when

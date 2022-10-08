@@ -4,7 +4,7 @@ using Sandbox.UI;
 using Sandbox.UI.Construct;
 using System.Linq;
 
-namespace Sandbox;
+namespace Test2D;
 
 [UseTemplate]
 internal class Tippy : Panel

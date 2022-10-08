@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Sandbox.MyGame;
+using static Test2D.MyGame;
+using Sandbox;
 
-namespace Sandbox;
+namespace Test2D;
 
 public partial class Status : BaseNetworkable
 {
@@ -19,14 +20,14 @@ public partial class Status : BaseNetworkable
 
 	public Status()
 	{
-
+		Level = 1;
 	}
 
 	public virtual void Init(PlayerCitizen player)
     {
 		Player = player;
 		ElapsedTime = Time.Now;
-		ShouldUpdate = true;
+		ShouldUpdate = false;
 	}
 
 	public virtual void Update(float dt)

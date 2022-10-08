@@ -2,8 +2,9 @@
 using System;
 using System.Linq;
 using Sandbox.UI;
+using Sandbox;
 
-namespace Sandbox;
+namespace Test2D;
 
 [UseTemplate]
 public class Modal : Panel

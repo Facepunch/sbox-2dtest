@@ -118,6 +118,16 @@
         //&.active, &:active {
         //    background-color: #3C415Cbb;
         //}
+
+        .status_level_label {
+            position: relative;
+            left: 12px;
+            bottom: 12px;
+            font-size: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 600;
+            color: #ffffff77;
+        }
     }
 }
 
