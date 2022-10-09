@@ -44,7 +44,7 @@ public partial class MyGame : Sandbox.Game
 
 	private TimeSince _enemySpawnTime;
 
-	public bool IsGameOver { get; private set; }
+	[Net] public bool IsGameOver { get; private set; }
 
 	public MyGame()
 	{
@@ -345,6 +345,14 @@ public partial class MyGame : Sandbox.Game
 		CoinCount = 0;
 		_enemySpawnTime = 0f;
 		IsGameOver = false;
+
+		RestartClient();
+	}
+
+	[ClientRpc]
+	public void RestartClient()
+	{
+		Hud.TimerPanel.Reset();
 	}
 
 	public void PlayerDied(PlayerCitizen player)

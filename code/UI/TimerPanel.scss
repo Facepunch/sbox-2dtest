@@ -1,0 +1,28 @@
+
+TimerPanel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    //text-align: center;
+    //flex-direction: column;
+    //align-content: center;
+    //text-anchor: middle;
+    align-items: center;
+    //border: 1px solid white;
+    //align-self: center;
+
+    &.invisible {
+        display: none;
+    }
+
+    .timer_label {
+        opacity: 1;
+        color: #ffffff77;
+        font-size: 32px;
+        font-family: monospace;
+        //align-self: center;
+        //border: 1px solid white;
+        padding-top: 20px;
+    }
+}
