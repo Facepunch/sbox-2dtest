@@ -50,6 +50,8 @@ public partial class PlayerCitizen : Thing
 	[Net] public float BulletSpeed { get; protected set; }
 	[Net] public float BulletLifetime { get; protected set; }
 	[Net] public float BulletNumPiercing { get; protected set; }
+	[Net] public float CritChance { get; set; }
+	[Net] public float CritMultiplier { get; set; }
 
 	private int _shotNum;
 
@@ -134,6 +136,8 @@ public partial class PlayerCitizen : Thing
 		BulletSpeed = 7.5f;
 		BulletLifetime = 0.8f;
 		Luck = 1f;
+		CritChance = 0.05f;
+		CritMultiplier = 1.5f;
 
 		DashCooldown = 1f;
 		DashInvulnTime = 0.25f;
@@ -448,6 +452,8 @@ public partial class PlayerCitizen : Thing
 				Lifetime = BulletLifetime,
 				NumPiercing = (int)MathF.Round(BulletNumPiercing),
 				Scale = new Vector2(BulletSize, BulletSize),
+				CriticalChance = CritChance,
+				CriticalMultiplier = CritMultiplier,
 			};
 
 			Game.AddThing(bullet);

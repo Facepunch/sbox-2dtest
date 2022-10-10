@@ -54,7 +54,7 @@ public class ChoiceModal : Panel
 		//var button0 = TypeLibrary.Create("b0", TypeLibrary.GetDescription("ChoiceButton").TargetType) as ChoiceButton;
 		//var button0 = TypeLibrary.Create<Panel>("ChoiceButton");
 
-		List<string> statusNames = new List<string>() { "NumProjectileStatus", "ReduceSpreadStatus", "ReloadSpeedStatus" };
+		List<string> statusNames = new List<string>() { "CritChanceStatus", "CritMultiplierStatus", "ReloadSpeedStatus" };
 
 		int NUM_CHOICES = 3;
 		for(int i = 0; i < NUM_CHOICES; i++)

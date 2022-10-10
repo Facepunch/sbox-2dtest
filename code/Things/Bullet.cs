@@ -19,6 +19,8 @@ public partial class Bullet : Thing
 	public float Lifetime { get; set; }
 	public int NumPiercing { get; set; }
 	public int NumHits { get; private set; }
+	public float CriticalChance { get; set; }
+	public float CriticalMultiplier { get; set; }
 
 	public List<Thing> _hitThings = new List<Thing>();
 
@@ -91,7 +93,13 @@ public partial class Bullet : Thing
 			if (_hitThings.Contains(enemy))
 				return;
 
-			enemy.Damage(Damage, Shooter);
+			float damage = Damage;
+			if (Rand.Float(0f, 1f) < CriticalChance)
+				damage *= CriticalMultiplier;
+		
+			// critical floater change colors
+
+			enemy.Damage(damage, Shooter);
 
 			enemy.Velocity += Velocity.Normal * Force;
 			enemy.TempWeight += AddTempWeight;

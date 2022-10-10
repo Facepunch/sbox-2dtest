@@ -50,6 +50,8 @@ public class InfoPanel : Panel
 		stats += "ATTRACT POWER: " + player.CoinAttractStrength + "\n";
 		stats += "LUCK: " + player.Luck + "\n";
 		stats += "SIZE: " + player.Radius + "\n";
+		stats += "CRIT CHANCE: " + player.CritChance + "\n";
+		stats += "CRIT MULTIPLIER: " + player.CritMultiplier + "\n";
 
 		StatsLabel.Text = stats;
 	}
