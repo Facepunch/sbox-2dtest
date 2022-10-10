@@ -35,7 +35,7 @@ public class InfoPanel : Panel
 		stats += "XP: " + player.ExperienceCurrent + " / " + player.ExperienceRequired + "\n\n";
 
 		stats += "HP: " + player.Health.ToString("#.#") + " / " + player.MaxHp + "\n";
-		stats += "DMG: " + player.Dmg + "\n";
+		stats += "DMG: " + player.BulletDamage + "\n";
 		stats += "AMMO : " + player.AmmoCount + " / " + player.MaxAmmoCount + "\n";
 		stats += "NUM BULLETS: " + player.NumBullets + "\n";
 		stats += "ATTACK SPD: " + player.AttackSpeed + "\n";

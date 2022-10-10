@@ -11,6 +11,7 @@ TimerPanel {
     align-items: center;
     //border: 1px solid white;
     //align-self: center;
+    pointer-events: none;
 
     &.invisible {
         display: none;
@@ -18,7 +19,7 @@ TimerPanel {
 
     .timer_label {
         opacity: 1;
-        color: #ffffff77;
+        color: #ffffff99;
         font-size: 32px;
         font-family: monospace;
         //align-self: center;

@@ -282,7 +282,7 @@ public partial class Enemy : Thing
 
 		_deathScale = Scale;
 
-		var coin_chance = shooter != null ? Utils.Map(shooter.Luck, 0f, 10f, 0.45f, 1f) : 0.5f;
+		var coin_chance = shooter != null ? Utils.Map(shooter.Luck, 0f, 10f, 0.5f, 1f) : 0.5f;
 		if(Rand.Float(0f, 1f) < coin_chance)
 			Game.SpawnCoin(Position);
 	}

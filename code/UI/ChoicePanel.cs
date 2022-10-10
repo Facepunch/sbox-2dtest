@@ -54,13 +54,13 @@ public class ChoiceModal : Panel
 		//var button0 = TypeLibrary.Create("b0", TypeLibrary.GetDescription("ChoiceButton").TargetType) as ChoiceButton;
 		//var button0 = TypeLibrary.Create<Panel>("ChoiceButton");
 
-		List<string> statusNames = new List<string>() { "ExampleStatus", "MovespeedStatus", "ExampleStatus2" };
+		List<string> statusNames = new List<string>() { "ExampleStatus", "MovespeedStatus", "DamageStatus" };
 
 		int NUM_CHOICES = 3;
 		for(int i = 0; i < NUM_CHOICES; i++)
         {
 			var statusName = statusNames[i];
-			var status = TypeLibrary.Create<Status>(statusName);
+			var status = StatusManager.CreateStatus(statusName);
 			var currLevel = player.GetStatusLevel(statusName);
 			status.Level = currLevel + 1;
 

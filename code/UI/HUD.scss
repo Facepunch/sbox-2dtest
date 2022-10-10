@@ -107,7 +107,7 @@
         //pointer-events: visible;
         margin: 2px;
         padding: 10px 0px 10px 0px;
-        opacity: 0.4;
+        opacity: 0.5;
         //padding-right: 2px;
 
         &:hover {
@@ -126,7 +126,16 @@
             font-size: 20px;
             font-family: Arial, Helvetica, sans-serif;
             font-weight: 600;
-            color: #ffffff77;
+            color: white;
+            opacity: 1;
+
+            .status_level_label_bg {
+                color: black;
+                position: relative;
+                left: -11px;
+                bottom: -3px;
+                z-index: -1;
+            }
         }
     }
 }
@@ -187,8 +196,8 @@
     justify-content: center;
 
     .choice_modal {
-        width: 930px;
-        height: 330px;
+        width: 1080px;
+        height: 360px;
         background-color: #00000033;
         border: 3px solid white;
         flex-direction: column;
@@ -209,8 +218,8 @@
         }
 
         .choice_button {
-            width: 240px;
-            height: 240px;
+            width: 320px;
+            height: 270px;
             background-color: #000000cc;
             pointer-events: all;
             border: 3px solid white;
@@ -249,6 +258,7 @@
                 font-style: italic;
                 font-size: 18px;
                 color: #ffffffaa;
+                padding: 8px;
                 //border: 1px solid blue;
             }
         }

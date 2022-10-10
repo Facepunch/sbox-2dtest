@@ -27,11 +27,13 @@ public class StatusPanel : Panel
         }
 		_statusIcons.Clear();
 
-		foreach(var status in statuses)
+		foreach(KeyValuePair<string, Status> pair in statuses)
         {
 			var icon = new StatusIcon();
 			icon.AddClass("status_panel");
 			icon.AddClass("status_icon");
+
+			var status = pair.Value;
 
 			icon.Style.SetBackgroundImage(status.IconPath);
 			//icon.Add.Image("/textures/icons/bullets.png");
@@ -43,6 +45,7 @@ public class StatusPanel : Panel
 			icon.Description = status.Description;
 			icon.Level = status.Level;
 			icon.LevelLabel.Text = status.Level > 1 ? status.Level.ToString() : "";
+			icon.LevelLabelBg.Text = status.Level > 1 ? status.Level.ToString() : "";
 
 			//icon.AddEventListener("onclick", () =>
 			//{
@@ -60,6 +63,7 @@ public class StatusIcon : Panel
 	public string Description;
 
 	public int Level { get; set; }
+	public Label LevelLabelBg;
 	public Label LevelLabel;
 
 	public StatusIcon()
@@ -67,7 +71,11 @@ public class StatusIcon : Panel
 		LevelLabel = new Label();
 		LevelLabel.AddClass("status_level_label");
 		AddChild(LevelLabel);
-    }
+
+		LevelLabelBg = new Label();
+		LevelLabelBg.AddClass("status_level_label_bg");
+		LevelLabel.AddChild(LevelLabelBg);
+	}
 
 	protected override void OnMouseOver(MousePanelEvent e)
 	{

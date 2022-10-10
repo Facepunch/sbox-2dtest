@@ -44,7 +44,11 @@ public partial class MyGame : Sandbox.Game
 
 	private TimeSince _enemySpawnTime;
 
+	public TimeSince ElapsedTime { get; set; }
+
 	[Net] public bool IsGameOver { get; private set; }
+
+	public StatusManager StatusManager { get; private set; }
 
 	public MyGame()
 	{
@@ -73,14 +77,17 @@ public partial class MyGame : Sandbox.Game
 			};
 
 			//var animTest = new Sprite
-   //         {
-   //             SpriteTexture = SpriteTexture.Atlas("textures/sprites/tile_test.png", 4, 4),
-   //             AnimationPath = "textures/sprites/tile_test.frames",
+			//         {
+			//             SpriteTexture = SpriteTexture.Atlas("textures/sprites/tile_test.png", 4, 4),
+			//             AnimationPath = "textures/sprites/tile_test.frames",
 
-   //             Filter = SpriteFilter.Pixelated,
-   //             Scale = 4f
-   //         };
-        }
+			//             Filter = SpriteFilter.Pixelated,
+			//             Scale = 4f
+			//         };
+
+			ElapsedTime = 0f;
+			StatusManager = new StatusManager();
+		}
 
 		if (Host.IsClient)
         {
@@ -344,6 +351,7 @@ public partial class MyGame : Sandbox.Game
 		EnemyCount = 0;
 		CoinCount = 0;
 		_enemySpawnTime = 0f;
+		ElapsedTime = 0f;
 		IsGameOver = false;
 
 		RestartClient();

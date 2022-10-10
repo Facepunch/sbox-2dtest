@@ -40,7 +40,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float ReloadSpeed { get; private set; }
 	[Net] public int AmmoCount { get; protected set; }
 	[Net] public float MaxAmmoCount { get; protected set; }
-	[Net] public float Dmg { get; protected set; }
+	[Net] public float BulletDamage { get; protected set; }
 	[Net] public float MoveSpeed { get; protected set; }
 	public const float BASE_MOVE_SPEED = 20f;
 	[Net] public float NumBullets { get; protected set; }
@@ -77,7 +77,8 @@ public partial class PlayerCitizen : Thing
 	public Nametag Nametag { get; private set; }
 
 	// STATUS
-	[Net] public IList<Status> Statuses { get; private set; }
+	[Net] public IDictionary<string, Status> Statuses { get; private set; }
+	//private List<Status> _statusesToRemove = new List<Status>();;
 
 	// MODIFIERS
 	private Dictionary<Status, Dictionary<string, ModifierData>> _modifiers = new Dictionary<Status, Dictionary<string, ModifierData>>();
@@ -101,7 +102,7 @@ public partial class PlayerCitizen : Thing
 			CollideWith.Add(typeof(Enemy));
 			CollideWith.Add(typeof(PlayerCitizen));
 
-			Statuses = new List<Status>();
+			Statuses = new Dictionary<string, Status>();
 
 			InitializeStats();
 		}
@@ -123,7 +124,7 @@ public partial class PlayerCitizen : Thing
 		ReloadTime = 1.25f;
 		ReloadSpeed = 1f;
 		AttackSpeed = 1f;
-		Dmg = 5f;
+		BulletDamage = 5f;
 		MoveSpeed = 1f;
 		NumBullets = 1f;
 		BulletSpread = 35f;
@@ -147,6 +148,7 @@ public partial class PlayerCitizen : Thing
 		CoinAttractStrength = 2.2f;
 
 		Statuses.Clear();
+		//_statusesToRemove.Clear();
 		_modifiers.Clear();
 
 		_isFlashing = false;
@@ -265,7 +267,7 @@ public partial class PlayerCitizen : Thing
 			{
 				//Game.Restart();
 				//AddStatus("MovespeedStatus");
-				LevelUp();
+				AddExperience(GetExperienceReqForLevel(Level));
                 return;
 			}
 
@@ -360,14 +362,14 @@ public partial class PlayerCitizen : Thing
 	void HandleStatuses(float dt)
     {
 		string debug = "";
-		for(int i = Statuses.Count - 1; i >= 0; i--)
-		{
-			Status status = Statuses[i];
+
+		foreach (KeyValuePair<string, Status> pair in Statuses)
+        {
+			Status status = pair.Value;
 			if (status.ShouldUpdate)
 				status.Update(dt);
 
 			debug += status.ToString() + "\n";
-			//debug += ": " + status.ElapsedTime + "\n";
 		}
 
 		//DebugText(debug);
@@ -438,7 +440,7 @@ public partial class PlayerCitizen : Thing
 				Depth = -1f,
 				Velocity = dir * BulletSpeed,
 				Shooter = this,
-				Damage = Dmg,
+				Damage = BulletDamage,
 				Force = 2.25f,
 				TempWeight = 3f,
 				Lifetime = BulletLifetime,
@@ -582,20 +584,16 @@ public partial class PlayerCitizen : Thing
     {
 		Status status = null;
 
-        foreach (var s in Statuses)
+		if(Statuses.ContainsKey(statusName))
         {
-			var typeString = s.GetType().ToString();
-			if(typeString.Contains(statusName))
-            {
-				status = s;
-				status.Level++;
-            }
-        }
-
+			status = Statuses[statusName];
+			status.Level++;
+		}
+			
 		if (status == null)
         {
-			status = TypeLibrary.Create<Status>(statusName);
-			Statuses.Add(status);
+			status = StatusManager.CreateStatus(statusName);
+			Statuses.Add(statusName, status);
 			status.Init(this);
 		}
 
@@ -606,16 +604,15 @@ public partial class PlayerCitizen : Thing
 		CheckForLevelUp();
 	}
 
+	public bool HasStatus(string statusName)
+	{
+		return Statuses.ContainsKey(statusName);
+	}
+
 	public int GetStatusLevel(string statusName)
     {
-		foreach (var s in Statuses)
-		{
-			var typeString = s.GetType().ToString();
-			if (typeString.Contains(statusName))
-			{
-				return s.Level;
-			}
-		}
+		if(Statuses.ContainsKey(statusName))
+			return Statuses[statusName].Level;
 
 		return 0;
 	}
@@ -684,12 +681,12 @@ public partial class PlayerCitizen : Thing
 		SetProperty(propertyName, curr_value);
     }
 
-	public void RemoveStatus(Status status)
-    {
-		Log.Info("RemoveStatus: " + status);
-		RemoveModifiers(status);
-		Statuses.Remove(status);
-    }
+	//public void RemoveStatus(Status status)
+ //   {
+	//	Log.Info("RemoveStatus: " + status);
+	//	RemoveModifiers(status);
+	//	_statusesToRemove.Add(status);
+ //   }
 
 	public void RemoveModifiers(Status status)
     {

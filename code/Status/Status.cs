@@ -47,6 +47,11 @@ public partial class Status : BaseNetworkable
 
     }
 
+	public virtual string GetDescription(int newLevel)
+	{
+		return "...";
+	}
+
 	public virtual string GetUpgradeDescription(int newLevel)
 	{
 		return "...";

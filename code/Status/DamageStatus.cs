@@ -5,12 +5,12 @@ using Sandbox;
 
 namespace Test2D;
 
-public class MovespeedStatus : Status
+public class DamageStatus : Status
 {
-	public MovespeedStatus()
+	public DamageStatus()
     {
-		Title = "Fast Shoes";
-		IconPath = "textures/icons/shoe.png";
+		Title = "Bigger Bullets";
+		IconPath = "textures/icons/bigger_bullets.png";
 	}
 
 	public override void Init(PlayerCitizen player)
@@ -22,17 +22,17 @@ public class MovespeedStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, "MoveSpeed", GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, "BulletDamage", GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("Increase movespeed by {0}%", GetPercentForLevel(Level));
+		return string.Format("Increase bullet damage by {0}%", GetPercentForLevel(Level));
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase movespeed by {0}% → {1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase bullet damage by {0}% → {1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetMultForLevel(int level)
