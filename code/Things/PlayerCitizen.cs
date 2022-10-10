@@ -41,6 +41,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public int AmmoCount { get; protected set; }
 	[Net] public float MaxAmmoCount { get; protected set; }
 	[Net] public float BulletDamage { get; protected set; }
+	[Net] public float BulletSize { get; protected set; }
 	[Net] public float MoveSpeed { get; protected set; }
 	public const float BASE_MOVE_SPEED = 20f;
 	[Net] public float NumBullets { get; protected set; }
@@ -125,10 +126,11 @@ public partial class PlayerCitizen : Thing
 		ReloadSpeed = 1f;
 		AttackSpeed = 1f;
 		BulletDamage = 5f;
+		BulletSize = 0.175f;
 		MoveSpeed = 1f;
 		NumBullets = 1f;
 		BulletSpread = 35f;
-		BulletInaccuracy = 10f;
+		BulletInaccuracy = 5f;
 		BulletSpeed = 7.5f;
 		BulletLifetime = 0.8f;
 		Luck = 1f;
@@ -445,6 +447,7 @@ public partial class PlayerCitizen : Thing
 				TempWeight = 3f,
 				Lifetime = BulletLifetime,
 				NumPiercing = (int)MathF.Round(BulletNumPiercing),
+				Scale = new Vector2(BulletSize, BulletSize),
 			};
 
 			Game.AddThing(bullet);

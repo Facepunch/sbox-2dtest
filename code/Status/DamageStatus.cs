@@ -23,6 +23,7 @@ public class DamageStatus : Status
 		Description = GetDescription(Level);
 
 		Player.Modify(this, "BulletDamage", GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, "BulletSize", GetBulletSizeForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)
@@ -43,5 +44,10 @@ public class DamageStatus : Status
 	public float GetPercentForLevel(int level)
 	{
 		return 20 * level;
+	}
+
+	public float GetBulletSizeForLevel(int level)
+	{
+		return 1f + 0.1f * level;
 	}
 }

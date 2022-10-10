@@ -54,7 +54,7 @@ public class ChoiceModal : Panel
 		//var button0 = TypeLibrary.Create("b0", TypeLibrary.GetDescription("ChoiceButton").TargetType) as ChoiceButton;
 		//var button0 = TypeLibrary.Create<Panel>("ChoiceButton");
 
-		List<string> statusNames = new List<string>() { "ExampleStatus", "MovespeedStatus", "DamageStatus" };
+		List<string> statusNames = new List<string>() { "NumProjectileStatus", "ReduceSpreadStatus", "ReloadSpeedStatus" };
 
 		int NUM_CHOICES = 3;
 		for(int i = 0; i < NUM_CHOICES; i++)
@@ -84,7 +84,7 @@ public class ChoiceButton : Panel
 	{
 		Label titleLabel = new Label();
 		titleLabel.AddClass("choice_title");
-		titleLabel.Text = status.Title + (status.Level > 1 ? " (Level " + status.Level + ")" : "");
+		titleLabel.Text = status.Title + (status.Level > 1 ? " (" + status.Level + ")" : "");
         //titleLabel.Text = "Title";
 		AddChild(titleLabel);
 

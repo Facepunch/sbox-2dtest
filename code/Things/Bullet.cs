@@ -18,6 +18,7 @@ public partial class Bullet : Thing
 	public float AddTempWeight { get; set; }
 	public float Lifetime { get; set; }
 	public int NumPiercing { get; set; }
+	public int NumHits { get; private set; }
 
 	public List<Thing> _hitThings = new List<Thing>();
 
@@ -31,7 +32,7 @@ public partial class Bullet : Thing
 
 			//RenderColor = Color.Random;
 
-			Scale = new Vector2(0.2f, 0.2f);
+			Scale = new Vector2(0.1f, 0.1f);
 			SpawnTime = 0f;
 			Damage = 1f;
 			AddTempWeight = 2f;
@@ -40,6 +41,7 @@ public partial class Bullet : Thing
 			Pivot = new Vector2(0.5f, -1.2f);
 			Lifetime = 1f;
 			NumPiercing = 0;
+			NumHits = 0;
 
 			CollideWith.Add(typeof(Enemy));
 		}
@@ -94,15 +96,16 @@ public partial class Bullet : Thing
 			enemy.Velocity += Velocity.Normal * Force;
 			enemy.TempWeight += AddTempWeight;
 
-			if(NumPiercing > 0)
-            {
-				NumPiercing--;
-				_hitThings.Add(enemy);
-            } 
-			else
+			NumHits++;
+
+			if(NumHits > NumPiercing)
             {
 				Remove();
 				return;
+            } 
+			else
+            {
+				_hitThings.Add(enemy);
 			}
 		}
 	}
