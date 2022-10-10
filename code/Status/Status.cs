@@ -56,4 +56,7 @@ public partial class Status : BaseNetworkable
 	{
 		return "...";
 	}
+
+	public virtual void OnDash() {}
+	public virtual void OnCritical(Enemy enemy) {}
 }

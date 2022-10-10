@@ -93,13 +93,9 @@ public partial class Bullet : Thing
 			if (_hitThings.Contains(enemy))
 				return;
 
-			float damage = Damage;
-			if (Rand.Float(0f, 1f) < CriticalChance)
-				damage *= CriticalMultiplier;
-		
-			// critical floater change colors
-
-			enemy.Damage(damage, Shooter);
+			bool isCrit = Rand.Float(0f, 1f) < CriticalChance;
+			float damage = Damage * (isCrit ? CriticalMultiplier : 1f);
+			enemy.Damage(damage, Shooter, isCrit);
 
 			enemy.Velocity += Velocity.Normal * Force;
 			enemy.TempWeight += AddTempWeight;

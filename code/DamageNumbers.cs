@@ -60,9 +60,9 @@ internal static class DamageNumbers
 	//	} );
 	//}
 
-	public static void Create( Vector3 pos, float amount)
+	public static void Create( Vector3 pos, float amount, bool isCrit)
 	{
-		var path = "particles/dmg_number.vpcf";
+		var path = isCrit ? "particles/dmg_number_crit.vpcf" : "particles/dmg_number.vpcf";
 		var number = amount;
 		var particle = Particles.Create( path, pos.WithZ(400f) );
 

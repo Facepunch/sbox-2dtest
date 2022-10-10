@@ -7,6 +7,8 @@ namespace Test2D;
 
 public class AttackSpeedStatus : Status
 {
+	public static int MaxLevel = 9;
+
 	public AttackSpeedStatus()
     {
 		Title = "Rapid Fire";

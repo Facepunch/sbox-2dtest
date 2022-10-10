@@ -109,6 +109,7 @@
         padding: 10px 0px 10px 0px;
         opacity: 0.5;
         //padding-right: 2px;
+        //image-rendering: pixelated;
 
         &:hover {
             //background-color: #301B3F99;
@@ -253,6 +254,7 @@
                 //border: 1px solid #ffffff22;
                 margin-bottom: 16px;
                 border-radius: 150px;
+                image-rendering: pixelated;
             }
 
             .choice_description {

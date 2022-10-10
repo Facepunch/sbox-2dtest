@@ -255,13 +255,13 @@ public partial class Enemy : Thing
 		}
 	}
 
-    public void Damage(float damage, PlayerCitizen shooter)
+    public void Damage(float damage, PlayerCitizen shooter, bool isCrit)
     {
 		if (IsDying)
 			return;
 
 		Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-2f, 2f)) * 0.1f, damage);
+		DamageNumbers.Create(Position + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-2f, 2f)) * 0.1f, damage, isCrit);
 		Flash(0.12f);
 
 		if (Health <= 0f)
