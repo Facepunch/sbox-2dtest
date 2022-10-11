@@ -360,7 +360,7 @@ public partial class MyGame : Sandbox.Game
 	[ClientRpc]
 	public void RestartClient()
 	{
-		Hud.TimerPanel.Reset();
+		Hud.Restart();
 	}
 
 	public void PlayerDied(PlayerCitizen player)
@@ -384,6 +384,6 @@ public partial class MyGame : Sandbox.Game
 	[ClientRpc]
 	public void GameOverClient()
 	{
-		Hud.AddChild<DeathPanel>("death_panel_root");
+		Hud.GameOver();
 	}
 }

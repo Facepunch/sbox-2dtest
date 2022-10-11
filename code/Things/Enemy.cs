@@ -34,9 +34,9 @@ public partial class Enemy : Thing
 
 	public static float SCALE_FACTOR = 0.8f;
 
-	//private Sprite _shadow;
+	private Shadow _shadow;
 
-	public override void Spawn()
+    public override void Spawn()
 	{
 		base.Spawn();
 
@@ -46,7 +46,7 @@ public partial class Enemy : Thing
 		//SpriteTexture = "textures/sprites/zombie.png";
 
 		if (Host.IsServer)
-        {
+		{
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie_spritesheet3.png", 5, 6);
 			AnimationPath = "textures/sprites/zombie_spawn.frames";
 			AnimationSpeed = 2f;
@@ -61,7 +61,7 @@ public partial class Enemy : Thing
 
 			IsSpawning = true;
 			ElapsedTime = 0f;
-				
+
 			Scale = new Vector2(1f, 1f) * SCALE_FACTOR;
 
 			CollideWith.Add(typeof(Enemy));
@@ -77,7 +77,15 @@ public partial class Enemy : Thing
 		ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
 	}
 
-	[Event.Tick.Client]
+    public override void ClientSpawn()
+    {
+        base.ClientSpawn();
+
+		_shadow = new Shadow();
+		_shadow.SetThing(this);
+	}
+
+    [Event.Tick.Client]
     public void ClientTick()
     {
         //DebugText(AnimationTimeElapsed.ToString());
@@ -92,6 +100,9 @@ public partial class Enemy : Thing
 
 	public override void Update(float dt)
     {
+		if (Game.IsGameOver)
+			return;
+
 		base.Update(dt);
 		ElapsedTime += dt;
 

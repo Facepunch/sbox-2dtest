@@ -56,6 +56,9 @@ public partial class HUD : RootPanel
 
 	public void SpawnChoicePanel()
     {
+		if (MyGame.Current.IsGameOver)
+			return;
+
 		ChoicePanel = AddChild<ChoicePanel>("choice_panel_root");
 	}
 
@@ -65,4 +68,26 @@ public partial class HUD : RootPanel
 		nametag.Player = player;
 		return nametag;
 	}
+
+	public void GameOver()
+    {
+		AddChild<DeathPanel>("death_panel_root");
+
+		if (ChoicePanel != null)
+		{
+			ChoicePanel.Delete();
+			ChoicePanel = null;
+		}
+	}
+
+	public void Restart()
+    {
+		TimerPanel.Restart();
+
+		if (ChoicePanel != null)
+        {
+			ChoicePanel.Delete();
+			ChoicePanel = null;
+		}
+    }
 }

@@ -37,7 +37,7 @@ public partial class TimerPanel : Panel
             AddClass("invisible");
     }
 
-    public void Reset()
+    public void Restart()
     {
         ElapsedTime = 0f;
     }

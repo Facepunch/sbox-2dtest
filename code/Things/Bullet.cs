@@ -53,6 +53,9 @@ public partial class Bullet : Thing
 
 	public override void Update(float dt)
 	{
+		if (Game.IsGameOver)
+			return;
+
 		base.Update(dt);
 
 		Position += Velocity * dt;

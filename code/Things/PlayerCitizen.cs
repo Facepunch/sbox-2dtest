@@ -214,6 +214,9 @@ public partial class PlayerCitizen : Thing
 	{
 		base.Simulate( cl );
 
+		if (Game.IsGameOver)
+			return;
+
 		float dt = Time.Delta;
 
 		// garry: pass the mouse offset/aim in the Input command instead of by console command
