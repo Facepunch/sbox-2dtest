@@ -146,12 +146,12 @@ public partial class PlayerCitizen : Thing
 		Health = 100f;
 		MaxHp = 100f;
 		IsDead = false;
-		Radius = 0.2f;
+		Radius = 0.175f;
 		GridPos = Game.GetGridSquareForPos(Position);
 		AimDir = Vector2.Up;
 
 		CoinAttractRange = 1.7f;
-		CoinAttractStrength = 2.2f;
+		CoinAttractStrength = 3.1f;
 
 		Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -164,6 +164,8 @@ public partial class PlayerCitizen : Thing
 		IsReloading = false;
 		TempWeight = 0f;
 		_shotNum = 0;
+
+		ShadowOpacity = 0.8f;
 
 		//AddStatus("MovespeedStatus");
 		//AddStatus("MovespeedStatus");
@@ -193,6 +195,8 @@ public partial class PlayerCitizen : Thing
         };
 
 		Nametag = Game.Hud.SpawnNametag(this);
+
+		SpawnShadow(1.12f);
 	}
 
     [Event.Tick.Client]
@@ -454,9 +458,10 @@ public partial class PlayerCitizen : Thing
 				TempWeight = 3f,
 				Lifetime = BulletLifetime,
 				NumPiercing = (int)MathF.Round(BulletNumPiercing),
-				Scale = new Vector2(BulletSize, BulletSize),
 				CriticalChance = CritChance,
 				CriticalMultiplier = CritMultiplier,
+				Scale = new Vector2(BulletSize, BulletSize),
+				Radius = BulletSize * 0.6f,
 			};
 
 			Game.AddThing(bullet);

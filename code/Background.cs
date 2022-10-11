@@ -15,7 +15,7 @@ public partial class Background : Sprite
 
 		SpriteTexture = "textures/sprites/bg_square.png";
 		Scale = 33f;
-		Depth = -200f;
+		Depth = -250f;
         Filter = SpriteFilter.Pixelated;
 		ColorFill = new Color(0.1f, 0.3f, 0.1f);
     }

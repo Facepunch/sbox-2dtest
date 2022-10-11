@@ -30,7 +30,7 @@ public partial class Coin : Thing
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/xp.png", 5, 4);
 			AnimationPath = "textures/sprites/xp_1.frames";
 			AnimationSpeed = 3f;
-			Pivot = new Vector2(0.5f, 0.3f);
+			Pivot = new Vector2(0.5f, 0.225f);
 
 			Scale = new Vector2(1f, 1f) * 0.4f;
 			SpawnTime = 0f;
@@ -40,14 +40,23 @@ public partial class Coin : Thing
 			CollideWith.Add(typeof(PlayerCitizen));
 			CollideWith.Add(typeof(Coin));
 
-            SetValue(1);
+			ShadowOpacity = 0.8f;
+
+			SetValue(1);
 			//SetValue(Rand.Int(1, 7));
 		}
 
 		Filter = SpriteFilter.Pixelated;
 	}
 
-	[Event.Tick.Client]
+    public override void ClientSpawn()
+    {
+        base.ClientSpawn();
+
+		SpawnShadow(0.4f);
+	}
+
+    [Event.Tick.Client]
 	public void ClientTick()
 	{
 		//DebugText("\nclient: " + AnimationSpeed.ToString());
@@ -137,19 +146,24 @@ public partial class Coin : Thing
         {
 			case 1:
 				AnimationPath = "textures/sprites/xp_1.frames";
+				Pivot = new Vector2(0.5f, 0.225f);
 				break;
 			case 2:
 				AnimationPath = "textures/sprites/xp_2.frames";
+				Pivot = new Vector2(0.5f, 0.2f);
 				break;
 			case 3:
-				AnimationPath = "textures/sprites/xp_3.frames";	
+				AnimationPath = "textures/sprites/xp_3.frames";
+				Pivot = new Vector2(0.5f, 0.15f);
 				break;
 			case 4:
 				AnimationPath = "textures/sprites/xp_4.frames";
+				Pivot = new Vector2(0.5f, 0.1f);
 				break;
 			case 5:
 			default:
 				AnimationPath = "textures/sprites/xp_5.frames";
+				Pivot = new Vector2(0.5f, 0.05f);
 				break;
 		}
 

@@ -16,8 +16,8 @@ public partial class Shadow : Sprite
 		base.Spawn();
 
 		SpriteTexture = "textures/sprites/shadow3.png";
-		Depth = -50f;
-		ColorFill = new Color(0f, 0f, 0f, 1f);
+		Depth = -249f;
+		ColorTint = new Color(0f, 0f, 0f, 0f);
 		Filter = SpriteFilter.Pixelated;
 		Scale = new Vector2(1f, 1f);
     }
@@ -52,6 +52,7 @@ public partial class Shadow : Sprite
 		}
 			
 		Position = Thing.Position;
+		ColorTint = new Color(0f, 0f, 0f, Thing.ShadowOpacity);
 
 		//DebugOverlay.Text("ColorFill: " + ColorFill.ToString(), Position + new Vector2(0.1f, -0.1f), 0f, float.MaxValue);
 	}

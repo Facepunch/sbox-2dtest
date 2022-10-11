@@ -44,11 +44,19 @@ public partial class Bullet : Thing
 			Lifetime = 1f;
 			NumPiercing = 0;
 			NumHits = 0;
+			ShadowOpacity = 0.8f;
 
 			CollideWith.Add(typeof(Enemy));
 		}
 
 		Filter = SpriteFilter.Pixelated;
+	}
+
+    public override void ClientSpawn()
+    {
+        base.ClientSpawn();
+
+		SpawnShadow(Radius * 3f);
 	}
 
 	public override void Update(float dt)

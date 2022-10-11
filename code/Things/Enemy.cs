@@ -18,10 +18,10 @@ public partial class Enemy : Thing
 
 	public float MaxHealth { get; private set; }
 
-	public bool IsSpawning { get; private set; }
-	public float ElapsedTime { get; private set; }
-	public bool IsDying { get; private set; }
-	public float DeathTimeElapsed { get; private set; }
+	[Net] public bool IsSpawning { get; private set; }
+	[Net] public float ElapsedTime { get; private set; }
+	[Net] public bool IsDying { get; private set; }
+	[Net] public float DeathTimeElapsed { get; private set; }
 	private Vector2 _deathScale;
 
 	public bool IsAttacking { get; private set; }
@@ -34,9 +34,10 @@ public partial class Enemy : Thing
 
 	public static float SCALE_FACTOR = 0.8f;
 
-	private Shadow _shadow;
+	private float SPAWN_TIME = 1.75f;
+	private float SHADOW_FULL_OPACITY = 0.8f;
 
-    public override void Spawn()
+	public override void Spawn()
 	{
 		base.Spawn();
 
@@ -81,14 +82,13 @@ public partial class Enemy : Thing
     {
         base.ClientSpawn();
 
-		_shadow = new Shadow();
-		_shadow.SetThing(this);
+		SpawnShadow(0.95f);
 	}
 
     [Event.Tick.Client]
     public void ClientTick()
     {
-        //DebugText(AnimationTimeElapsed.ToString());
+        //DebugText(ShadowOpacity.ToString());
     }
 
     [Event.Tick.Server]
@@ -121,10 +121,16 @@ public partial class Enemy : Thing
             DeathTimeElapsed += dt;
 			Scale = _deathScale * Utils.Map(DeathTimeElapsed, 0f, 0.3f, 1f, 1.2f);
 
-            if (DeathTimeElapsed > 0.3f)
+			float DEATH_TIME = 0.3f;
+            if (DeathTimeElapsed > DEATH_TIME)
             {
                 Remove();
             }
+			else
+            {
+				ShadowOpacity = Utils.Map(ElapsedTime, 0f, DEATH_TIME, SHADOW_FULL_OPACITY, 0f);
+			}
+
 			return;
         }
 
@@ -132,13 +138,16 @@ public partial class Enemy : Thing
         {
 			Depth = -Position.y * 10f;
 
-			if (ElapsedTime > 1.75f)
+			if (ElapsedTime > SPAWN_TIME)
             {
 				IsSpawning = false;
 				AnimationPath = "textures/sprites/zombie_walk.frames";
+
+				ShadowOpacity = SHADOW_FULL_OPACITY;
 			} 
 			else
             {
+				ShadowOpacity = Utils.Map(ElapsedTime, 0f, SPAWN_TIME, 0f, SHADOW_FULL_OPACITY);
 				return;
             }
 		}
