@@ -134,9 +134,44 @@ public partial class Sprite : ModelEntity
     }
 
     [Net]
-	public Color ColorFill { get; set; }
+	private Color NetColorFill { get; set; }
+	private Color LocalColorFill { get; set; }
 
-    [Net] public Color ColorTint { get; set; } = Color.White;
+	public Color ColorFill
+	{
+		get => IsClientOnly ? LocalColorFill : NetColorFill;
+		set
+		{
+			if ( IsClientOnly )
+			{
+				LocalColorFill = value;
+			}
+			else
+			{
+				NetColorFill = value;
+			}
+		}
+	}
+
+    [Net]
+    private Color NetColorTint { get; set; } = Color.White;
+    private Color LocalColorTint { get; set; } = Color.White;
+
+    public Color ColorTint
+	{
+	    get => IsClientOnly ? LocalColorTint : NetColorTint;
+	    set
+	    {
+		    if ( IsClientOnly )
+		    {
+			    LocalColorTint = value;
+		    }
+		    else
+		    {
+			    NetColorTint = value;
+		    }
+	    }
+    }
 
 	public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
