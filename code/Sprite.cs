@@ -57,12 +57,12 @@ public partial class Sprite : ModelEntity
 
     public SpriteTexture SpriteTexture
     {
-        get => IsClientOnly ? LocalSpriteTexture : SpriteTexture.Atlas(NetTexturePath, NetAtlasRows, NetAtlasColumns);
+        get => IsClientOnly ? ClientSpriteTexture : SpriteTexture.Atlas(NetTexturePath, NetAtlasRows, NetAtlasColumns);
         set
         {
 	        if ( IsClientOnly )
 	        {
-		        LocalSpriteTexture = value;
+		        ClientSpriteTexture = value;
 
 		        OnNetTexturePathChanged();
 			}
@@ -84,49 +84,70 @@ public partial class Sprite : ModelEntity
     [Net]
     private int NetAtlasColumns { get; set; }
 
-	private SpriteTexture LocalSpriteTexture { get; set; }
+	private SpriteTexture ClientSpriteTexture { get; set; }
 
     [Net, Change, ResourceType("frames")]
 	private string NetAnimationPath { get; set; }
-	private string LocalAnimationPath { get; set; }
+	private string ClientAnimationPath { get; set; }
 
     public string AnimationPath
     {
-        get => IsClientOnly ? LocalAnimationPath : NetAnimationPath;
+        get => IsClientOnly ? ClientAnimationPath : NetAnimationPath;
         set
-        {
-            if ( IsClientOnly )
+		{
+			NetAnimationPath = ClientAnimationPath = value;
+
+			if ( IsClientOnly )
 			{
-				LocalAnimationPath = value;
 				OnNetAnimationPathChanged();
             }
-            else
-            {
-	            NetAnimationPath = value;
-			}
         }
     }
 
     public float AnimationTimeElapsed { get; set; }
 
-    [Net] public float AnimationSpeed { get; set; }
+    [Net]
+    private float NetAnimationSpeed { get; set; }
+	private float ClientAnimationSpeed { get; set; }
 
-    [Net, Predicted] public new Vector2 Scale { get; set; } = new Vector2(1f, 1f);
+	public float AnimationSpeed
+	{
+		get => IsClientOnly ? ClientAnimationSpeed : NetAnimationSpeed;
+		set => NetAnimationSpeed = ClientAnimationSpeed = value;
+	}
+
+    [Net, Predicted]
+    private Vector2 NetScale { get; set; } = new Vector2( 1f, 1f );
+	private Vector2 ClientScale { get; set; } = new Vector2( 1f, 1f );
+
+	public new Vector2 Scale
+	{
+		get => IsClientOnly ? ClientScale : NetScale;
+		set => NetScale = ClientScale = value;
+	}
 
 	[Net, Predicted]
-    public Vector2 Pivot { get; set; } = new Vector2(0.5f, 0.5f);
+	private Vector2 NetPivot { get; set; } = new Vector2(0.5f, 0.5f);
+	private Vector2 ClientPivot { get; set; } = new Vector2( 0.5f, 0.5f );
 
-    [Net, Change]
+	public Vector2 Pivot
+	{
+		get => IsClientOnly ? ClientPivot : NetPivot;
+		set => NetPivot = ClientPivot = value;
+	}
+
+	[Net, Change]
     private SpriteFilter NetFilter { get; set; }
+	private SpriteFilter ClientFilter { get; set; }
 
     public SpriteFilter Filter
     {
-        get => NetFilter;
+        get => IsClientOnly ? ClientFilter : NetFilter;
         set
         {
-            NetFilter = value;
+	        NetFilter = ClientFilter = value;
 
-            if (IsClient)
+			if ( IsClientOnly )
             {
                 OnNetFilterChanged();
             }
@@ -135,43 +156,23 @@ public partial class Sprite : ModelEntity
 
     [Net]
 	private Color NetColorFill { get; set; }
-	private Color LocalColorFill { get; set; }
+	private Color ClientColorFill { get; set; }
 
 	public Color ColorFill
 	{
-		get => IsClientOnly ? LocalColorFill : NetColorFill;
-		set
-		{
-			if ( IsClientOnly )
-			{
-				LocalColorFill = value;
-			}
-			else
-			{
-				NetColorFill = value;
-			}
-		}
+		get => IsClientOnly ? ClientColorFill : NetColorFill;
+		set => NetColorFill = ClientColorFill = value;
 	}
 
     [Net]
     private Color NetColorTint { get; set; } = Color.White;
-    private Color LocalColorTint { get; set; } = Color.White;
+    private Color ClientColorTint { get; set; } = Color.White;
 
     public Color ColorTint
 	{
-	    get => IsClientOnly ? LocalColorTint : NetColorTint;
-	    set
-	    {
-		    if ( IsClientOnly )
-		    {
-			    LocalColorTint = value;
-		    }
-		    else
-		    {
-			    NetColorTint = value;
-		    }
-	    }
-    }
+	    get => IsClientOnly ? ClientColorTint : NetColorTint;
+	    set => NetColorTint = ClientColorTint = value;
+	}
 
 	public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
