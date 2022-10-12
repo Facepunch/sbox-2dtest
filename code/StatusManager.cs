@@ -18,16 +18,17 @@ public class StatusManager
 {
     //private Dictionary<string, StatusData> _statuses = new Dictionary<string, StatusData>();
     private static List<string> _statusNames = new List<string> {
-        "AttackSpeedStatus",
-        "CritChanceStatus",
-        "CritMultiplierStatus",
-        "DamageStatus",
-        "MaxAmmoStatus",
-        "MovespeedStatus",
-        "NumProjectileStatus",
-        "PiercingStatus",
-        "ReduceSpreadStatus",
+        //"AttackSpeedStatus",
+        //"CritChanceStatus",
+        //"CritMultiplierStatus",
+        //"DamageStatus",
+        //"MaxAmmoStatus",
+        //"MovespeedStatus",
+        //"NumProjectileStatus",
+        //"PiercingStatus",
+        //"ReduceSpreadStatus",
         "ReloadSpeedStatus",
+        "BulletLifetimeStatus",
     };
 
     public StatusManager()

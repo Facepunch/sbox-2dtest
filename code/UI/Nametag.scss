@@ -56,9 +56,11 @@ Nametag {
         position: absolute;
         bottom: -19px;
         transform-origin: left;
+        transition: opacity 0.075s ease-out;
+        opacity: 0;
 
-        &.invisible {
-            display: none;
+        &.showing {
+            opacity: 1;
         }
     }
 
@@ -69,9 +71,11 @@ Nametag {
         position: absolute;
         bottom: -22px;
         left: 0px;
+        transition: opacity 0.175s ease-out;
+        opacity: 0;
 
-        &.invisible {
-            display: none;
+        &.showing {
+            opacity: 1;
         }
     }
 }

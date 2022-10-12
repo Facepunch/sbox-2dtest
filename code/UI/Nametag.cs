@@ -29,6 +29,7 @@ public partial class Nametag : Panel
         ReloadBarTickRight = new Panel();
         ReloadBarTickRight.AddClass("reload_bar_tick_right");
         AddChild(ReloadBarTickRight);
+        //ReloadBarTickRight.Style.Opacity = 0f;
     }
 
     public override void Tick()
@@ -72,8 +73,8 @@ public partial class Nametag : Panel
         {
             if(Player.IsReloading)
             {
-                ReloadBar.RemoveClass("invisible");
-                ReloadBarTickRight.RemoveClass("invisible");
+                ReloadBar.AddClass("showing");
+                ReloadBarTickRight.AddClass("showing");
 
                 var progress = Utils.EasePercent(Player.ReloadProgress, EasingType.SineInOut);
 
@@ -85,8 +86,8 @@ public partial class Nametag : Panel
             }
             else
             {
-                ReloadBar.AddClass("invisible");
-                ReloadBarTickRight.AddClass("invisible");
+                ReloadBar.RemoveClass("showing");
+                ReloadBarTickRight.RemoveClass("showing");
             }
         }
     }

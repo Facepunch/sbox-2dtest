@@ -43,8 +43,9 @@ public partial class PlayerCitizen : Thing
 	[Net] public float MaxAmmoCount { get; protected set; }
 	[Net] public float BulletDamage { get; protected set; }
 	[Net] public float BulletSize { get; protected set; }
+	[Net] public float BulletForce { get; protected set; }
 	[Net] public float MoveSpeed { get; protected set; }
-	public const float BASE_MOVE_SPEED = 20f;
+	public const float BASE_MOVE_SPEED = 16f;
 	[Net] public float NumBullets { get; protected set; }
 	[Net] public float BulletSpread { get; protected set; }
 	[Net] public float BulletInaccuracy { get; protected set; }
@@ -125,11 +126,12 @@ public partial class PlayerCitizen : Thing
 		Timer = AttackTime;
 		AmmoCount = 5;
 		MaxAmmoCount = AmmoCount;
-		ReloadTime = 1.25f;
+		ReloadTime = 1.5f;
 		ReloadSpeed = 1f;
 		AttackSpeed = 1f;
 		BulletDamage = 5f;
 		BulletSize = 0.175f;
+		BulletForce = 1f;
 		MoveSpeed = 1f;
 		NumBullets = 1f;
 		BulletSpread = 35f;
@@ -160,6 +162,7 @@ public partial class PlayerCitizen : Thing
 
 		_isFlashing = false;
 		ColorTint = Color.White;
+		EnableDrawing = true;
 		IsChoosingLevelUpReward = false;
 		IsDashing = false;
 		IsReloading = false;
@@ -208,7 +211,7 @@ public partial class PlayerCitizen : Thing
 	public void ClientTick()
 	{
 		//Log.Info("local player: " + (Game.Client != null));
-		//DebugText(AnimationTimeElapsed.ToString());
+		//DebugText(Scale.ToString());
 	}
 
 	[Event.Tick.Server]
@@ -232,7 +235,10 @@ public partial class PlayerCitizen : Thing
 		MouseOffset = Input.Cursor.Direction;
 
         Vector2 inputVector = new Vector2(-Input.Left, Input.Forward);
-		Velocity += inputVector * MoveSpeed * BASE_MOVE_SPEED * dt;
+
+		if(inputVector.LengthSquared > 0f)
+            Velocity += inputVector.Normal * MoveSpeed * BASE_MOVE_SPEED * dt;
+
 		Position += (Velocity + _dashVelocity) * dt;
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, dt);
 		_dashVelocity *= (1f - dt * 7.95f);
@@ -283,9 +289,9 @@ public partial class PlayerCitizen : Thing
         {
 			if (Input.Pressed(InputButton.Run))
 			{
-				Game.Restart();
+				//Game.Restart();
                 //AddStatus("MovespeedStatus");
-                //AddExperience(GetExperienceReqForLevel(Level));
+                AddExperience(GetExperienceReqForLevel(Level));
                 return;
 			}
 
@@ -460,7 +466,7 @@ public partial class PlayerCitizen : Thing
 				Velocity = dir * BulletSpeed,
 				Shooter = this,
 				Damage = BulletDamage,
-				Force = 2.25f,
+				Force = BulletForce,
 				TempWeight = 3f,
 				Lifetime = BulletLifetime,
 				NumPiercing = (int)MathF.Round(BulletNumPiercing),
@@ -574,7 +580,8 @@ public partial class PlayerCitizen : Thing
 
 		IsDead = true;
 		Game.PlayerDied(this);
-		ColorTint = new Color(0f, 0f, 0f, 0f);
+		EnableDrawing = false;
+		//ColorTint = new Color(0f, 0f, 0f, 0f);
 		DieClient();
 	}
 
@@ -766,6 +773,7 @@ public partial class PlayerCitizen : Thing
 		Level++;
 		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
 
+		ColorTint = new Color(0f, 0f, 0f, 0.5f);
 		//Log.Info("Level Up - now level: " + Level + " IsServer: " + Host.IsServer);
 
 		IsChoosingLevelUpReward = true;

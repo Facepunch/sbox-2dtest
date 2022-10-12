@@ -35,7 +35,8 @@ public partial class Thing : Sprite
     {
 		//Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
 		//DebugText(Radius.ToString("#.#"));
-		//DebugText(Depth.ToString("#.#"));
+		//DebugText("Depth: " + Depth);
+		//DebugText("ColorFill: " + ColorFill.ToString());
 	}
 
 	public virtual void Colliding(Thing other, float percent, float dt)
