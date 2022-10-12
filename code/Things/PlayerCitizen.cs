@@ -36,6 +36,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float AttackTime { get; protected set; }
 	[Net] public float AttackSpeed { get; private set; }
 	[Net] public bool IsReloading { get; protected set; }
+	[Net] public float ReloadProgress { get; protected set; }
 	[Net] public float ReloadTime { get; protected set; }
 	[Net] public float ReloadSpeed { get; private set; }
 	[Net] public int AmmoCount { get; protected set; }
@@ -162,6 +163,7 @@ public partial class PlayerCitizen : Thing
 		IsChoosingLevelUpReward = false;
 		IsDashing = false;
 		IsReloading = false;
+		ReloadProgress = 0f;
 		TempWeight = 0f;
 		_shotNum = 0;
 
@@ -187,12 +189,15 @@ public partial class PlayerCitizen : Thing
     {
         base.ClientSpawn();
 		
-        ArrowAimer = new Arrow
+		if(Game.LocalPlayer == this)
         {
-            Parent = this,
-            //LocalPosition = new Vector3(0.3f, 0f, 0f);
-            Depth = 100f
-        };
+			ArrowAimer = new Arrow
+			{
+				Parent = this,
+				//LocalPosition = new Vector3(0.3f, 0f, 0f);
+				Depth = 100f
+			};
+		}
 
 		Nametag = Game.Hud.SpawnNametag(this);
 
@@ -392,6 +397,7 @@ public partial class PlayerCitizen : Thing
     {
 		if (IsReloading)
 		{
+			ReloadProgress = Utils.Map(Timer, ReloadTime, 0f, 0f, 1f);
 			Timer -= dt * ReloadSpeed;
 			if (Timer <= 0f)
 			{
@@ -475,6 +481,7 @@ public partial class PlayerCitizen : Thing
 		AmmoCount = (int)MaxAmmoCount;
 		IsReloading = false;
 		_shotNum = 0;
+		ReloadProgress = 0f;
 	}
 
 	void HandleBounds()

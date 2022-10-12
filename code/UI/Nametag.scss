@@ -47,4 +47,31 @@ Nametag {
         transition: transform 0.4s ease-out, opacity 0.25s linear, background-color 0.25s linear;
         opacity: 0.8;
     }
+
+    .reload_bar {
+        width: 100px;
+        height: 1px;
+        background-color: #ffffff44;
+        align-self: center;
+        position: absolute;
+        bottom: -18px;
+        transform-origin: left;
+
+        &.invisible {
+            display: none;
+        }
+    }
+
+    .reload_bar_tick_right {
+        width: 2px;
+        height: 6px;
+        background-color: #ffffff44;
+        position: absolute;
+        bottom: -20px;
+        left: 0px;
+
+        &.invisible {
+            display: none;
+        }
+    }
 }

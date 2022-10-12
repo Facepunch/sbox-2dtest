@@ -66,6 +66,10 @@ public partial class HUD : RootPanel
     {
 		var nametag = AddChild<Nametag>();
 		nametag.Player = player;
+
+		if(player == MyGame.Current.LocalPlayer)
+			nametag.AddReloadBar();
+
 		return nametag;
 	}
 

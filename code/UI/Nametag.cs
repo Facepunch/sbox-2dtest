@@ -17,6 +17,20 @@ public partial class Nametag : Panel
 
     public Panel HpBarOverlay { get; set; }
 
+    public Panel ReloadBar { get; set; }
+    public Panel ReloadBarTickRight { get; set; }
+
+    public void AddReloadBar()
+    {
+        ReloadBar = new Panel();
+        ReloadBar.AddClass("reload_bar");
+        AddChild(ReloadBar);
+
+        ReloadBarTickRight = new Panel();
+        ReloadBarTickRight.AddClass("reload_bar_tick_right");
+        AddChild(ReloadBarTickRight);
+    }
+
     public override void Tick()
     {
         base.Tick();
@@ -27,7 +41,7 @@ public partial class Nametag : Panel
         var name = Player.Client.Name;
         NameLabel.Text = name[..Math.Min(name.Length, 16)];
 
-        var screenPos = MyGame.Current.MainCamera.WorldToScreen(Player.Position + new Vector2(0f, 1.375f)) * ScaleFromScreen;
+        var screenPos = MyGame.Current.MainCamera.WorldToScreen(Player.Position + new Vector2(0f, 1.42f)) * ScaleFromScreen;
 
         Style.Left = screenPos.x - 150;
         Style.Top = screenPos.y;
@@ -53,6 +67,28 @@ public partial class Nametag : Panel
         var color = Lerp3(Color.Green, Color.Yellow, Color.Red, 1f - player_health_ratio);
 
         HpBarOverlay.Style.BackgroundColor = color;
+
+        if(ReloadBar != null)
+        {
+            if(Player.IsReloading)
+            {
+                ReloadBar.RemoveClass("invisible");
+                ReloadBarTickRight.RemoveClass("invisible");
+
+                var progress = Utils.EasePercent(Player.ReloadProgress, EasingType.SineInOut);
+
+                var rtr = new PanelTransform();
+                rtr.AddScale(new Vector3(progress, 1f, 1f));
+                ReloadBar.Style.Transform = rtr;
+
+                ReloadBarTickRight.Style.Left = Utils.Map(progress, 0f, 1f, 99f, 199f);
+            }
+            else
+            {
+                ReloadBar.AddClass("invisible");
+                ReloadBarTickRight.AddClass("invisible");
+            }
+        }
     }
 
     Color Lerp3(Color a, Color b, Color c, float t)
