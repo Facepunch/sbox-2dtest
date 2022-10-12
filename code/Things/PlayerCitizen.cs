@@ -773,7 +773,6 @@ public partial class PlayerCitizen : Thing
 		Level++;
 		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
 
-		ColorTint = new Color(0f, 0f, 0f, 0.5f);
 		//Log.Info("Level Up - now level: " + Level + " IsServer: " + Host.IsServer);
 
 		IsChoosingLevelUpReward = true;
