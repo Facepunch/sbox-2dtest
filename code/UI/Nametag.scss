@@ -50,11 +50,11 @@ Nametag {
 
     .reload_bar {
         width: 100px;
-        height: 1px;
+        height: 2px;
         background-color: #ffffff44;
         align-self: center;
         position: absolute;
-        bottom: -18px;
+        bottom: -19px;
         transform-origin: left;
 
         &.invisible {
@@ -64,10 +64,10 @@ Nametag {
 
     .reload_bar_tick_right {
         width: 2px;
-        height: 6px;
-        background-color: #ffffff44;
+        height: 7px;
+        background-color: #ffffffff;
         position: absolute;
-        bottom: -20px;
+        bottom: -22px;
         left: 0px;
 
         &.invisible {

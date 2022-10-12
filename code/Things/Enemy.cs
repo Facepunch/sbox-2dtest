@@ -128,7 +128,7 @@ public partial class Enemy : Thing
             }
 			else
             {
-				ShadowOpacity = Utils.Map(ElapsedTime, 0f, DEATH_TIME, SHADOW_FULL_OPACITY, 0f);
+				ShadowOpacity = Utils.Map(DeathTimeElapsed, 0f, DEATH_TIME, SHADOW_FULL_OPACITY, 0f, EasingType.QuadIn);
 			}
 
 			return;

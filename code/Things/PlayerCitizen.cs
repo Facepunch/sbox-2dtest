@@ -283,9 +283,9 @@ public partial class PlayerCitizen : Thing
         {
 			if (Input.Pressed(InputButton.Run))
 			{
-				//Game.Restart();
-				//AddStatus("MovespeedStatus");
-				AddExperience(GetExperienceReqForLevel(Level));
+				Game.Restart();
+                //AddStatus("MovespeedStatus");
+                //AddExperience(GetExperienceReqForLevel(Level));
                 return;
 			}
 

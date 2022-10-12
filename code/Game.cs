@@ -50,6 +50,8 @@ public partial class MyGame : Sandbox.Game
 
 	public StatusManager StatusManager { get; private set; }
 
+	public BackgroundManager BackgroundManager { get; private set; } // client only
+
 	public MyGame()
 	{
 		BOUNDS_MIN = new Vector2(-16f, -12f);
@@ -71,10 +73,11 @@ public partial class MyGame : Sandbox.Game
                 SpawnEnemy();
             }
 
-            _ = new Background()
-			{
-				Position = Vector2.Zero
-			};
+
+   //         _ = new BackgroundTile()
+			//{
+			//	Position = Vector2.Zero
+			//};
 
 			//var animTest = new Sprite
 			//         {
@@ -93,6 +96,7 @@ public partial class MyGame : Sandbox.Game
         {
 			//_ = new MainHud();
             Hud = new HUD();
+			BackgroundManager = new BackgroundManager();
 		}
 	}
 
@@ -361,6 +365,7 @@ public partial class MyGame : Sandbox.Game
 	public void RestartClient()
 	{
 		Hud.Restart();
+		BackgroundManager.Restart();
 	}
 
 	public void PlayerDied(PlayerCitizen player)
