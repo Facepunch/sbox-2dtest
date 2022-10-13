@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -86,10 +86,11 @@ public partial class Sprite : ModelEntity
 
 	private SpriteTexture ClientSpriteTexture { get; set; }
 
-    [Net, Change, ResourceType("frames")]
+    [Net, Change]
 	private string NetAnimationPath { get; set; }
 	private string ClientAnimationPath { get; set; }
 
+	[ResourceType( "frames" )]
     public string AnimationPath
     {
         get => IsClientOnly ? ClientAnimationPath : NetAnimationPath;
