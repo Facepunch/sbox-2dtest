@@ -276,32 +276,37 @@ public partial class Sprite : ModelEntity
 	{
         UpdateMaterial();
 	}
-		
-	public Sprite()
-    {
-        if (IsServer || IsClientOnly)
-        {
-            SetModel("models/quad.vmdl");
-
-            EnableDrawing = true;
-            PhysicsEnabled = false;
-        }
-    }
 
     public override void Spawn()
     {
         base.Spawn();
 
+        Transmit = TransmitType.Always;
+
         if (IsServer || IsClientOnly)
-        {
-            AnimationSpeed = 1f;
+		{
+			SetModel( "models/quad.vmdl" );
+
+			EnableDrawing = true;
+			PhysicsEnabled = false;
+
+			AnimationSpeed = 1f;
             Rotation = 0f;
         }
     }
 
+    private TimeSince _lastLog;
+
     [Event.PreRender]
 	private void ClientPreRender()
 	{
+		if ( this is PlayerCitizen && _lastLog > 1f )
+		{
+			_lastLog = 0f;
+
+			Log.Info( $"{SceneObject} {ColorTint} {Opacity} \"{_texture?.ResourcePath}\"" );
+		}
+
 		if (SceneObject == null)
 			return;
 
