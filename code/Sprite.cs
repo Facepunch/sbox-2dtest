@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -174,6 +174,16 @@ public partial class Sprite : ModelEntity
 	    set => NetColorTint = ClientColorTint = value;
 	}
 
+    [Net]
+    private float NetOpacity { get; set; } = 1f;
+    private float ClientOpacity { get; set; } = 1f;
+
+    public float Opacity
+    {
+	    get => IsClientOnly ? ClientOpacity : NetOpacity;
+		set => NetOpacity = ClientOpacity = value;
+    }
+
 	public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
 	public new Vector2 Position
@@ -299,7 +309,7 @@ public partial class Sprite : ModelEntity
         SceneObject.Attributes.Set("SpritePivot", new Vector2(Pivot.y, Pivot.x));
         SceneObject.Attributes.Set("TextureSize", _texture?.Size ?? new Vector2(1f, 1f));
 		SceneObject.Attributes.Set("ColorFill", ColorFill);
-        SceneObject.Attributes.Set("ColorMultiply", ColorTint);
+        SceneObject.Attributes.Set("ColorMultiply", ColorTint.WithAlphaMultiplied( Opacity ));
 
         if (_anim != null)
         {
