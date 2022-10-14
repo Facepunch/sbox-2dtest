@@ -54,6 +54,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float BulletNumPiercing { get; protected set; }
 	[Net] public float CritChance { get; set; }
 	[Net] public float CritMultiplier { get; set; }
+	[Net] public float NumUpgradeChoices { get; protected set; }
 
 	private int _shotNum;
 
@@ -159,6 +160,8 @@ public partial class PlayerCitizen : Thing
 
 		CoinAttractRange = 1.7f;
 		CoinAttractStrength = 3.1f;
+
+		NumUpgradeChoices = 3f;
 
 		Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -299,7 +302,6 @@ public partial class PlayerCitizen : Thing
 			if (Input.Pressed(InputButton.Run))
 			{
 				//Game.Restart();
-                //AddStatus("MovespeedStatus");
                 AddExperience(GetExperienceReqForLevel(Level));
                 return;
 			}
@@ -575,7 +577,7 @@ public partial class PlayerCitizen : Thing
 			// show DODGED! floater
 			return;
 
-		Health -= damage;
+		//Health -= damage;
 		Flash(0.125f);
 
 		if(Health <= 0f)

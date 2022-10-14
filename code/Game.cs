@@ -138,7 +138,7 @@ public partial class MyGame : Sandbox.Game
 
 	void HandleEnemySpawn()
     {
-		if(_enemySpawnTime > Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.25f, EasingType.QuadOut))
+		if(_enemySpawnTime > Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.25f, EasingType.QuadOut) * Utils.Map(ElapsedTime, 0f, 60f, 3f, 1f))
         {
 			SpawnEnemy();
 			_enemySpawnTime = 0f;

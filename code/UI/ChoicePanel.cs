@@ -55,13 +55,16 @@ public class ChoiceModal : Panel
 		//var button0 = TypeLibrary.Create<Panel>("ChoiceButton");
 
 		//List<string> statusNames = new List<string>() { "CritChanceStatus", "CritMultiplierStatus", "ReloadSpeedStatus" };
-		List<TypeDescription> types = StatusManager.GetRandomStatuses(player, 3);
 
-		Log.Info("types: " + types);
-		Log.Info("types.Count: " + types.Count);
+		int numChoices = Math.Clamp((int)MathF.Round(player.NumUpgradeChoices), 1, 6);
+		List<TypeDescription> types = StatusManager.GetRandomStatuses(player, numChoices);
 
-		int NUM_CHOICES = 3;
-		for(int i = 0; i < NUM_CHOICES; i++)
+		Style.Width = numChoices * 310f;
+
+		//Log.Info("types: " + types);
+		//Log.Info("types.Count: " + types.Count);
+
+		for(int i = 0; i < types.Count; i++)
         {
 			var type = types[i];
 			var status = StatusManager.CreateStatus(type);

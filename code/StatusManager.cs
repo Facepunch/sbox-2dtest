@@ -47,19 +47,34 @@ public class StatusManager
 
         foreach (var type in TypeLibrary.GetDescriptions<Status>())
         {
+            //Log.Info("--------------- " + type.Name);
+
             var attrib = type.GetAttribute<StatusAttribute>();
             if (attrib == null)
+            {
+                Log.Info("not valid - no status attribute!");
                 continue;
-
+            }
+                
             if (player.Level < attrib.ReqLevel)
+            {
+                Log.Info("not valid - ReqLevel is " + attrib.ReqLevel + " and player level is " + player.Level);
                 continue;
+            }
 
             if (player.GetStatusLevel(type) >= attrib.MaxLevel)
+            {
+                Log.Info("not valid - MaxLevel is " + attrib.MaxLevel + " and player status level is " + player.GetStatusLevel(type));
                 continue;
+            }
 
             if (attrib.ReqStatuses.Any(x => !player.HasStatus(TypeLibrary.GetDescription(x))))
+            {
+                Log.Info("not valid - required statuses not all owned");
                 continue;
+            }
 
+            //Log.Info("valid: adding with weight of " + attrib.Weight);
             valid.Add((type, attrib.Weight));
         }
 
@@ -70,12 +85,16 @@ public class StatusManager
         while(output.Count < numStatuses)
         {
             float totalWeight = valid.Sum(x => x.Weight);
-
             var rand = Rand.Float(0f, totalWeight);
-            for(int i = valid.Count - 1; i >= 0; i--)
+            //Log.Info("--- output.Count: " + output.Count + " totalWeight: " + totalWeight +" rand: " + rand);
+
+            for (int i = valid.Count - 1; i >= 0; i--)
             {
                 var (type, weight) = valid[i];
                 rand -= weight;
+
+                //Log.Info("i: " + i + " type: " + type.Name + " weight: " + weight + " rand is now " + rand);
+
                 if (rand < 0f)
                 {
                     output.Add(type);
