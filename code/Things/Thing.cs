@@ -18,6 +18,7 @@ public partial class Thing : Sprite
 	public List<Type> CollideWith = new List<Type>();
 
 	[Net] public float ShadowOpacity { get; set; }
+	[Net] public float ShadowScale { get; set; }
 	public Shadow Shadow { get; set; } // client only 
 
 

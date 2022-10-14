@@ -27,7 +27,7 @@ public class StatusPanel : Panel
         }
 		_statusIcons.Clear();
 
-		foreach(KeyValuePair<string, Status> pair in statuses)
+		foreach(KeyValuePair<int, Status> pair in statuses)
         {
 			var icon = new StatusIcon();
 			icon.AddClass("status_panel");

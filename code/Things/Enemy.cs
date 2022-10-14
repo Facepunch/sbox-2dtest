@@ -11,7 +11,7 @@ namespace Test2D;
 public partial class Enemy : Thing
 {
 	public float MoveTimeOffset { get; set; }
-	public float MoveTimeSpeed { get; set; }
+	//public float MoveTimeSpeed { get; set; }
 
 	private float _flashTimer;
 	private bool _isFlashing;
@@ -57,8 +57,8 @@ public partial class Enemy : Thing
 			Health = 30f;
 			MaxHealth = Health;
 			MoveTimeOffset = Rand.Float(0f, 4f);
-			MoveTimeSpeed = Rand.Float(6f, 9f);
-			DamageToPlayer = 10f;
+			//MoveTimeSpeed = Rand.Float(6f, 9f);
+			DamageToPlayer = 20f;
 
 			IsSpawning = true;
 			ElapsedTime = 0f;
@@ -67,6 +67,8 @@ public partial class Enemy : Thing
 
 			CollideWith.Add(typeof(Enemy));
 			CollideWith.Add(typeof(PlayerCitizen));
+
+			ShadowScale = 0.95f;
 		}
 
 		//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
@@ -157,11 +159,11 @@ public partial class Enemy : Thing
 			return;
 
 		Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
-		float speed = 0.7f + Utils.FastSin(MoveTimeOffset + Time.Now * MoveTimeSpeed) * 0.3f * (IsAttacking ? 1.25f : 1f);
+		float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
 		Position += Velocity * dt * speed;
 		//Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
 		Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
-		Velocity *= (1f - dt * 1.47f);
+		Velocity *= (1f - dt * (IsAttacking ? 1.33f : 1.47f));
 
 		//if (MathF.Abs(Velocity.x) > 0.2f)
 		//	Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * SCALE_FACTOR;
@@ -271,6 +273,7 @@ public partial class Enemy : Thing
 			if(IsAttacking)
             {
 				player.Damage(DamageToPlayer * dt);
+				//player.Velocity *= (1f - 13.5f * dt);
             }
 		}
 	}

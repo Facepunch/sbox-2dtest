@@ -17,12 +17,12 @@ public class ChoicePanel : Panel
 		AddChild(modal);
 	}
 
-	public void OnChoiceMade(string statusName)
+	public void OnChoiceMade(TypeDescription type)
 	{
-		Log.Info("OnChoiceMade: " + statusName);
+		Log.Info("OnChoiceMade: " + type.TargetType.ToString());
 
-		ConsoleSystem.Run("add_status", statusName);
-		//PlayerCitizen.AddStatusCmd(statusName);
+        //ConsoleSystem.Run("add_status", type);
+        PlayerCitizen.AddStatusCmd(StatusManager.TypeToIdentity(type));
 		Delete();
 		MyGame.Current.Hud.ChoicePanel = null;
 	}
@@ -55,19 +55,22 @@ public class ChoiceModal : Panel
 		//var button0 = TypeLibrary.Create<Panel>("ChoiceButton");
 
 		//List<string> statusNames = new List<string>() { "CritChanceStatus", "CritMultiplierStatus", "ReloadSpeedStatus" };
-		List<string> statusNames = new List<string>() { StatusManager.GetRandomValidStatus(player), StatusManager.GetRandomValidStatus(player), StatusManager.GetRandomValidStatus(player) };
+		List<TypeDescription> types = StatusManager.GetRandomStatuses(player, 3);
+
+		Log.Info("types: " + types);
+		Log.Info("types.Count: " + types.Count);
 
 		int NUM_CHOICES = 3;
 		for(int i = 0; i < NUM_CHOICES; i++)
         {
-			var statusName = statusNames[i];
-			var status = StatusManager.CreateStatus(statusName);
-			var currLevel = player.GetStatusLevel(statusName);
+			var type = types[i];
+			var status = StatusManager.CreateStatus(type);
+			var currLevel = player.GetStatusLevel (type);
 			status.Level = currLevel + 1;
 
 			var button = new ChoiceButton(status);
 			button.AddClass("choice_button");
-			button.AddEventListener("onclick", () => ChoicePanel.OnChoiceMade(statusName));
+			button.AddEventListener("onclick", () => ChoicePanel.OnChoiceMade(type));
 			button.status = status;
 			buttonContainer.AddChild(button);
 		}

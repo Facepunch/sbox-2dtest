@@ -7,47 +7,105 @@ using Sandbox;
 
 namespace Test2D;
 
-//public struct StatusData
-//{
-//    public int maxLevel;
-//    public List<string> reqStatuses;
-//    public int reqLevel;
-//}
+public struct StatusData
+{
+    public int maxLevel;
+    public int reqLevel;
+    public float weight;
+    public List<string> reqStatuses;
+
+    public StatusData(int _maxLevel, int _reqLevel, float _weight, List<string> _reqStatuses = null)
+    {
+        maxLevel = _maxLevel;
+        reqLevel = _reqLevel;
+        weight = _weight;
+        reqStatuses = _reqStatuses;
+    }
+}
+
+public class StatusAttribute : Attribute
+{
+    public int MaxLevel { get; }
+    public int ReqLevel { get; }
+    public float Weight { get; }
+    public Type[] ReqStatuses { get; }
+
+    public StatusAttribute(int maxLevel, int reqLevel, float weight, params Type[] reqStatuses)
+    {
+        MaxLevel = maxLevel;
+        ReqLevel = reqLevel;
+        Weight = weight;
+        ReqStatuses = reqStatuses;
+    }
+}
 
 public class StatusManager
 {
-    //private Dictionary<string, StatusData> _statuses = new Dictionary<string, StatusData>();
-    private static List<string> _statusNames = new List<string> {
-        //"AttackSpeedStatus",
-        //"CritChanceStatus",
-        //"CritMultiplierStatus",
-        //"DamageStatus",
-        //"MaxAmmoStatus",
-        //"MovespeedStatus",
-        //"NumProjectileStatus",
-        //"PiercingStatus",
-        //"ReduceSpreadStatus",
-        "ReloadSpeedStatus",
-        "BulletLifetimeStatus",
-    };
-
-    public StatusManager()
+    public static List<TypeDescription> GetRandomStatuses(PlayerCitizen player, int numStatuses)
     {
-        
+        List<(TypeDescription Type, float Weight)> valid = new List<(TypeDescription, float)>();
+
+        foreach (var type in TypeLibrary.GetDescriptions<Status>())
+        {
+            var attrib = type.GetAttribute<StatusAttribute>();
+            if (attrib == null)
+                continue;
+
+            if (player.Level < attrib.ReqLevel)
+                continue;
+
+            if (player.GetStatusLevel(type) >= attrib.MaxLevel)
+                continue;
+
+            if (attrib.ReqStatuses.Any(x => !player.HasStatus(TypeLibrary.GetDescription(x))))
+                continue;
+
+            valid.Add((type, attrib.Weight));
+        }
+
+        // todo: handle if valid has < elements than numStatuses
+
+        List<TypeDescription> output = new List<TypeDescription>();
+
+        while(output.Count < numStatuses)
+        {
+            float totalWeight = valid.Sum(x => x.Weight);
+
+            var rand = Rand.Float(0f, totalWeight);
+            for(int i = valid.Count - 1; i >= 0; i--)
+            {
+                var (type, weight) = valid[i];
+                rand -= weight;
+                if (rand < 0f)
+                {
+                    output.Add(type);
+                    valid.Remove((type, weight));
+                    break;
+                }
+            }
+        }
+
+        return output;
     }
 
-    public static string GetRandomValidStatus(PlayerCitizen player, List<string> ignoredStatuses = null)
+    public static Status CreateStatus(TypeDescription type)
     {
-        return _statusNames[Rand.Int(0, _statusNames.Count - 1)];
+        var status = type.Create<Status>();
+        return status;
     }
 
-    public static Status CreateStatus(string statusName)
+    //public static Type GetStatusType(string statusName)
+    //{
+    //    return TypeLibrary.GetDescription(statusName).TargetType;
+    //}
+
+    public static int TypeToIdentity(TypeDescription type)
     {
-        return TypeLibrary.Create<Status>(statusName);
+        return type.Identity;
     }
 
-    public static Type GetStatusType(string statusName)
+    public static TypeDescription IdentityToType(int typeIdentity)
     {
-        return TypeLibrary.GetDescription(statusName).TargetType;
+        return TypeLibrary.GetDescriptionByIdent(typeIdentity);
     }
 }

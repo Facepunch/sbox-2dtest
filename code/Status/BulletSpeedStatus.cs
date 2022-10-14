@@ -6,12 +6,12 @@ using Sandbox;
 namespace Test2D;
 
 [Status(9, 0, 1f)]
-public class ReloadSpeedStatus : Status
+public class BulletSpeedStatus : Status
 {
-	public ReloadSpeedStatus()
+	public BulletSpeedStatus()
     {
-		Title = "Quick Hands";
-		IconPath = "textures/icons/reload_speed.png";
+		Title = "Speedy Bullets";
+		IconPath = "textures/icons/fast_bullets.png";
 	}
 
 	public override void Init(PlayerCitizen player)
@@ -23,17 +23,17 @@ public class ReloadSpeedStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, "ReloadSpeed", GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, "BulletSpeed", GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("Increase reload speed by {0}%", GetPercentForLevel(Level));
+		return string.Format("Increase bullet speed by {0}%", GetPercentForLevel(Level));
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase reload speed by {0}% → {1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase bullet speed by {0}% → {1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetMultForLevel(int level)

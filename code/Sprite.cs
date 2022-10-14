@@ -304,7 +304,7 @@ public partial class Sprite : ModelEntity
 		{
 			_lastLog = 0f;
 
-			Log.Info( $"{SceneObject} {ColorTint} {Opacity} \"{_texture?.ResourcePath}\"" );
+			//Log.Info( $"{SceneObject} {ColorTint} {Opacity} \"{_texture?.ResourcePath}\"" );
 		}
 
 		if (SceneObject == null)

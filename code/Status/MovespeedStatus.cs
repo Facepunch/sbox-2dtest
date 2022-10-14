@@ -5,6 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
+[Status(9, 0, 1f)]
 public class MovespeedStatus : Status
 {
 	public MovespeedStatus()
@@ -22,7 +23,7 @@ public class MovespeedStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, "MoveSpeed", GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, nameof(Player.MoveSpeed), GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

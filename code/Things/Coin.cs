@@ -41,6 +41,7 @@ public partial class Coin : Thing
 			CollideWith.Add(typeof(Coin));
 
 			ShadowOpacity = 0.8f;
+			ShadowScale = 0.4f;
 
 			SetValue(1);
 			//SetValue(Rand.Int(1, 7));

@@ -45,6 +45,7 @@ public partial class Bullet : Thing
 			NumPiercing = 0;
 			NumHits = 0;
 			ShadowOpacity = 0.8f;
+			ShadowScale = 0.3f;
 
 			CollideWith.Add(typeof(Enemy));
 		}

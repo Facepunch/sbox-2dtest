@@ -53,6 +53,7 @@ public partial class Shadow : Sprite
 			
 		Position = Thing.Position;
 		ColorTint = new Color(0f, 0f, 0f, Thing.ShadowOpacity);
+		Scale = Thing.ShadowScale;
 
 		//DebugOverlay.Text("ColorFill: " + ColorFill.ToString(), Position + new Vector2(0.1f, -0.1f), 0f, float.MaxValue);
 	}

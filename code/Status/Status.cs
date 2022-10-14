@@ -10,6 +10,8 @@ namespace Test2D;
 
 public partial class Status : BaseNetworkable
 {
+	//public string StatusName { get; set; }
+
 	public bool ShouldUpdate { get; protected set; }
 	public PlayerCitizen Player { get; protected set; }
 	[Net] public int Level { get; set; }

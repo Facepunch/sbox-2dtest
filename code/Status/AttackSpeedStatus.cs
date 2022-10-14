@@ -5,6 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
+[Status(9, 0, 1f)]
 public class AttackSpeedStatus : Status
 {
 	public static int MaxLevel = 9;
@@ -24,7 +25,7 @@ public class AttackSpeedStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, "AttackSpeed", GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, nameof(Player.AttackSpeed), GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

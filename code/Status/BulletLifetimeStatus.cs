@@ -5,6 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
+[Status(9, 0, 1f)]
 public class BulletLifetimeStatus : Status
 {
 	public BulletLifetimeStatus()
@@ -37,11 +38,11 @@ public class BulletLifetimeStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f + 0.25f * level;
+		return 1f + 0.2f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 25 * level;
+		return 2 * level;
 	}
 }

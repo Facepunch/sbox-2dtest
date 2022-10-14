@@ -45,7 +45,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float BulletSize { get; protected set; }
 	[Net] public float BulletForce { get; protected set; }
 	[Net] public float MoveSpeed { get; protected set; }
-	public const float BASE_MOVE_SPEED = 16f;
+	public const float BASE_MOVE_SPEED = 14f;
 	[Net] public float NumBullets { get; protected set; }
 	[Net] public float BulletSpread { get; protected set; }
 	[Net] public float BulletInaccuracy { get; protected set; }
@@ -75,6 +75,7 @@ public partial class PlayerCitizen : Thing
 	private Vector2 _dashVelocity;
 	private float _dashInvulnTimer;
 	[Net] public float DashInvulnTime { get; private set; }
+	[Net] public float DashProgress { get; protected set; }
 
 	private float _flashTimer;
 	private bool _isFlashing;
@@ -82,7 +83,9 @@ public partial class PlayerCitizen : Thing
 	public Nametag Nametag { get; private set; }
 
 	// STATUS
-	[Net] public IDictionary<string, Status> Statuses { get; private set; }
+	[Net] public IDictionary<int, Status> Statuses { get; private set; }
+	//[Net] public List<Status> ClientStatuses { get; private set; }
+
 	//private List<Status> _statusesToRemove = new List<Status>();;
 
 	// MODIFIERS
@@ -107,7 +110,8 @@ public partial class PlayerCitizen : Thing
 			CollideWith.Add(typeof(Enemy));
 			CollideWith.Add(typeof(PlayerCitizen));
 
-			Statuses = new Dictionary<string, Status>();
+			Statuses = new Dictionary<int, Status>();
+			//ClientStatuses = new List<Status>();
 
 			InitializeStats();
 		}
@@ -131,12 +135,12 @@ public partial class PlayerCitizen : Thing
 		AttackSpeed = 1f;
 		BulletDamage = 5f;
 		BulletSize = 0.175f;
-		BulletForce = 1f;
+		BulletForce = 0.55f;
 		MoveSpeed = 1f;
 		NumBullets = 1f;
 		BulletSpread = 35f;
 		BulletInaccuracy = 5f;
-		BulletSpeed = 7.5f;
+		BulletSpeed = 4.5f;
 		BulletLifetime = 0.8f;
 		Luck = 1f;
 		CritChance = 0.05f;
@@ -167,10 +171,12 @@ public partial class PlayerCitizen : Thing
 		IsDashing = false;
 		IsReloading = false;
 		ReloadProgress = 0f;
+		DashProgress = 0f;
 		TempWeight = 0f;
 		_shotNum = 0;
 
 		ShadowOpacity = 0.8f;
+		ShadowScale = 1.12f;
 
 		//AddStatus("MovespeedStatus");
 		//AddStatus("MovespeedStatus");
@@ -191,8 +197,8 @@ public partial class PlayerCitizen : Thing
 	public override void ClientSpawn()
     {
         base.ClientSpawn();
-		
-		if(Game.LocalPlayer == this)
+
+		if (Game.LocalPlayer == this)
         {
 			ArrowAimer = new Arrow
 			{
@@ -207,19 +213,20 @@ public partial class PlayerCitizen : Thing
 		SpawnShadow(1.12f);
 	}
 
-    [Event.Tick.Client]
-	public void ClientTick()
-	{
-		//Log.Info("local player: " + (Game.Client != null));
-		//DebugText(Scale.ToString());
-	}
-
 	[Event.Tick.Server]
 	public void ServerTick()
 	{
 		//Utils.DrawCircle(HitboxPos, 1.4f, 18, Time.Now, Color.Red);
 		//Log.Info("local player: " + (Game.Client != null));
 		//DebugText("IsChoosingLevelUpReward: " + IsChoosingLevelUpReward);
+		//DebugText("Server - Statuses: " + Statuses);
+	}
+
+	[Event.Tick.Client]
+	public void ClientTick()
+	{
+		//Log.Info("local player: " + (Game.Client != null));
+		//DebugText("\n\nClient - Statuses: " + Statuses);
 	}
 
 	public override void Simulate( Client cl )
@@ -243,6 +250,8 @@ public partial class PlayerCitizen : Thing
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, dt);
 		_dashVelocity *= (1f - dt * 7.95f);
 		TempWeight *= (1f - dt * 4.7f);
+
+		ShadowScale = IsDashing ? Utils.MapReturn(DashProgress, 0f, 1f, 1.12f, 0.75f, EasingType.SineInOut) : 1.12f;
 
 		if (Velocity.LengthSquared > 0.01f && inputVector.LengthSquared > 0.1f)
         {
@@ -344,6 +353,7 @@ public partial class PlayerCitizen : Thing
 		if(_dashInvulnTimer > 0f)
         {
 			_dashInvulnTimer -= dt;
+			DashProgress = Utils.Map(_dashInvulnTimer, DashInvulnTime, 0f, 0f, 1f);
 			if (_dashInvulnTimer <= 0f)
             {
 				IsDashing = false;
@@ -370,6 +380,7 @@ public partial class PlayerCitizen : Thing
 		_dashTimer = DashCooldown;
 		IsDashing = true;
 		_dashInvulnTimer = DashInvulnTime;
+		DashProgress = 0f;
 	}
 
 	public void DashRecharged()
@@ -387,7 +398,7 @@ public partial class PlayerCitizen : Thing
     {
 		string debug = "";
 
-		foreach (KeyValuePair<string, Status> pair in Statuses)
+		foreach (KeyValuePair<int, Status> pair in Statuses)
         {
 			Status status = pair.Value;
 			if (status.ShouldUpdate)
@@ -580,7 +591,7 @@ public partial class PlayerCitizen : Thing
 
 		IsDead = true;
 		Game.PlayerDied(this);
-		EnableDrawing = false;
+		//EnableDrawing = false;
 		//ColorTint = new Color(0f, 0f, 0f, 0f);
 		DieClient();
 	}
@@ -605,45 +616,69 @@ public partial class PlayerCitizen : Thing
 	}
 
 	[ConCmd.Server("add_status")]
-	public static void AddStatusCmd(string statusName)
+	public static void AddStatusCmd(int typeIdentity)
     {
+        Log.Info("AddStatusCmd: " + typeIdentity);
+		TypeDescription type = StatusManager.IdentityToType(typeIdentity);
+		Log.Info("type: " + type);
+
 		var player = ConsoleSystem.Caller.Pawn as PlayerCitizen;
-		player.AddStatus(statusName);
+		player.AddStatus(type);
 	}
 
-	public void AddStatus(string statusName)
+	public void AddStatus(TypeDescription type)
     {
-		Status status = null;
+		Log.Info("AddStatus: " + type.TargetType.ToString());
 
-		if(Statuses.ContainsKey(statusName))
+		Status status = null;
+		var typeIdentity = type.Identity;
+
+		if(Statuses.ContainsKey(typeIdentity))
         {
-			status = Statuses[statusName];
+			status = Statuses[typeIdentity];
 			status.Level++;
 		}
 			
 		if (status == null)
         {
-			status = StatusManager.CreateStatus(statusName);
-			Statuses.Add(statusName, status);
+			status = StatusManager.CreateStatus(type);
+			Statuses.Add(typeIdentity, status);
 			status.Init(this);
 		}
 
 		status.Refresh();
-		RefreshStatusHud();
+
+		//ClearStatusesClient();
+		//foreach (KeyValuePair<TypeDescription, Status> pair in Statuses)
+  //          AddStatusClient(StatusManager.TypeToIdentity(pair.Key), pair.Value);
+
+        RefreshStatusHud();
 
 		IsChoosingLevelUpReward = false;
 		CheckForLevelUp();
 	}
 
-	public bool HasStatus(string statusName)
+	//[ClientRpc]
+	//public void ClearStatusesClient()
+	//{
+	//	Statuses.Clear();
+	//}
+
+	//[ClientRpc]
+	//public void AddStatusClient(int typeIdentity, Status status)
+	//{
+	//	Statuses.Add(StatusManager.IdentityToType(typeIdentity), status);
+	//}
+
+	public bool HasStatus(TypeDescription type)
 	{
-		return Statuses.ContainsKey(statusName);
+		return Statuses.ContainsKey(type.Identity);
 	}
 
-	public int GetStatusLevel(string statusName)
+	public int GetStatusLevel(TypeDescription type)
     {
-		if(Statuses.ContainsKey(statusName))
-			return Statuses[statusName].Level;
+		if(Statuses.ContainsKey(type.Identity))
+			return Statuses[type.Identity].Level;
 
 		return 0;
 	}

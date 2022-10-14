@@ -6,12 +6,12 @@ using Sandbox;
 namespace Test2D;
 
 [Status(9, 0, 1f)]
-public class ReloadSpeedStatus : Status
+public class BulletInaccuracyStatus : Status
 {
-	public ReloadSpeedStatus()
+	public BulletInaccuracyStatus()
     {
-		Title = "Quick Hands";
-		IconPath = "textures/icons/reload_speed.png";
+		Title = "Steady Hand";
+		IconPath = "textures/icons/bullet_accuracy.png";
 	}
 
 	public override void Init(PlayerCitizen player)
@@ -23,22 +23,22 @@ public class ReloadSpeedStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, "ReloadSpeed", GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, "BulletInaccuracy", GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("Increase reload speed by {0}%", GetPercentForLevel(Level));
+		return string.Format("{0}% less inaccuracy", GetPercentForLevel(Level));
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase reload speed by {0}% → {1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("{0}% → {1}% less inaccuracy", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetMultForLevel(int level)
     {
-		return 1f + 0.25f * level;
+		return 1f - 0.25f * level;
     }
 
 	public float GetPercentForLevel(int level)
