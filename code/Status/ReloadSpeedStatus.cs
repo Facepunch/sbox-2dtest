@@ -23,7 +23,7 @@ public class ReloadSpeedStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, "ReloadSpeed", GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, nameof(Player.ReloadSpeed), GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

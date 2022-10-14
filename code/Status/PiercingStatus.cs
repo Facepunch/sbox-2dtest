@@ -23,7 +23,7 @@ public class PiercingStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, "BulletNumPiercing", GetNumPiercingForLevel(Level), ModifierType.Add);
+		Player.Modify(this, nameof(Player.BulletNumPiercing), GetNumPiercingForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

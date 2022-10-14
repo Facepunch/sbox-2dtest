@@ -35,6 +35,7 @@ public class InfoPanel : Panel
 		stats += "XP: " + player.ExperienceCurrent + " / " + player.ExperienceRequired + "\n\n";
 
 		stats += "HP: " + player.Health.ToString("#.#") + " / " + player.MaxHp + "\n";
+		stats += "HEALTH REGEN: " + player.HealthRegen + "/s" + "\n";
 		stats += "DMG: " + player.BulletDamage + "\n";
 		stats += "AMMO : " + player.AmmoCount + " / " + player.MaxAmmoCount + "\n";
 		stats += "NUM BULLETS: " + player.NumBullets + "\n";
@@ -53,6 +54,7 @@ public class InfoPanel : Panel
 		stats += "SIZE: " + player.Radius + "\n";
 		stats += "CRIT CHANCE: " + player.CritChance + "\n";
 		stats += "CRIT MULTIPLIER: " + player.CritMultiplier + "\n";
+		stats += "NUM CHOICES: " + player.NumUpgradeChoices + "\n";
 
 		StatsLabel.Text = stats;
 	}

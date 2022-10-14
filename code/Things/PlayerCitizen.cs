@@ -55,6 +55,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float CritChance { get; set; }
 	[Net] public float CritMultiplier { get; set; }
 	[Net] public float NumUpgradeChoices { get; protected set; }
+	[Net] public float HealthRegen { get; protected set; }
 
 	private int _shotNum;
 
@@ -162,6 +163,7 @@ public partial class PlayerCitizen : Thing
 		CoinAttractStrength = 3.1f;
 
 		NumUpgradeChoices = 3f;
+		HealthRegen = 0f;
 
 		Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -276,6 +278,13 @@ public partial class PlayerCitizen : Thing
 		if (MathF.Abs(Input.Left) > 0f)
 			Scale = new Vector2(1f * Input.Left < 0f ? -1f : 1f, 1f) * 1f;
 
+		if(HealthRegen > 0f)
+        {
+			Health += HealthRegen * dt;
+			if(Health > MaxHp)
+				Health = MaxHp;
+        }
+
 		//Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
 		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
 
@@ -284,7 +293,7 @@ public partial class PlayerCitizen : Thing
 		//DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
 		//DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
 
-        AimDir = MouseOffset.Normal;
+		AimDir = MouseOffset.Normal;
 
         if (ArrowAimer != null)
         {
@@ -577,8 +586,8 @@ public partial class PlayerCitizen : Thing
 			// show DODGED! floater
 			return;
 
-		//Health -= damage;
-		Flash(0.125f);
+		Health -= damage;
+        Flash(0.125f);
 
 		if(Health <= 0f)
         {

@@ -23,7 +23,7 @@ public class BulletForceStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, "BulletForce", GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, nameof(Player.BulletForce), GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)
