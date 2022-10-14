@@ -100,6 +100,13 @@ public partial class MyGame : Sandbox.Game
 		}
 	}
 
+	public override void ClientSpawn()
+	{
+		base.ClientSpawn();
+
+		BackgroundManager?.Restart();
+    }
+
 	[Event.Tick.Server]
 	public void ServerTick()
     {

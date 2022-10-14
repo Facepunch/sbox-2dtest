@@ -16,7 +16,7 @@ public class BackgroundManager
     private List<BackgroundTile> _tiles = new List<BackgroundTile>();
     public BackgroundManager()
     {
-        Restart();
+
     }
 
     public void Restart()
