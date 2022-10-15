@@ -71,6 +71,8 @@ public partial class PlayerCitizen : Thing
 
 	[Net] public float MaxHp { get; protected set; }
 
+	[Net] public float NumDashes { get; private set; }
+	[Net] public int NumDashesAvailable { get; private set; }
 	[Net] public float DashCooldown { get; private set; }
 	private float _dashTimer;
 	public bool IsDashing { get; private set; }
@@ -78,6 +80,7 @@ public partial class PlayerCitizen : Thing
 	private float _dashInvulnTimer;
 	[Net] public float DashInvulnTime { get; private set; }
 	[Net] public float DashProgress { get; protected set; }
+	[Net] public float DashRechargeProgress { get; protected set; }
 
 	private float _flashTimer;
 	private bool _isFlashing;
@@ -148,7 +151,9 @@ public partial class PlayerCitizen : Thing
 		CritChance = 0.05f;
 		CritMultiplier = 1.5f;
 
-		DashCooldown = 1f;
+		NumDashes = 3f;
+		NumDashesAvailable = (int)NumDashes;
+		DashCooldown = 3f;
 		DashInvulnTime = 0.25f;
 		BulletNumPiercing = 0f;
 
@@ -163,7 +168,7 @@ public partial class PlayerCitizen : Thing
 		CoinAttractStrength = 3.1f;
 
 		NumUpgradeChoices = 3f;
-		HealthRegen = 0f;
+		HealthRegen = 50f;
 
 		Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -177,6 +182,7 @@ public partial class PlayerCitizen : Thing
 		IsReloading = false;
 		ReloadProgress = 0f;
 		DashProgress = 0f;
+		DashRechargeProgress = 1f;
 		TempWeight = 0f;
 		_shotNum = 0;
 
@@ -216,6 +222,8 @@ public partial class PlayerCitizen : Thing
 		Nametag = Game.Hud.SpawnNametag(this);
 
 		SpawnShadow(1.12f);
+
+		//Game.Hud.InfoPanel.DashContainer.Refresh();
 	}
 
 	[Event.Tick.Server]
@@ -224,7 +232,7 @@ public partial class PlayerCitizen : Thing
 		//Utils.DrawCircle(HitboxPos, 1.4f, 18, Time.Now, Color.Red);
 		//Log.Info("local player: " + (Game.Client != null));
 		//DebugText("IsChoosingLevelUpReward: " + IsChoosingLevelUpReward);
-		//DebugText("Server - Statuses: " + Statuses);
+		DebugText(NumDashesAvailable + " / " + NumDashes + "\n\n" + _dashTimer);
 	}
 
 	[Event.Tick.Client]
@@ -343,15 +351,6 @@ public partial class PlayerCitizen : Thing
 
 			//DebugOverlay.Text(MouseOffset.ToString(), Position + new Vector2(0.2f, 0f));
 
-			if (_dashTimer > 0f)
-			{
-				_dashTimer -= dt;
-				if(_dashTimer <= 0f)
-                {
-					DashRecharged();
-				}
-			}
-
 			HandleDashing(dt);
 			HandleStatuses(dt);
 			HandleShooting(dt);
@@ -361,7 +360,18 @@ public partial class PlayerCitizen : Thing
 
 	void HandleDashing(float dt)
     {
-		if(_dashInvulnTimer > 0f)
+		int numDashes = (int)MathF.Round(NumDashes);
+		if (NumDashesAvailable < numDashes && _dashTimer > 0f)
+		{
+			_dashTimer -= dt;
+			DashRechargeProgress = Utils.Map(_dashTimer, DashCooldown, 0f, 0f, 1f);
+			if (_dashTimer <= 0f)
+			{
+				DashRecharged();
+			}
+		}
+
+		if (_dashInvulnTimer > 0f)
         {
 			_dashInvulnTimer -= dt;
 			DashProgress = Utils.Map(_dashInvulnTimer, DashInvulnTime, 0f, 0f, 1f);
@@ -369,6 +379,7 @@ public partial class PlayerCitizen : Thing
             {
 				IsDashing = false;
 				ColorTint = Color.White;
+				DashFinished();
 			} else
             {
 				var rand = Rand.Float(0.5f, 1f);
@@ -382,22 +393,57 @@ public partial class PlayerCitizen : Thing
 
 	public void Dash()
     {
-		if (_dashTimer > 0f)
+		if (NumDashesAvailable <= 0)
 			return;
 
 		Vector2 dashDir = Velocity.LengthSquared > 0f ? Velocity.Normal : AimDir;
 		_dashVelocity = dashDir * 7f;
 		TempWeight = 15f;
-		_dashTimer = DashCooldown;
+
+		if (NumDashesAvailable == (int)NumDashes)
+			_dashTimer = DashCooldown;
+
+		NumDashesAvailable--;
 		IsDashing = true;
 		_dashInvulnTimer = DashInvulnTime;
 		DashProgress = 0f;
+		DashRechargeProgress = 0f;
+
+		ForEachStatus(status => status.OnDashStarted());
+	}
+
+	public void DashFinished()
+    {
+		ForEachStatus(status => status.OnDashFinished());
 	}
 
 	public void DashRecharged()
     {
+		NumDashesAvailable++;
+		var numDashes = (int)MathF.Round(NumDashes);
+		if (NumDashesAvailable > numDashes)
+			NumDashesAvailable = numDashes;
 
-    }
+		if(NumDashesAvailable < numDashes)
+        {
+			_dashTimer = DashCooldown;
+			DashRechargeProgress = 0f;
+		}
+		else
+        {
+			DashRechargeProgress = 1f;
+		}
+			
+		ForEachStatus(status => status.OnDashRecharged());
+	}
+
+	public void ForEachStatus(Action<Status> action)
+	{
+		foreach (var (_, status) in Statuses)
+		{
+			action(status);
+		}
+	}
 
 	[ClientRpc]
 	public void RefreshStatusHud()
@@ -468,7 +514,7 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
-	void Shoot()
+	public void Shoot()
 	{
 		//return;
 

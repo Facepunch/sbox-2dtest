@@ -13,10 +13,20 @@ public class InfoPanel : Panel
 	public Label NameLabel { get; internal set; }
 	public Label StatsLabel { get; internal set; }
 
+	public DashContainer DashContainer { get; set; }
+
 	public InfoPanel()
 	{
 		NameLabel = Add.Label("Name", "info_name");
 		StatsLabel = Add.Label("Stats", "stats_label");
+
+		var outerDashContainter = new Panel();
+		outerDashContainter.AddClass("info_dash_outer_container");
+		AddChild(outerDashContainter);
+
+		DashContainer = new DashContainer();
+		DashContainer.AddClass("info_dash_container");
+		outerDashContainter.AddChild(DashContainer);
 	}
 
 	public override void Tick()
@@ -57,5 +67,82 @@ public class InfoPanel : Panel
 		stats += "NUM CHOICES: " + player.NumUpgradeChoices + "\n";
 
 		StatsLabel.Text = stats;
+	}
+}
+
+public class DashContainer : Panel
+{
+	private List<DashIcon> _icons = new List<DashIcon>();
+
+	public DashContainer()
+	{
+		
+	}
+
+	public override void Tick()
+	{
+		base.Tick();
+
+		var player = MyGame.Current.LocalPlayer;
+		if (player == null) 
+			return;
+
+		int numDashes = (int)MathF.Round(player.NumDashes);
+		if (_icons.Count != numDashes)
+			Refresh(numDashes);
+
+		for(int i = 0; i < _icons.Count; i++)
+        {
+			var icon = _icons[i];
+
+			var amount = i == player.NumDashesAvailable ? player.DashRechargeProgress : (i < player.NumDashesAvailable ? 1f : 0f);
+			var xform = new PanelTransform();
+			xform.AddScale(new Vector3(amount, 1f, 1f));
+			icon.OverlayPanel.Style.Transform = xform;
+
+			if (i < player.NumDashesAvailable)
+                icon.OverlayPanel.RemoveClass("recharge");
+            else
+                icon.OverlayPanel.AddClass("recharge");
+		}
+	}
+
+	public void Refresh(int numDashes)
+	{
+		foreach (var icon in _icons)
+			icon.Delete();
+		_icons.Clear();
+
+		for (int i = 0; i < numDashes; i++)
+        {
+			var icon = new DashIcon();
+			icon.AddClass("info_dash_icon");
+			AddChild(icon);
+			_icons.Add(icon);
+		}
+	}
+}
+
+public class DashIcon : Panel
+{
+	public Panel OverlayPanel { get; set; }
+
+	public DashIcon()
+	{
+		OverlayPanel = new Panel();
+		OverlayPanel.AddClass("dash_icon_overlay");
+		AddChild(OverlayPanel);
+
+		var label = new Label();
+		label.AddClass("dash_icon_label");
+		label.Text = "DASH";
+		AddChild(label);
+	}
+
+	protected override void OnMouseOver(MousePanelEvent e)
+	{
+		base.OnMouseOver(e);
+
+		Tippy.Create(this, Tippy.Pivots.TopLeft).WithContent("Dash", "Press SPACE to use", 0);
 	}
 }

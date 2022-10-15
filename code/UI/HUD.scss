@@ -164,13 +164,65 @@
     pointer-events: none;
     justify-content: flex-start;
     flex-direction: column;
+    //border: 3px solid white;
 
     .info_name {
         color: #ffffff77;
     }
 
     .stats_label {
+    }
 
+    .info_dash_outer_container {
+        background-color: #00008811;
+        width: 100%;
+        height: 100%;
+        align-items: flex-end;
+    }
+
+    .info_dash_container {
+        background-color: #00FF8833;
+        width: 100%;
+        height: 480px;
+        flex-direction: column-reverse;
+        align-items: center;
+        margin-bottom: 43px;
+    }
+
+    .info_dash_icon {
+        width: 95%;
+        height: 30px;
+        //padding: 4px;
+        margin: 4px;
+        background-color: #00000055;
+        border: 2px solid #ffffff88;
+        pointer-events: all;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            opacity: 0.8;
+            border: 2px solid #ffffffbb;
+        }
+
+        .dash_icon_overlay {
+            width: 100%;
+            height: 100%;
+            transform-origin: left;
+            //transform: scaleX( 0.8 );
+            background-color: #00ff0066;
+            pointer-events: none;
+        }
+
+        .recharge {
+            background-color: #00ff4433;
+        }
+
+        .dash_icon_label {
+            color: #00000022;
+            font-size: 18px;
+            position: absolute;
+        }
     }
 }
 
