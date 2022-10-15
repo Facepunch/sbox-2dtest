@@ -210,12 +210,12 @@
             height: 100%;
             transform-origin: left;
             //transform: scaleX( 0.8 );
-            background-color: #00ff0066;
+            background-color: #00ff0055;
             pointer-events: none;
         }
 
         .recharge {
-            background-color: #00ff4433;
+            background-color: #00ff4411;
         }
 
         .dash_icon_label {
@@ -290,7 +290,7 @@
 
             &:hover {
                 border: 3px solid #66669999;
-                background-color: #000000ff;
+                background-color: #000000ee;
             }
 
             &:active {

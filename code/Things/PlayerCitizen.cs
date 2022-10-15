@@ -151,7 +151,7 @@ public partial class PlayerCitizen : Thing
 		CritChance = 0.05f;
 		CritMultiplier = 1.5f;
 
-		NumDashes = 3f;
+		NumDashes = 1f;
 		NumDashesAvailable = (int)NumDashes;
 		DashCooldown = 3f;
 		DashInvulnTime = 0.25f;
@@ -232,7 +232,7 @@ public partial class PlayerCitizen : Thing
 		//Utils.DrawCircle(HitboxPos, 1.4f, 18, Time.Now, Color.Red);
 		//Log.Info("local player: " + (Game.Client != null));
 		//DebugText("IsChoosingLevelUpReward: " + IsChoosingLevelUpReward);
-		DebugText(NumDashesAvailable + " / " + NumDashes + "\n\n" + _dashTimer);
+		//DebugText(NumDashesAvailable + " / " + NumDashes + "\n\n" + _dashTimer);
 	}
 
 	[Event.Tick.Client]
@@ -361,7 +361,7 @@ public partial class PlayerCitizen : Thing
 	void HandleDashing(float dt)
     {
 		int numDashes = (int)MathF.Round(NumDashes);
-		if (NumDashesAvailable < numDashes && _dashTimer > 0f)
+		if (NumDashesAvailable < numDashes)
 		{
 			_dashTimer -= dt;
 			DashRechargeProgress = Utils.Map(_dashTimer, DashCooldown, 0f, 0f, 1f);
