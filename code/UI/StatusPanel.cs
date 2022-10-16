@@ -44,6 +44,7 @@ public class StatusPanel : Panel
 			icon.Title = status.Title;
 			icon.Description = status.Description;
 			icon.Level = status.Level;
+			icon.MaxLevel = status.MaxLevel;
 			icon.LevelLabel.Text = status.Level > 1 ? status.Level.ToString() : "";
 			icon.LevelLabelBg.Text = status.Level > 1 ? status.Level.ToString() : "";
 
@@ -63,6 +64,7 @@ public class StatusIcon : Panel
 	public string Description;
 
 	public int Level { get; set; }
+	public int MaxLevel { get; set; }
 	public Label LevelLabelBg;
 	public Label LevelLabel;
 
@@ -84,7 +86,11 @@ public class StatusIcon : Panel
 		if (string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(Description))
 			return;
 
-		Tippy.Create(this, Tippy.Pivots.TopRight).WithContent(Title, Description, Level);
+		var levelText = Level == MaxLevel 
+			? "(MAX)"
+			: Level > 1 ? "(" + Level.ToString() + ")" : "";
+
+		Tippy.Create(this, Tippy.Pivots.TopRight).WithContent(Title, Description, levelText);
 	}
 
     public override void OnMouseWheel(float value)

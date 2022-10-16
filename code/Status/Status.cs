@@ -15,6 +15,7 @@ public partial class Status : BaseNetworkable
 	public bool ShouldUpdate { get; protected set; }
 	public PlayerCitizen Player { get; protected set; }
 	[Net] public int Level { get; set; }
+	[Net] public int MaxLevel { get; set; }
 	public TimeSince ElapsedTime { get; protected set; }
 	[Net] public string Title { get; protected set; }
 	[Net] public string Description { get; protected set; }

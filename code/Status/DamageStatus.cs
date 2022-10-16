@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(9, 0, 51f)]
 public class DamageStatus : Status
 {
 	public DamageStatus()

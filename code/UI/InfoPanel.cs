@@ -150,6 +150,6 @@ public class DashIcon : Panel
 	{
 		base.OnMouseOver(e);
 
-		Tippy.Create(this, Tippy.Pivots.TopLeft).WithContent("Dash", "Press SPACE to use", 0);
+		Tippy.Create(this, Tippy.Pivots.TopLeft).WithContent("Dash", "Press SPACE to use", "");
 	}
 }

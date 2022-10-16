@@ -168,7 +168,7 @@ public partial class PlayerCitizen : Thing
 		CoinAttractStrength = 3.1f;
 
 		NumUpgradeChoices = 3f;
-		HealthRegen = 50f;
+		HealthRegen = 0f;
 
 		Statuses.Clear();
 		//_statusesToRemove.Clear();

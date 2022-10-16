@@ -36,10 +36,10 @@ internal class Tippy : Panel
 	//	Add.Label(description)
 	//);
 
-	public Tippy WithContent( string title, string description, int level )
+	public Tippy WithContent( string title, string description, string level )
 	{
 		TitleLabel.Text = title;
-		LevelLabel.Text = level > 1 ? "(" + level.ToString() + ")" : "";
+		LevelLabel.Text = level;
 		DescLabel.Text = description;
 
 		return this;

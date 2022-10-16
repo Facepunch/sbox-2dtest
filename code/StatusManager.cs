@@ -110,6 +110,11 @@ public class StatusManager
     public static Status CreateStatus(TypeDescription type)
     {
         var status = type.Create<Status>();
+
+        var attrib = type.GetAttribute<StatusAttribute>();
+        if (attrib != null)
+            status.MaxLevel = attrib.MaxLevel;
+
         return status;
     }
 
