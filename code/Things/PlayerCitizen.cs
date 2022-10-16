@@ -633,7 +633,8 @@ public partial class PlayerCitizen : Thing
 			return;
 
 		Health -= damage;
-        Flash(0.125f);
+		DamageNumbers.Create(Position + new Vector2(Rand.Float(0.5f, 4f), Rand.Float(8.5f, 10.5f)) * 0.1f, MathX.CeilToInt(damage), DamageType.Player);
+		Flash(0.125f);
 
 		if(Health <= 0f)
         {

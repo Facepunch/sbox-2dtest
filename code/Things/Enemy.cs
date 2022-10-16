@@ -37,6 +37,9 @@ public partial class Enemy : Thing
 	private float SPAWN_TIME = 1.75f;
 	private float SHADOW_FULL_OPACITY = 0.8f;
 
+	private TimeSince _damageTime;
+	private const float DAMAGE_TIME = 0.25f;
+
 	public override void Spawn()
 	{
 		base.Spawn();
@@ -58,7 +61,7 @@ public partial class Enemy : Thing
 			MaxHealth = Health;
 			MoveTimeOffset = Rand.Float(0f, 4f);
 			//MoveTimeSpeed = Rand.Float(6f, 9f);
-			DamageToPlayer = 20f;
+			DamageToPlayer = 5f;
 
 			IsSpawning = true;
 			ElapsedTime = 0f;
@@ -69,6 +72,7 @@ public partial class Enemy : Thing
 			CollideWith.Add(typeof(PlayerCitizen));
 
 			ShadowScale = 0.95f;
+			_damageTime = DAMAGE_TIME;
 		}
 
 		//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
@@ -96,9 +100,9 @@ public partial class Enemy : Thing
     [Event.Tick.Server]
     public void ServerTick()
     {
-		//DebugText(IsAttacking.ToString());
-		//DebugText(SinceSpawning.Absolute.ToString("#.##"));
-	}
+		//DebugText(_damageTime.ToString());
+        //DebugText(SinceSpawning.Absolute.ToString("#.##"));
+    }
 
 	public override void Update(float dt)
     {
@@ -162,7 +166,12 @@ public partial class Enemy : Thing
 		float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
 		Position += Velocity * dt * speed;
 		//Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
-		Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
+
+		var x_min = Game.BOUNDS_MIN.x + Radius / 2f;
+		var x_max = Game.BOUNDS_MAX.x - Radius / 2f;
+		var y_min = Game.BOUNDS_MIN.y;
+		var y_max = Game.BOUNDS_MAX.y - Radius * 4.2f;
+		Position = new Vector2(MathX.Clamp(Position.x, x_min, x_max), MathX.Clamp(Position.y, y_min, y_max));
 		Velocity *= (1f - dt * (IsAttacking ? 1.33f : 1.47f));
 
 		//if (MathF.Abs(Velocity.x) > 0.2f)
@@ -270,11 +279,12 @@ public partial class Enemy : Thing
 		{
 			Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * (1f + player.TempWeight) * dt;
 
-			if(IsAttacking)
+			if(IsAttacking && _damageTime >= DAMAGE_TIME)
             {
-				player.Damage(DamageToPlayer * dt);
+				player.Damage(DamageToPlayer);
 				//player.Velocity *= (1f - 13.5f * dt);
-            }
+				_damageTime = 0f;
+			}
 		}
 	}
 
@@ -284,7 +294,7 @@ public partial class Enemy : Thing
 			return;
 
 		Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-2f, 2f)) * 0.1f, damage, isCrit);
+		DamageNumbers.Create(Position + new Vector2(Rand.Float(1.5f, 2.3f), Rand.Float(6f, 7f)) * 0.1f, damage, isCrit ? DamageType.Crit : DamageType.Normal);
 		Flash(0.12f);
 
 		if (Health <= 0f)

@@ -101,9 +101,16 @@ public class DashContainer : Panel
 			icon.OverlayPanel.Style.Transform = xform;
 
 			if (i < player.NumDashesAvailable)
-                icon.OverlayPanel.RemoveClass("recharge");
+            {
+				icon.RemoveClass("recharge_icon");
+				icon.OverlayPanel.RemoveClass("recharge");
+			}
             else
-                icon.OverlayPanel.AddClass("recharge");
+            {
+				icon.AddClass("recharge_icon");
+				icon.OverlayPanel.AddClass("recharge");
+			}
+                
 		}
 	}
 

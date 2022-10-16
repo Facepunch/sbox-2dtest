@@ -43,6 +43,6 @@ public class BulletLifetimeStatus : Status
 
 	public float GetPercentForLevel(int level)
 	{
-		return 2 * level;
+		return 20 * level;
 	}
 }

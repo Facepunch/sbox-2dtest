@@ -202,7 +202,7 @@
 
         &:hover {
             opacity: 0.8;
-            border: 2px solid #ffffffbb;
+            border: 2px solid #ffffff44;
         }
 
         .dash_icon_overlay {
@@ -223,6 +223,10 @@
             font-size: 18px;
             position: absolute;
         }
+    }
+
+    .recharge_icon {
+        border: 2px solid #ffffff11;
     }
 }
 
@@ -250,21 +254,21 @@
 
     .choice_modal {
         width: 900px;
-        height: 360px;
+        height: 400px;
         background-color: #00000033;
-        border: 3px solid white;
+        border: 3px solid #ffffff33;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         background-color: #00003399;
         margin-bottom: 22px;
-        padding-bottom: 55px;
 
         .choice_lvl_label {
             color: #66ffaa;
             font-size: 32px;
             //margin-top: 6px;
             margin-bottom: 12px;
+            padding-top: 8px;
         }
 
         .choice_button_container {
@@ -273,6 +277,7 @@
             //flex-wrap: nowrap;
             //overflow: clip;
             //align-items: stretch;
+            margin-bottom: 20px;
         }
 
         .choice_button {
@@ -280,7 +285,7 @@
             height: 300px;
             background-color: #000000cc;
             pointer-events: all;
-            border: 3px solid white;
+            border: 3px solid #ffffff55;
             margin-left: 5px;
             margin-right: 5px;
             flex-direction: column;
@@ -289,12 +294,12 @@
             //flex-shrink: 1;
 
             &:hover {
-                border: 3px solid #66669999;
+                border: 3px solid #ffffffee;
                 background-color: #000000ee;
             }
 
             &:active {
-                border: 3px solid #88880099;
+                border: 3px solid #ffffffdd;
                 background-color: #000033ff;
             }
 

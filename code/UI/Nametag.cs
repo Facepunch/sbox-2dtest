@@ -40,7 +40,7 @@ public partial class Nametag : Panel
             return;
 
         var name = Player.Client.Name;
-        NameLabel.Text = name[..Math.Min(name.Length, 16)];
+        NameLabel.Text = name[..Math.Min(name.Length, 14)] + " (" + Player.Level.ToString() + ")";
 
         var screenPos = MyGame.Current.MainCamera.WorldToScreen(Player.Position + new Vector2(0f, 1.42f)) * ScaleFromScreen;
 
