@@ -54,7 +54,7 @@ public class BackgroundManager
     {
         var tile = new BackgroundTile();
         tile.Position = pos;
-        tile.Scale = new Vector2(TILE_WIDTH, TILE_HEIGHT);
+        tile.Scale = new Vector2(TILE_WIDTH + 0.01f, TILE_HEIGHT + 0.01f);
         tile.Depth = -(220f + _tiles.Count * 0.1f);
         _tiles.Add(tile);
     }

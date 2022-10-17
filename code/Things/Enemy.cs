@@ -318,6 +318,16 @@ public partial class Enemy : Thing
 		var coin_chance = shooter != null ? Utils.Map(shooter.Luck, 0f, 10f, 0.5f, 1f) : 0.5f;
 		if(Rand.Float(0f, 1f) < coin_chance)
 			Game.SpawnCoin(Position);
+
+		StartDyingClient();
+	}
+
+	[ClientRpc]
+	public void StartDyingClient()
+    {
+		var blood = new BloodSplatter();
+		blood.Position = Position;
+		Log.Info("blood: " + blood);
 	}
 
 	public void Flash(float time)

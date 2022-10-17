@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(1, 0, 55f)]
+[Status(3, 0, 1f)]
 public class NumDashesStatus : Status
 {
 	public NumDashesStatus()

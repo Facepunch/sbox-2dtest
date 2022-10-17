@@ -16,7 +16,7 @@ public partial class Shadow : Sprite
 		base.Spawn();
 
 		SpriteTexture = "textures/sprites/shadow3.png";
-		Depth = -219f;
+		Depth = -218f;
 		ColorTint = new Color(0f, 0f, 0f, 0f);
 		Filter = SpriteFilter.Pixelated;
 		Scale = new Vector2(1f, 1f);
