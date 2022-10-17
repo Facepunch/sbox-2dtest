@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -59,18 +59,16 @@ public partial class Sprite : ModelEntity
     {
         get => IsClientOnly ? ClientSpriteTexture : SpriteTexture.Atlas(NetTexturePath, NetAtlasRows, NetAtlasColumns);
         set
-        {
-	        if ( IsClientOnly )
-	        {
-		        ClientSpriteTexture = value;
+		{
+			ClientSpriteTexture = value;
 
+			NetTexturePath = value.TexturePath;
+			NetAtlasRows = value.AtlasRows;
+			NetAtlasColumns = value.AtlasColumns;
+
+			if ( IsClientOnly )
+	        {
 		        OnNetTexturePathChanged();
-			}
-	        else
-			{
-				NetTexturePath = value.TexturePath;
-				NetAtlasRows = value.AtlasRows;
-				NetAtlasColumns = value.AtlasColumns;
 			}
         }
     }
@@ -334,7 +332,7 @@ public partial class Sprite : ModelEntity
         if (_anim != null)
         {
 			AnimationTimeElapsed += Time.Delta * AnimationSpeed;
-			var (min, max) = _anim.GetFrameUvs(AnimationTimeElapsed, NetAtlasRows, NetAtlasColumns);
+			var (min, max) = _anim.GetFrameUvs(AnimationTimeElapsed, SpriteTexture.AtlasRows, SpriteTexture.AtlasColumns);
 
             SceneObject.Attributes.Set("UvMin", min);
             SceneObject.Attributes.Set("UvMax", max);
