@@ -185,6 +185,20 @@ public partial class Sprite : ModelEntity
 		set => NetOpacity = ClientOpacity = value;
     }
 
+    [Net]
+	private Rect NetUvRect { get; set; } = new Rect( 0f, 0f, 1f, 1f );
+	private Rect ClientUvRect { get; set; } = new Rect( 0f, 0f, 1f, 1f );
+
+	/// <summary>
+	/// Useful for offsetting or tiling this sprite's texture.
+	/// Only supported for non-animated sprites for now.
+	/// </summary>
+	public Rect UvRect
+	{
+		get => IsClientOnly ? ClientUvRect : NetUvRect;
+		set => NetUvRect = ClientUvRect = value;
+	}
+
 	public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
 	public new Vector2 Position
@@ -327,8 +341,8 @@ public partial class Sprite : ModelEntity
 		}
         else
 		{
-			SceneObject.Attributes.Set("UvMin", Vector2.Zero);
-            SceneObject.Attributes.Set("UvMax", Vector2.One);
+			SceneObject.Attributes.Set("UvMin", UvRect.TopLeft);
+            SceneObject.Attributes.Set("UvMax", UvRect.BottomRight);
 		}
 	}
 }

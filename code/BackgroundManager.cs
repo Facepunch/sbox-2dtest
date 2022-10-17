@@ -26,6 +26,7 @@ public class BackgroundManager
 
         _tiles.Clear();
 
+        var boundsSize = MyGame.Current.BOUNDS_MAX - MyGame.Current.BOUNDS_MIN + new Vector2( 8f, 8f );
 
         var x_min = MyGame.Current.BOUNDS_MIN.x;
         var y_min = MyGame.Current.BOUNDS_MIN.y;
@@ -52,10 +53,11 @@ public class BackgroundManager
 
     void AddTile(Vector2 pos)
     {
-        var tile = new BackgroundTile();
-        tile.Position = pos;
-        tile.Scale = new Vector2(TILE_WIDTH + 0.01f, TILE_HEIGHT + 0.01f);
-        tile.Depth = -(220f + _tiles.Count * 0.1f);
-        _tiles.Add(tile);
+        _tiles.Add( new BackgroundTile
+		{
+			Depth = -512f,
+			Scale = boundsSize,
+			UvRect = new Rect( 0f, boundsSize / new Vector2( TILE_WIDTH, TILE_HEIGHT ) )
+		} );
     }
 }
