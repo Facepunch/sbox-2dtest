@@ -53,11 +53,13 @@ public class BackgroundManager
 
     void AddTile(Vector2 pos)
     {
-        _tiles.Add( new BackgroundTile
-		{
-			Depth = -512f,
-			Scale = boundsSize,
-			UvRect = new Rect( 0f, boundsSize / new Vector2( TILE_WIDTH, TILE_HEIGHT ) )
-		} );
+        var boundsSize = MyGame.Current.BOUNDS_MAX - MyGame.Current.BOUNDS_MIN + new Vector2(8f, 8f);
+
+        _tiles.Add(new BackgroundTile
+        {
+            Depth = -512f,
+            Scale = boundsSize,
+            UvRect = new Rect(0f, boundsSize / new Vector2(TILE_WIDTH, TILE_HEIGHT))
+        });
     }
 }

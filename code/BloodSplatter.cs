@@ -17,14 +17,14 @@ public partial class BloodSplatter : Sprite
 		AnimationPath = "textures/sprites/blood_splatter.frames";
 		AnimationSpeed = 4f;
 		Depth = -219f;
-		//ColorTint = new Color(0f, 0f, 0f, 0f);
-		Filter = SpriteFilter.Pixelated;
+		ColorTint = Color.White;
+        Filter = SpriteFilter.Pixelated;
 		Scale = new Vector2(1f, 1f);
     }
 
 	[Event.Tick.Client]
 	public void ClientTick()
 	{
-		//DebugOverlay.Text("blood", Position + new Vector2(0.1f, -0.1f), 0f, float.MaxValue);
+		DebugOverlay.Text("blood", Position + new Vector2(0.1f, -0.1f), 0f, float.MaxValue);
 	}
 }
