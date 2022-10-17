@@ -325,9 +325,7 @@ public partial class Enemy : Thing
 	[ClientRpc]
 	public void StartDyingClient()
     {
-		var blood = new BloodSplatter();
-		blood.Position = Position;
-		Log.Info("blood: " + blood);
+		Game.SpawnBloodSplatter(Position);
 	}
 
 	public void Flash(float time)

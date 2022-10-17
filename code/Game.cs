@@ -52,6 +52,8 @@ public partial class MyGame : Sandbox.Game
 
 	public BackgroundManager BackgroundManager { get; private set; } // client only
 
+	public List<Sprite> _bloodSplatters;
+
 	public MyGame()
 	{
 		BOUNDS_MIN = new Vector2(-16f, -12f);
@@ -97,6 +99,7 @@ public partial class MyGame : Sandbox.Game
 			//_ = new MainHud();
             Hud = new HUD();
 			BackgroundManager = new BackgroundManager();
+			_bloodSplatters = new List<Sprite>();
 		}
 	}
 
@@ -373,6 +376,11 @@ public partial class MyGame : Sandbox.Game
 	{
 		Hud.Restart();
 		BackgroundManager.Restart();
+		
+		foreach(var blood in _bloodSplatters)
+			blood.Delete();
+
+		_bloodSplatters.Clear();
 	}
 
 	public void PlayerDied(PlayerCitizen player)
@@ -398,4 +406,21 @@ public partial class MyGame : Sandbox.Game
 	{
 		Hud.GameOver();
 	}
+
+	public void SpawnBloodSplatter(Vector2 pos)
+    {
+		if (!Host.IsClient)
+			return;
+
+		_bloodSplatters.Add(new BloodSplatter()
+		{
+			Position = pos,
+		});
+	}
+
+	public void RemoveBloodSplatter(BloodSplatter blood)
+    {
+		if(_bloodSplatters.Contains(blood))
+			_bloodSplatters.Remove(blood);
+    }
 }
