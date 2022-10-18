@@ -8,7 +8,7 @@ using Sandbox;
 
 namespace Test2D;
 
-public partial class Zombie : Enemy
+public partial class Spitter : Enemy
 {
     private TimeSince _damageTime;
     private const float DAMAGE_TIME = 0.25f;
@@ -19,7 +19,7 @@ public partial class Zombie : Enemy
 
         if (Host.IsServer)
         {
-            SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie.png", 5, 6);
+            SpriteTexture = SpriteTexture.Atlas("textures/sprites/spitter.png", 5, 6);
             AnimationPath = "textures/sprites/zombie_spawn.frames";
             AnimIdlePath = "textures/sprites/zombie_walk.frames";
             AnimationSpeed = 2f;

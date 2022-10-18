@@ -155,11 +155,22 @@ public partial class MyGame : Sandbox.Game
 
 		var pos = new Vector2(Rand.Float(BOUNDS_MIN.x, BOUNDS_MAX.x), Rand.Float(BOUNDS_MIN.y, BOUNDS_MAX.y));
 
-		var enemy = new Zombie
-		{
-			Position = pos,
-			//Depth = Rand.Float(-128f, 128f),
-		};
+		Enemy enemy = null;
+
+		if(Rand.Float(0f, 1f) < 0.2f)
+        {
+			enemy = new Spitter
+			{
+				Position = pos,
+			};
+		}
+		else
+        {
+			enemy = new Zombie
+			{
+				Position = pos,
+			};
+		}
 
 		var closestPlayer = GetClosestPlayer(pos);
 		if (closestPlayer?.Position.x > pos.x)
