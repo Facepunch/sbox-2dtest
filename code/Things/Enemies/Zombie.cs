@@ -13,6 +13,9 @@ public partial class Zombie : Enemy
     private TimeSince _damageTime;
     private const float DAMAGE_TIME = 0.25f;
 
+    public bool HasTarget { get; private set; }
+    private Vector2 _wanderPos;
+
     public override void Spawn()
     {
         base.Spawn();
@@ -37,6 +40,10 @@ public partial class Zombie : Enemy
 
             ShadowScale = 0.95f;
             _damageTime = DAMAGE_TIME;
+
+            HasTarget = false;
+
+            _wanderPos = new Vector2(Rand.Float(Game.BOUNDS_MIN.x + 1f, Game.BOUNDS_MAX.x - 1f), Rand.Float(Game.BOUNDS_MIN.y + 1f, Game.BOUNDS_MAX.y - 1f));
         }
     }
 
@@ -56,7 +63,30 @@ public partial class Zombie : Enemy
         if (closestPlayer == null)
             return;
 
-        Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
+        if (HasTarget)
+        {
+            Velocity += (closestPlayer.Position - Position).Normal * dt;
+        }
+        else
+        {
+            var wander_dist_sqr = (_wanderPos - Position).LengthSquared;
+            if(wander_dist_sqr < 0.25f)
+            {
+                _wanderPos = new Vector2(MathX.Clamp(closestPlayer.Position.x + Rand.Float(-3f, 3f), Game.BOUNDS_MIN.x + 1f, Game.BOUNDS_MAX.x - 1f), MathX.Clamp(closestPlayer.Position.y + Rand.Float(-3f, 3f), Game.BOUNDS_MIN.y + 1f, Game.BOUNDS_MAX.y - 1f));
+            }
+
+            Velocity += (_wanderPos - Position).Normal * dt;
+
+            var player_dist_sqr = (closestPlayer.Position - Position).LengthSquared;
+            if(player_dist_sqr < 3.5f * 3.5f)
+            {
+                HasTarget = true;
+            }
+        }
+
+        //if(!HasTarget)
+        //    DebugOverlay.Line(Position, _wanderPos, 0f, false);
+
         float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
         Position += Velocity * dt * speed;
     }

@@ -159,6 +159,9 @@ public abstract partial class Enemy : Thing
 		TempWeight *= (1f - dt * 4.7f);
 
 		var closestPlayer = Game.GetClosestPlayer(Position);
+		if (closestPlayer == null)
+			return;
+
 		float dist_sqr = (closestPlayer.Position - Position).LengthSquared;
 		float attack_dist_sqr = MathF.Pow(AGGRO_RANGE, 2f);
 

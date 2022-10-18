@@ -100,7 +100,6 @@ public partial class Bullet : Thing
 	{
 		base.Colliding(other, percent, dt);
 
-		Log.Info("other: " + other.GetType().ToString());
 		if (typeof(Enemy).IsAssignableFrom(other.GetType()))
 		{
 			var enemy = (Enemy)other;
