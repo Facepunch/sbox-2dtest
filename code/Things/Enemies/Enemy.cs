@@ -8,7 +8,7 @@ using Sandbox;
 
 namespace Test2D;
 
-public partial class Enemy : Thing
+public abstract partial class Enemy : Thing
 {
 	public float MoveTimeOffset { get; set; }
 	//public float MoveTimeSpeed { get; set; }
@@ -16,7 +16,7 @@ public partial class Enemy : Thing
 	private float _flashTimer;
 	private bool _isFlashing;
 
-	public float MaxHealth { get; private set; }
+	public float MaxHealth { get; protected set; }
 
 	[Net] public bool IsSpawning { get; private set; }
 	[Net] public float ElapsedTime { get; private set; }
@@ -26,61 +26,31 @@ public partial class Enemy : Thing
 
 	public bool IsAttacking { get; private set; }
 	private float _aggroTimer;
-	private const float AGGRO_RANGE = 1.4f;
-	private const float AGGRO_START_TIME = 0.2f;
-	private const float AGGRO_LOSE_TIME = 0.4f;
+	protected const float AGGRO_RANGE = 1.4f;
+	protected const float AGGRO_START_TIME = 0.2f;
+	protected const float AGGRO_LOSE_TIME = 0.4f;
 
-	public float DamageToPlayer { get; private set; }
+	public float DamageToPlayer { get; protected set; }
 
 	public static float SCALE_FACTOR = 0.8f;
 
 	private float SPAWN_TIME = 1.75f;
 	private float SHADOW_FULL_OPACITY = 0.8f;
 
-	private TimeSince _damageTime;
-	private const float DAMAGE_TIME = 0.25f;
+	public string AnimIdlePath { get; protected set; }
 
 	public override void Spawn()
 	{
 		base.Spawn();
 
-		//TexturePath = "textures/sprites/mummy_walk3.png";
-		//TexturePath = "textures/sprites/zombie_bw.png";
-		//TexturePath = "textures/sprites/mummy_walk3.png";
-		//SpriteTexture = "textures/sprites/zombie.png";
-
 		if (Host.IsServer)
 		{
-			SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie_spritesheet3.png", 5, 6);
-			AnimationPath = "textures/sprites/zombie_spawn.frames";
-			AnimationSpeed = 2f;
-			Pivot = new Vector2(0.5f, 0.05f);
-
-			Radius = 0.25f;
-			Health = 30f;
-			MaxHealth = Health;
 			MoveTimeOffset = Rand.Float(0f, 4f);
-			//MoveTimeSpeed = Rand.Float(6f, 9f);
-			DamageToPlayer = 5f;
-
 			IsSpawning = true;
 			ElapsedTime = 0f;
-
-			Scale = new Vector2(1f, 1f) * SCALE_FACTOR;
-
-			CollideWith.Add(typeof(Enemy));
-			CollideWith.Add(typeof(PlayerCitizen));
-
-			ShadowScale = 0.95f;
-			_damageTime = DAMAGE_TIME;
 		}
 
-		//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
-		//RenderColor = Color.Random;
-		//Rotation = Time.Now * 0.1f;
-
         Filter = SpriteFilter.Pixelated;
-		//ColorFill = new ColorHsv(Rand.Float(0f, 360f), 0.5f, 1f, 0.125f);
 		ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
 	}
 
@@ -88,7 +58,7 @@ public partial class Enemy : Thing
     {
         base.ClientSpawn();
 
-		SpawnShadow(0.95f);
+		SpawnShadow(ShadowScale);
 	}
 
     [Event.Tick.Client]
@@ -147,7 +117,7 @@ public partial class Enemy : Thing
 			if (ElapsedTime > SPAWN_TIME)
             {
 				IsSpawning = false;
-				AnimationPath = "textures/sprites/zombie_walk.frames";
+				AnimationPath = AnimIdlePath;
 
 				ShadowOpacity = SHADOW_FULL_OPACITY;
 			} 
@@ -158,32 +128,15 @@ public partial class Enemy : Thing
             }
 		}
 
-		var closestPlayer = Game.GetClosestPlayer(Position);
-		if (closestPlayer == null)
-			return;
-
-		Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
-		float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
-		Position += Velocity * dt * speed;
-		//Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
+		UpdatePosition(dt);
 
 		var x_min = Game.BOUNDS_MIN.x + Radius / 2f;
 		var x_max = Game.BOUNDS_MAX.x - Radius / 2f;
 		var y_min = Game.BOUNDS_MIN.y;
 		var y_max = Game.BOUNDS_MAX.y - Radius * 4.2f;
 		Position = new Vector2(MathX.Clamp(Position.x, x_min, x_max), MathX.Clamp(Position.y, y_min, y_max));
+
 		Velocity *= (1f - dt * (IsAttacking ? 1.33f : 1.47f));
-
-		//if (MathF.Abs(Velocity.x) > 0.2f)
-		//	Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * SCALE_FACTOR;
-
-		//enemy.Rotation = enemy.Velocity.LengthSquared * Utils.FastSin(Time.Now * 12f);
-		//enemy.Rotation = enemy.Velocity.Length * Utils.FastSin(Time.Now * MathF.PI * 7f) * 4.5f;
-
-		//DebugOverlay.Line(enemy.Position, enemy.Position + enemy.Radius, 0f, false);
-		//DebugText(Health.ToString("#.") + "/" + MaxHealth.ToString("#."));
-
-		//DebugText(MathF.Abs(Velocity.x).ToString("#.#"));
 
 		Depth = -Position.y * 10f;
 
@@ -205,6 +158,7 @@ public partial class Enemy : Thing
 
 		TempWeight *= (1f - dt * 4.7f);
 
+		var closestPlayer = Game.GetClosestPlayer(Position);
 		float dist_sqr = (closestPlayer.Position - Position).LengthSquared;
 		float attack_dist_sqr = MathF.Pow(AGGRO_RANGE, 2f);
 
@@ -223,6 +177,9 @@ public partial class Enemy : Thing
 			else
 			{
 				//DebugText(IsAttacking.ToString() + ", " + MathF.Abs(Velocity.x).ToString("#.##"));
+
+				float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
+
 				AnimationSpeed = Utils.Map(speed, 0.4f, 1f, 0.75f, 3f, EasingType.ExpoIn);
 				_aggroTimer = 0f;
 			}
@@ -253,42 +210,14 @@ public partial class Enemy : Thing
 
 			Scale = new Vector2(1f * closestPlayer.Position.x < Position.x ? 1f : -1f, 1f) * SCALE_FACTOR;
 		}
-
-		//ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
-		//ColorFill = new ColorHsv(0.5f + Utils.FastSin(Time.Now * 4f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 3f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 2f) * 0.5f, 0.5f + Utils.FastSin(Time.Now * 1f) * 0.5f);
-		//ColorFill = new ColorHsv(0.94f, 0.157f, 0.392f, 1f);
-		//ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
-
-		//ColorFill = new Color(0.2f, 0.2f, 1f) * 1.5f; // frozen
-		//ColorFill = new Color(1f, 1f, 0.1f) * 2.5f; // shock
-		//ColorFill = new Color(0.1f, 1f, 0.1f) * 2.5f; // poison
-
-		//ColorFill = Color.White;
-		//ColorFill = new ColorHsv(1f, 0f, 0f, 0f);
 	}
 
-    public override void Colliding(Thing other, float percent, float dt)
+	protected virtual void UpdatePosition(float dt)
     {
-        base.Colliding(other, percent, dt);
 
-		if (other is Enemy enemy && !enemy.IsDying)
-		{
-			Velocity += (Position - enemy.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 10f * (1f + enemy.TempWeight) * dt;
-		}
-		else if (other is PlayerCitizen player)
-		{
-			Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * (1f + player.TempWeight) * dt;
+    }
 
-			if(IsAttacking && _damageTime >= DAMAGE_TIME)
-            {
-				player.Damage(DamageToPlayer);
-				//player.Velocity *= (1f - 13.5f * dt);
-				_damageTime = 0f;
-			}
-		}
-	}
-
-    public void Damage(float damage, PlayerCitizen shooter, bool isCrit)
+    public virtual void Damage(float damage, PlayerCitizen shooter, bool isCrit)
     {
 		if (IsDying)
 			return;
@@ -303,7 +232,7 @@ public partial class Enemy : Thing
 		}
     }
 
-	public void StartDying(PlayerCitizen shooter)
+	public virtual void StartDying(PlayerCitizen shooter)
     {
 		IsDying = true;
 		DeathTimeElapsed = 0f;

@@ -38,7 +38,7 @@ public class HealthRegenStatus : Status
 
 	public float GetAmountForLevel(int level)
     {
-		return 1f * level;
+		return 0.5f * level;
     }
 
 	public string GetPrintAmountForLevel(int level)

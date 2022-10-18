@@ -10,7 +10,7 @@ namespace Test2D;
 public partial class BloodSplatter : Sprite
 {
 	private TimeSince _spawnTime;
-	private float _lifetime;
+	public float Lifetime { get; set; }
 
 	public override void Spawn()
 	{
@@ -24,15 +24,14 @@ public partial class BloodSplatter : Sprite
         Filter = SpriteFilter.Pixelated;
 		Scale = new Vector2((Rand.Float(0f, 1f) > 0.5f ? -1f : 1f) * Rand.Float(0.9f, 1.2f), Rand.Float(0.9f, 1.2f));
 		_spawnTime = 0f;
-		_lifetime = Rand.Float(2f, 7f);
 	}
 
 	[Event.Tick.Client]
 	public void ClientTick()
 	{
 		//DebugOverlay.Text("blood", Position + new Vector2(0.1f, -0.1f), 0f, float.MaxValue);
-		Opacity = Utils.Map(_spawnTime, 0f, _lifetime, 1f, 0f);
-        if (_spawnTime > _lifetime)
+		Opacity = Utils.Map(_spawnTime, 0f, Lifetime, 1f, 0f);
+        if (_spawnTime > Lifetime)
         {
             Game.RemoveBloodSplatter(this);
             Delete();

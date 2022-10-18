@@ -1,8 +1,8 @@
 {
-  "Title": "2D Test",
+  "Title": "Sausage Survivors",
   "Type": "game",
-  "Org": "local",
-  "Ident": "2dtest",
+  "Org": "facepunch",
+  "Ident": "sausagesurvivors",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
@@ -13,7 +13,7 @@
   "CodePath": "/code/",
   "RootNamespace": null,
   "Metadata": {
-    "MaxPlayers": 64,
+    "MaxPlayers": 4,
     "MinPlayers": 1,
     "GameNetworkType": "Multiplayer",
     "MapSelect": "Empty",
@@ -22,6 +22,9 @@
     "PerMapRanking": false,
     "LeaderboardType": "None",
     "ProjectTemplate": null,
-    "GameCategory": "None"
+    "GameCategory": "Retro",
+    "ControlModes": {
+      "Keyboard": true
+    }
   }
 }

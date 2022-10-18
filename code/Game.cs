@@ -155,7 +155,7 @@ public partial class MyGame : Sandbox.Game
 
 		var pos = new Vector2(Rand.Float(BOUNDS_MIN.x, BOUNDS_MAX.x), Rand.Float(BOUNDS_MIN.y, BOUNDS_MAX.y));
 
-		var enemy = new Enemy
+		var enemy = new Zombie
 		{
 			Position = pos,
 			//Depth = Rand.Float(-128f, 128f),
@@ -202,7 +202,20 @@ public partial class MyGame : Sandbox.Game
 				return;
 
 			var other = things[i];
-			if (other == thing || other.IsRemoved || !other.IsValid || !thing.CollideWith.Contains(other.GetType()))
+			if (other == thing || other.IsRemoved || !other.IsValid)
+				continue;
+
+			bool isValidType = false;
+			foreach(var t in thing.CollideWith)
+            {
+				if(t.IsAssignableFrom(other.GetType()))
+                {
+					isValidType = true;
+					break;
+                }
+            }
+
+			if (!isValidType)
 				continue;
 
 			var dist_sqr = (thing.Position - other.Position).LengthSquared;
@@ -349,9 +362,15 @@ public partial class MyGame : Sandbox.Game
 
 		_things.Clear();
 
-		for (int i = 0; i < PlayerList.Count; i++)
+		for (int i = PlayerList.Count - 1; i >= 0; i--)
 		{
 			var player = PlayerList[i];
+			if(player == null || !player.IsValid)
+            {
+				PlayerList.Remove(player);
+				continue;
+            }
+
 			player.InitializeStats();
 			player.Position = new Vector2(Utils.Map(i, 0, PlayerList.Count - 1, -2f, 2f), 0f);
 			_things.Add(player);
@@ -415,6 +434,7 @@ public partial class MyGame : Sandbox.Game
 		_bloodSplatters.Add(new BloodSplatter()
 		{
 			Position = pos,
+			Lifetime = Utils.Map(_bloodSplatters.Count, 0, 100, 10f, 1f) * Rand.Float(0.8f, 1.2f),
 		});
 	}
 

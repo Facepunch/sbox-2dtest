@@ -100,28 +100,34 @@ public partial class Bullet : Thing
 	{
 		base.Colliding(other, percent, dt);
 
-		if (other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime > 1.5f))
+		Log.Info("other: " + other.GetType().ToString());
+		if (typeof(Enemy).IsAssignableFrom(other.GetType()))
 		{
-			if (_hitThings.Contains(enemy))
-				return;
+			var enemy = (Enemy)other;
 
-			bool isCrit = Rand.Float(0f, 1f) < CriticalChance;
-			float damage = Damage * (isCrit ? CriticalMultiplier : 1f);
-			enemy.Damage(damage, Shooter, isCrit);
-
-			enemy.Velocity += Velocity.Normal * Force;
-			enemy.TempWeight += AddTempWeight;
-
-			NumHits++;
-
-			if(NumHits > NumPiercing)
+			if(!enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime > 1.5f))
             {
-				Remove();
-				return;
-            } 
-			else
-            {
-				_hitThings.Add(enemy);
+				if (_hitThings.Contains(enemy))
+					return;
+
+				bool isCrit = Rand.Float(0f, 1f) < CriticalChance;
+				float damage = Damage * (isCrit ? CriticalMultiplier : 1f);
+				enemy.Damage(damage, Shooter, isCrit);
+
+				enemy.Velocity += Velocity.Normal * Force;
+				enemy.TempWeight += AddTempWeight;
+
+				NumHits++;
+
+				if (NumHits > NumPiercing)
+				{
+					Remove();
+					return;
+				}
+				else
+				{
+					_hitThings.Add(enemy);
+				}
 			}
 		}
 	}

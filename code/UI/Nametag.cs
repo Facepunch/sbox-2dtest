@@ -36,7 +36,7 @@ public partial class Nametag : Panel
     {
         base.Tick();
 
-        if (Player == null)
+        if (Player == null || !Player.IsValid)
             return;
 
         var name = Player.Client.Name;
