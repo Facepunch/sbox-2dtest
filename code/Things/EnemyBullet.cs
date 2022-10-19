@@ -15,6 +15,7 @@ public partial class EnemyBullet : Thing
 
 	public float Damage { get; set; }
 	public float Lifetime { get; set; }
+	public Vector2 Direction { get; set; }
 
 	public override void Spawn()
 	{
@@ -54,7 +55,9 @@ public partial class EnemyBullet : Thing
 
 		base.Update(dt);
 
-		Position += Velocity * dt;
+		var speed = 2f * Utils.Map(SpawnTime, 0f, 0.5f, 0f, 1f, EasingType.QuadInOut);
+
+		Position += Direction * speed * dt;
 		Depth = -Position.y * 10f;
 
 		if (SpawnTime > Lifetime)

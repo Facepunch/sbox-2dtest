@@ -11,7 +11,7 @@ namespace Test2D;
 public partial class Zombie : Enemy
 {
     private TimeSince _damageTime;
-    private const float DAMAGE_TIME = 0.25f;
+    private const float DAMAGE_TIME = 0.5f;
 
     public bool HasTarget { get; private set; }
     private Vector2 _wanderPos;
@@ -31,7 +31,7 @@ public partial class Zombie : Enemy
             Radius = 0.25f;
             Health = 30f;
             MaxHealth = Health;
-            DamageToPlayer = 3f;
+            DamageToPlayer = 6f;
 
             Scale = new Vector2(1f, 1f) * SCALE_FACTOR;
 

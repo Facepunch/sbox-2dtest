@@ -11,11 +11,14 @@ namespace Test2D;
 public partial class Spitter : Enemy
 {
     private TimeSince _damageTime;
-    private const float DAMAGE_TIME = 0.25f;
+    private const float DAMAGE_TIME = 0.75f;
 
     private float _shootTimer;
-    private const float SHOOT_TIME_MIN = 2f;
-    private const float SHOOT_TIME_MAX = 3f;
+    private const float SHOOT_DELAY_MIN = 2f;
+    private const float SHOOT_DELAY_MAX = 3f;
+
+    private TimeSince _shotTime;
+    private const float SHOOT_TIME = 1f;
 
     public override void Spawn()
     {
@@ -32,7 +35,7 @@ public partial class Spitter : Enemy
             Radius = 0.25f;
             Health = 30f;
             MaxHealth = Health;
-            DamageToPlayer = 5f;
+            DamageToPlayer = 9f;
 
             Scale = new Vector2(1f, 1f) * SCALE_FACTOR;
 
@@ -41,7 +44,8 @@ public partial class Spitter : Enemy
 
             ShadowScale = 0.95f;
             _damageTime = DAMAGE_TIME;
-            _shootTimer = Rand.Float(SHOOT_TIME_MIN, SHOOT_TIME_MAX);
+            _shootTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
+            _shotTime = SHOOT_TIME;
         }
     }
 
@@ -61,12 +65,16 @@ public partial class Spitter : Enemy
         if (closestPlayer == null)
             return;
 
-        Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
+        var is_shooting = _shotTime < SHOOT_TIME;
+
+        if(!is_shooting)
+            Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
+
         float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
         Position += Velocity * dt * speed;
 
         var player_dist_sqr = (closestPlayer.Position - Position).LengthSquared;
-        if (!IsAttacking && player_dist_sqr < 5f * 5f)
+        if (!is_shooting && !IsAttacking && player_dist_sqr < 5f * 5f)
         {
             _shootTimer -= dt;
             if(_shootTimer < 0f)
@@ -88,14 +96,15 @@ public partial class Spitter : Enemy
         {
             Position = Position,
             Depth = -1f,
-            Velocity = dir * 2f,
+            Direction = dir,
             Shooter = this,
         };
 
         Game.AddThing(bullet);
 
-        _shootTimer = Rand.Float(SHOOT_TIME_MIN, SHOOT_TIME_MAX);
-        DebugOverlay.Line(Position, target_pos, 1f, false);
+        Velocity *= 0.25f;
+        _shotTime = 0f;
+        _shootTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
     }
 
     public override void Colliding(Thing other, float percent, float dt)
