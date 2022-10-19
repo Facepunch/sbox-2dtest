@@ -87,6 +87,8 @@ public partial class PlayerCitizen : Thing
 
 	public Nametag Nametag { get; private set; }
 
+	[Net] public int NumRerollAvailable { get; set; }
+
 	// STATUS
 	[Net] public IDictionary<int, Status> Statuses { get; private set; }
 	//[Net] public List<Status> ClientStatuses { get; private set; }
@@ -163,6 +165,7 @@ public partial class PlayerCitizen : Thing
 		Radius = 0.175f;
 		GridPos = Game.GetGridSquareForPos(Position);
 		AimDir = Vector2.Up;
+		NumRerollAvailable = 3;
 
 		CoinAttractRange = 1.7f;
 		CoinAttractStrength = 3.1f;
@@ -890,6 +893,14 @@ public partial class PlayerCitizen : Thing
     {
 		if(this == Local.Pawn)
 			Game.Hud.SpawnChoicePanel();
+	}
+
+	[ConCmd.Server]
+	public static void UseRerollCmd()
+	{
+		var player = ConsoleSystem.Caller.Pawn as PlayerCitizen;
+		player.NumRerollAvailable--;
+		player.LevelUpClient();
 	}
 
 	public int GetExperienceReqForLevel(int level)

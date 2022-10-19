@@ -189,7 +189,7 @@
 
     .choice_modal {
         width: 900px;
-        height: 400px;
+        height: 480px;
         background-color: #00000033;
         border: 3px solid #ffffff33;
         flex-direction: column;
@@ -263,6 +263,43 @@
                 //border: 1px solid blue;
             }
         }
+
+        .reroll_button {
+            width: 240px;
+            height: 80px;
+            background-color: #000000cc;
+            pointer-events: all;
+            border: 3px solid white;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                border: 3px solid #66669999;
+                background-color: #000000ff;
+            }
+
+            &:active {
+                border: 3px solid #88880099;
+                background-color: #000033ff;
+            }
+
+            .reroll_button_label {
+                color: #aaaaaa;
+                font-size: 24px;
+                pointer-events: none;
+            }
+
+            .disabled_text {
+                color: #aaaaaa22;
+            }
+        }
+
+        .disabled {
+            pointer-events: none;
+            border: 3px solid #ffffff11;
+        }
     }
 }
 
@@ -314,16 +351,16 @@
                 background-color: #000033ff;
             }
 
-            .disabled {
-                pointer-events: none;
-                opacity: 0.5;
-            }
-
             .death_button_label {
                 color: #aaaaaa;
                 font-size: 24px;
                 pointer-events: none;
             }
+        }
+
+        .disabled {
+            pointer-events: none;
+            opacity: 0.5;
         }
     }
 }

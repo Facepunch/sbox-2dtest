@@ -26,6 +26,19 @@ public class ChoicePanel : Panel
 		Delete();
 		MyGame.Current.Hud.ChoicePanel = null;
 	}
+
+	public void Reroll()
+	{
+		var player = MyGame.Current.LocalPlayer;
+
+		if (player == null || player.NumRerollAvailable <= 0)
+			return;
+
+		Delete();
+		MyGame.Current.Hud.ChoicePanel = null;
+
+		PlayerCitizen.UseRerollCmd();
+	}
 }
 
 public class ChoiceModal : Panel
@@ -76,6 +89,20 @@ public class ChoiceModal : Panel
 			button.AddEventListener("onclick", () => ChoicePanel.OnChoiceMade(type));
 			button.status = status;
 			buttonContainer.AddChild(button);
+		}
+
+		var rerollButton = Add.Panel("reroll_button");
+		rerollButton.AddEventListener("onclick", () => ChoicePanel.Reroll());
+
+		Label reroll_label = new Label();
+		reroll_label.AddClass("reroll_button_label");
+		reroll_label.Text = "Reroll (" + player.NumRerollAvailable + ")";
+		rerollButton.AddChild(reroll_label);
+
+		if (player.NumRerollAvailable <= 0)
+        {
+			rerollButton.AddClass("disabled");
+			reroll_label.AddClass("disabled_text");
 		}
 	}
 }

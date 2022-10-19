@@ -358,6 +358,7 @@ public partial class MyGame : Sandbox.Game
 	{
 		Current.Restart();
 	}
+
 	public void Restart()
 	{
 		for (int i = _things.Count - 1; i >= 0; i--)
