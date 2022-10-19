@@ -90,8 +90,8 @@ public partial class Spitter : Enemy
         if (closestPlayer == null)
             return;
 
-        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 2f;
-        var dir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-20f, 20f));
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 1.5f;
+        var dir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-10f, 10f));
         var bullet = new EnemyBullet
         {
             Position = Position,

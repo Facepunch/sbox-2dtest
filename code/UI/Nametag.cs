@@ -14,9 +14,8 @@ public partial class Nametag : Panel
     public Label NameLabel { get; set; }
 
     public Panel HpBar { get; set; }
-
     public Panel HpBarOverlay { get; set; }
-
+    public Panel HpBarDelta { get; set; }
     public Panel ReloadBar { get; set; }
     public Panel ReloadBarTickRight { get; set; }
 
@@ -50,12 +49,14 @@ public partial class Nametag : Panel
         var BAR_WIDTH = 100;
         HpBar.Style.Width = BAR_WIDTH;
         HpBarOverlay.Style.Width = BAR_WIDTH;
+        HpBarDelta.Style.Width = BAR_WIDTH;
 
         var player_health_ratio = Math.Clamp(Player.Health / Player.MaxHp, 0f, 1f);
 
         var tr = new PanelTransform();
         tr.AddScale(new Vector3(player_health_ratio, 1f, 1f));
         HpBarOverlay.Style.Transform = tr;
+        HpBarDelta.Style.Transform = tr;
 
         //var colors = new List<Color>() { Color.Green, Color.Yellow, Color.Red };
         //var t = 1f - player_health_ratio;
@@ -65,8 +66,7 @@ public partial class Nametag : Panel
         //float newT = scaledTime - MathF.Round(scaledTime);
         //var color = Color.Lerp(oldColor, newColor, newT);
 
-        var color = Lerp3(Color.Green, Color.Yellow, Color.Red, 1f - player_health_ratio);
-
+        var color = Lerp3(new Color(0f, 0.75f, 0f), new Color(0.75f, 0.75f, 0f), new Color(1f, 0f, 0f), 1f - player_health_ratio);
         HpBarOverlay.Style.BackgroundColor = color;
 
         if(ReloadBar != null)

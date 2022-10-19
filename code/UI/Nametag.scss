@@ -22,6 +22,10 @@ Nametag {
         align-self: center;
     }
 
+    &.invisible {
+        display: none;
+    }
+
     .hpbar {
         width: 100px;
         height: 8px;
@@ -47,8 +51,29 @@ Nametag {
         align-self: center;
         transform-origin: left;
         //transform: scaleX(0.5);
-        transition: transform 0.4s ease-out, opacity 0.25s linear, background-color 0.25s linear;
-        opacity: 0.8;
+        transition: transform 0.1s ease-out, opacity 0.25s linear, background-color 0.25s linear;
+        opacity: 1;
+        //z-index: 2;
+
+        &.invisible {
+            display: none;
+        }
+    }
+
+    .hpbardelta {
+        width: 0px;
+        height: 8px;
+        //border: 2px solid blue;
+        background-color: white;
+        //text-anchor: initial;
+        position: absolute;
+        bottom: -12px;
+        align-self: center;
+        transform-origin: left;
+        //transform: scaleX(0.5);
+        transition: transform 0.4s ease-out;
+        opacity: 1;
+        //z-index: 1;
 
         &.invisible {
             display: none;
