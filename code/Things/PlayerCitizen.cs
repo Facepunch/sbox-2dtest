@@ -888,7 +888,8 @@ public partial class PlayerCitizen : Thing
 	[ClientRpc]
 	public void LevelUpClient()
     {
-		Game.Hud.SpawnChoicePanel();
+		if(this == Local.Pawn)
+			Game.Hud.SpawnChoicePanel();
 	}
 
 	public int GetExperienceReqForLevel(int level)
