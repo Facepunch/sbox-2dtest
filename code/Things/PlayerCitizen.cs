@@ -351,10 +351,13 @@ public partial class PlayerCitizen : Thing
 
 			//DebugOverlay.Text(MouseOffset.ToString(), Position + new Vector2(0.2f, 0f));
 
-			HandleDashing(dt);
-			HandleStatuses(dt);
-			HandleShooting(dt);
-			HandleFlashing(dt);
+			if(!IsDead)
+            {
+				HandleDashing(dt);
+				HandleStatuses(dt);
+				HandleShooting(dt);
+				HandleFlashing(dt);
+			}
 		}
 	}
 
@@ -650,8 +653,9 @@ public partial class PlayerCitizen : Thing
 		IsDead = true;
 		Game.PlayerDied(this);
 		//EnableDrawing = false;
-		//ColorTint = new Color(0f, 0f, 0f, 0f);
-		DieClient();
+		ColorTint = new Color(1f, 1f, 1f, 0.05f);
+		ShadowOpacity = 0.1f;
+        DieClient();
 	}
 
 	[ClientRpc]
@@ -664,13 +668,20 @@ public partial class PlayerCitizen : Thing
 	{
 		base.Colliding(other, percent, dt);
 
-		//if (IsDashing)
-		//	return;
+        if (IsDead)
+            return;
 
-		if ((other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime < 0.5f)) || other is PlayerCitizen)
+		if (other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime < 0.5f))
 		{
 			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * (1f + other.TempWeight) * dt;
 		}
+		else if(other is PlayerCitizen player)
+        {
+			if(!player.IsDead)
+            {
+				Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * (1f + other.TempWeight) * dt;
+			}
+        }
 	}
 
 	[ConCmd.Server("add_status")]

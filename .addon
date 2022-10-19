@@ -1,13 +1,14 @@
 {
   "Title": "Sausage Survivors",
   "Type": "game",
-  "Org": "facepunch",
+  "Org": "ryleigh",
   "Ident": "sausagesurvivors",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
   "ResourcePaths": [
-    "/textures/sprites/*"
+    "/textures/sprites/*",
+    "/textures/icons/*"
   ],
   "HasCode": true,
   "CodePath": "/code/",

@@ -126,8 +126,11 @@ public partial class Coin : Thing
 		} 
 		else if (other is PlayerCitizen player)
 		{
-			player.AddExperience(Value);
-			Remove();
+			if(!player.IsDead)
+            {
+				player.AddExperience(Value);
+				Remove();
+			}
 		}
 		else if (other is Coin coin)
 		{

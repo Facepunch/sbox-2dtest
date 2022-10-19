@@ -11,10 +11,9 @@ Nametag {
     //text-anchor: middle;
     //align-items: center;
     justify-content: center;
-
-    &.invisible {
-        display: none;
-    }
+    //&.invisible {
+    //    display: none;
+    //}
 
     .name {
         opacity: 1;
@@ -31,6 +30,10 @@ Nametag {
         align-self: center;
         position: absolute;
         bottom: -12px;
+
+        &.invisible {
+            display: none;
+        }
     }
 
     .hpbaroverlay {
@@ -46,6 +49,10 @@ Nametag {
         //transform: scaleX(0.5);
         transition: transform 0.4s ease-out, opacity 0.25s linear, background-color 0.25s linear;
         opacity: 0.8;
+
+        &.invisible {
+            display: none;
+        }
     }
 
     .reload_bar {

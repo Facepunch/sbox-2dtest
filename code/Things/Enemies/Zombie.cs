@@ -101,13 +101,16 @@ public partial class Zombie : Enemy
         }
         else if (other is PlayerCitizen player)
         {
-            Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * (1f + player.TempWeight) * dt;
-
-            if (IsAttacking && _damageTime >= DAMAGE_TIME)
+            if(!player.IsDead)
             {
-                player.Damage(DamageToPlayer);
-                //player.Velocity *= (1f - 13.5f * dt);
-                _damageTime = 0f;
+                Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * (1f + player.TempWeight) * dt;
+
+                if (IsAttacking && _damageTime >= DAMAGE_TIME)
+                {
+                    player.Damage(DamageToPlayer);
+                    //player.Velocity *= (1f - 13.5f * dt);
+                    _damageTime = 0f;
+                }
             }
         }
     }

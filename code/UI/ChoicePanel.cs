@@ -19,7 +19,7 @@ public class ChoicePanel : Panel
 
 	public void OnChoiceMade(TypeDescription type)
 	{
-		Log.Info("OnChoiceMade: " + type.TargetType.ToString());
+		//Log.Info("OnChoiceMade: " + type.TargetType.ToString());
 
         //ConsoleSystem.Run("add_status", type);
         PlayerCitizen.AddStatusCmd(StatusManager.TypeToIdentity(type));

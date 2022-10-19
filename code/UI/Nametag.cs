@@ -103,8 +103,14 @@ public partial class Nametag : Panel
     public void SetVisible(bool visible)
     {
         if (visible)
-            RemoveClass("invisible");
+        {
+            HpBar.RemoveClass("invisible");
+            HpBarOverlay.RemoveClass("invisible");
+        }
         else
-            AddClass("invisible");
+        {
+            HpBar.AddClass("invisible");
+            HpBarOverlay.AddClass("invisible");
+        }
     }
 }
