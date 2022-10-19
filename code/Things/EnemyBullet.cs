@@ -7,22 +7,14 @@ using static Test2D.MyGame;
 using Sandbox;
 
 namespace Test2D;
-public partial class Bullet : Thing
+public partial class EnemyBullet : Thing
 {
 	public TimeSince SpawnTime { get; private set; }
 
-	public PlayerCitizen Shooter { get; set; }
+	public Enemy Shooter { get; set; }
 
 	public float Damage { get; set; }
-	public float Force { get; set; }
-	public float AddTempWeight { get; set; }
 	public float Lifetime { get; set; }
-	public int NumPiercing { get; set; }
-	public int NumHits { get; private set; }
-	public float CriticalChance { get; set; }
-	public float CriticalMultiplier { get; set; }
-
-	public List<Thing> _hitThings = new List<Thing>();
 
 	public override void Spawn()
 	{
@@ -32,20 +24,17 @@ public partial class Bullet : Thing
         {
 			SpriteTexture = "textures/sprites/bullet.png";
 
-			Scale = new Vector2(0.1f, 0.1f);
+			Scale = new Vector2(0.3f, 0.3f);
 			SpawnTime = 0f;
-			Damage = 1f;
-			AddTempWeight = 2f;
-			Force = 0.75f;
+			Damage = 10f;
 			Radius = 0.1f;
-			Pivot = new Vector2(0.5f, -1.2f);
-			Lifetime = 1f;
-			NumPiercing = 0;
-			NumHits = 0;
+			Pivot = new Vector2(0.5f, -0.9f);
 			ShadowOpacity = 0.8f;
-			ShadowScale = 0.3f;
+			ShadowScale = 0.6f;
+			ColorTint = Color.Red;
+			Lifetime = 5f;
 
-			CollideWith.Add(typeof(Enemy));
+			CollideWith.Add(typeof(PlayerCitizen));
 		}
 
 		Filter = SpriteFilter.Pixelated;
@@ -98,33 +87,14 @@ public partial class Bullet : Thing
 	{
 		base.Colliding(other, percent, dt);
 
-		if (typeof(Enemy).IsAssignableFrom(other.GetType()))
+		if (typeof(PlayerCitizen).IsAssignableFrom(other.GetType()))
 		{
-			var enemy = (Enemy)other;
+			var player = (PlayerCitizen)other;
 
-			if(!enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime > 1.5f))
+			if(!player.IsDead)
             {
-				if (_hitThings.Contains(enemy))
-					return;
-
-				bool isCrit = Rand.Float(0f, 1f) < CriticalChance;
-				float damage = Damage * (isCrit ? CriticalMultiplier : 1f);
-				enemy.Damage(damage, Shooter, isCrit);
-
-				enemy.Velocity += Velocity.Normal * Force;
-				enemy.TempWeight += AddTempWeight;
-
-				NumHits++;
-
-				if (NumHits > NumPiercing)
-				{
-					Remove();
-					return;
-				}
-				else
-				{
-					_hitThings.Add(enemy);
-				}
+				player.Damage(Damage);
+				Remove();
 			}
 		}
 	}

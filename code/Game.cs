@@ -157,7 +157,7 @@ public partial class MyGame : Sandbox.Game
 
 		Enemy enemy = null;
 
-		if(Rand.Float(0f, 1f) < 0.2f)
+		if(Rand.Float(0f, 1f) < 0.8f)
         {
 			enemy = new Spitter
 			{

@@ -44,6 +44,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float BulletDamage { get; protected set; }
 	[Net] public float BulletSize { get; protected set; }
 	[Net] public float BulletForce { get; protected set; }
+	[Net] public float Recoil { get; private set; }
 	[Net] public float MoveSpeed { get; protected set; }
 	public const float BASE_MOVE_SPEED = 14f;
 	[Net] public float NumBullets { get; protected set; }
@@ -143,6 +144,7 @@ public partial class PlayerCitizen : Thing
 		BulletDamage = 5f;
 		BulletSize = 0.175f;
 		BulletForce = 0.55f;
+		Recoil = 0f;
 		MoveSpeed = 1f;
 		NumBullets = 1f;
 		BulletSpread = 35f;
@@ -165,7 +167,7 @@ public partial class PlayerCitizen : Thing
 		Radius = 0.175f;
 		GridPos = Game.GetGridSquareForPos(Position);
 		AimDir = Vector2.Up;
-		NumRerollAvailable = 3;
+		NumRerollAvailable = 0;
 
 		CoinAttractRange = 1.7f;
 		CoinAttractStrength = 3.1f;
@@ -522,8 +524,6 @@ public partial class PlayerCitizen : Thing
 
 	public void Shoot()
 	{
-		//return;
-
 		float start_angle = MathF.Sin(-_shotNum * 2f) * BulletInaccuracy;
 
 		int num_bullets_int = (int)NumBullets;
@@ -552,6 +552,8 @@ public partial class PlayerCitizen : Thing
 
 			Game.AddThing(bullet);
 		}
+
+		Velocity -= AimDir * Recoil;
 
 		_shotNum++;
 	}
@@ -880,6 +882,7 @@ public partial class PlayerCitizen : Thing
 
 		Level++;
 		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
+		NumRerollAvailable++;
 
 		//Log.Info("Level Up - now level: " + Level + " IsServer: " + Host.IsServer);
 

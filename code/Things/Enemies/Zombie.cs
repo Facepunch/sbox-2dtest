@@ -109,7 +109,7 @@ public partial class Zombie : Enemy
                 if (IsAttacking && _damageTime >= DAMAGE_TIME)
                 {
                     player.Damage(DamageToPlayer);
-                    //player.Velocity *= (1f - 13.5f * dt);
+                    player.Velocity += (Position - player.Position).Normal * 0.5f * dt;
                     _damageTime = 0f;
                 }
             }
