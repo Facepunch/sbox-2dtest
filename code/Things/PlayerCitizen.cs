@@ -671,9 +671,10 @@ public partial class PlayerCitizen : Thing
         if (IsDead)
             return;
 
-		if (other is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime < 0.5f))
+		if (other is Enemy enemy && !enemy.IsDying)
 		{
-			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * (1f + other.TempWeight) * dt;
+			var spawnFactor = Utils.Map(enemy.ElapsedTime, 0f, enemy.SpawnTime, 0f, 1f, EasingType.QuadIn);
+			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * (1f + other.TempWeight) * spawnFactor * dt;
 		}
 		else if(other is PlayerCitizen player)
         {

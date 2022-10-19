@@ -34,7 +34,7 @@ public abstract partial class Enemy : Thing
 
 	public static float SCALE_FACTOR = 0.8f;
 
-	private float SPAWN_TIME = 1.75f;
+	public float SpawnTime { get; protected set; }
 	private float SHADOW_FULL_OPACITY = 0.8f;
 
 	public string AnimIdlePath { get; protected set; }
@@ -48,6 +48,7 @@ public abstract partial class Enemy : Thing
 			MoveTimeOffset = Rand.Float(0f, 4f);
 			IsSpawning = true;
 			ElapsedTime = 0f;
+			SpawnTime = 1.75f;
 		}
 
         Filter = SpriteFilter.Pixelated;
@@ -114,7 +115,7 @@ public abstract partial class Enemy : Thing
         {
 			Depth = -Position.y * 10f;
 
-			if (ElapsedTime > SPAWN_TIME)
+			if (ElapsedTime > SpawnTime)
             {
 				IsSpawning = false;
 				AnimationPath = AnimIdlePath;
@@ -123,7 +124,7 @@ public abstract partial class Enemy : Thing
 			} 
 			else
             {
-				ShadowOpacity = Utils.Map(ElapsedTime, 0f, SPAWN_TIME, 0f, SHADOW_FULL_OPACITY);
+				ShadowOpacity = Utils.Map(ElapsedTime, 0f, SpawnTime, 0f, SHADOW_FULL_OPACITY);
 				return;
             }
 		}
