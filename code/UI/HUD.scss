@@ -314,6 +314,11 @@
                 background-color: #000033ff;
             }
 
+            .disabled {
+                pointer-events: none;
+                opacity: 0.5;
+            }
+
             .death_button_label {
                 color: #aaaaaa;
                 font-size: 24px;

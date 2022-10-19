@@ -52,25 +52,25 @@ public class StatusManager
             var attrib = type.GetAttribute<StatusAttribute>();
             if (attrib == null)
             {
-                Log.Info("not valid - no status attribute!");
+                //Log.Info("not valid - no status attribute!");
                 continue;
             }
                 
             if (player.Level < attrib.ReqLevel)
             {
-                Log.Info("not valid - ReqLevel is " + attrib.ReqLevel + " and player level is " + player.Level);
+                //Log.Info("not valid - ReqLevel is " + attrib.ReqLevel + " and player level is " + player.Level);
                 continue;
             }
 
             if (player.GetStatusLevel(type) >= attrib.MaxLevel)
             {
-                Log.Info("not valid - MaxLevel is " + attrib.MaxLevel + " and player status level is " + player.GetStatusLevel(type));
+                //Log.Info("not valid - MaxLevel is " + attrib.MaxLevel + " and player status level is " + player.GetStatusLevel(type));
                 continue;
             }
 
             if (attrib.ReqStatuses.Any(x => !player.HasStatus(TypeLibrary.GetDescription(x))))
             {
-                Log.Info("not valid - required statuses not all owned");
+                //Log.Info("not valid - required statuses not all owned");
                 continue;
             }
 

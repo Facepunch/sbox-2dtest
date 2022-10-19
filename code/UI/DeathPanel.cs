@@ -17,8 +17,11 @@ public class DeathPanel : Panel
 
 	public void OnDeathButtonClicked()
 	{
-		MyGame.RestartCmd();
-		Delete();
+		if (Local.Client.IsListenServerHost)
+        {
+			MyGame.RestartCmd();
+			Delete();
+		}
 	}
 }
 
@@ -43,5 +46,11 @@ public class DeathModal : Panel
 		button_label.AddClass("death_button_label");
 		button_label.Text = "Retry";
 		button.AddChild(button_label);
+
+		if(!Local.Client.IsListenServerHost)
+        {
+			button.AddClass("disabled");
+			button_label.Text += " (Host only)";
+		}
 	}
 }
