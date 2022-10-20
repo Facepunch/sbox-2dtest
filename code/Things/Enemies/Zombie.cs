@@ -23,8 +23,6 @@ public partial class Zombie : Enemy
         if (Host.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie.png", 5, 6);
-            AnimationPath = "textures/sprites/zombie_spawn.frames";
-            AnimIdlePath = "textures/sprites/zombie_walk.frames";
             AnimationSpeed = 2f;
             Pivot = new Vector2(0.5f, 0.05f);
 
@@ -33,7 +31,8 @@ public partial class Zombie : Enemy
             MaxHealth = Health;
             DamageToPlayer = 6f;
 
-            Scale = new Vector2(1f, 1f) * SCALE_FACTOR;
+            ScaleFactor = 0.8f;
+            Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
@@ -44,6 +43,8 @@ public partial class Zombie : Enemy
             HasTarget = false;
 
             _wanderPos = new Vector2(Rand.Float(Game.BOUNDS_MIN.x + 1f, Game.BOUNDS_MAX.x - 1f), Rand.Float(Game.BOUNDS_MIN.y + 1f, Game.BOUNDS_MAX.y - 1f));
+
+            AnimationPath = AnimSpawnPath;
         }
     }
 
@@ -109,7 +110,7 @@ public partial class Zombie : Enemy
                 if (IsAttacking && _damageTime >= DAMAGE_TIME)
                 {
                     player.Damage(DamageToPlayer);
-                    player.Velocity += (Position - player.Position).Normal * 0.5f * dt;
+                    //player.Velocity += (Position - player.Position).Normal * 1.5f;
                     _damageTime = 0f;
                 }
             }

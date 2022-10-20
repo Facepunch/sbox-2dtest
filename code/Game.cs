@@ -28,8 +28,8 @@ public partial class MyGame : Sandbox.Game
 	public readonly List<PlayerCitizen> PlayerList = new();
 
 	public int EnemyCount { get; private set; }
-	//public const float MAX_ENEMY_COUNT = 350;
-	public const float MAX_ENEMY_COUNT = 10;
+	public const float MAX_ENEMY_COUNT = 350;
+	//public const float MAX_ENEMY_COUNT = 10;
 
     public int CoinCount { get; private set; }
 	public const float MAX_COIN_COUNT = 100;
@@ -69,26 +69,10 @@ public partial class MyGame : Sandbox.Game
 				}
 			}
 
-			//for (var i = 0; i < 750; ++i)
 			for (var i = 0; i < 5; ++i)
 			{
                 SpawnEnemy();
             }
-
-
-   //         _ = new BackgroundTile()
-			//{
-			//	Position = Vector2.Zero
-			//};
-
-			//var animTest = new Sprite
-			//         {
-			//             SpriteTexture = SpriteTexture.Atlas("textures/sprites/tile_test.png", 4, 4),
-			//             AnimationPath = "textures/sprites/tile_test.frames",
-
-			//             Filter = SpriteFilter.Pixelated,
-			//             Scale = 4f
-			//         };
 
 			ElapsedTime = 0f;
 			StatusManager = new StatusManager();
@@ -157,12 +141,17 @@ public partial class MyGame : Sandbox.Game
 
 		Enemy enemy = null;
 
-		if(Rand.Float(0f, 1f) < 0.8f)
+		if(Rand.Float(0f, 1f) < 0.1f)
         {
-			enemy = new Spitter
+			enemy = new Charger
 			{
 				Position = pos,
 			};
+
+			//enemy = new Spitter
+			//{
+			//	Position = pos,
+			//};
 		}
 		else
         {
@@ -174,7 +163,7 @@ public partial class MyGame : Sandbox.Game
 
 		var closestPlayer = GetClosestPlayer(pos);
 		if (closestPlayer?.Position.x > pos.x)
-			enemy.Scale = new Vector2(-1f, 1f) * Enemy.SCALE_FACTOR;
+			enemy.Scale = new Vector2(-1f, 1f) * enemy.ScaleFactor;
 
 		AddThing(enemy);
 		EnemyCount++;
@@ -436,16 +425,18 @@ public partial class MyGame : Sandbox.Game
 		Hud.GameOver();
 	}
 
-	public void SpawnBloodSplatter(Vector2 pos)
+	public BloodSplatter SpawnBloodSplatter(Vector2 pos)
     {
-		if (!Host.IsClient)
-			return;
+		Host.AssertClient();
 
-		_bloodSplatters.Add(new BloodSplatter()
+		var bloodSplatter = new BloodSplatter()
 		{
 			Position = pos,
 			Lifetime = Utils.Map(_bloodSplatters.Count, 0, 100, 10f, 1f) * Rand.Float(0.8f, 1.2f),
-		});
+		};
+
+		_bloodSplatters.Add(bloodSplatter);
+		return bloodSplatter;
 	}
 
 	public void RemoveBloodSplatter(BloodSplatter blood)

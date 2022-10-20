@@ -16,6 +16,7 @@ public partial class EnemyBullet : Thing
 	public float Damage { get; set; }
 	public float Lifetime { get; set; }
 	public Vector2 Direction { get; set; }
+	public float Speed { get; set; }
 
 	public override void Spawn()
 	{
@@ -33,7 +34,8 @@ public partial class EnemyBullet : Thing
 			ShadowOpacity = 0.8f;
 			ShadowScale = 0.6f;
 			ColorTint = Color.Red;
-			Lifetime = 5f;
+			Lifetime = 6f;
+			Speed = 1.8f;
 
 			CollideWith.Add(typeof(PlayerCitizen));
 		}
@@ -55,7 +57,7 @@ public partial class EnemyBullet : Thing
 
 		base.Update(dt);
 
-		var speed = 2f * Utils.Map(SpawnTime, 0f, 0.5f, 0f, 1f, EasingType.QuadInOut);
+		var speed = Speed * Utils.Map(SpawnTime, 0f, 0.5f, 0f, 1f, EasingType.QuadInOut);
 
 		Position += Direction * speed * dt;
 		Depth = -Position.y * 10f;
@@ -97,6 +99,7 @@ public partial class EnemyBullet : Thing
 			if(!player.IsDead)
             {
 				player.Damage(Damage);
+				player.Velocity += Direction * 2f;
 				Remove();
 			}
 		}

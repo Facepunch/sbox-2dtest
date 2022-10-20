@@ -644,11 +644,21 @@ public partial class PlayerCitizen : Thing
 		DamageNumbers.Create(Position + new Vector2(Rand.Float(0.5f, 4f), Rand.Float(8.5f, 10.5f)) * 0.1f, MathX.CeilToInt(damage), DamageType.Player);
 		Flash(0.125f);
 
-		if(Health <= 0f)
+		DamageClient(damage);
+
+		if (Health <= 0f)
         {
 			Die();
 		}
     }
+
+	[ClientRpc]
+	public void DamageClient(float damage)
+	{
+		var blood = Game.SpawnBloodSplatter(Position);
+		blood.Scale *= Utils.Map(damage, 1f, 20f, 0.3f, 0.5f, EasingType.QuadIn) * Rand.Float(0.8f, 1.2f);
+		blood.Lifetime *= 0.3f;
+	}
 
 	public void Die()
     {

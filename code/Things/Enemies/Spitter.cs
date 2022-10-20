@@ -13,11 +13,12 @@ public partial class Spitter : Enemy
     private TimeSince _damageTime;
     private const float DAMAGE_TIME = 0.75f;
 
-    private float _shootTimer;
+    private float _shootDelayTimer;
     private const float SHOOT_DELAY_MIN = 2f;
     private const float SHOOT_DELAY_MAX = 3f;
 
-    private TimeSince _shotTime;
+    public bool IsShooting { get; private set; }
+    private float _shotTimer;
     private const float SHOOT_TIME = 1f;
 
     public override void Spawn()
@@ -27,25 +28,27 @@ public partial class Spitter : Enemy
         if (Host.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/spitter.png", 5, 6);
-            AnimationPath = "textures/sprites/zombie_spawn.frames";
-            AnimIdlePath = "textures/sprites/zombie_walk.frames";
+            //AnimationPath = "textures/sprites/zombie_spawn.frames";
+            //AnimIdlePath = "textures/sprites/zombie_walk.frames";
             AnimationSpeed = 2f;
             Pivot = new Vector2(0.5f, 0.05f);
 
-            Radius = 0.25f;
-            Health = 30f;
+            Radius = 0.225f;
+            Health = 26f;
             MaxHealth = Health;
             DamageToPlayer = 9f;
 
-            Scale = new Vector2(1f, 1f) * SCALE_FACTOR;
+            ScaleFactor = 0.75f;
+            Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 0.95f;
+            ShadowScale = 0.925f;
             _damageTime = DAMAGE_TIME;
-            _shootTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
-            _shotTime = SHOOT_TIME;
+            _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
+
+            AnimationPath = AnimSpawnPath;
         }
     }
 
@@ -65,23 +68,38 @@ public partial class Spitter : Enemy
         if (closestPlayer == null)
             return;
 
-        var is_shooting = _shotTime < SHOOT_TIME;
-
-        if(!is_shooting)
+        if(IsShooting)
+        {
+            _shotTimer -= dt;
+            if(_shotTimer < 0f)
+            {
+                Shoot();
+                return;
+            }
+        } 
+        else
+        {
             Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
+        }
 
-        float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
+        float speed = 0.9f * (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
         Position += Velocity * dt * speed;
 
         var player_dist_sqr = (closestPlayer.Position - Position).LengthSquared;
-        if (!is_shooting && !IsAttacking && player_dist_sqr < 5f * 5f)
+        if (!IsShooting && !IsAttacking && player_dist_sqr < 5f * 5f)
         {
-            _shootTimer -= dt;
-            if(_shootTimer < 0f)
+            _shootDelayTimer -= dt;
+            if(_shootDelayTimer < 0f)
             {
-                Shoot();
+                PrepareToShoot();
             }
         }
+    }
+
+    public void PrepareToShoot()
+    {
+        _shotTimer = SHOOT_TIME;
+        IsShooting = true;
     }
 
     public void Shoot()
@@ -103,8 +121,8 @@ public partial class Spitter : Enemy
         Game.AddThing(bullet);
 
         Velocity *= 0.25f;
-        _shotTime = 0f;
-        _shootTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
+        _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
+        IsShooting = false;
     }
 
     public override void Colliding(Thing other, float percent, float dt)
