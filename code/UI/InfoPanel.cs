@@ -65,6 +65,7 @@ public class InfoPanel : Panel
 		stats += "CRIT CHANCE: " + player.CritChance + "\n";
 		stats += "CRIT MULTIPLIER: " + player.CritMultiplier + "\n";
 		stats += "NUM CHOICES: " + player.NumUpgradeChoices + "\n";
+		stats += "DASH STRENGTH: " + player.DashStrength + "\n";
 
 		StatsLabel.Text = stats;
 	}

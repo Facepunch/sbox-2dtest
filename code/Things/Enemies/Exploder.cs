@@ -90,8 +90,13 @@ public partial class Exploder : Enemy
 
                 if (IsAttacking && _damageTime >= DAMAGE_TIME)
                 {
-                    player.Damage(DamageToPlayer);
-                    //player.Velocity *= (1f - 13.5f * dt);
+                    float damageDealt = player.Damage(DamageToPlayer);
+
+                    if (damageDealt > 0f && player.ThornsPercent > 0f)
+                    {
+                        Damage(damageDealt * player.ThornsPercent, player, false);
+                    }
+
                     _damageTime = 0f;
                 }
             }

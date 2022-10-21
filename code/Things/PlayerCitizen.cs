@@ -57,6 +57,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float CritMultiplier { get; set; }
 	[Net] public float NumUpgradeChoices { get; protected set; }
 	[Net] public float HealthRegen { get; protected set; }
+	[Net] public float DamageReductionPercent { get; protected set; }
 
 	private int _shotNum;
 
@@ -82,6 +83,8 @@ public partial class PlayerCitizen : Thing
 	[Net] public float DashInvulnTime { get; private set; }
 	[Net] public float DashProgress { get; protected set; }
 	[Net] public float DashRechargeProgress { get; protected set; }
+	[Net] public float DashStrength { get; protected set; }
+	[Net] public float ThornsPercent { get; protected set; }
 
 	private float _flashTimer;
 	private bool _isFlashing;
@@ -154,11 +157,13 @@ public partial class PlayerCitizen : Thing
 		Luck = 1f;
 		CritChance = 0.05f;
 		CritMultiplier = 1.5f;
+		ThornsPercent = 0f;
 
 		NumDashes = 1f;
 		NumDashesAvailable = (int)NumDashes;
 		DashCooldown = 3f;
 		DashInvulnTime = 0.25f;
+		DashStrength = 7f;
 		BulletNumPiercing = 0f;
 
 		Health = 100f;
@@ -174,6 +179,7 @@ public partial class PlayerCitizen : Thing
 
 		NumUpgradeChoices = 3f;
 		HealthRegen = 0f;
+		DamageReductionPercent = 0f;
 
 		Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -417,7 +423,7 @@ public partial class PlayerCitizen : Thing
 			return;
 
 		Vector2 dashDir = Velocity.LengthSquared > 0f ? Velocity.Normal : AimDir;
-		_dashVelocity = dashDir * 7f;
+		_dashVelocity = dashDir * DashStrength;
 		TempWeight = 15f;
 
 		if (NumDashesAvailable == (int)NumDashes)
@@ -547,7 +553,7 @@ public partial class PlayerCitizen : Thing
 			var dir = Utils.RotateVector(AimDir, start_angle + currAngleOffset + increment * i);
 			var bullet = new Bullet
 			{
-				Position = Position,
+				Position = Position + dir * 0.5f,
 				Depth = -1f,
 				Velocity = dir * BulletSpeed,
 				Shooter = this,
@@ -646,14 +652,20 @@ public partial class PlayerCitizen : Thing
         }
     }
 
-	public void Damage(float damage)
+	// returns actual damage amount taken
+	public float Damage(float damage)
     {
 		if (IsDashing)
+        {
 			// show DODGED! floater
-			return;
+			return 0f;
+		}
+
+		if(DamageReductionPercent > 0f)
+			damage *= (1f - MathX.Clamp(DamageReductionPercent, 0f, 1f));
 
 		Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Rand.Float(0.5f, 4f), Rand.Float(8.5f, 10.5f)) * 0.1f, MathX.CeilToInt(damage), DamageType.Player);
+		DamageNumbers.Create(Position + new Vector2(Rand.Float(0.5f, 4f), Rand.Float(8.5f, 10.5f)) * 0.1f, MathF.Max((int)MathF.Round(damage), 1), DamageType.Player);
 		Flash(0.125f);
 
 		DamageClient(damage);
@@ -662,6 +674,8 @@ public partial class PlayerCitizen : Thing
         {
 			Die();
 		}
+
+		return damage;
     }
 
 	[ClientRpc]

@@ -271,7 +271,7 @@ public abstract partial class Enemy : Thing
 
 	}
 
-	public virtual void Damage(float damage, PlayerCitizen shooter, bool isCrit)
+	public virtual void Damage(float damage, PlayerCitizen player, bool isCrit)
 	{
 		if (IsDying)
 			return;
@@ -282,11 +282,11 @@ public abstract partial class Enemy : Thing
 
 		if (Health <= 0f)
 		{
-			StartDying(shooter);
+			StartDying(player);
 		}
 	}
 
-	public virtual void StartDying(PlayerCitizen shooter)
+	public virtual void StartDying(PlayerCitizen player)
 	{
 		IsDying = true;
 		DeathTimeElapsed = 0f;
@@ -298,7 +298,7 @@ public abstract partial class Enemy : Thing
 
 		_deathScale = Scale;
 
-		var coin_chance = shooter != null ? Utils.Map(shooter.Luck, 0f, 10f, 0.5f, 1f) : 0.5f;
+		var coin_chance = player != null ? Utils.Map(player.Luck, 0f, 10f, 0.5f, 1f) : 0.5f;
 		if (Rand.Float(0f, 1f) < coin_chance)
 			Game.SpawnCoin(Position);
 

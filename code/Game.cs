@@ -102,6 +102,9 @@ public partial class MyGame : Sandbox.Game
 	[Event.Tick.Server]
 	public void ServerTick()
     {
+		if (IsGameOver)
+			return;
+
 		var dt = Time.Delta;
 
 		for(int i = _things.Count - 1; i >= 0; i--)
@@ -111,7 +114,7 @@ public partial class MyGame : Sandbox.Game
 				thing.Update(dt);
 		}
 
-        //      DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
+        //DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
         //DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
         //DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
         //DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
@@ -137,8 +140,7 @@ public partial class MyGame : Sandbox.Game
 
 		Enemy enemy = null;
 
-		float exploderChance = ElapsedTime < 60f ? 0f : Utils.Map(ElapsedTime, 60f, 600f, 0.05f, 0.1f);
-		exploderChance = 0.1f;
+		float exploderChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 180f, 0.05f, 0.1f);
 		if (enemy == null && Rand.Float(0f, 1f) < exploderChance)
 			enemy = new Exploder();
 
