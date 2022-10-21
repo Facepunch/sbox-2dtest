@@ -54,6 +54,7 @@ public partial class MyGame : Sandbox.Game
 
 	public List<Sprite> _bloodSplatters;
 	public List<Sprite> _clouds;
+	public List<Sprite> _explosions;
 
 	public MyGame()
 	{
@@ -84,8 +85,10 @@ public partial class MyGame : Sandbox.Game
 			//_ = new MainHud();
             Hud = new HUD();
 			BackgroundManager = new BackgroundManager();
+
 			_bloodSplatters = new List<Sprite>();
 			_clouds = new List<Sprite>();
+			_explosions = new List<Sprite>();
 		}
 	}
 
@@ -108,21 +111,12 @@ public partial class MyGame : Sandbox.Game
 				thing.Update(dt);
 		}
 
-			//for (float x = BOUNDS_MIN.x; x < BOUNDS_MAX.x; x += GRID_SIZE)
-			//{
-			//    for (float y = BOUNDS_MIN.y; y < BOUNDS_MAX.y; y += GRID_SIZE)
-			//    {
-			//        DebugOverlay.Box(new Vector2(x, y), new Vector2(x + GRID_SIZE, y + GRID_SIZE), Color.White, 0f, false);
-			//        DebugOverlay.Text((new Vector2(x, y)).ToString(), new Vector2(x + 0.1f, y + 0.1f));
-			//    }
-			//}
+        //      DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
+        //DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
+        //DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
+        //DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
 
-			//      DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
-			//DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
-			//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
-			//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
-
-			HandleEnemySpawn();
+        HandleEnemySpawn();
 	}
 
 	void HandleEnemySpawn()
@@ -143,8 +137,13 @@ public partial class MyGame : Sandbox.Game
 
 		Enemy enemy = null;
 
+		float exploderChance = ElapsedTime < 60f ? 0f : Utils.Map(ElapsedTime, 60f, 600f, 0.05f, 0.1f);
+		exploderChance = 0.1f;
+		if (enemy == null && Rand.Float(0f, 1f) < exploderChance)
+			enemy = new Exploder();
+
 		float spitterChance = ElapsedTime < 60f ? 0f : Utils.Map(ElapsedTime, 60f, 600f, 0.05f, 0.1f);
- 		if(Rand.Float(0f, 1f) < spitterChance)
+ 		if(enemy == null && Rand.Float(0f, 1f) < spitterChance)
 			enemy = new Spitter();
 
 		float chargerChance = ElapsedTime < 240f ? 0f : Utils.Map(ElapsedTime, 240f, 800f, 0.05f, 0.1f);
@@ -222,6 +221,14 @@ public partial class MyGame : Sandbox.Game
 				thing.Colliding(other, percent, dt);
 			}
 		}
+	}
+
+	public void AddThingsInGridSquare(GridSquare gridSquare, List<Thing> things)
+    {
+		if (!ThingGridPositions.ContainsKey(gridSquare))
+			return;
+
+		things.AddRange(ThingGridPositions[gridSquare]);
 	}
 
 	/// <summary>
@@ -392,13 +399,15 @@ public partial class MyGame : Sandbox.Game
 		
 		foreach(var blood in _bloodSplatters)
 			blood.Delete();
-
 		_bloodSplatters.Clear();
 
 		foreach (var cloud in _clouds)
 			cloud.Delete();
-
 		_clouds.Clear();
+
+		foreach (var explosion in _explosions)
+			explosion.Delete();
+		_explosions.Clear();
 	}
 
 	public void PlayerDied(PlayerCitizen player)
@@ -463,5 +472,25 @@ public partial class MyGame : Sandbox.Game
 	{
 		if (_clouds.Contains(cloud))
 			_clouds.Remove(cloud);
+	}
+
+	public ExplosionEffect SpawnExplosionEffect(Vector2 pos)
+	{
+		Host.AssertClient();
+
+		var explosion = new ExplosionEffect()
+		{
+			Position = pos,
+			Lifetime = 0.5f
+		};
+
+		_explosions.Add(explosion);
+		return explosion;
+	}
+
+	public void RemoveExplosionEffect(ExplosionEffect explosion)
+	{
+		if (_explosions.Contains(explosion))
+			_explosions.Remove(explosion);
 	}
 }

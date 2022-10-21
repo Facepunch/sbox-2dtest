@@ -364,6 +364,18 @@ public partial class PlayerCitizen : Thing
 				HandleFlashing(dt);
 			}
 		}
+
+		if (Input.Down(InputButton.Reload))
+		{
+			for (float x = Game.BOUNDS_MIN.x; x < Game.BOUNDS_MAX.x; x += Game.GRID_SIZE)
+			{
+				for (float y = Game.BOUNDS_MIN.y; y < Game.BOUNDS_MAX.y; y += Game.GRID_SIZE)
+				{
+					DebugOverlay.Box(new Vector2(x, y), new Vector2(x + Game.GRID_SIZE, y + Game.GRID_SIZE), Color.White, 0f, false);
+					DebugOverlay.Text((new Vector2(x, y)).ToString(), new Vector2(x + 0.1f, y + 0.1f));
+				}
+			}
+		}
 	}
 
 	void HandleDashing(float dt)

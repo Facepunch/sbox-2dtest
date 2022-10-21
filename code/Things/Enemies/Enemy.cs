@@ -22,6 +22,7 @@ public abstract partial class Enemy : Thing
 	[Net] public float ElapsedTime { get; private set; }
 	[Net] public bool IsDying { get; private set; }
 	[Net] public float DeathTimeElapsed { get; private set; }
+	public float DeathTime { get; protected set; }
 	private Vector2 _deathScale;
 
 	public bool IsAttacking { get; private set; }
@@ -59,11 +60,14 @@ public abstract partial class Enemy : Thing
 			SpawnTime = 1.75f;
 			Deceleration = 1.47f;
 			DecelerationAttacking = 1.33f;
+			DeathTime = 0.3f;
 
 			AnimSpawnPath = "textures/sprites/zombie_spawn.frames";
 			AnimIdlePath = "textures/sprites/zombie_walk.frames";
 			AnimAttackPath = "textures/sprites/zombie_attack.frames";
 			AnimDiePath = "textures/sprites/zombie_die.frames";
+
+			//ColorTint = new Color(Rand.Float(0.45f, 1f), Rand.Float(0.45f, 1f), Rand.Float(0.45f, 1f));
 		}
 
 		Filter = SpriteFilter.Pixelated;
@@ -211,16 +215,15 @@ public abstract partial class Enemy : Thing
 	void HandleDying(float dt)
 	{
 		DeathTimeElapsed += dt;
-		Scale = _deathScale * Utils.Map(DeathTimeElapsed, 0f, 0.3f, 1f, 1.2f);
+		Scale = _deathScale * Utils.Map(DeathTimeElapsed, 0f, DeathTime, 1f, 1.2f);
 
-		float DEATH_TIME = 0.3f;
-		if (DeathTimeElapsed > DEATH_TIME)
+		if (DeathTimeElapsed > DeathTime)
 		{
-			Remove();
+			FinishDying();
 		}
 		else
 		{
-			ShadowOpacity = Utils.Map(DeathTimeElapsed, 0f, DEATH_TIME, SHADOW_FULL_OPACITY, 0f, EasingType.QuadIn);
+			ShadowOpacity = Utils.Map(DeathTimeElapsed, 0f, DeathTime, SHADOW_FULL_OPACITY, 0f, EasingType.QuadIn);
 		}
 	}
 
@@ -303,9 +306,14 @@ public abstract partial class Enemy : Thing
 	}
 
 	[ClientRpc]
-	public void StartDyingClient()
+	public virtual void StartDyingClient()
 	{
 		Game.SpawnBloodSplatter(Position);
+	}
+
+	public virtual void FinishDying()
+	{
+		Remove();
 	}
 
 	public void Flash(float time)
