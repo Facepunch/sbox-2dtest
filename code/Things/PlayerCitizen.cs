@@ -164,7 +164,7 @@ public partial class PlayerCitizen : Thing
 		Health = 100f;
 		MaxHp = 100f;
 		IsDead = false;
-		Radius = 0.175f;
+		Radius = 0.1f;
 		GridPos = Game.GetGridSquareForPos(Position);
 		AimDir = Vector2.Up;
 		NumRerollAvailable = 0;
@@ -234,7 +234,7 @@ public partial class PlayerCitizen : Thing
 	[Event.Tick.Server]
 	public void ServerTick()
 	{
-		//Utils.DrawCircle(HitboxPos, 1.4f, 18, Time.Now, Color.Red);
+		//Utils.DrawCircle(Position, 1.7f, 18, Time.Now, Color.Red);
 		//Log.Info("local player: " + (Game.Client != null));
 		//DebugText("IsChoosingLevelUpReward: " + IsChoosingLevelUpReward);
 		//DebugText(NumDashesAvailable + " / " + NumDashes + "\n\n" + _dashTimer);

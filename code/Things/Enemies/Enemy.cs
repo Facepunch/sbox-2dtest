@@ -45,6 +45,8 @@ public abstract partial class Enemy : Thing
 	public float Deceleration { get; protected set; }
 	public float DecelerationAttacking { get; protected set; }
 
+	private TimeSince _spawnCloudTime;
+
 	public override void Spawn()
 	{
 		base.Spawn();
@@ -235,8 +237,21 @@ public abstract partial class Enemy : Thing
 		}
 		else
 		{
+			if(_spawnCloudTime > 0.3f)
+            {
+				SpawnCloudClient(Position + new Vector2(0f, 0.25f), new Vector2(Rand.Float(-1f, 1f), Rand.Float(-1f, 1f)).Normal * Rand.Float(0.2f, 0.6f));
+				_spawnCloudTime = Rand.Float(0f, 0.15f);
+            }
+
 			ShadowOpacity = Utils.Map(ElapsedTime, 0f, SpawnTime, 0f, SHADOW_FULL_OPACITY);
 		}
+	}
+
+	[ClientRpc]
+	public void SpawnCloudClient(Vector2 pos, Vector2 vel)
+	{
+		var cloud = Game.SpawnCloud(Position);
+		cloud.Velocity = vel;
 	}
 
 	void ClampToBounds()

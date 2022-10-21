@@ -53,6 +53,7 @@ public partial class MyGame : Sandbox.Game
 	public BackgroundManager BackgroundManager { get; private set; } // client only
 
 	public List<Sprite> _bloodSplatters;
+	public List<Sprite> _clouds;
 
 	public MyGame()
 	{
@@ -84,6 +85,7 @@ public partial class MyGame : Sandbox.Game
             Hud = new HUD();
 			BackgroundManager = new BackgroundManager();
 			_bloodSplatters = new List<Sprite>();
+			_clouds = new List<Sprite>();
 		}
 	}
 
@@ -125,7 +127,7 @@ public partial class MyGame : Sandbox.Game
 
 	void HandleEnemySpawn()
     {
-		if(_enemySpawnTime > Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.25f, EasingType.QuadOut) * Utils.Map(ElapsedTime, 0f, 60f, 3f, 1f))
+		if(_enemySpawnTime > Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.25f, EasingType.QuadOut) * Utils.Map(ElapsedTime, 0f, 30f, 1.5f, 1f) * Utils.Map(ElapsedTime, 0f, 180f, 3f, 1f))
         {
 			SpawnEnemy();
 			_enemySpawnTime = 0f;
@@ -141,25 +143,18 @@ public partial class MyGame : Sandbox.Game
 
 		Enemy enemy = null;
 
-		if(Rand.Float(0f, 1f) < 0.1f)
-        {
-			enemy = new Charger
-			{
-				Position = pos,
-			};
+		float spitterChance = ElapsedTime < 60f ? 0f : Utils.Map(ElapsedTime, 60f, 600f, 0.05f, 0.1f);
+ 		if(Rand.Float(0f, 1f) < spitterChance)
+			enemy = new Spitter();
 
-			//enemy = new Spitter
-			//{
-			//	Position = pos,
-			//};
-		}
-		else
-        {
-			enemy = new Zombie
-			{
-				Position = pos,
-			};
-		}
+		float chargerChance = ElapsedTime < 240f ? 0f : Utils.Map(ElapsedTime, 240f, 800f, 0.05f, 0.1f);
+		if (enemy == null && Rand.Float(0f, 1f) < chargerChance)
+			enemy = new Charger();
+
+		if(enemy == null)
+			enemy = new Zombie();
+
+		enemy.Position = pos;
 
 		var closestPlayer = GetClosestPlayer(pos);
 		if (closestPlayer?.Position.x > pos.x)
@@ -399,6 +394,11 @@ public partial class MyGame : Sandbox.Game
 			blood.Delete();
 
 		_bloodSplatters.Clear();
+
+		foreach (var cloud in _clouds)
+			cloud.Delete();
+
+		_clouds.Clear();
 	}
 
 	public void PlayerDied(PlayerCitizen player)
@@ -444,4 +444,24 @@ public partial class MyGame : Sandbox.Game
 		if(_bloodSplatters.Contains(blood))
 			_bloodSplatters.Remove(blood);
     }
+
+	public Cloud SpawnCloud(Vector2 pos)
+	{
+		Host.AssertClient();
+
+		var cloud = new Cloud()
+		{
+			Position = pos,
+			Lifetime = 0.7f * Rand.Float(0.8f, 1.2f),
+		};
+
+		_clouds.Add(cloud);
+		return cloud;
+	}
+
+	public void RemoveCloud(Cloud cloud)
+	{
+		if (_clouds.Contains(cloud))
+			_clouds.Remove(cloud);
+	}
 }

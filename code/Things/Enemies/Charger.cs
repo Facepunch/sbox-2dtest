@@ -26,6 +26,7 @@ public partial class Charger : Enemy
 
     private Vector2 _chargeDir;
     private Vector2 _chargeVel;
+    private TimeSince _chargeCloudTimer;
 
     public override void Spawn()
     {
@@ -104,6 +105,12 @@ public partial class Charger : Enemy
             }
             
             Position += (_chargeVel + Velocity) * dt;
+
+            if(_chargeCloudTimer > 0.25f)
+            {
+                SpawnCloudClient(Position + new Vector2(0f, 0.25f), -_chargeDir * Rand.Float(0.2f, 0.8f));
+                _chargeCloudTimer = Rand.Float(0f, 0.075f);
+            }
         }
         else
         {
