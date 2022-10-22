@@ -359,7 +359,8 @@ public partial class MyGame : Sandbox.Game
 			var thing = _things[i];
 			if(thing is not PlayerCitizen)
             {
-				thing.Delete();
+				//thing.Delete();
+				thing.Remove();
             }
 		}
 

@@ -94,7 +94,7 @@ public partial class Exploder : Enemy
 
                     if (damageDealt > 0f && player.ThornsPercent > 0f)
                     {
-                        Damage(damageDealt * player.ThornsPercent, player, false);
+                        Damage(damageDealt * player.ThornsPercent * player.GetDamageMultiplier(), player, false);
                     }
 
                     _damageTime = 0f;

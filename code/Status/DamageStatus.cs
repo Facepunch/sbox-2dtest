@@ -39,12 +39,12 @@ public class DamageStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f + 0.2f * level;
+		return 1f + 0.15f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 20 * level;
+		return 15 * level;
 	}
 
 	public float GetBulletSizeForLevel(int level)

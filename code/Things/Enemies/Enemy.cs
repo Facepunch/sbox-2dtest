@@ -23,6 +23,7 @@ public abstract partial class Enemy : Thing
 	[Net] public bool IsDying { get; private set; }
 	[Net] public float DeathTimeElapsed { get; private set; }
 	public float DeathTime { get; protected set; }
+	[Net] public float DeathProgress { get; private set; }
 	private Vector2 _deathScale;
 
 	public bool IsAttacking { get; private set; }
@@ -47,6 +48,8 @@ public abstract partial class Enemy : Thing
 	public float DecelerationAttacking { get; protected set; }
 
 	private TimeSince _spawnCloudTime;
+
+	public Dictionary<TypeDescription, EnemyStatus> EnemyStatuses = new Dictionary<TypeDescription, EnemyStatus>();
 
 	public override void Spawn()
 	{
@@ -103,6 +106,7 @@ public abstract partial class Enemy : Thing
 		ElapsedTime += dt;
 
 		HandleFlashing(dt);
+		HandleStatuses(dt);
 
 		if (IsDying)
 		{
@@ -132,6 +136,18 @@ public abstract partial class Enemy : Thing
 
 		HandleAttacking(closestPlayer, dt);
 		UpdateSprite(closestPlayer);
+	}
+
+	protected virtual void HandleStatuses(float dt)
+	{
+		foreach (var pair in EnemyStatuses) 
+		{
+			var status = pair.Value;
+			if (status.ShouldUpdate)
+			{
+				status.Update(dt);
+			}
+		}
 	}
 
 	protected virtual void HandleDeceleration(float dt)
@@ -219,11 +235,13 @@ public abstract partial class Enemy : Thing
 
 		if (DeathTimeElapsed > DeathTime)
 		{
+			DeathProgress = 1f;
 			FinishDying();
 		}
 		else
 		{
-			ShadowOpacity = Utils.Map(DeathTimeElapsed, 0f, DeathTime, SHADOW_FULL_OPACITY, 0f, EasingType.QuadIn);
+			DeathProgress = Utils.Map(DeathTimeElapsed, 0f, DeathTime, 0f, 1f);
+			ShadowOpacity = Utils.Map(DeathProgress, 0f, 1f, SHADOW_FULL_OPACITY, 0f, EasingType.QuadIn);
 		}
 	}
 
@@ -271,10 +289,13 @@ public abstract partial class Enemy : Thing
 
 	}
 
-	public virtual void Damage(float damage, PlayerCitizen player, bool isCrit)
+	public virtual void Damage(float damage, PlayerCitizen player, bool isCrit = false)
 	{
 		if (IsDying)
 			return;
+
+		BurningEnemyStatus burning = (BurningEnemyStatus)AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
+		burning.Player = player;
 
 		Health -= damage;
 		DamageNumbers.Create(Position + new Vector2(Rand.Float(1.5f, 2.3f), Rand.Float(6f, 7f)) * 0.1f, damage, isCrit ? DamageType.Crit : DamageType.Normal);
@@ -289,6 +310,7 @@ public abstract partial class Enemy : Thing
 	public virtual void StartDying(PlayerCitizen player)
 	{
 		IsDying = true;
+		DeathProgress = 0f;
 		DeathTimeElapsed = 0f;
 		AnimationPath = AnimDiePath;
 		AnimationSpeed = 5.5f;
@@ -301,6 +323,9 @@ public abstract partial class Enemy : Thing
 		var coin_chance = player != null ? Utils.Map(player.Luck, 0f, 10f, 0.5f, 1f) : 0.5f;
 		if (Rand.Float(0f, 1f) < coin_chance)
 			Game.SpawnCoin(Position);
+
+		foreach (var pair in EnemyStatuses)
+			pair.Value.StartDying();
 
 		StartDyingClient();
 	}
@@ -316,7 +341,17 @@ public abstract partial class Enemy : Thing
 		Remove();
 	}
 
-	public void Flash(float time)
+    public override void Remove()
+    {
+		foreach(var pair in EnemyStatuses)
+			pair.Value.Remove();
+
+		EnemyStatuses.Clear();
+
+        base.Remove();
+    }
+
+    public void Flash(float time)
 	{
 		if (_isFlashing)
 			return;
@@ -347,4 +382,40 @@ public abstract partial class Enemy : Thing
 			}
 		}
 	}
+
+	public override void Colliding(Thing other, float percent, float dt)
+	{
+		foreach (var pair in EnemyStatuses)
+			pair.Value.Colliding(other, percent, dt);
+	}
+
+	public EnemyStatus AddEnemyStatus(TypeDescription type)
+	{
+		if(EnemyStatuses.ContainsKey(type))
+        {
+			EnemyStatuses[type].Refresh();
+			return EnemyStatuses[type];
+        }
+		else
+        {
+            var enemyStatus = type.Create<EnemyStatus>();
+			EnemyStatuses.Add(type, enemyStatus);
+			enemyStatus.Init(this);
+			return enemyStatus;
+		}
+	}
+
+	public void RemoveEnemyStatus(TypeDescription type)
+    {
+		if (EnemyStatuses.ContainsKey(type))
+        {
+			EnemyStatuses[type].Remove();
+			EnemyStatuses.Remove(type);
+		}
+	}
+
+	public bool HasEnemyStatus(TypeDescription type)
+    {
+		return EnemyStatuses.ContainsKey(type);
+    }
 }

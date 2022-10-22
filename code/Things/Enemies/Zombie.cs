@@ -117,7 +117,7 @@ public partial class Zombie : Enemy
 
                         if (player.ThornsPercent > 0f)
                         {
-                            Damage(damageDealt * player.ThornsPercent, player, false);
+                            Damage(damageDealt * player.ThornsPercent * player.GetDamageMultiplier(), player, false);
                         }
                     }
 

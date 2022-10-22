@@ -45,7 +45,7 @@ public partial class Thing : Sprite
 
     }
 
-	public void Remove()
+	public virtual void Remove()
 	{
 		IsRemoved = true;
 		Game.RemoveThing(this);

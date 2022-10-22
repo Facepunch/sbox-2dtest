@@ -55,6 +55,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float BulletNumPiercing { get; protected set; }
 	[Net] public float CritChance { get; set; }
 	[Net] public float CritMultiplier { get; set; }
+	public float LowHealthDamageMultiplier { get; set; }
 	[Net] public float NumUpgradeChoices { get; protected set; }
 	[Net] public float HealthRegen { get; protected set; }
 	[Net] public float DamageReductionPercent { get; protected set; }
@@ -95,7 +96,6 @@ public partial class PlayerCitizen : Thing
 
 	// STATUS
 	[Net] public IDictionary<int, Status> Statuses { get; private set; }
-	//[Net] public List<Status> ClientStatuses { get; private set; }
 
 	//private List<Status> _statusesToRemove = new List<Status>();;
 
@@ -157,6 +157,7 @@ public partial class PlayerCitizen : Thing
 		Luck = 1f;
 		CritChance = 0.05f;
 		CritMultiplier = 1.5f;
+		LowHealthDamageMultiplier = 0f;
 		ThornsPercent = 0f;
 
 		NumDashes = 1f;
@@ -358,10 +359,6 @@ public partial class PlayerCitizen : Thing
 				}
 			}
 
-			//ArrowAimer.Depth = 100f;
-
-			//DebugOverlay.Text(MouseOffset.ToString(), Position + new Vector2(0.2f, 0f));
-
 			if(!IsDead)
             {
 				HandleDashing(dt);
@@ -551,13 +548,14 @@ public partial class PlayerCitizen : Thing
 		for (int i = 0; i < num_bullets_int; i++)
 		{
 			var dir = Utils.RotateVector(AimDir, start_angle + currAngleOffset + increment * i);
+
 			var bullet = new Bullet
 			{
 				Position = Position + dir * 0.5f,
 				Depth = -1f,
 				Velocity = dir * BulletSpeed,
 				Shooter = this,
-				Damage = BulletDamage,
+				Damage = BulletDamage * GetDamageMultiplier(),
 				Force = BulletForce,
 				TempWeight = 3f,
 				Lifetime = BulletLifetime,
@@ -703,6 +701,16 @@ public partial class PlayerCitizen : Thing
 	public void DieClient()
     {
 		Nametag.SetVisible(false);
+	}
+
+	public float GetDamageMultiplier()
+    {
+		float damageMultiplier = 1f + Utils.Map(Health, MaxHp, 0f, 0f, LowHealthDamageMultiplier);
+
+		if (damageMultiplier < -1f)
+			damageMultiplier = -1f;
+
+		return damageMultiplier;
 	}
 
 	public override void Colliding(Thing other, float percent, float dt)

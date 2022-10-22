@@ -29,7 +29,7 @@ public partial class Status : BaseNetworkable
 	public virtual void Init(PlayerCitizen player)
     {
 		Player = player;
-		ElapsedTime = Time.Now;
+		ElapsedTime = 0f;
 		ShouldUpdate = false;
 	}
 
