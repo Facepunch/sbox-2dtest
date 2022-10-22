@@ -9,6 +9,8 @@ internal static class DamageNumbers
 {
 	public static void Create( Vector3 pos, float amount, DamageType damageType)
 	{
+		amount = MathF.Max((int)MathF.Round(amount), 1);
+
 		var path = damageType == DamageType.Normal ? "particles/dmg_number.vpcf" : (damageType == DamageType.Crit ? "particles/dmg_number_crit.vpcf" : "particles/dmg_number_player.vpcf");
 		var number = amount;
 		var particle = Particles.Create( path, pos.WithZ(400f) );

@@ -85,7 +85,10 @@ public partial class PlayerCitizen : Thing
 	[Net] public float DashProgress { get; protected set; }
 	[Net] public float DashRechargeProgress { get; protected set; }
 	[Net] public float DashStrength { get; protected set; }
-	[Net] public float ThornsPercent { get; protected set; }
+	public float ThornsPercent { get; protected set; }
+	public float FireDamage { get; protected set; }
+	public float FireLifetime { get; protected set; }
+	public float FireIgniteChance { get; protected set; }
 
 	private float _flashTimer;
 	private bool _isFlashing;
@@ -174,6 +177,10 @@ public partial class PlayerCitizen : Thing
 		GridPos = Game.GetGridSquareForPos(Position);
 		AimDir = Vector2.Up;
 		NumRerollAvailable = 0;
+
+		FireDamage = 1.4f;
+		FireLifetime = 2.0f;
+		FireIgniteChance = 0.05f;
 
 		CoinAttractRange = 1.7f;
 		CoinAttractStrength = 3.1f;
@@ -663,7 +670,7 @@ public partial class PlayerCitizen : Thing
 			damage *= (1f - MathX.Clamp(DamageReductionPercent, 0f, 1f));
 
 		Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Rand.Float(0.5f, 4f), Rand.Float(8.5f, 10.5f)) * 0.1f, MathF.Max((int)MathF.Round(damage), 1), DamageType.Player);
+		DamageNumbers.Create(Position + new Vector2(Rand.Float(0.5f, 4f), Rand.Float(8.5f, 10.5f)) * 0.1f, damage, DamageType.Player);
 		Flash(0.125f);
 
 		DamageClient(damage);

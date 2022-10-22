@@ -15,6 +15,7 @@ public abstract partial class EnemyStatus : BaseNetworkable
 	public bool ShouldUpdate { get; protected set; }
 	public Enemy Enemy { get; protected set; }
 	public TimeSince ElapsedTime { get; protected set; }
+	public float Priority { get; set; }
 
 	public EnemyStatus()
 	{

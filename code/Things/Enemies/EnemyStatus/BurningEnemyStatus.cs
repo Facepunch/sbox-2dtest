@@ -13,8 +13,14 @@ public class BurningEnemyStatus : EnemyStatus
 	public Fire FireSprite { get; private set; }
 
 	private TimeSince _sinceDamageTime;
+	private const float DAMAGE_INTERVAL = 0.5f;
+
+	public float Lifetime { get; set; }
+	public float IgniteChance { get; set; }
 
 	public PlayerCitizen Player { get; set; }
+
+	public float Damage { get; set; }
 
 	private TimeSince _damagePlayerTime;
 
@@ -36,15 +42,15 @@ public class BurningEnemyStatus : EnemyStatus
 		if (Enemy == null || !Enemy.IsValid)
 			return;
 
-		//DebugOverlay.Text(Enemy.DeathProgress.ToString(), Enemy.Position, 0f, float.MaxValue);
+		//DebugOverlay.Text(ElapsedTime + " / " + Lifetime, Enemy.Position, 0f, float.MaxValue);
 		UpdateFire();
 
-		if (ElapsedTime > 2f)
+		if (ElapsedTime > Lifetime)
 			Enemy.RemoveEnemyStatus(TypeLibrary.GetDescription(this.GetType()));
 
-		if(_sinceDamageTime > 0.5f)
+		if(_sinceDamageTime > DAMAGE_INTERVAL)
         {
-			Enemy.Damage(2f, Player);
+			Enemy.Damage(Damage, Player);
 			_sinceDamageTime = 0f;
         }
     }
@@ -56,7 +62,7 @@ public class BurningEnemyStatus : EnemyStatus
 		bool flip = Utils.FastSin(Time.Now * 4f) < 0f;
 		FireSprite.Scale = new Vector2((1f + Utils.FastSin(Time.Now * 24f) * 0.1f) * (flip ? -1f : 1f), 1f + Utils.FastSin(ElapsedTime * 14f) * 0.075f);
 		FireSprite.Depth = Enemy.Depth + 2f;
-		FireSprite.Opacity = (0.4f + Utils.FastSin(ElapsedTime * 20f) * 0.3f) * Utils.Map(Enemy.DeathProgress, 0f, 1f, 1f, 0f);
+		FireSprite.Opacity = (0.4f + Utils.FastSin(ElapsedTime * 20f) * 0.3f) * Utils.Map(Enemy.DeathProgress, 0f, 1f, 1f, 0f) * Utils.Map(ElapsedTime, Lifetime - 0.25f, Lifetime, 1f, 0f);
 	}
 
 	public override void Remove()
@@ -71,18 +77,37 @@ public class BurningEnemyStatus : EnemyStatus
 
 	public override void Colliding(Thing other, float percent, float dt)
 	{
+		bool didDamage = false;
+
 		if (other is Enemy enemy && !enemy.IsDying && !enemy.HasEnemyStatus(TypeLibrary.GetDescription(this.GetType())))
 		{
-			enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
+			if (_damagePlayerTime > 0.5f)
+			{
+				enemy.Damage(Damage, Player);
+
+				if(!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))) && Rand.Float(0f, 1f) < IgniteChance)
+                {
+					BurningEnemyStatus burning = (BurningEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
+					burning.Player = Player;
+					burning.Damage = Damage;
+					burning.Lifetime = Lifetime;
+					burning.IgniteChance = IgniteChance;
+				}
+
+				didDamage = true;
+			}
 		}
 		else if (other is PlayerCitizen player && !player.IsDead)
         {
 			if(_damagePlayerTime > 0.5f)
             {
 				player.Damage(5f);
-				_damagePlayerTime = 0f;
+				didDamage = true;
 			}
 		}
+
+		if(didDamage)
+			_damagePlayerTime = 0f;
 	}
 }
 

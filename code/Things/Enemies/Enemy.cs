@@ -140,13 +140,11 @@ public abstract partial class Enemy : Thing
 
 	protected virtual void HandleStatuses(float dt)
 	{
-		foreach (var pair in EnemyStatuses) 
-		{
-			var status = pair.Value;
+		for (int i = EnemyStatuses.Count - 1; i >= 0; i--)
+        {
+			var status = EnemyStatuses.Values.ElementAt(i);
 			if (status.ShouldUpdate)
-			{
 				status.Update(dt);
-			}
 		}
 	}
 
@@ -294,11 +292,8 @@ public abstract partial class Enemy : Thing
 		if (IsDying)
 			return;
 
-		BurningEnemyStatus burning = (BurningEnemyStatus)AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
-		burning.Player = player;
-
 		Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Rand.Float(1.5f, 2.3f), Rand.Float(6f, 7f)) * 0.1f, damage, isCrit ? DamageType.Crit : DamageType.Normal);
+		DamageNumbers.Create(Position + new Vector2(Rand.Float(1.25f, 2.55f), Rand.Float(4f, 8f)) * 0.1f, damage, isCrit ? DamageType.Crit : DamageType.Normal);
 		Flash(0.12f);
 
 		if (Health <= 0f)
@@ -324,8 +319,8 @@ public abstract partial class Enemy : Thing
 		if (Rand.Float(0f, 1f) < coin_chance)
 			Game.SpawnCoin(Position);
 
-		foreach (var pair in EnemyStatuses)
-			pair.Value.StartDying();
+		for (int i = EnemyStatuses.Count - 1; i >= 0; i--)
+			EnemyStatuses.Values.ElementAt(i).StartDying();
 
 		StartDyingClient();
 	}
@@ -343,8 +338,8 @@ public abstract partial class Enemy : Thing
 
     public override void Remove()
     {
-		foreach(var pair in EnemyStatuses)
-			pair.Value.Remove();
+		for (int i = EnemyStatuses.Count - 1; i >= 0; i--)
+			EnemyStatuses.Values.ElementAt(i).Remove();
 
 		EnemyStatuses.Clear();
 
@@ -385,8 +380,8 @@ public abstract partial class Enemy : Thing
 
 	public override void Colliding(Thing other, float percent, float dt)
 	{
-		foreach (var pair in EnemyStatuses)
-			pair.Value.Colliding(other, percent, dt);
+		for (int i = EnemyStatuses.Count - 1; i >= 0; i--)
+			EnemyStatuses.Values.ElementAt(i).Colliding(other, percent, dt);
 	}
 
 	public EnemyStatus AddEnemyStatus(TypeDescription type)
@@ -413,6 +408,15 @@ public abstract partial class Enemy : Thing
 			EnemyStatuses.Remove(type);
 		}
 	}
+
+	public EnemyStatus GetEnemyStatus(TypeDescription type)
+	{
+		if (EnemyStatuses.ContainsKey(type))
+			return EnemyStatuses[type];
+
+		return null;
+	}
+
 
 	public bool HasEnemyStatus(TypeDescription type)
     {

@@ -111,6 +111,12 @@ public partial class Bullet : Thing
 				float damage = Damage * (isCrit ? CriticalMultiplier : 1f);
 				enemy.Damage(damage, Shooter, isCrit);
 
+				BurningEnemyStatus burning = (BurningEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
+				burning.Player = Shooter;
+				burning.Damage = Shooter.FireDamage * Shooter.GetDamageMultiplier();
+				burning.Lifetime = Shooter.FireLifetime;
+				burning.IgniteChance = Shooter.FireIgniteChance;
+
 				enemy.Velocity += Velocity.Normal * Force;
 				enemy.TempWeight += AddTempWeight;
 
