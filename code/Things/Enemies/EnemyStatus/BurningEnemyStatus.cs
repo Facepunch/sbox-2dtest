@@ -16,7 +16,7 @@ public class BurningEnemyStatus : EnemyStatus
 	private const float DAMAGE_INTERVAL = 0.4f;
 
 	public float Lifetime { get; set; }
-	public float IgniteChance { get; set; }
+	public float SpreadChance { get; set; }
 
 	public PlayerCitizen Player { get; set; }
 
@@ -85,13 +85,13 @@ public class BurningEnemyStatus : EnemyStatus
 			{
 				enemy.Damage(Damage, Player);
 
-				if(!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))) && Rand.Float(0f, 1f) < IgniteChance)
+				if(!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))) && Rand.Float(0f, 1f) < SpreadChance)
                 {
 					BurningEnemyStatus burning = (BurningEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
 					burning.Player = Player;
 					burning.Damage = Damage;
 					burning.Lifetime = Lifetime;
-					burning.IgniteChance = IgniteChance;
+					burning.SpreadChance = SpreadChance;
 				}
 
 				didDamage = true;

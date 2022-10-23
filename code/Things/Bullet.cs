@@ -21,6 +21,7 @@ public partial class Bullet : Thing
 	public int NumHits { get; private set; }
 	public float CriticalChance { get; set; }
 	public float CriticalMultiplier { get; set; }
+	public float FireIgniteChance { get; set; }
 
 	public List<Thing> _hitThings = new List<Thing>();
 
@@ -111,14 +112,17 @@ public partial class Bullet : Thing
 				float damage = Damage * (isCrit ? CriticalMultiplier : 1f);
 				enemy.Damage(damage, Shooter, isCrit);
 
-				BurningEnemyStatus burning = (BurningEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
-				burning.Player = Shooter;
-				burning.Damage = Shooter.FireDamage * Shooter.GetDamageMultiplier();
-				burning.Lifetime = Shooter.FireLifetime;
-				burning.IgniteChance = Shooter.FireIgniteChance;
-
 				enemy.Velocity += Velocity.Normal * Force;
 				enemy.TempWeight += AddTempWeight;
+
+				if (FireIgniteChance > 0f && Rand.Float(0f, 1f) < FireIgniteChance)
+				{
+					BurningEnemyStatus burning = (BurningEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
+					burning.Player = Shooter;
+					burning.Damage = Shooter.FireDamage * Shooter.GetDamageMultiplier();
+					burning.Lifetime = Shooter.FireLifetime;
+					burning.SpreadChance = Shooter.FireSpreadChance;
+				}
 
 				NumHits++;
 

@@ -34,7 +34,7 @@ public class NumProjectileStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase num projectiles by {0}→{1} but reduce attack speed by {2}%→{3}%", GetNumProjectilesForLevel(newLevel - 1), GetNumProjectilesForLevel(newLevel), GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase num projectiles by {0} → {1} but reduce attack speed by {2}% → {3}%", GetNumProjectilesForLevel(newLevel - 1), GetNumProjectilesForLevel(newLevel), GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetNumProjectilesForLevel(int level)

@@ -33,7 +33,7 @@ public class NumDashesStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase num dashes by {0}→{1}", GetNumDashesForLevel(newLevel - 1), GetNumDashesForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase num dashes by {0} → {1}", GetNumDashesForLevel(newLevel - 1), GetNumDashesForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetNumDashesForLevel(int level)

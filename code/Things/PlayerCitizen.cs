@@ -89,6 +89,7 @@ public partial class PlayerCitizen : Thing
 	public float FireDamage { get; protected set; }
 	public float FireLifetime { get; protected set; }
 	public float FireIgniteChance { get; protected set; }
+	public float FireSpreadChance { get; protected set; }
 
 	private float _flashTimer;
 	private bool _isFlashing;
@@ -180,7 +181,8 @@ public partial class PlayerCitizen : Thing
 
 		FireDamage = 1.0f;
 		FireLifetime = 2.0f;
-		FireIgniteChance = 0.05f;
+		FireIgniteChance = 0f;
+		FireSpreadChance = 0.05f;
 
 		CoinAttractRange = 1.7f;
 		CoinAttractStrength = 3.1f;
@@ -571,6 +573,7 @@ public partial class PlayerCitizen : Thing
 				CriticalMultiplier = CritMultiplier,
 				Scale = new Vector2(BulletSize, BulletSize),
 				Radius = BulletSize * 0.6f,
+				FireIgniteChance = FireIgniteChance,
 			};
 
 			Game.AddThing(bullet);

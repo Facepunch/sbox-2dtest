@@ -29,12 +29,12 @@ public class PiercingStatus : Status
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("Increase bullet pierces by {0} but reduce damage by {1}%", GetNumPiercingForLevel(Level), GetDamagePercentForLevel(Level));
+		return string.Format("Increase bullet pierces by {0} but reduce bullet damage by {1}%", GetNumPiercingForLevel(Level), GetDamagePercentForLevel(Level));
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase bullet pierces by {0}→{1} but reduce damage by {2}%→{3}%", GetNumPiercingForLevel(newLevel - 1), GetNumPiercingForLevel(newLevel), GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase bullet pierces by {0} → {1} but reduce bullet damage by {2}% → {3}%", GetNumPiercingForLevel(newLevel - 1), GetNumPiercingForLevel(newLevel), GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetNumPiercingForLevel(int level)
