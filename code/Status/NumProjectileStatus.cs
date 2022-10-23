@@ -23,7 +23,7 @@ public class NumProjectileStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.NumBullets), GetNumProjectilesForLevel(Level), ModifierType.Add);
+		Player.Modify(this, nameof(Player.NumProjectiles), GetNumProjectilesForLevel(Level), ModifierType.Add);
 		Player.Modify(this, nameof(Player.AttackSpeed), GetMultForLevel(Level), ModifierType.Mult);
 	}
 

@@ -95,18 +95,18 @@
     height: 100%;
     right: 0px;
     align-self: flex-end;
-    background-color: #00005533;
+    //background-color: #00005533;
     pointer-events: none;
     justify-content: flex-start;
     flex-direction: column;
     //border: 3px solid white;
 
-    .info_name {
-        color: #ffffff77;
-    }
+    //.info_name {
+    //    color: #ffffff77;
+    //}
 
-    .stats_label {
-    }
+    //.stats_label {
+    //}
 
     .info_dash_outer_container {
         //background-color: #00008811;
@@ -122,6 +122,7 @@
         flex-direction: column-reverse;
         align-items: center;
         margin-bottom: 43px;
+        margin-right: 24px;
     }
 
     .info_dash_icon {

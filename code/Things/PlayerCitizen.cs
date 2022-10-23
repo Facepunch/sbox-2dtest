@@ -33,58 +33,58 @@ public partial class PlayerCitizen : Thing
 	public bool IsDead { get; private set; }
 
 	public float Timer { get; protected set; }
-	[Net] public float AttackTime { get; protected set; }
-	[Net] public float AttackSpeed { get; private set; }
+	public float AttackTime { get; protected set; }
+	public float AttackSpeed { get; private set; }
 	[Net] public bool IsReloading { get; protected set; }
 	[Net] public float ReloadProgress { get; protected set; }
-	[Net] public float ReloadTime { get; protected set; }
-	[Net] public float ReloadSpeed { get; private set; }
-	[Net] public int AmmoCount { get; protected set; }
-	[Net] public float MaxAmmoCount { get; protected set; }
-	[Net] public float BulletDamage { get; protected set; }
-	[Net] public float BulletSize { get; protected set; }
-	[Net] public float BulletForce { get; protected set; }
-	[Net] public float Recoil { get; private set; }
-	[Net] public float MoveSpeed { get; protected set; }
+	public float ReloadTime { get; protected set; }
+	public float ReloadSpeed { get; private set; }
+	public int AmmoCount { get; protected set; }
+	public float MaxAmmoCount { get; protected set; }
+	public float BulletDamage { get; protected set; }
+	public float BulletSize { get; protected set; }
+	public float BulletForce { get; protected set; }
+	public float Recoil { get; private set; }
+	public float MoveSpeed { get; protected set; }
 	public const float BASE_MOVE_SPEED = 14f;
-	[Net] public float NumBullets { get; protected set; }
-	[Net] public float BulletSpread { get; protected set; }
-	[Net] public float BulletInaccuracy { get; protected set; }
-	[Net] public float BulletSpeed { get; protected set; }
-	[Net] public float BulletLifetime { get; protected set; }
-	[Net] public float BulletNumPiercing { get; protected set; }
-	[Net] public float CritChance { get; set; }
-	[Net] public float CritMultiplier { get; set; }
+	public float NumProjectiles { get; protected set; }
+	public float BulletSpread { get; protected set; }
+	public float BulletInaccuracy { get; protected set; }
+	public float BulletSpeed { get; protected set; }
+	public float BulletLifetime { get; protected set; }
+	public float BulletNumPiercing { get; protected set; }
+	public float CritChance { get; set; }
+	public float CritMultiplier { get; set; }
 	public float LowHealthDamageMultiplier { get; set; }
 	[Net] public float NumUpgradeChoices { get; protected set; }
-	[Net] public float HealthRegen { get; protected set; }
-	[Net] public float DamageReductionPercent { get; protected set; }
+	public float HealthRegen { get; protected set; }
+	public float DamageReductionPercent { get; protected set; }
 
 	private int _shotNum;
 
-	[Net] public float CoinAttractRange { get; protected set; }
-	[Net] public float CoinAttractStrength { get; protected set; }
-	[Net] public float Luck { get; protected set; }
+	public float CoinAttractRange { get; protected set; }
+	public float CoinAttractStrength { get; protected set; }
+	public float Luck { get; protected set; }
 
 	[Net] public int Level { get; protected set; }
-	[Net] public int ExperienceTotal { get; protected set; }
+	public int ExperienceTotal { get; protected set; }
 	[Net] public int ExperienceCurrent { get; protected set; }
 	[Net] public int ExperienceRequired { get; protected set; }
-	[Net] public bool IsChoosingLevelUpReward { get; protected set; }
+	public bool IsChoosingLevelUpReward { get; protected set; }
 
 	[Net] public float MaxHp { get; protected set; }
 
 	[Net] public float NumDashes { get; private set; }
 	[Net] public int NumDashesAvailable { get; private set; }
-	[Net] public float DashCooldown { get; private set; }
+	public float DashCooldown { get; private set; }
 	private float _dashTimer;
 	public bool IsDashing { get; private set; }
 	private Vector2 _dashVelocity;
 	private float _dashInvulnTimer;
-	[Net] public float DashInvulnTime { get; private set; }
-	[Net] public float DashProgress { get; protected set; }
+	public float DashInvulnTime { get; private set; }
+	public float DashProgress { get; protected set; }
 	[Net] public float DashRechargeProgress { get; protected set; }
-	[Net] public float DashStrength { get; protected set; }
+	public float DashStrength { get; protected set; }
 	public float ThornsPercent { get; protected set; }
 	public float FireDamage { get; protected set; }
 	public float FireLifetime { get; protected set; }
@@ -155,7 +155,7 @@ public partial class PlayerCitizen : Thing
 		BulletForce = 0.55f;
 		Recoil = 0f;
 		MoveSpeed = 1f;
-		NumBullets = 1f;
+		NumProjectiles = 1f;
 		BulletSpread = 35f;
 		BulletInaccuracy = 5f;
 		BulletSpeed = 4.5f;
@@ -416,8 +416,7 @@ public partial class PlayerCitizen : Thing
 				DashFinished();
 			} else
             {
-				var rand = Rand.Float(0.5f, 1f);
-                ColorTint = new Color(rand, rand, rand / 2f);
+                ColorTint = new Color(Rand.Float(0.1f, 0.25f), Rand.Float(0.1f, 0.25f), 1f);
 			}
 		}
 
@@ -552,9 +551,10 @@ public partial class PlayerCitizen : Thing
 	{
 		float start_angle = MathF.Sin(-_shotNum * 2f) * BulletInaccuracy;
 
-		int num_bullets_int = (int)NumBullets;
+		int num_bullets_int = (int)NumProjectiles;
 		float currAngleOffset = num_bullets_int == 1 ? 0f : -BulletSpread * 0.5f;
 		float increment = num_bullets_int == 1 ? 0f : BulletSpread / (float)(num_bullets_int - 1);
+		bool is_last_bullet = AmmoCount == 1;
 
 		for (int i = 0; i < num_bullets_int; i++)
 		{
