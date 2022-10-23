@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(3, 0, 1f)]
 public class BulletInaccuracyStatus : Status
 {
 	public BulletInaccuracyStatus()
@@ -38,11 +38,11 @@ public class BulletInaccuracyStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f - 0.25f * level;
-    }
+		return level == 1 ? 0.70f : (level == 2 ? 0.40f : 0f);
+	}
 
 	public float GetPercentForLevel(int level)
 	{
-		return 25 * level;
+		return level == 1 ? 30 : (level == 2 ? 60 : 100);
 	}
 }

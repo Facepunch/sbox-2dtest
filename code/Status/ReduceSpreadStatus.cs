@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f, typeof(NumProjectileStatus))]
+[Status(3, 0, 1f, typeof(NumProjectileStatus))]
 public class ReduceSpreadStatus : Status
 {
 	public ReduceSpreadStatus()
@@ -38,7 +38,7 @@ public class ReduceSpreadStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f - 0.3f * level;
+		return 1f - level * 0.3f;
     }
 
 	public float GetPercentForLevel(int level)

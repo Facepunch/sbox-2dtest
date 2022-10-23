@@ -86,9 +86,9 @@ public class StatusIcon : Panel
 		if (string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(Description))
 			return;
 
-		var levelText = Level == MaxLevel 
-			? "(MAX)"
-			: Level > 1 ? "(" + Level.ToString() + ")" : "";
+		var levelText = Level == MaxLevel
+			? "MAX"
+			: Level + "/" + MaxLevel;
 
 		Tippy.Create(this, Tippy.Pivots.TopRight).WithContent(Title, Description, levelText);
 	}
