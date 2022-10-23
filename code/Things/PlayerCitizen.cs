@@ -178,7 +178,7 @@ public partial class PlayerCitizen : Thing
 		AimDir = Vector2.Up;
 		NumRerollAvailable = 0;
 
-		FireDamage = 1.4f;
+		FireDamage = 1.0f;
 		FireLifetime = 2.0f;
 		FireIgniteChance = 0.05f;
 

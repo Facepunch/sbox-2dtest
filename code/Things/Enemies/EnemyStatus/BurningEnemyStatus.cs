@@ -13,7 +13,7 @@ public class BurningEnemyStatus : EnemyStatus
 	public Fire FireSprite { get; private set; }
 
 	private TimeSince _sinceDamageTime;
-	private const float DAMAGE_INTERVAL = 0.5f;
+	private const float DAMAGE_INTERVAL = 0.4f;
 
 	public float Lifetime { get; set; }
 	public float IgniteChance { get; set; }
@@ -22,7 +22,7 @@ public class BurningEnemyStatus : EnemyStatus
 
 	public float Damage { get; set; }
 
-	private TimeSince _damagePlayerTime;
+	private TimeSince _damageOtherTime;
 
 	public BurningEnemyStatus()
 	{
@@ -81,7 +81,7 @@ public class BurningEnemyStatus : EnemyStatus
 
 		if (other is Enemy enemy && !enemy.IsDying && !enemy.HasEnemyStatus(TypeLibrary.GetDescription(this.GetType())))
 		{
-			if (_damagePlayerTime > 0.5f)
+			if (_damageOtherTime > DAMAGE_INTERVAL)
 			{
 				enemy.Damage(Damage, Player);
 
@@ -99,15 +99,15 @@ public class BurningEnemyStatus : EnemyStatus
 		}
 		else if (other is PlayerCitizen player && !player.IsDead)
         {
-			if(_damagePlayerTime > 0.5f)
+			if(_damageOtherTime > DAMAGE_INTERVAL)
             {
-				player.Damage(5f);
+				player.Damage(Damage);
 				didDamage = true;
 			}
 		}
 
 		if(didDamage)
-			_damagePlayerTime = 0f;
+			_damageOtherTime = 0f;
 	}
 }
 

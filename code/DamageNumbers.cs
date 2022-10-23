@@ -9,7 +9,18 @@ internal static class DamageNumbers
 {
 	public static void Create( Vector3 pos, float amount, DamageType damageType)
 	{
-		amount = MathF.Max((int)MathF.Round(amount), 1);
+		if(amount < 1f)
+        {
+			amount = MathF.Ceiling(amount);
+        }
+		else
+        {
+			float fractional = amount - MathF.Floor(amount);
+			if (fractional > 0f && Rand.Float(0f, 1f) > fractional)
+				amount = MathF.Ceiling(amount);
+			else
+				amount = MathF.Floor(amount);
+		}
 
 		var path = damageType == DamageType.Normal ? "particles/dmg_number.vpcf" : (damageType == DamageType.Crit ? "particles/dmg_number_crit.vpcf" : "particles/dmg_number_player.vpcf");
 		var number = amount;
