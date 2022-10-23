@@ -66,4 +66,11 @@ public partial class Thing : Sprite
 		Shadow.SetThing(this);
 		Shadow.Scale = size;
 	}
+
+	[ClientRpc]
+	public void SpawnCloudClient(Vector2 pos, Vector2 vel)
+	{
+		var cloud = Game.SpawnCloud(Position);
+		cloud.Velocity = vel;
+	}
 }

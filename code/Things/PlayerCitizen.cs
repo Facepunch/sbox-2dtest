@@ -42,7 +42,6 @@ public partial class PlayerCitizen : Thing
 	public int AmmoCount { get; protected set; }
 	public float MaxAmmoCount { get; protected set; }
 	public float BulletDamage { get; protected set; }
-	public float BulletSize { get; protected set; }
 	public float BulletForce { get; protected set; }
 	public float Recoil { get; private set; }
 	public float MoveSpeed { get; protected set; }
@@ -90,6 +89,7 @@ public partial class PlayerCitizen : Thing
 	public float FireLifetime { get; protected set; }
 	public float FireIgniteChance { get; protected set; }
 	public float FireSpreadChance { get; protected set; }
+	public float LastAmmoDamageMultiplier { get; protected set; }
 
 	private float _flashTimer;
 	private bool _isFlashing;
@@ -151,7 +151,6 @@ public partial class PlayerCitizen : Thing
 		ReloadSpeed = 1f;
 		AttackSpeed = 1f;
 		BulletDamage = 5f;
-		BulletSize = 0.175f;
 		BulletForce = 0.55f;
 		Recoil = 0f;
 		MoveSpeed = 1f;
@@ -192,6 +191,7 @@ public partial class PlayerCitizen : Thing
 		NumUpgradeChoices = 3f;
 		HealthRegen = 0f;
 		DamageReductionPercent = 0f;
+		LastAmmoDamageMultiplier = 1f;
 
 		Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -554,11 +554,23 @@ public partial class PlayerCitizen : Thing
 		int num_bullets_int = (int)NumProjectiles;
 		float currAngleOffset = num_bullets_int == 1 ? 0f : -BulletSpread * 0.5f;
 		float increment = num_bullets_int == 1 ? 0f : BulletSpread / (float)(num_bullets_int - 1);
-		bool is_last_bullet = AmmoCount == 1;
+		bool is_last_ammo = AmmoCount == 1;
 
 		for (int i = 0; i < num_bullets_int; i++)
 		{
 			var dir = Utils.RotateVector(AimDir, start_angle + currAngleOffset + increment * i);
+
+			var damage = BulletDamage * GetDamageMultiplier();
+
+			if (is_last_ammo)
+				damage *= LastAmmoDamageMultiplier;
+
+			//float scale = Utils.Map(damage, 1f, 15f, 0.15f, 0.25f);
+			float scale = 0.125f + damage * 0.015f * Utils.Map(damage, 10f, 100f, 1f, 0.1f, EasingType.QuadOut);
+			var radius = 0.07f + scale * 0.2f * Utils.Map(damage, 10f, 100f, 1f, 0.5f);
+			var basePivotY = Utils.Map(damage, 5f, 30f, -1.2f, -0.3f);
+
+			Log.Info("damage: " + damage + " scale: " + scale + " radius: " + radius);
 
 			var bullet = new Bullet
 			{
@@ -566,17 +578,20 @@ public partial class PlayerCitizen : Thing
 				Depth = -1f,
 				Velocity = dir * BulletSpeed,
 				Shooter = this,
-				Damage = BulletDamage * GetDamageMultiplier(),
+				Damage = damage,
 				Force = BulletForce,
 				TempWeight = 3f,
 				Lifetime = BulletLifetime,
 				NumPiercing = (int)MathF.Round(BulletNumPiercing),
 				CriticalChance = CritChance,
 				CriticalMultiplier = CritMultiplier,
-				Scale = new Vector2(BulletSize, BulletSize),
-				Radius = BulletSize * 0.6f,
+				Scale = new Vector2(scale, scale),
+				Radius = radius,
 				FireIgniteChance = FireIgniteChance,
+				BasePivotY = basePivotY,
 			};
+
+			bullet.HeightZ = 0f;
 
 			Game.AddThing(bullet);
 		}

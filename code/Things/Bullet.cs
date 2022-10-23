@@ -39,8 +39,8 @@ public partial class Bullet : Thing
 			AddTempWeight = 2f;
 			Force = 0.75f;
 			Radius = 0.1f;
-			BasePivotY = -1.2f;
-			HeightZ = 0f;
+			//BasePivotY = -1.2f;
+			//HeightZ = 0f;
 			//Pivot = new Vector2(0.5f, -1.2f);
 			Lifetime = 1f;
 			NumPiercing = 0;

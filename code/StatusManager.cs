@@ -74,6 +74,8 @@ public class StatusManager
                 continue;
             }
 
+            //int currLevel = player.GetStatusLevel(type);
+
             //Log.Info("valid: adding with weight of " + attrib.Weight);
             valid.Add((type, attrib.Weight));
         }

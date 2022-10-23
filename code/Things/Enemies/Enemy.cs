@@ -266,13 +266,6 @@ public abstract partial class Enemy : Thing
 		}
 	}
 
-	[ClientRpc]
-	public void SpawnCloudClient(Vector2 pos, Vector2 vel)
-	{
-		var cloud = Game.SpawnCloud(Position);
-		cloud.Velocity = vel;
-	}
-
 	void ClampToBounds()
 	{
 		var x_min = Game.BOUNDS_MIN.x + Radius / 2f;

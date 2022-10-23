@@ -137,6 +137,7 @@ public partial class Coin : Thing
 		else if (other is Coin coin)
 		{
 			SetValue(Value + coin.Value);
+			SpawnCloudClient(coin.Position, Vector2.Zero);
 			coin.Remove();
 		}
 	}
