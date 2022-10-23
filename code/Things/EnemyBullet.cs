@@ -30,7 +30,10 @@ public partial class EnemyBullet : Thing
 			SpawnTime = 0f;
 			Damage = 10f;
 			Radius = 0.1f;
-			Pivot = new Vector2(0.5f, -0.9f);
+			BasePivotY = -0.9f;
+			HeightZ = 0f;
+			//Pivot = new Vector2(0.5f, -0.9f);
+
 			ShadowOpacity = 0.8f;
 			ShadowScale = 0.6f;
 			ColorTint = Color.Red;

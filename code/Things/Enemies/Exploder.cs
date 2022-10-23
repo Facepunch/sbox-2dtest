@@ -25,7 +25,9 @@ public partial class Exploder : Enemy
             //AnimationPath = "textures/sprites/zombie_spawn.frames";
             //AnimIdlePath = "textures/sprites/zombie_walk.frames";
             AnimationSpeed = 2f;
-            Pivot = new Vector2(0.5f, 0.05f);
+            BasePivotY = 0.05f;
+            HeightZ = 0f;
+            //Pivot = new Vector2(0.5f, 0.05f);
 
             Radius = 0.215f;
             Health = 20f;

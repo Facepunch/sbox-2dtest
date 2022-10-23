@@ -24,7 +24,9 @@ public partial class Zombie : Enemy
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie.png", 5, 6);
             AnimationSpeed = 2f;
-            Pivot = new Vector2(0.5f, 0.05f);
+            BasePivotY = 0.05f;
+            HeightZ = 0f;
+            //Pivot = new Vector2(0.5f, 0.05f);
 
             Radius = 0.25f;
             Health = 30f;

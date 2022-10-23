@@ -120,7 +120,9 @@ public partial class PlayerCitizen : Thing
 		if (Host.IsServer)
         {
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/player_spritesheet.png", 2, 2);
-			Pivot = new Vector2(0.5f, 0.05f);
+			BasePivotY = 0.05f;
+			HeightZ = 0f;
+			//Pivot = new Vector2(0.5f, 0.05f);
 
 			CollideWith.Add(typeof(Enemy));
 			CollideWith.Add(typeof(PlayerCitizen));

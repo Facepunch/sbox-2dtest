@@ -30,7 +30,9 @@ public partial class Coin : Thing
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/xp.png", 5, 4);
 			AnimationPath = "textures/sprites/xp_1.frames";
 			AnimationSpeed = 3f;
-			Pivot = new Vector2(0.5f, 0.225f);
+			BasePivotY = 0.225f;
+			HeightZ = 0f;
+			//Pivot = new Vector2(0.5f, 0.225f);
 
 			Scale = new Vector2(1f, 1f) * 0.4f;
 			SpawnTime = 0f;
@@ -129,7 +131,7 @@ public partial class Coin : Thing
 			if(!player.IsDead)
             {
 				player.AddExperience(Value);
-				Remove();
+				Remove ();
 			}
 		}
 		else if (other is Coin coin)
@@ -150,26 +152,33 @@ public partial class Coin : Thing
         {
 			case 1:
 				AnimationPath = "textures/sprites/xp_1.frames";
-				Pivot = new Vector2(0.5f, 0.225f);
+				BasePivotY = 0.225f;
+				//Pivot = new Vector2(0.5f, 0.225f);
 				break;
 			case 2:
 				AnimationPath = "textures/sprites/xp_2.frames";
-				Pivot = new Vector2(0.5f, 0.2f);
+				BasePivotY = 0.225f;
+				//Pivot = new Vector2(0.5f, 0.2f);
 				break;
 			case 3:
 				AnimationPath = "textures/sprites/xp_3.frames";
-				Pivot = new Vector2(0.5f, 0.15f);
+				BasePivotY = 0.15f;
+				//Pivot = new Vector2(0.5f, 0.15f);
 				break;
 			case 4:
 				AnimationPath = "textures/sprites/xp_4.frames";
-				Pivot = new Vector2(0.5f, 0.1f);
+				BasePivotY = 0.1f;
+				//Pivot = new Vector2(0.5f, 0.1f);
 				break;
 			case 5:
 			default:
 				AnimationPath = "textures/sprites/xp_5.frames";
-				Pivot = new Vector2(0.5f, 0.05f);
+				BasePivotY = 0.05f;
+				//Pivot = new Vector2(0.5f, 0.05f);
 				break;
 		}
+
+		HeightZ = 0f;
 
 		switch (tier_color)
 		{

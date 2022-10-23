@@ -36,7 +36,9 @@ public partial class Charger : Enemy
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/charger.png", 5, 6);
             AnimationSpeed = 2f;
-            Pivot = new Vector2(0.5f, 0.05f);
+            BasePivotY = 0.05f;
+            HeightZ = 0f;
+            //Pivot = new Vector2(0.5f, 0.05f);
 
             Radius = 0.275f;
             Health = 50f;

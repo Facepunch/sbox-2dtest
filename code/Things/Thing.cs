@@ -20,7 +20,10 @@ public partial class Thing : Sprite
 	[Net] public float ShadowOpacity { get; set; }
 	[Net] public float ShadowScale { get; set; }
 	public Shadow Shadow { get; set; } // client only 
+	public float BasePivotY { get; set; }
 
+	float _heightZ = 0.0f;
+	public float HeightZ { set { _heightZ = value; Pivot = new Vector2(0.5f, BasePivotY - _heightZ); } get { return _heightZ; } }
 
 	public Thing()
     {
