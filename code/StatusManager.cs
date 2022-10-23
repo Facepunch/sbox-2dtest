@@ -68,9 +68,9 @@ public class StatusManager
                 continue;
             }
 
-            if (attrib.ReqStatuses.Any(x => !player.HasStatus(TypeLibrary.GetDescription(x))))
+            if (attrib.ReqStatuses.All(x => !player.HasStatus(TypeLibrary.GetDescription(x))))
             {
-                //Log.Info("not valid - required statuses not all owned");
+                //Log.Info("not valid - none of the required statuses owned");
                 continue;
             }
 

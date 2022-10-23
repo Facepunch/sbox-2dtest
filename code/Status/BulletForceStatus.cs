@@ -5,7 +5,8 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f, typeof(BulletSpeedStatus), typeof(DamageStatus))]
+//[Status(9, 0, 1f, typeof(BulletSpeedStatus), typeof(DamageStatus))]
+[Status(9, 0, 1f)]
 public class BulletForceStatus : Status
 {
 	public BulletForceStatus()

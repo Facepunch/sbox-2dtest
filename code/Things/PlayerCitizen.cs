@@ -182,7 +182,7 @@ public partial class PlayerCitizen : Thing
 		FireDamage = 1.0f;
 		FireLifetime = 2.0f;
 		FireIgniteChance = 0f;
-		FireSpreadChance = 0.05f;
+		FireSpreadChance = 0f;
 
 		CoinAttractRange = 1.7f;
 		CoinAttractStrength = 3.1f;
