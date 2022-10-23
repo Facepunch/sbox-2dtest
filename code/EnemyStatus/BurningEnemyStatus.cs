@@ -10,7 +10,7 @@ namespace Test2D;
 
 public class BurningEnemyStatus : EnemyStatus
 {
-	public Fire FireSprite { get; private set; }
+	public BurningVfx FireSprite { get; private set; }
 
 	private TimeSince _sinceDamageTime;
 	private const float DAMAGE_INTERVAL = 0.4f;
@@ -33,7 +33,7 @@ public class BurningEnemyStatus : EnemyStatus
     {
 		base.Init(enemy);
 
-		FireSprite = new Fire();
+		FireSprite = new BurningVfx();
 		UpdateFire();
 	}
 
@@ -111,7 +111,7 @@ public class BurningEnemyStatus : EnemyStatus
 	}
 }
 
-public partial class Fire : Sprite
+public partial class BurningVfx : Sprite
 {
 	public override void Spawn()
 	{

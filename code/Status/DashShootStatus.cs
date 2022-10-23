@@ -26,7 +26,7 @@ public class DashShootStatus : Status
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("Shoot 1 time whenever you dash");
+		return string.Format("Shoot 1 time when you dash");
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
