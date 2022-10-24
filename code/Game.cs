@@ -240,23 +240,8 @@ public partial class MyGame : Sandbox.Game
 	{
 		base.ClientJoined( client );
 
-		// Create a pawn for this client to play with
 		var player = new PlayerCitizen();
 		client.Pawn = player;
-
-		// Get all of the spawnpoints
-		var spawnpoints = Entity.All.OfType<SpawnPoint>();
-
-		// chose a random one
-		var randomSpawnPoint = spawnpoints.OrderBy( x => Guid.NewGuid() ).FirstOrDefault();
-
-		// if it exists, place the pawn there
-		if ( randomSpawnPoint != null )
-		{
-			var tx = randomSpawnPoint.Transform;
-			tx.Position = tx.Position + Vector3.Up * 50.0f; // raise it up
-			player.Transform = tx;
-		}
 
 		PlayerList.Add(player);
 		AddThing(player);
@@ -376,7 +361,7 @@ public partial class MyGame : Sandbox.Game
             }
 
 			player.InitializeStats();
-			player.Position = new Vector2(Utils.Map(i, 0, PlayerList.Count - 1, -2f, 2f), 0f);
+			player.Position = new Vector2(0f + i * 0.5f, 0f);
 			_things.Add(player);
 		}
 
@@ -495,5 +480,27 @@ public partial class MyGame : Sandbox.Game
 	{
 		if (_explosions.Contains(explosion))
 			_explosions.Remove(explosion);
+	}
+
+	[ClientRpc]
+	public void PlaySfx(string name, Vector2 worldPos)
+	{
+		var x = Utils.Map(worldPos.x, MainCamera.Position.x - MainCamera.WorldSize.x * 0.5f, MainCamera.Position.x + MainCamera.WorldSize.x * 0.5f, 1f, -1f);
+		Sound.FromScreen(name, x + 0.4f, 0.5f);
+	}
+
+	[ClientRpc]
+	public void PlaySfx(string name, float pitch)
+	{
+		var sound = Sound.FromScreen(name, 0.5f, 0.5f);
+		sound.SetPitch(pitch);
+	}
+
+	[ClientRpc]
+	public void PlaySfx(string name, float pitch, float volume)
+	{
+		var sound = Sound.FromScreen(name, 0.5f, 0.5f);
+		sound.SetPitch(pitch);
+		sound.SetVolume(volume);
 	}
 }

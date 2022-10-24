@@ -21,6 +21,9 @@ public partial class OrthoCamera : CameraMode
 	/// World space position of the center of the view.
 	/// </summary>
 	public new Vector2 Position { get; set; }
+	public Vector2 LowerLeftWorld { get; set; }
+	public Vector2 UpperRightWorld { get; set; }
+	public Vector2 WorldSize { get; set; }
 
 	/// <summary>
 	/// Height of the view in world space.
@@ -45,6 +48,10 @@ public partial class OrthoCamera : CameraMode
 
 		base.Rotation = global::Rotation.FromYaw( 90f + Rotation ) * global::Rotation.FromPitch( 90f );
 		base.Position = new Vector3( Position, Depth );
+
+		LowerLeftWorld = ScreenToWorld(new Vector2(0, Screen.Height));
+		UpperRightWorld = ScreenToWorld(new Vector2(Screen.Width, 0));
+		WorldSize = UpperRightWorld - LowerLeftWorld;
 	}
 
 	public Vector2 ScreenToWorld(Vector2 screenPos)

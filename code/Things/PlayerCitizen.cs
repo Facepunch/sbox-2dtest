@@ -555,12 +555,13 @@ public partial class PlayerCitizen : Thing
 		float currAngleOffset = num_bullets_int == 1 ? 0f : -BulletSpread * 0.5f;
 		float increment = num_bullets_int == 1 ? 0f : BulletSpread / (float)(num_bullets_int - 1);
 
+		var pos = Position + AimDir * 0.5f;
+
 		for (int i = 0; i < num_bullets_int; i++)
 		{
 			var dir = Utils.RotateVector(AimDir, start_angle + currAngleOffset + increment * i);
 
 			var damage = BulletDamage * GetDamageMultiplier();
-
 			if (isLastAmmo)
 				damage *= LastAmmoDamageMultiplier;
 
@@ -571,7 +572,7 @@ public partial class PlayerCitizen : Thing
 
 			var bullet = new Bullet
 			{
-				Position = Position + dir * 0.5f,
+				Position = pos,
 				Depth = -1f,
 				Velocity = dir * BulletSpeed,
 				Shooter = this,
@@ -592,6 +593,14 @@ public partial class PlayerCitizen : Thing
 
 			Game.AddThing(bullet);
 		}
+
+		Game.PlaySfx("shoot", pos);
+
+        //Sound.FromScreen("shoot", -100f, 0f);
+        //Sound.FromWorld("shoot", new Vector3());
+        //Sound.FromEntity("shoot", this);
+
+        //Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition)
 
 		Velocity -= AimDir * Recoil;
 
@@ -656,8 +665,6 @@ public partial class PlayerCitizen : Thing
 		Game.MainCamera.Position = new Vector2(MathX.Clamp(Position.x, -DIST, DIST), MathX.Clamp(Position.y, -DIST, DIST));
 
 		//MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
-
-		
 		//MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.RootPanel.MousePosition) - Position;
 
 		//SetMouseOffset(MouseOffset);
