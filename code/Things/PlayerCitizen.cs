@@ -442,13 +442,6 @@ public partial class PlayerCitizen : Thing
 		DashProgress = 0f;
 		DashRechargeProgress = 0f;
 
-		var healthPack = new HealthPack()
-		{
-			Position = Position
-		};
-
-		Game.AddThing(healthPack);
-
 		ForEachStatus(status => status.OnDashStarted());
 	}
 

@@ -310,7 +310,22 @@ public abstract partial class Enemy : Thing
 
 		var coin_chance = player != null ? Utils.Map(player.Luck, 0f, 10f, 0.5f, 1f) : 0.5f;
 		if (Rand.Float(0f, 1f) < coin_chance)
+        {
 			Game.SpawnCoin(Position);
+		}
+		else
+        {
+			var lowest_hp_percent = 1f;
+			foreach (PlayerCitizen p in Game.AlivePlayers)
+				lowest_hp_percent = MathF.Min(lowest_hp_percent, p.Health / p.MaxHp);
+
+			var health_pack_chance = Utils.Map(lowest_hp_percent, 1f, 0f, 0f, 0.1f);
+			if (Rand.Float(0f, 1f) < health_pack_chance)
+			{
+				var healthPack = new HealthPack() { Position = Position };
+				Game.AddThing(healthPack);
+			}
+		}
 
 		for (int i = EnemyStatuses.Count - 1; i >= 0; i--)
 			EnemyStatuses.Values.ElementAt(i).StartDying();

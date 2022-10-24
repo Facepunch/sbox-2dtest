@@ -27,7 +27,7 @@ public partial class HealthPack : Thing
 			ColorTint = new Color(1f, 1f, 1f, 1f);
 
 			SpawnTime = 0f;
-			Radius = 0.2f;
+			Radius = 0.175f;
 			BasePivotY = 0.275f;
 			HeightZ = 0f;
 			Lifetime = 60f;
@@ -60,7 +60,7 @@ public partial class HealthPack : Thing
 
 		Position += Velocity * dt;
 		Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
-		Velocity *= (1f - dt * 1.5f);
+		Velocity *= (1f - dt * 3.5f);
 
 		Scale = new Vector2(0.6f + Utils.FastSin(SpawnTime * 8f) * 0.025f, 0.6f + MathF.Cos(SpawnTime * 8f) * 0.025f);
 		ShadowScale = 0.8f + Utils.FastSin(SpawnTime * 8f) * 0.025f;
@@ -79,6 +79,19 @@ public partial class HealthPack : Thing
 			Game.DeregisterThingGridSquare(this, GridPos);
 			Game.RegisterThingGridSquare(this, gridPos);
 			GridPos = gridPos;
+		}
+
+		if(SpawnTime > 0.1f)
+        {
+			foreach (PlayerCitizen player in Game.AlivePlayers)
+			{
+				var dist_sqr = (Position - player.Position).LengthSquared;
+				var req_dist_sqr = MathF.Pow(player.CoinAttractRange, 2f);
+				if (dist_sqr < req_dist_sqr)
+				{
+					Velocity += (player.Position - Position).Normal * Utils.Map(dist_sqr, req_dist_sqr, 0f, 0f, 1f, EasingType.Linear) * player.CoinAttractStrength * dt;
+				}
+			}
 		}
 
 		for (int dx = -1; dx <= 1; dx++)
