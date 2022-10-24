@@ -516,7 +516,7 @@ public partial class PlayerCitizen : Thing
 			Timer -= dt * AttackSpeed;
 			if (Timer <= 0f)
             {
-				Shoot();
+				Shoot(isLastAmmo: AmmoCount == 1);
 				AmmoCount--;
 
 				if (AmmoCount <= 0)
@@ -547,14 +547,13 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
-	public void Shoot()
+	public void Shoot(bool isLastAmmo = false)
 	{
 		float start_angle = MathF.Sin(-_shotNum * 2f) * BulletInaccuracy;
 
 		int num_bullets_int = (int)NumProjectiles;
 		float currAngleOffset = num_bullets_int == 1 ? 0f : -BulletSpread * 0.5f;
 		float increment = num_bullets_int == 1 ? 0f : BulletSpread / (float)(num_bullets_int - 1);
-		bool is_last_ammo = AmmoCount == 1;
 
 		for (int i = 0; i < num_bullets_int; i++)
 		{
@@ -562,15 +561,13 @@ public partial class PlayerCitizen : Thing
 
 			var damage = BulletDamage * GetDamageMultiplier();
 
-			if (is_last_ammo)
+			if (isLastAmmo)
 				damage *= LastAmmoDamageMultiplier;
 
 			//float scale = Utils.Map(damage, 1f, 15f, 0.15f, 0.25f);
 			float scale = 0.125f + damage * 0.015f * Utils.Map(damage, 10f, 100f, 1f, 0.1f, EasingType.QuadOut);
 			var radius = 0.07f + scale * 0.2f * Utils.Map(damage, 10f, 100f, 1f, 0.5f);
 			var basePivotY = Utils.Map(damage, 5f, 30f, -1.2f, -0.3f);
-
-			Log.Info("damage: " + damage + " scale: " + scale + " radius: " + radius);
 
 			var bullet = new Bullet
 			{

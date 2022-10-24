@@ -28,8 +28,8 @@ public partial class MyGame : Sandbox.Game
 	public readonly List<PlayerCitizen> PlayerList = new();
 
 	public int EnemyCount { get; private set; }
-	//public const float MAX_ENEMY_COUNT = 350;
-	public const float MAX_ENEMY_COUNT = 0;
+	public const float MAX_ENEMY_COUNT = 350;
+	//public const float MAX_ENEMY_COUNT = 0;
 
     public int CoinCount { get; private set; }
 	public const float MAX_COIN_COUNT = 100;
