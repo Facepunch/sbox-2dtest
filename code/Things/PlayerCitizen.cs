@@ -339,12 +339,12 @@ public partial class PlayerCitizen : Thing
 
 		if (Host.IsServer)
         {
-			if (Input.Pressed(InputButton.Run))
-			{
-				//Game.Restart();
-                AddExperience(GetExperienceReqForLevel(Level));
-                return;
-			}
+			//if (Input.Pressed(InputButton.Run))
+			//{
+			//	//Game.Restart();
+   //             AddExperience(GetExperienceReqForLevel(Level));
+   //             return;
+			//}
 
 			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
