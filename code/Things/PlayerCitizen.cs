@@ -442,6 +442,13 @@ public partial class PlayerCitizen : Thing
 		DashProgress = 0f;
 		DashRechargeProgress = 0f;
 
+		var healthPack = new HealthPack()
+		{
+			Position = Position
+		};
+
+		Game.AddThing(healthPack);
+
 		ForEachStatus(status => status.OnDashStarted());
 	}
 
@@ -988,5 +995,16 @@ public partial class PlayerCitizen : Thing
 		ColorTint = new Color(1f, 0f, 0f);
 		_isFlashing = true;
 		_flashTimer = time;
+	}
+
+	public void Heal (float amount)
+    {
+		ColorTint = new Color(0f, 1f, 0f);
+		_isFlashing = true;
+		_flashTimer = 0.2f;
+
+		Health += amount;
+		if (Health > MaxHp)
+			Health = MaxHp;
 	}
 }
