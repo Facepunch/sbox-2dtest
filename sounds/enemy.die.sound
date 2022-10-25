@@ -2,11 +2,11 @@
 {
 	data = 
 	{
-		UI = true
-		Volume = 0.6
+		UI = false
+		Volume = 1
 		VolumeRandom = 0
-		Pitch = 1
-		PitchRandom = 0.1
+		Pitch = 0.75
+		PitchRandom = 0.15
 		Decibels = 50
 		Sounds = 
 		[

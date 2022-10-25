@@ -263,6 +263,12 @@ public partial class PlayerCitizen : Thing
 	{
 		//Log.Info("local player: " + (Game.Client != null));
 		//DebugText("\n\nClient - Statuses: " + Statuses);
+		Sound.Listener = new()
+		{
+			Position = new Vector3(Position.x, Position.y, Game.MainCamera.Depth),
+			//Position = new Vector3(Position.x, Position.y, 2f),
+			Rotation = global::Rotation.LookAt(new Vector3(0f, 1f, 0f))
+        };
 	}
 
 	public override void Simulate( Client cl )
@@ -339,14 +345,14 @@ public partial class PlayerCitizen : Thing
 
 		if (Host.IsServer)
         {
-			//if (Input.Pressed(InputButton.Run))
-			//{
-			//	//Game.Restart();
-   //             AddExperience(GetExperienceReqForLevel(Level));
-   //             return;
-			//}
+            if (Input.Pressed(InputButton.Run))
+            {
+                //Game.Restart();
+                AddExperience(GetExperienceReqForLevel(Level));
+                return;
+            }
 
-			var gridPos = Game.GetGridSquareForPos(Position);
+            var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
 			{
 				Game.DeregisterThingGridSquare(this, GridPos);
@@ -594,13 +600,7 @@ public partial class PlayerCitizen : Thing
 			Game.AddThing(bullet);
 		}
 
-		Game.PlaySfx("shoot", pos);
-
-        //Sound.FromScreen("shoot", -100f, 0f);
-        //Sound.FromWorld("shoot", new Vector3());
-        //Sound.FromEntity("shoot", this);
-
-        //Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition)
+        Game.PlaySfx("shoot", pos, pitch: Utils.Map(_shotNum, 0f, (float)MaxAmmoCount, 1f, 1.25f));
 
 		Velocity -= AimDir * Recoil;
 

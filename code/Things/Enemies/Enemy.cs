@@ -287,11 +287,15 @@ public abstract partial class Enemy : Thing
 
 		Health -= damage;
 		DamageNumbers.Create(Position + new Vector2(Rand.Float(1.25f, 2.55f), Rand.Float(4f, 8f)) * 0.1f, damage, isCrit ? DamageType.Crit : DamageType.Normal);
-		Flash(0.12f);
 
 		if (Health <= 0f)
 		{
 			StartDying(player);
+			Flash(0.05f);
+		} 
+		else
+        {
+			Flash(0.12f);
 		}
 	}
 
@@ -304,7 +308,7 @@ public abstract partial class Enemy : Thing
 		AnimationSpeed = 5.5f;
 
 		_isFlashing = false;
-		ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
+		//ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
 
 		_deathScale = Scale;
 

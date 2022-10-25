@@ -2,7 +2,7 @@
 
 Layer0
 {
-	shader "sprite.vfx"
+	shader "2dtest_sprite.vfx"
 
 	//---- Rendering ----
 	F_RENDER_BACKFACES 1

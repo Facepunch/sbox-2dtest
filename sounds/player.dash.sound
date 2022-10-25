@@ -5,15 +5,15 @@
 		UI = false
 		Volume = 1
 		VolumeRandom = 0
-		Pitch = 0.8
+		Pitch = 1
 		PitchRandom = 0
-		Decibels = 45
+		Decibels = 70
 		Sounds = 
 		[
-			resource:"sounds/shoot.vsnd",
+			resource:"sounds/player.dash.vsnd",
 		]
 		SelectionMode = "Random"
-		MaximumDistance = 491.52356
-		MinimumDistance = 24.576178
+		MaximumDistance = 1143.9335
+		MinimumDistance = 57.196674
 	}
 }

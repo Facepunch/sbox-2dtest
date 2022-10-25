@@ -3,17 +3,17 @@
 	data = 
 	{
 		UI = false
-		Volume = 1
+		Volume = 0.85
 		VolumeRandom = 0
 		Pitch = 0.8
-		PitchRandom = 0
-		Decibels = 45
+		PitchRandom = 0.05
+		Decibels = 25
 		Sounds = 
 		[
-			resource:"sounds/shoot.vsnd",
+			resource:"sounds/enemy.hit.vsnd",
 		]
 		SelectionMode = "Random"
-		MaximumDistance = 491.52356
-		MinimumDistance = 24.576178
+		MaximumDistance = 173.82826
+		MinimumDistance = 8.691413
 	}
 }

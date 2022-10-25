@@ -482,24 +482,29 @@ public partial class MyGame : Sandbox.Game
 			_explosions.Remove(explosion);
 	}
 
-	[ClientRpc]
+	//[ClientRpc]
 	public void PlaySfx(string name, Vector2 worldPos)
 	{
-		var x = Utils.Map(worldPos.x, MainCamera.Position.x - MainCamera.WorldSize.x * 0.5f, MainCamera.Position.x + MainCamera.WorldSize.x * 0.5f, 1f, -1f);
-		Sound.FromScreen(name, x + 0.4f, 0.5f);
+		//var x = Utils.Map(worldPos.x, MainCamera.Position.x - MainCamera.WorldSize.x * 0.5f, MainCamera.Position.x + MainCamera.WorldSize.x * 0.5f, 1f, -1f);
+		//      Sound.FromScreen(name, x + 0.4f, 0.5f);
+
+		//Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 0f));
+		Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
+
+		//Log.Info("worldPos: " + worldPos + " listener pos: " + Sound.Listener);
 	}
 
-	[ClientRpc]
-	public void PlaySfx(string name, float pitch)
+	//[ClientRpc]
+	public void PlaySfx(string name, Vector2 worldPos, float pitch)
 	{
-		var sound = Sound.FromScreen(name, 0.5f, 0.5f);
+		var sound = Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
 		sound.SetPitch(pitch);
 	}
 
-	[ClientRpc]
-	public void PlaySfx(string name, float pitch, float volume)
+	//[ClientRpc]
+	public void PlaySfx(string name, Vector2 worldPos, float pitch, float volume)
 	{
-		var sound = Sound.FromScreen(name, 0.5f, 0.5f);
+		var sound = Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
 		sound.SetPitch(pitch);
 		sound.SetVolume(volume);
 	}
