@@ -45,13 +45,19 @@ public readonly struct SpriteTexture
     }
 }
 
-public partial class Sprite : ModelEntity
+public partial class Sprite : Entity
 {
 	private Material _material;
 	private Texture _texture;
 	private SpriteAnimation _anim;
 
 	private float _localRotation;
+
+	private bool _materialInvalid;
+	private bool _textureInvalid;
+	private bool _animInvalid;
+
+	internal SceneObject SceneObject { get; private set; }
 
 	public MyGame Game => MyGame.Current;
 
@@ -257,36 +263,92 @@ public partial class Sprite : ModelEntity
 		// MaterialDict[(texture.ResourcePath, filter)] = mat;
 
         return mat;
-    }
-
-    private void UpdateMaterial()
-	{
-		_material = GetMaterial(_texture ?? Texture.White, Filter);
-
-        SetMaterialOverride(_material);
 	}
 
-	private void OnNetTexturePathChanged()
-	{
-		_texture = string.IsNullOrEmpty(SpriteTexture.TexturePath)
-			? Texture.White
-			: Texture.Load( FileSystem.Mounted, SpriteTexture.TexturePath );
+    public Sprite()
+    {
+	    if ( IsClientOnly || IsServer )
+	    {
+		    EnableDrawing = true;
 
-        UpdateMaterial();
+		    AnimationSpeed = 1f;
+		    Rotation = 0f;
+		}
     }
 
-    private void OnNetAnimationPathChanged()
+    private void UpdateTexture()
     {
-        _anim = string.IsNullOrEmpty(AnimationPath)
-            ? null
-            : ResourceLibrary.Get<SpriteAnimation>(AnimationPath);
+	    if ( !_textureInvalid ) return;
+
+	    _textureInvalid = false;
+
+	    _texture = string.IsNullOrEmpty( SpriteTexture.TexturePath )
+		    ? Texture.White
+		    : Texture.Load( FileSystem.Mounted, SpriteTexture.TexturePath );
+
+	    UpdateMaterial();
+    }
+	
+	private void UpdateMaterial()
+	{
+		if ( !_materialInvalid ) return;
+
+		_materialInvalid = false;
+
+		_material = GetMaterial(_texture ?? Texture.White, Filter);
+		SceneObject.SetMaterialOverride( _material );
+	}
+
+	private void UpdateAnim()
+	{
+		if ( !_animInvalid ) return;
+
+		_animInvalid = false;
+
+		_anim = string.IsNullOrEmpty( AnimationPath )
+			? null
+			: ResourceLibrary.Get<SpriteAnimation>( AnimationPath );
 
 		AnimationTimeElapsed = 0f;
 	}
 
-    private void OnNetFilterChanged()
+	private void UpdateSceneObject()
 	{
-        UpdateMaterial();
+		SceneObject.Transform = Transform;
+		SceneObject.Attributes.Set( "SpriteScale", new Vector2( Scale.y, Scale.x ) / 100f );
+		SceneObject.Attributes.Set( "SpritePivot", new Vector2( Pivot.y, Pivot.x ) );
+		SceneObject.Attributes.Set( "TextureSize", _texture?.Size ?? new Vector2( 1f, 1f ) );
+		SceneObject.Attributes.Set( "ColorFill", ColorFill );
+		SceneObject.Attributes.Set( "ColorMultiply", ColorTint.WithAlphaMultiplied( Opacity ) );
+
+		if ( _anim != null )
+		{
+			AnimationTimeElapsed += Time.Delta * AnimationSpeed;
+			var (min, max) = _anim.GetFrameUvs( AnimationTimeElapsed, SpriteTexture.AtlasRows, SpriteTexture.AtlasColumns );
+
+			SceneObject.Attributes.Set( "UvMin", min );
+			SceneObject.Attributes.Set( "UvMax", max );
+		}
+		else
+		{
+			SceneObject.Attributes.Set( "UvMin", UvRect.TopLeft );
+			SceneObject.Attributes.Set( "UvMax", UvRect.BottomRight );
+		}
+	}
+
+	private void OnNetTexturePathChanged()
+	{
+		_textureInvalid = true;
+	}
+
+    private void OnNetAnimationPathChanged()
+    {
+	    _animInvalid = true;
+    }
+
+    private void OnNetFilterChanged()
+    {
+	    _materialInvalid = true;
 	}
 
     public override void Spawn()
@@ -294,53 +356,36 @@ public partial class Sprite : ModelEntity
         base.Spawn();
 
         Transmit = TransmitType.Always;
-
-        if (IsServer || IsClientOnly)
-		{
-			SetModel( "models/quad.vmdl" );
-
-			EnableDrawing = true;
-			PhysicsEnabled = false;
-
-			AnimationSpeed = 1f;
-            Rotation = 0f;
-        }
     }
-
-    private TimeSince _lastLog;
-
+	
     [Event.PreRender]
 	private void ClientPreRender()
 	{
-		if ( this is PlayerCitizen && _lastLog > 1f )
+		if ( !Scene.IsValid() ) return;
+
+		if ( !SceneObject.IsValid() )
 		{
-			_lastLog = 0f;
+			if ( !EnableDrawing ) return;
 
-			//Log.Info( $"{SceneObject} {ColorTint} {Opacity} \"{_texture?.ResourcePath}\"" );
+			SceneObject = new SceneObject( Scene, "models/quad.vmdl", Transform ) { Flags = { IsTranslucent = true } };
 		}
 
-		if (SceneObject == null)
-			return;
+		SceneObject.RenderingEnabled = EnableDrawing;
 
-		SceneObject.Flags.IsTranslucent = true;
-		SceneObject.Attributes.Set( "SpriteScale", new Vector2(Scale.y, Scale.x) / 100f );
-        SceneObject.Attributes.Set("SpritePivot", new Vector2(Pivot.y, Pivot.x));
-        SceneObject.Attributes.Set("TextureSize", _texture?.Size ?? new Vector2(1f, 1f));
-		SceneObject.Attributes.Set("ColorFill", ColorFill);
-        SceneObject.Attributes.Set("ColorMultiply", ColorTint.WithAlphaMultiplied( Opacity ));
+		if ( !EnableDrawing ) return;
 
-        if (_anim != null)
-        {
-			AnimationTimeElapsed += Time.Delta * AnimationSpeed;
-			var (min, max) = _anim.GetFrameUvs(AnimationTimeElapsed, SpriteTexture.AtlasRows, SpriteTexture.AtlasColumns);
+		UpdateTexture();
+		UpdateMaterial();
+		UpdateAnim();
 
-            SceneObject.Attributes.Set("UvMin", min);
-            SceneObject.Attributes.Set("UvMax", max);
-		}
-        else
-		{
-			SceneObject.Attributes.Set("UvMin", UvRect.TopLeft);
-            SceneObject.Attributes.Set("UvMax", UvRect.BottomRight);
-		}
+		UpdateSceneObject();
+	}
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+
+		SceneObject?.Delete();
+		SceneObject = null;
 	}
 }
