@@ -265,17 +265,6 @@ public partial class Sprite : Entity
         return mat;
 	}
 
-    public Sprite()
-    {
-	    if ( IsClientOnly || IsServer )
-	    {
-		    EnableDrawing = true;
-
-		    AnimationSpeed = 1f;
-		    Rotation = 0f;
-		}
-    }
-
     private void UpdateTexture()
     {
 	    if ( !_textureInvalid ) return;
@@ -315,6 +304,10 @@ public partial class Sprite : Entity
 	private void UpdateSceneObject()
 	{
 		SceneObject.Transform = Transform;
+
+		// TODO
+		SceneObject.Bounds = new BBox( float.NegativeInfinity, float.PositiveInfinity );
+
 		SceneObject.Attributes.Set( "SpriteScale", new Vector2( Scale.y, Scale.x ) / 100f );
 		SceneObject.Attributes.Set( "SpritePivot", new Vector2( Pivot.y, Pivot.x ) );
 		SceneObject.Attributes.Set( "TextureSize", _texture?.Size ?? new Vector2( 1f, 1f ) );
@@ -356,23 +349,33 @@ public partial class Sprite : Entity
         base.Spawn();
 
         Transmit = TransmitType.Always;
-    }
+
+        if ( IsClientOnly || IsServer )
+		{
+			EnableDrawing = true;
+
+			AnimationSpeed = 1f;
+			Rotation = 0f;
+		}
+	}
 	
     [Event.PreRender]
 	private void ClientPreRender()
 	{
-		if ( !Scene.IsValid() ) return;
+		var scene = Map.Scene;
+
+		if ( !scene.IsValid() ) return;
 
 		if ( !SceneObject.IsValid() )
 		{
 			if ( !EnableDrawing ) return;
 
-			SceneObject = new SceneObject( Scene, "models/quad.vmdl", Transform ) { Flags = { IsTranslucent = true } };
+			SceneObject = new SceneObject( scene, "models/quad.vmdl", Transform ) { Flags = { IsTranslucent = true } };
 		}
 
-		SceneObject.RenderingEnabled = EnableDrawing;
+		SceneObject.RenderingEnabled = EnableDrawing && Opacity > 0f;
 
-		if ( !EnableDrawing ) return;
+		if ( !SceneObject.RenderingEnabled ) return;
 
 		UpdateTexture();
 		UpdateMaterial();
