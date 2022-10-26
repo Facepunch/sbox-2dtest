@@ -265,7 +265,7 @@ public partial class PlayerCitizen : Thing
 		//DebugText("\n\nClient - Statuses: " + Statuses);
 		Sound.Listener = new()
 		{
-			Position = new Vector3(Position.x, Position.y, Game.MainCamera.Depth),
+			Position = new Vector3(Position.x, Position.y, 512f),
 			//Position = new Vector3(Position.x, Position.y, 2f),
 			Rotation = global::Rotation.LookAt(new Vector3(0f, 1f, 0f))
         };
@@ -448,6 +448,8 @@ public partial class PlayerCitizen : Thing
 		DashProgress = 0f;
 		DashRechargeProgress = 0f;
 
+		Game.PlaySfxNearby("player.dash", Position, pitch: Utils.Map(NumDashesAvailable, 0, 5, 1f, 0.9f), volume: 1f, maxDist: 4f);
+
 		ForEachStatus(status => status.OnDashStarted());
 	}
 
@@ -528,6 +530,7 @@ public partial class PlayerCitizen : Thing
 				if (AmmoCount <= 0)
 				{
 					IsReloading = true;
+					Game.PlaySfx("reload.start", Position);
 					Timer += ReloadTime;
 				}
 				else
@@ -600,7 +603,7 @@ public partial class PlayerCitizen : Thing
 			Game.AddThing(bullet);
 		}
 
-        Game.PlaySfx("shoot", pos, pitch: Utils.Map(_shotNum, 0f, (float)MaxAmmoCount, 1f, 1.25f));
+		Game.PlaySfxNearby("shoot", pos, pitch: Utils.Map(_shotNum, 0f, (float)MaxAmmoCount, 1f, 1.25f), volume: 1f, maxDist: 4f);
 
 		Velocity -= AimDir * Recoil;
 
@@ -613,6 +616,7 @@ public partial class PlayerCitizen : Thing
 		IsReloading = false;
 		_shotNum = 0;
 		ReloadProgress = 0f;
+		Game.PlaySfx("reload.end", Position); 
 	}
 
 	void HandleBounds()

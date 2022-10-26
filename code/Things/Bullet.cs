@@ -110,7 +110,7 @@ public partial class Bullet : Thing
 				if (_hitThings.Contains(enemy))
 					return;
 
-				Game.PlaySfx("enemy.hit", Position, pitch: Utils.Map(enemy.Health, enemy.MaxHealth, 0f, 0.9f, 1.3f, EasingType.SineIn));
+				Game.PlaySfxNearby("enemy.hit", Position, pitch: Utils.Map(enemy.Health, enemy.MaxHealth, 0f, 0.9f, 1.3f, EasingType.SineIn), volume: 1f, maxDist: 4f);
 
 				bool isCrit = Rand.Float(0f, 1f) < CriticalChance;
 				float damage = Damage * (isCrit ? CriticalMultiplier : 1f);

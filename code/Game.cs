@@ -132,7 +132,7 @@ public partial class MyGame : Sandbox.Game
     }
 
 	void SpawnEnemy()
-    {
+	{
 		if (EnemyCount >= MAX_ENEMY_COUNT)
 			return;
 
@@ -145,14 +145,14 @@ public partial class MyGame : Sandbox.Game
 			enemy = new Exploder();
 
 		float spitterChance = ElapsedTime < 60f ? 0f : Utils.Map(ElapsedTime, 60f, 600f, 0.05f, 0.1f);
- 		if(enemy == null && Rand.Float(0f, 1f) < spitterChance)
+		if (enemy == null && Rand.Float(0f, 1f) < spitterChance)
 			enemy = new Spitter();
 
 		float chargerChance = ElapsedTime < 240f ? 0f : Utils.Map(ElapsedTime, 240f, 800f, 0.05f, 0.1f);
 		if (enemy == null && Rand.Float(0f, 1f) < chargerChance)
 			enemy = new Charger();
 
-		if(enemy == null)
+		if (enemy == null)
 			enemy = new Zombie();
 
 		enemy.Position = pos;
@@ -163,6 +163,8 @@ public partial class MyGame : Sandbox.Game
 
 		AddThing(enemy);
 		EnemyCount++;
+
+		PlaySfxNearby("zombie.spawn0", pos, pitch: 1f, volume: 1f, maxDist: 5f);
 	}
 
 	public void SpawnCoin(Vector2 pos)
@@ -482,21 +484,58 @@ public partial class MyGame : Sandbox.Game
 			_explosions.Remove(explosion);
 	}
 
+	public void PlaySfxNearby(string name, Vector2 worldPos, float pitch, float volume, float maxDist)
+	{
+		foreach (PlayerCitizen player in Players)
+		{
+			var playerPos = player.Position;
+
+			var distSqr = (player.Position - worldPos).LengthSquared;
+			if (distSqr < maxDist * maxDist)
+			{
+				var dist = (player.Position - worldPos).Length;
+				var falloff = Utils.Map(dist, maxDist, 0f, 0f, 1f);
+				var pos = playerPos + (worldPos - playerPos) * 0.1f;
+
+				var sound = Sound.FromWorld(To.Single(player.Client), name, new Vector3(pos.x, pos.y, 512f));
+				sound.SetPitch(pitch);
+				sound.SetVolume(volume * falloff);
+			}
+		}
+	}
+
+	public void PlaySfxTarget(To toTarget, string name, Vector2 worldPos)
+	{
+		worldPos = OffsetSoundPos(worldPos);
+		Sound.FromWorld(toTarget, name, new Vector3(worldPos.x, worldPos.y, 512f));
+	}
+
+	public void PlaySfxTarget(To toTarget, string name, Vector2 worldPos, float pitch)
+	{
+		worldPos = OffsetSoundPos(worldPos);
+        var sound = Sound.FromWorld(toTarget, name, new Vector3(worldPos.x, worldPos.y, 512f));
+		sound.SetPitch(pitch);
+	}
+
+	public void PlaySfxTarget(To toTarget, string name, Vector2 worldPos, float pitch, float volume)
+	{
+		worldPos = OffsetSoundPos(worldPos);
+		var sound = Sound.FromWorld(toTarget, name, new Vector3(worldPos.x, worldPos.y, 512f));
+		sound.SetPitch(pitch);
+		sound.SetVolume(volume);
+	}
+
 	//[ClientRpc]
 	public void PlaySfx(string name, Vector2 worldPos)
 	{
-		//var x = Utils.Map(worldPos.x, MainCamera.Position.x - MainCamera.WorldSize.x * 0.5f, MainCamera.Position.x + MainCamera.WorldSize.x * 0.5f, 1f, -1f);
-		//      Sound.FromScreen(name, x + 0.4f, 0.5f);
-
-		//Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 0f));
+		worldPos = OffsetSoundPos(worldPos);
 		Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
-
-		//Log.Info("worldPos: " + worldPos + " listener pos: " + Sound.Listener);
 	}
 
 	//[ClientRpc]
 	public void PlaySfx(string name, Vector2 worldPos, float pitch)
 	{
+		worldPos = OffsetSoundPos(worldPos);
 		var sound = Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
 		sound.SetPitch(pitch);
 	}
@@ -504,8 +543,18 @@ public partial class MyGame : Sandbox.Game
 	//[ClientRpc]
 	public void PlaySfx(string name, Vector2 worldPos, float pitch, float volume)
 	{
+		worldPos = OffsetSoundPos(worldPos);
 		var sound = Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
 		sound.SetPitch(pitch);
 		sound.SetVolume(volume);
 	}
+
+    Vector2 OffsetSoundPos(Vector2 worldPos)
+    {
+        if (Sound.Listener == null)
+            return worldPos;
+
+        Vector2 listenerPos = (Vector2)Sound.Listener.Value.Position;
+        return listenerPos + (worldPos - listenerPos) * 0.1f;
+    }
 }

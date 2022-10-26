@@ -146,9 +146,14 @@ public partial class Spitter : Enemy
                 {
                     float damageDealt = player.Damage(DamageToPlayer);
 
-                    if (damageDealt > 0f && player.ThornsPercent > 0f)
+                    if (damageDealt > 0f)
                     {
-                        Damage(damageDealt * player.ThornsPercent * player.GetDamageMultiplier(), player, false);
+                        Game.PlaySfxNearby("zombie.attack.player", Position, pitch: Utils.Map(player.Health, player.MaxHp, 0f, 0.95f, 1.15f, EasingType.QuadIn), volume: 1f, maxDist: 5.5f);
+
+                        if (player.ThornsPercent > 0f)
+                        {
+                            Damage(damageDealt * player.ThornsPercent * player.GetDamageMultiplier(), player, false);
+                        }
                     }
 
                     _damageTime = 0f;
