@@ -34,6 +34,7 @@ public partial class HUD : RootPanel
 	public XpBarPanel XpBarPanel { get; private set; }
 	public TimerPanel TimerPanel { get; private set; }
 	public ChoicePanel ChoicePanel { get; set; }
+	public DeathPanel DeathPanel{ get; set; }
 
 	public HUD()
 	{
@@ -75,7 +76,7 @@ public partial class HUD : RootPanel
 
 	public void GameOver()
     {
-		AddChild<DeathPanel>("death_panel_root");
+		DeathPanel = AddChild<DeathPanel>("death_panel_root");
 
 		if (ChoicePanel != null)
 		{
@@ -92,6 +93,12 @@ public partial class HUD : RootPanel
         {
 			ChoicePanel.Delete();
 			ChoicePanel = null;
+		}
+
+		if(DeathPanel != null)
+        {
+			DeathPanel.Delete();
+			DeathPanel = null;
 		}
     }
 }

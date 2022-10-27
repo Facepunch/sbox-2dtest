@@ -21,6 +21,7 @@ public class DeathPanel : Panel
         {
 			MyGame.RestartCmd();
 			Delete();
+			MyGame.Current.Hud.DeathPanel = null;
 		}
 	}
 }
