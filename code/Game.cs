@@ -494,7 +494,7 @@ public partial class MyGame : Sandbox.Game
 			if (distSqr < maxDist * maxDist)
 			{
 				var dist = (player.Position - worldPos).Length;
-				var falloff = Utils.Map(dist, maxDist, 0f, 0f, 1f);
+				var falloff = Utils.Map(dist, 0f, maxDist, 1f, 0f, EasingType.SineIn);
                 var pos = playerPos + (worldPos - playerPos) * 0.1f;
 
 				var sound = Sound.FromWorld(To.Single(player.Client), name, new Vector3(pos.x, pos.y, 512f));

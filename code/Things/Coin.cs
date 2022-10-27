@@ -131,7 +131,7 @@ public partial class Coin : Thing
 			if(!player.IsDead)
             {
 				player.AddExperience(Value);
-				Game.PlaySfxNearby("xp", Position, pitch: Utils.Map(player.ExperienceCurrent, player.GetExperienceReqForLevel(player.Level - 1), player.ExperienceRequired, 0.9f, 1.1f, EasingType.QuadIn), volume: 1f, maxDist: 5f);
+				Game.PlaySfxNearby("xp", Position, pitch: Utils.Map(Value, 1, 10, 0.7f, 1.5f, EasingType.QuadIn), volume: 1f, maxDist: 6f);
 				Remove ();
 			}
 		}

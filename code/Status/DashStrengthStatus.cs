@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(9, 0, 111f)]
 public class DashStrengthStatus : Status
 {
 	public DashStrengthStatus()

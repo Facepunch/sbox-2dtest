@@ -18,12 +18,12 @@ public abstract partial class Enemy : Thing
 
 	public float MaxHealth { get; protected set; }
 
-	[Net] public bool IsSpawning { get; private set; }
-	[Net] public float ElapsedTime { get; private set; }
-	[Net] public bool IsDying { get; private set; }
-	[Net] public float DeathTimeElapsed { get; private set; }
+	public bool IsSpawning { get; private set; }
+	public float ElapsedTime { get; private set; }
+	public bool IsDying { get; private set; }
+	public float DeathTimeElapsed { get; private set; }
 	public float DeathTime { get; protected set; }
-	[Net] public float DeathProgress { get; private set; }
+	public float DeathProgress { get; private set; }
 	private Vector2 _deathScale;
 
 	public bool IsAttacking { get; private set; }

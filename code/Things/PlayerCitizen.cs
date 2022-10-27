@@ -80,6 +80,7 @@ public partial class PlayerCitizen : Thing
 	public bool IsDashing { get; private set; }
 	private Vector2 _dashVelocity;
 	private float _dashInvulnTimer;
+	private TimeSince _dashCloudTime;
 	public float DashInvulnTime { get; private set; }
 	public float DashProgress { get; protected set; }
 	[Net] public float DashRechargeProgress { get; protected set; }
@@ -169,7 +170,7 @@ public partial class PlayerCitizen : Thing
 		NumDashesAvailable = (int)NumDashes;
 		DashCooldown = 3f;
 		DashInvulnTime = 0.25f;
-		DashStrength = 7f;
+		DashStrength = 3f;
 		BulletNumPiercing = 0f;
 
 		Health = 100f;
@@ -291,9 +292,13 @@ public partial class PlayerCitizen : Thing
 		if(inputVector.LengthSquared > 0f)
             Velocity += inputVector.Normal * MoveSpeed * BASE_MOVE_SPEED * dt;
 
-		Position += (Velocity + _dashVelocity) * dt;
+		Position += Velocity * dt;
+
+		if(IsDashing)
+			Position += _dashVelocity * dt;
+
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, dt);
-		_dashVelocity *= (1f - dt * 7.95f);
+		//_dashVelocity *= (1f - dt * 7.95f);
 		TempWeight *= (1f - dt * 4.7f);
 
 		ShadowScale = IsDashing ? Utils.MapReturn(DashProgress, 0f, 1f, 1.12f, 0.75f, EasingType.SineInOut) : 1.12f;
@@ -423,9 +428,16 @@ public partial class PlayerCitizen : Thing
 				IsDashing = false;
 				ColorTint = Color.White;
 				DashFinished();
-			} else
+			}
+			else
             {
                 ColorTint = new Color(Rand.Float(0.1f, 0.25f), Rand.Float(0.1f, 0.25f), 1f);
+
+				if(_dashCloudTime > Rand.Float(0.1f, 0.2f))
+                {
+					SpawnCloudClient();
+					_dashCloudTime = 0f;
+				}
 			}
 		}
 
@@ -451,9 +463,17 @@ public partial class PlayerCitizen : Thing
 		DashProgress = 0f;
 		DashRechargeProgress = 0f;
 
-		Game.PlaySfxNearby("player.dash", Position, pitch: Utils.Map(NumDashesAvailable, 0, 5, 1f, 0.9f), volume: 1f, maxDist: 4f);
+		Game.PlaySfxNearby("player.dash", Position + dashDir * 0.5f, pitch: Utils.Map(NumDashesAvailable, 0, 5, 1f, 0.9f), volume: 1f, maxDist: 4f);
+		SpawnCloudClient();
+		_dashCloudTime = 0f;
 
 		ForEachStatus(status => status.OnDashStarted());
+	}
+
+	[ClientRpc]
+	public void SpawnCloudClient()
+	{
+		Game.SpawnCloud(Position + new Vector2(Rand.Float(1f, 1f), Rand.Float(1f, 1f)) * 0.05f);
 	}
 
 	public void DashFinished()
