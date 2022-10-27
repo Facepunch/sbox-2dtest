@@ -116,6 +116,7 @@ public partial class Exploder : Enemy
         base.StartDyingClient();
 
         Game.SpawnExplosionEffect(Position);
+        Game.PlaySfxNearby("explode", Position, pitch: Rand.Float(0.9f, 1.1f), volume: 1f, maxDist: 6f);
     }
 
     public override void FinishDying()

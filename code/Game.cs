@@ -164,7 +164,7 @@ public partial class MyGame : Sandbox.Game
 		AddThing(enemy);
 		EnemyCount++;
 
-		PlaySfxNearby("zombie.spawn0", pos, pitch: 1f, volume: 1f, maxDist: 5f);
+		PlaySfxNearby("zombie.dirt", pos, pitch: Rand.Float(0.6f, 0.8f), volume: 0.7f, maxDist: 5.5f);
 	}
 
 	public void SpawnCoin(Vector2 pos)
@@ -495,7 +495,7 @@ public partial class MyGame : Sandbox.Game
 			{
 				var dist = (player.Position - worldPos).Length;
 				var falloff = Utils.Map(dist, maxDist, 0f, 0f, 1f);
-				var pos = playerPos + (worldPos - playerPos) * 0.1f;
+                var pos = playerPos + (worldPos - playerPos) * 0.1f;
 
 				var sound = Sound.FromWorld(To.Single(player.Client), name, new Vector3(pos.x, pos.y, 512f));
 				sound.SetPitch(pitch);
@@ -504,22 +504,8 @@ public partial class MyGame : Sandbox.Game
 		}
 	}
 
-	public void PlaySfxTarget(To toTarget, string name, Vector2 worldPos)
-	{
-		worldPos = OffsetSoundPos(worldPos);
-		Sound.FromWorld(toTarget, name, new Vector3(worldPos.x, worldPos.y, 512f));
-	}
-
-	public void PlaySfxTarget(To toTarget, string name, Vector2 worldPos, float pitch)
-	{
-		worldPos = OffsetSoundPos(worldPos);
-        var sound = Sound.FromWorld(toTarget, name, new Vector3(worldPos.x, worldPos.y, 512f));
-		sound.SetPitch(pitch);
-	}
-
 	public void PlaySfxTarget(To toTarget, string name, Vector2 worldPos, float pitch, float volume)
 	{
-		worldPos = OffsetSoundPos(worldPos);
 		var sound = Sound.FromWorld(toTarget, name, new Vector3(worldPos.x, worldPos.y, 512f));
 		sound.SetPitch(pitch);
 		sound.SetVolume(volume);
@@ -532,22 +518,22 @@ public partial class MyGame : Sandbox.Game
 		Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
 	}
 
-	//[ClientRpc]
-	public void PlaySfx(string name, Vector2 worldPos, float pitch)
-	{
-		worldPos = OffsetSoundPos(worldPos);
-		var sound = Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
-		sound.SetPitch(pitch);
-	}
+	////[ClientRpc]
+	//public void PlaySfx(string name, Vector2 worldPos, float pitch)
+	//{
+	//	worldPos = OffsetSoundPos(worldPos);
+	//	var sound = Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
+	//	sound.SetPitch(pitch);
+	//}
 
-	//[ClientRpc]
-	public void PlaySfx(string name, Vector2 worldPos, float pitch, float volume)
-	{
-		worldPos = OffsetSoundPos(worldPos);
-		var sound = Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
-		sound.SetPitch(pitch);
-		sound.SetVolume(volume);
-	}
+	////[ClientRpc]
+	//public void PlaySfx(string name, Vector2 worldPos, float pitch, float volume)
+	//{
+	//	worldPos = OffsetSoundPos(worldPos);
+	//	var sound = Sound.FromWorld(name, new Vector3(worldPos.x, worldPos.y, 512f));
+	//	sound.SetPitch(pitch);
+	//	sound.SetVolume(volume);
+	//}
 
     Vector2 OffsetSoundPos(Vector2 worldPos)
     {

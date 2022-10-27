@@ -263,12 +263,15 @@ public partial class PlayerCitizen : Thing
 	{
 		//Log.Info("local player: " + (Game.Client != null));
 		//DebugText("\n\nClient - Statuses: " + Statuses);
-		Sound.Listener = new()
-		{
-			Position = new Vector3(Position.x, Position.y, 512f),
-			//Position = new Vector3(Position.x, Position.y, 2f),
-			Rotation = global::Rotation.LookAt(new Vector3(0f, 1f, 0f))
-        };
+		if(this == Local.Client.Pawn)
+        {
+			Sound.Listener = new()
+			{
+				Position = new Vector3(Position.x, Position.y, 512f),
+				//Position = new Vector3(Position.x, Position.y, 2f),
+				Rotation = global::Rotation.LookAt(new Vector3(0f, 1f, 0f))
+			};
+		}
 	}
 
 	public override void Simulate( Client cl )
@@ -476,6 +479,8 @@ public partial class PlayerCitizen : Thing
 		}
 			
 		ForEachStatus(status => status.OnDashRecharged());
+
+		Game.PlaySfxTarget(To.Single(Client), "player.dash.recharge", Position, pitch: Utils.Map(NumDashesAvailable, 1, numDashes, 1f, 1.2f), volume: 0.2f);
 	}
 
 	public void ForEachStatus(Action<Status> action)
@@ -530,7 +535,9 @@ public partial class PlayerCitizen : Thing
 				if (AmmoCount <= 0)
 				{
 					IsReloading = true;
-					Game.PlaySfx("reload.start", Position);
+
+					//Game.PlaySfxTarget(To.Single(Client), "reload.start", Position, pitch: 1f, volume: 0.5f);
+
 					Timer += ReloadTime;
 				}
 				else
@@ -616,7 +623,8 @@ public partial class PlayerCitizen : Thing
 		IsReloading = false;
 		_shotNum = 0;
 		ReloadProgress = 0f;
-		Game.PlaySfx("reload.end", Position); 
+
+		//Game.PlaySfxTarget(To.Single(Client), "reload.end", Position, pitch: 1f, volume: 0.5f);
 	}
 
 	void HandleBounds()
@@ -988,7 +996,7 @@ public partial class PlayerCitizen : Thing
 	public int GetExperienceReqForLevel(int level)
     {
 		//return 3 + level + (int)MathF.Round(Utils.Map(level, 1, 100, 0f, 1000f, EasingType.SineIn));
-		return (int)MathF.Round(Utils.Map(level, 1, 100, 3f, 1500f, EasingType.SineIn));
+		return (int)MathF.Round(Utils.Map(level, 1, 100, 3f, 1000f, EasingType.SineIn));
 	}
 
 	public void Flash(float time)

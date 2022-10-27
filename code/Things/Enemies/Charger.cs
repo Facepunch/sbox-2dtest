@@ -162,6 +162,7 @@ public partial class Charger : Enemy
     {
         _prepareTimer = PREPARE_TIME;
         IsPreparingToCharge = true;
+        Game.PlaySfxNearby("enemy.roar.prepare", Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1f, maxDist: 5f);
     }
 
     public void Charge()
@@ -184,6 +185,8 @@ public partial class Charger : Enemy
         AnimationPath = AnimAttackPath;
         AnimationSpeed = 3f;
         Scale = new Vector2(1f * target_pos.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
+
+        Game.PlaySfxNearby("enemy.roar", Position, pitch: Rand.Float(0.925f, 1.075f), volume: 1f, maxDist: 8f);
     }
 
     public override void Colliding(Thing other, float percent, float dt)

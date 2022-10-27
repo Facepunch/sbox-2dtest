@@ -84,6 +84,7 @@ public partial class Zombie : Enemy
             if(player_dist_sqr < 3.5f * 3.5f)
             {
                 HasTarget = true;
+                Game.PlaySfxNearby("zombie.spawn0", Position, pitch: Rand.Float(0.9f, 1.1f), volume: 1f, maxDist: 4f);
             }
         }
 

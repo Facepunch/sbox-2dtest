@@ -9,7 +9,8 @@
   "ResourcePaths": [
     "/textures/sprites/*",
     "/textures/icons/*",
-    "/shaders/*"
+    "/shaders/*",
+    "/particles/*"
   ],
   "HasCode": true,
   "CodePath": "/code/",

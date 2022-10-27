@@ -10,7 +10,7 @@
 		Decibels = 70
 		Sounds = 
 		[
-			resource:"sounds/reload.start.vsnd",
+			resource:"sounds/player.dash.recharge.vsnd",
 		]
 		SelectionMode = "Random"
 		MaximumDistance = 1143.9335

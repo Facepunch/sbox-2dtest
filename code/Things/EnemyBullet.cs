@@ -103,6 +103,7 @@ public partial class EnemyBullet : Thing
             {
 				player.Damage(Damage);
 				player.Velocity += Direction * 2f;
+				Game.PlaySfxNearby("splash", Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1f, maxDist: 4f);
 				Remove();
 			}
 		}

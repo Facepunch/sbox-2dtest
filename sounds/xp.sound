@@ -10,7 +10,7 @@
 		Decibels = 70
 		Sounds = 
 		[
-			resource:"sounds/xp.vsnd",
+			resource:"sounds/pop.vsnd",
 		]
 		SelectionMode = "Random"
 		MaximumDistance = 1143.9335
