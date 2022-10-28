@@ -338,6 +338,7 @@ public partial class MyGame : Sandbox.Game
 	public static void RestartCmd()
 	{
 		Current.Restart();
+		MyGame.Current.PlaySfxTarget(To.Everyone, "restart", Vector2.Zero, Rand.Float(0.95f, 1.05f), 0.66f);
 	}
 
 	public void Restart()

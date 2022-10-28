@@ -757,7 +757,9 @@ public partial class PlayerCitizen : Thing
 		//EnableDrawing = false;
 		ColorTint = new Color(1f, 1f, 1f, 0.05f);
 		ShadowOpacity = 0.1f;
-        DieClient();
+
+		Game.PlaySfxNearby("die", Position, pitch: Rand.Float(1f, 1.2f), volume: 1.5f, maxDist: 12f);
+		DieClient();
 	}
 
 	[ClientRpc]
@@ -1002,7 +1004,10 @@ public partial class PlayerCitizen : Thing
 	public void LevelUpClient()
     {
 		if(this == Local.Pawn)
+        {
 			Game.Hud.SpawnChoicePanel();
+			Game.PlaySfxTarget(To.Single(Local.Client), "levelup", Position, Rand.Float(0.95f, 1.05f), 0.66f);
+		}
 	}
 
 	[ConCmd.Server]
