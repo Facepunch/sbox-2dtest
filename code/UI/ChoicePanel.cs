@@ -23,7 +23,7 @@ public class ChoicePanel : Panel
 
         //ConsoleSystem.Run("add_status", type);
         PlayerCitizen.AddStatusCmd(StatusManager.TypeToIdentity(type));
-		MyGame.Current.PlaySfxTarget(To.Single(Local.Client), "click", Vector2.Zero, 0.9f, 0.85f);
+		MyGame.Current.PlaySfxTarget(To.Single(Local.Client), "click", Vector2.Zero, 0.9f, 0.75f);
 		Delete();
 		MyGame.Current.Hud.ChoicePanel = null;
 	}
@@ -40,7 +40,7 @@ public class ChoicePanel : Panel
 
 		PlayerCitizen.UseRerollCmd();
 
-		MyGame.Current.PlaySfxTarget(To.Single(Local.Client), "reroll", player.Position, Utils.Map(player.NumRerollAvailable, 0, 20, 0.9f, 1.4f, EasingType.QuadIn), 0.75f);
+		MyGame.Current.PlaySfxTarget(To.Single(Local.Client), "reroll", player.Position, Utils.Map(player.NumRerollAvailable, 0, 20, 0.9f, 1.4f, EasingType.QuadIn), 0.6f);
 	}
 }
 

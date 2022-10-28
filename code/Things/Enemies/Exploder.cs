@@ -28,6 +28,7 @@ public partial class Exploder : Enemy
             BasePivotY = 0.05f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
+            PushStrength = 12f;
 
             Radius = 0.215f;
             Health = 20f;
@@ -82,13 +83,13 @@ public partial class Exploder : Enemy
         if (other is Enemy enemy && !enemy.IsDying)
         {
             var spawnFactor = Utils.Map(enemy.ElapsedTime, 0f, enemy.SpawnTime, 0f, 1f, EasingType.QuadIn);
-            Velocity += (Position - enemy.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 10f * (1f + enemy.TempWeight) * spawnFactor * dt;
+            Velocity += (Position - enemy.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * enemy.PushStrength * (1f + enemy.TempWeight) * spawnFactor * dt;
         }
         else if (other is PlayerCitizen player)
         {
             if(!player.IsDead)
             {
-                Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 5f * (1f + player.TempWeight) * dt;
+                Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * player.PushStrength * (1f + player.TempWeight) * dt;
 
                 if (IsAttacking && _damageTime >= DAMAGE_TIME)
                 {

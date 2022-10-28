@@ -35,6 +35,7 @@ public abstract partial class Enemy : Thing
 	public float DamageToPlayer { get; protected set; }
 
 	public float ScaleFactor { get; protected set; }
+	public float PushStrength { get; protected set; }
 
 	public float SpawnTime { get; protected set; }
 	private float SHADOW_FULL_OPACITY = 0.8f;

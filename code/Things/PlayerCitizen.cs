@@ -58,6 +58,7 @@ public partial class PlayerCitizen : Thing
 	[Net] public float NumUpgradeChoices { get; protected set; }
 	public float HealthRegen { get; protected set; }
 	public float DamageReductionPercent { get; protected set; }
+	public float PushStrength { get; protected set; }
 
 	private int _shotNum;
 
@@ -192,6 +193,7 @@ public partial class PlayerCitizen : Thing
 		NumUpgradeChoices = 3f;
 		HealthRegen = 0f;
 		DamageReductionPercent = 0f;
+		PushStrength = 50f;
 		LastAmmoDamageMultiplier = 1f;
 
 		Statuses.Clear();
