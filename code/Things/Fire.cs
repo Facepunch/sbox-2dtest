@@ -109,6 +109,8 @@ public partial class Fire : Thing
 					burning.Damage = Shooter.FireDamage * Shooter.GetDamageMultiplier();
 					burning.Lifetime = Shooter.FireLifetime;
 					burning.SpreadChance = Shooter.FireSpreadChance;
+
+					Game.PlaySfxNearby("burn", Position, pitch: Rand.Float(0.95f, 1.15f), volume: 1f, maxDist: 5f);
 				}
 
 				Log.Info("Shooter.FireDamage: " + Shooter.FireDamage);

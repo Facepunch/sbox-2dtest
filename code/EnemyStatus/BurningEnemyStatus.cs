@@ -92,6 +92,8 @@ public class BurningEnemyStatus : EnemyStatus
 					burning.Damage = Damage;
 					burning.Lifetime = Lifetime;
 					burning.SpreadChance = SpreadChance;
+
+					MyGame.Current.PlaySfxNearby("burn", enemy.Position, pitch: Rand.Float(1.15f, 1.35f), volume: 0.7f, maxDist: 4f);
 				}
 
 				didDamage = true;

@@ -48,6 +48,7 @@ public class DashFireStatus : Status
 			};
 
 			MyGame.Current.AddThing(fire);
+			MyGame.Current.PlaySfxNearby("ignite", Player.Position, pitch: Rand.Float(1.05f, 1.25f), volume: 0.5f, maxDist: 4f);
 		}
 	}
 

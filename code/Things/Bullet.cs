@@ -121,6 +121,9 @@ public partial class Bullet : Thing
 
 				if (FireIgniteChance > 0f && Rand.Float(0f, 1f) < FireIgniteChance)
 				{
+					if (!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))))
+						Game.PlaySfxNearby("burn", Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1f, maxDist: 5f);
+
 					BurningEnemyStatus burning = (BurningEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
 					burning.Player = Shooter;
 					burning.Damage = Shooter.FireDamage * Shooter.GetDamageMultiplier();

@@ -32,7 +32,7 @@ public partial class MyGame : Sandbox.Game
 	//public const float MAX_ENEMY_COUNT = 0;
 
     public int CoinCount { get; private set; }
-	public const float MAX_COIN_COUNT = 100;
+	public const float MAX_COIN_COUNT = 200;
 
 	private readonly List<Thing> _things = new();
 	public record struct GridSquare(int x, int y);
@@ -124,7 +124,7 @@ public partial class MyGame : Sandbox.Game
 
 	void HandleEnemySpawn()
     {
-		if(_enemySpawnTime > Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.25f, EasingType.QuadOut) * Utils.Map(ElapsedTime, 0f, 30f, 1.5f, 1f) * Utils.Map(ElapsedTime, 0f, 180f, 3f, 1f))
+		if(_enemySpawnTime > Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.25f, EasingType.QuadOut) * Utils.Map(ElapsedTime, 0f, 60f, 1.5f, 1f) * Utils.Map(ElapsedTime, 0f, 180f, 3f, 1f))
         {
 			SpawnEnemy();
 			_enemySpawnTime = 0f;
@@ -169,7 +169,8 @@ public partial class MyGame : Sandbox.Game
 
 	public void SpawnCoin(Vector2 pos)
     {
-		if (CoinCount >= MAX_ENEMY_COUNT)
+		// todo: spawn larger amounts less often if reaching max coin cap
+		if (CoinCount >= MAX_COIN_COUNT)
 			return;
 
 		var coin = new Coin()
