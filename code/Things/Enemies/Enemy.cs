@@ -23,7 +23,7 @@ public abstract partial class Enemy : Thing
 	public bool IsDying { get; private set; }
 	public float DeathTimeElapsed { get; private set; }
 	public float DeathTime { get; protected set; }
-	public float DeathProgress { get; private set; }
+	[Net] public float DeathProgress { get; private set; }
 	private Vector2 _deathScale;
 
 	public bool IsAttacking { get; private set; }
@@ -51,6 +51,10 @@ public abstract partial class Enemy : Thing
 	private TimeSince _spawnCloudTime;
 
 	public Dictionary<TypeDescription, EnemyStatus> EnemyStatuses = new Dictionary<TypeDescription, EnemyStatus>();
+
+	private BurningVfx _burningVfx;
+
+	private FrozenVfx _frozenVfx;
 
 	public override void Spawn()
 	{
@@ -431,9 +435,40 @@ public abstract partial class Enemy : Thing
 		return null;
 	}
 
-
 	public bool HasEnemyStatus(TypeDescription type)
     {
 		return EnemyStatuses.ContainsKey(type);
     }
+
+	[ClientRpc]
+	public void CreateBurningVfx()
+	{
+		_burningVfx = new BurningVfx(this);
+	}
+
+	[ClientRpc]
+	public void RemoveBurningVfx()
+	{
+		if(_burningVfx != null)
+        {
+			_burningVfx.Delete();
+			_burningVfx = null;
+		}
+	}
+
+	[ClientRpc]
+	public void CreateFrozenVfx()
+	{
+		_frozenVfx = new FrozenVfx(this);
+	}
+
+	[ClientRpc]
+	public void RemoveFrozenVfx()
+	{
+		if (_frozenVfx != null)
+		{
+			_frozenVfx.Delete();
+			_frozenVfx = null;
+		}
+	}
 }

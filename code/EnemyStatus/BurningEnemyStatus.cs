@@ -10,8 +10,6 @@ namespace Test2D;
 
 public class BurningEnemyStatus : EnemyStatus
 {
-	public BurningVfx FireSprite { get; private set; }
-
 	private TimeSince _sinceDamageTime;
 	private const float DAMAGE_INTERVAL = 0.4f;
 
@@ -33,17 +31,13 @@ public class BurningEnemyStatus : EnemyStatus
     {
 		base.Init(enemy);
 
-		FireSprite = new BurningVfx();
-		UpdateFire();
+		Enemy.CreateBurningVfx();
 	}
 
 	public override void Update(float dt)
     {
 		if (Enemy == null || !Enemy.IsValid)
 			return;
-
-		//DebugOverlay.Text(ElapsedTime + " / " + Lifetime, Enemy.Position, 0f, float.MaxValue);
-		UpdateFire();
 
 		if (ElapsedTime > Lifetime)
 			Enemy.RemoveEnemyStatus(TypeLibrary.GetDescription(this.GetType()));
@@ -55,19 +49,9 @@ public class BurningEnemyStatus : EnemyStatus
         }
     }
 
-	void UpdateFire()
-    {
-		FireSprite.Position = Enemy.Position + new Vector2(0f, 0.4f);
-
-		bool flip = Utils.FastSin(Time.Now * 4f) < 0f;
-		FireSprite.Scale = new Vector2((1f + Utils.FastSin(Time.Now * 24f) * 0.1f) * (flip ? -1f : 1f), 1f + Utils.FastSin(ElapsedTime * 14f) * 0.075f);
-		FireSprite.Depth = Enemy.Depth + 2f;
-		FireSprite.Opacity = (0.4f + Utils.FastSin(ElapsedTime * 20f) * 0.3f) * Utils.Map(Enemy.DeathProgress, 0f, 1f, 1f, 0f) * Utils.Map(ElapsedTime, Lifetime - 0.25f, Lifetime, 1f, 0f);
-	}
-
 	public override void Remove()
     {
-		FireSprite.Delete();
+		Enemy.RemoveBurningVfx();
 	}
 
 	public override void Refresh()
@@ -115,6 +99,13 @@ public class BurningEnemyStatus : EnemyStatus
 
 public partial class BurningVfx : Sprite
 {
+	private Enemy _enemy;
+
+	public BurningVfx(Enemy enemy)
+    {
+		_enemy = enemy;
+    }
+
 	public override void Spawn()
 	{
 		base.Spawn();
@@ -125,5 +116,16 @@ public partial class BurningVfx : Sprite
 
 		ColorTint = new Color(1f, 1f, 1f, 1f);
 		Filter = SpriteFilter.Pixelated;
+	}
+
+	[Event.Tick.Client]
+	public void ClientTick()
+	{
+		Position = _enemy.Position + new Vector2(0f, 0.4f);
+
+        bool flip = Utils.FastSin(Time.Now * 4f) < 0f;
+        Scale = new Vector2((1f + Utils.FastSin(Time.Now * 24f) * 0.1f) * (flip ? -1f : 1f), 1f + Utils.FastSin(Time.Now * 14f) * 0.075f);
+        Depth = _enemy.Depth + 2f;
+        Opacity = (0.4f + Utils.FastSin(Time.Now * 20f) * 0.3f) * Utils.Map(_enemy.DeathProgress, 0f, 1f, 1f, 0f);
 	}
 }

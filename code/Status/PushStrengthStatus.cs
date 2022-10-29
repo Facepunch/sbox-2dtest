@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 111f)]
+[Status(9, 0, 1f)]
 public class PushStrengthStatus : Status
 {
 	public PushStrengthStatus()

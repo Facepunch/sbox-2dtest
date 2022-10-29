@@ -131,6 +131,10 @@ public partial class Bullet : Thing
 					burning.SpreadChance = Shooter.FireSpreadChance;
 				}
 
+				FrozenEnemyStatus frozen = (FrozenEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus)));
+				frozen.Player = Shooter;
+				frozen.Lifetime = Shooter.FireLifetime;
+
 				NumHits++;
 
 				if (NumHits > NumPiercing)
