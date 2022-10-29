@@ -11,6 +11,7 @@ namespace Test2D;
 public class FrozenEnemyStatus : EnemyStatus
 {
 	public float Lifetime { get; set; }
+	public float TimeScale { get; set; }
 
 	public PlayerCitizen Player { get; set; }
 
@@ -19,9 +20,25 @@ public class FrozenEnemyStatus : EnemyStatus
 		base.Init(enemy);
 
 		enemy.CreateFrozenVfx();
-		enemy.AnimSpeedModifier = 0.5f;
 		enemy.IsFrozen = true;
-		enemy.TimeScale = 0.5f;
+		TimeScale = float.MaxValue;
+	}
+
+	public void SetLifetime(float lifetime)
+    {
+		if(lifetime > Lifetime)
+        {
+			Lifetime = lifetime;
+        }
+    }
+
+	public void SetTimeScale(float timeScale)
+    {
+		if(timeScale < TimeScale)
+		{
+			Enemy.AnimSpeedModifier = timeScale;
+			Enemy.TimeScale = timeScale;
+		}
 	}
 
 	public override void Update(float dt)
@@ -29,12 +46,10 @@ public class FrozenEnemyStatus : EnemyStatus
 		if (Enemy == null || !Enemy.IsValid)
 			return;
 
-		//DebugOverlay.Text(ElapsedTime + " / " + Lifetime, Enemy.Position, 0f, float.MaxValue);
-
 		if (ElapsedTime > Lifetime)
 			Enemy.RemoveEnemyStatus(TypeLibrary.GetDescription(this.GetType()));
 
-		//Enemy.Velocity *= (1f - 15f * dt);
+		Enemy.Velocity *= (1f - Utils.Map(TimeScale, 0.6f, 0f, 3f, 15f) * dt);
     }
 
 	public override void StartDying()
@@ -72,7 +87,6 @@ public partial class FrozenVfx : Sprite
 	{
 		base.Spawn();
 
-		//SpriteTexture = SpriteTexture.Atlas("textures/sprites/frozenb.png", 2, 3);
 		SpriteTexture = SpriteTexture.Atlas("textures/sprites/frozen.png", 1, 5);
         AnimationPath = "textures/sprites/frozen.frames";
 		AnimationSpeed = Rand.Float(3f, 4f);

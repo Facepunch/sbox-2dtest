@@ -480,4 +480,21 @@ public abstract partial class Enemy : Thing
 			_frozenVfx = null;
 		}
 	}
+
+	public void Burn(PlayerCitizen player, float damage, float lifetime, float spreadChance)
+	{
+		BurningEnemyStatus burning = (BurningEnemyStatus)AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
+		burning.Player = player;
+		burning.Damage = damage;
+		burning.Lifetime = lifetime;
+		burning.SpreadChance = spreadChance;
+	}
+
+	public void Freeze(PlayerCitizen player)
+    {
+		FrozenEnemyStatus frozen = (FrozenEnemyStatus)AddEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus)));
+		frozen.Player = player;
+		frozen.SetLifetime(player.FreezeLifetime);
+		frozen.SetTimeScale(player.FreezeTimeScale);
+	}
 }

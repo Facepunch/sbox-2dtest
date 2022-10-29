@@ -23,7 +23,7 @@ public class FireIgniteStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.FireIgniteChance), GetAddForLevel(Level), ModifierType.Add);
+		Player.Modify(this, nameof(Player.ShootFireIgniteChance), GetAddForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

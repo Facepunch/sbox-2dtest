@@ -104,16 +104,9 @@ public partial class Fire : Thing
             {
 				if (!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))))
                 {
-					BurningEnemyStatus burning = (BurningEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
-					burning.Player = Shooter;
-					burning.Damage = Shooter.FireDamage * Shooter.GetDamageMultiplier();
-					burning.Lifetime = Shooter.FireLifetime;
-					burning.SpreadChance = Shooter.FireSpreadChance;
-
+					enemy.Burn(Shooter, Shooter.FireDamage * Shooter.GetDamageMultiplier(), Shooter.FireLifetime, Shooter.FireSpreadChance);
 					Game.PlaySfxNearby("burn", Position, pitch: Rand.Float(0.95f, 1.15f), volume: 1f, maxDist: 5f);
 				}
-
-				Log.Info("Shooter.FireDamage: " + Shooter.FireDamage);
 			}
 		}
 		else if (other is PlayerCitizen player && !player.IsDead)

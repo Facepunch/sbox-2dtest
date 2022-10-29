@@ -22,6 +22,7 @@ public partial class Bullet : Thing
 	public float CriticalChance { get; set; }
 	public float CriticalMultiplier { get; set; }
 	public float FireIgniteChance { get; set; }
+	public float FreezeChance { get; set; }
 
 	public List<Thing> _hitThings = new List<Thing>();
 
@@ -119,21 +120,21 @@ public partial class Bullet : Thing
 				enemy.Velocity += Velocity.Normal * Force;
 				enemy.TempWeight += AddTempWeight;
 
-				if (FireIgniteChance > 0f && Rand.Float(0f, 1f) < FireIgniteChance)
+				if (Rand.Float(0f, 1f) < FireIgniteChance)
 				{
 					if (!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))))
 						Game.PlaySfxNearby("burn", Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1f, maxDist: 5f);
 
-					BurningEnemyStatus burning = (BurningEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
-					burning.Player = Shooter;
-					burning.Damage = Shooter.FireDamage * Shooter.GetDamageMultiplier();
-					burning.Lifetime = Shooter.FireLifetime;
-					burning.SpreadChance = Shooter.FireSpreadChance;
+					enemy.Burn(Shooter, Shooter.FireDamage * Shooter.GetDamageMultiplier(), Shooter.FireLifetime, Shooter.FireSpreadChance);
 				}
 
-				FrozenEnemyStatus frozen = (FrozenEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus)));
-				frozen.Player = Shooter;
-				frozen.Lifetime = 3f;
+				if (FreezeChance > 0f && Rand.Float(0f, 1f) < FreezeChance)
+				{
+					if (!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus))))
+						Game.PlaySfxNearby("burn", Position, pitch: Rand.Float(1.5f, 1.6f), volume: 1f, maxDist: 5f);
+
+					enemy.Freeze(Shooter);
+				}
 
 				NumHits++;
 

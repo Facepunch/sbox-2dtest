@@ -71,12 +71,7 @@ public class BurningEnemyStatus : EnemyStatus
 
 				if(!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))) && Rand.Float(0f, 1f) < SpreadChance)
                 {
-					BurningEnemyStatus burning = (BurningEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
-					burning.Player = Player;
-					burning.Damage = Damage;
-					burning.Lifetime = Lifetime;
-					burning.SpreadChance = SpreadChance;
-
+					enemy.Burn(Player, Damage, Lifetime, SpreadChance);
 					MyGame.Current.PlaySfxNearby("burn", enemy.Position, pitch: Rand.Float(1.15f, 1.35f), volume: 0.7f, maxDist: 4f);
 				}
 

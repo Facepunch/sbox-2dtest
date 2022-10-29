@@ -89,8 +89,13 @@ public partial class PlayerCitizen : Thing
 	public float ThornsPercent { get; protected set; }
 	public float FireDamage { get; protected set; }
 	public float FireLifetime { get; protected set; }
-	public float FireIgniteChance { get; protected set; }
+	public float ShootFireIgniteChance { get; protected set; }
 	public float FireSpreadChance { get; protected set; }
+	public float ShootFreezeChance { get; protected set; }
+	public float FreezeLifetime { get; protected set; }
+	public float FreezeTimeScale { get; protected set; }
+	public float FreezeOnMeleeChance { get; protected set; }
+
 	public float LastAmmoDamageMultiplier { get; protected set; }
 
 	private float _flashTimer;
@@ -184,8 +189,12 @@ public partial class PlayerCitizen : Thing
 
 		FireDamage = 1.0f;
 		FireLifetime = 2.0f;
-		FireIgniteChance = 0f;
+		ShootFireIgniteChance = 0f;
 		FireSpreadChance = 0f;
+		ShootFreezeChance = 0f;
+		FreezeLifetime = 3f;
+		FreezeTimeScale = 0.6f;
+		FreezeOnMeleeChance = 0f;
 
 		CoinAttractRange = 1.7f;
 		CoinAttractStrength = 3.1f;
@@ -623,7 +632,8 @@ public partial class PlayerCitizen : Thing
 				CriticalMultiplier = CritMultiplier,
 				Scale = new Vector2(scale, scale),
 				Radius = radius,
-				FireIgniteChance = FireIgniteChance,
+				FireIgniteChance = ShootFireIgniteChance,
+				FreezeChance = ShootFreezeChance,
 				BasePivotY = basePivotY,
 			};
 
