@@ -133,7 +133,7 @@ public partial class Bullet : Thing
 
 				FrozenEnemyStatus frozen = (FrozenEnemyStatus)enemy.AddEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus)));
 				frozen.Player = Shooter;
-				frozen.Lifetime = Shooter.FireLifetime;
+				frozen.Lifetime = 3f;
 
 				NumHits++;
 

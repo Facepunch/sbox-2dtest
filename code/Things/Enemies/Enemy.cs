@@ -55,6 +55,12 @@ public abstract partial class Enemy : Thing
 	private BurningVfx _burningVfx;
 
 	private FrozenVfx _frozenVfx;
+	public bool IsFrozen { get; set; }
+
+	private float _animSpeed;
+	public float AnimSpeed { get { return _animSpeed; } set { _animSpeed = value; AnimationSpeed = _animSpeed * _animSpeedModifier; } }
+	private float _animSpeedModifier;
+	public float AnimSpeedModifier { get { return _animSpeedModifier; } set { _animSpeedModifier = value; AnimationSpeed = _animSpeed * _animSpeedModifier; } }
 
 	public override void Spawn()
 	{
@@ -74,6 +80,9 @@ public abstract partial class Enemy : Thing
 			AnimIdlePath = "textures/sprites/zombie_walk.frames";
 			AnimAttackPath = "textures/sprites/zombie_attack.frames";
 			AnimDiePath = "textures/sprites/zombie_die.frames";
+
+			_animSpeed = 1f;
+			_animSpeedModifier = 1f;
 
 			//ColorTint = new Color(Rand.Float(0.45f, 1f), Rand.Float(0.45f, 1f), Rand.Float(0.45f, 1f));
 		}
@@ -110,7 +119,7 @@ public abstract partial class Enemy : Thing
 		base.Update(dt);
 		ElapsedTime += dt;
 
-		HandleFlashing(dt);
+		HandleFlashing(Time.Delta);
 		HandleStatuses(dt);
 
 		if (IsDying)
@@ -193,7 +202,7 @@ public abstract partial class Enemy : Thing
 			}
 			else
 			{
-				AnimationSpeed = Utils.Map(dist_sqr, attack_dist_sqr, 0f, 1f, 4f, EasingType.Linear);
+				AnimSpeed = Utils.Map(dist_sqr, attack_dist_sqr, 0f, 1f, 4f, EasingType.Linear);
 				_aggroTimer = 0f;
 			}
 		}
@@ -203,16 +212,16 @@ public abstract partial class Enemy : Thing
     {
 		if(!IsAttacking)
         {
-			AnimationSpeed = Utils.Map(Utils.FastSin(MoveTimeOffset + Time.Now * 7.5f), -1f, 1f, 0.75f, 3f, EasingType.ExpoIn);
+			AnimSpeed = Utils.Map(Utils.FastSin(MoveTimeOffset + Time.Now * 7.5f), -1f, 1f, 0.75f, 3f, EasingType.ExpoIn);
 
-			if (MathF.Abs(Velocity.x) > 0.175f)
+			if (MathF.Abs(Velocity.x) > 0.175f && !IsFrozen)
 				Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * ScaleFactor;
 		}
 		else
         {
 			float dist_sqr = (targetPlayer.Position - Position).LengthSquared;
 			float attack_dist_sqr = MathF.Pow(AGGRO_RANGE, 2f);
-			AnimationSpeed = Utils.Map(dist_sqr, attack_dist_sqr, 0f, 1f, 4f, EasingType.Linear);
+			AnimSpeed = Utils.Map(dist_sqr, attack_dist_sqr, 0f, 1f, 4f, EasingType.Linear);
 
 			Scale = new Vector2(1f * targetPlayer.Position.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
 		}
@@ -261,7 +270,7 @@ public abstract partial class Enemy : Thing
 		}
 		else
 		{
-			if(_spawnCloudTime > 0.3f)
+			if(_spawnCloudTime > (0.3f / TimeScale))
             {
 				SpawnCloudClient(Position + new Vector2(0f, 0.25f), new Vector2(Rand.Float(-1f, 1f), Rand.Float(-1f, 1f)).Normal * Rand.Float(0.2f, 0.6f));
 				_spawnCloudTime = Rand.Float(0f, 0.15f);
@@ -310,7 +319,7 @@ public abstract partial class Enemy : Thing
 		DeathProgress = 0f;
 		DeathTimeElapsed = 0f;
 		AnimationPath = AnimDiePath;
-		AnimationSpeed = 5.5f;
+		AnimSpeed = 5.5f;
 
 		_isFlashing = false;
 		//ColorFill = new ColorHsv(0f, 0f, 0f, 0f);

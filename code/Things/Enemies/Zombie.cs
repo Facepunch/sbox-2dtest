@@ -23,7 +23,7 @@ public partial class Zombie : Enemy
         if (Host.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/zombie.png", 5, 6);
-            AnimationSpeed = 2f;
+            AnimSpeed = 2f;
             BasePivotY = 0.05f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
@@ -111,7 +111,7 @@ public partial class Zombie : Enemy
             {
                 Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * player.PushStrength * (1f + player.TempWeight) * dt;
 
-                if (IsAttacking && _damageTime >= DAMAGE_TIME)
+                if (IsAttacking && _damageTime > (DAMAGE_TIME / TimeScale))
                 {
                     float damageDealt = player.Damage(DamageToPlayer);
                     

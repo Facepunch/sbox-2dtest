@@ -111,7 +111,7 @@ public partial class MyGame : Sandbox.Game
         {
 			var thing = _things[i];
 			if (!thing.IsRemoved)
-				thing.Update(dt);
+				thing.Update(dt * thing.TimeScale);
 		}
 
         //DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
@@ -223,7 +223,7 @@ public partial class MyGame : Sandbox.Game
 			{
 				float percent = Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 1f);
 				//thing.Velocity += (thing.Position - other.Position).Normal * Utils.Map(dist_sqr, total_radius_sqr, 0f, 0f, 10f) * (1f + other.TempWeight) * dt;
-				thing.Colliding(other, percent, dt);
+				thing.Colliding(other, percent, dt * thing.TimeScale);
 			}
 		}
 	}

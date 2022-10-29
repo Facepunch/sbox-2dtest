@@ -35,7 +35,7 @@ public partial class Charger : Enemy
         if (Host.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/charger.png", 5, 6);
-            AnimationSpeed = 2f;
+            AnimSpeed = 2f;
             BasePivotY = 0.05f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
@@ -185,7 +185,7 @@ public partial class Charger : Enemy
         _chargeVel = Vector2.Zero;
 
         AnimationPath = AnimAttackPath;
-        AnimationSpeed = 3f;
+        AnimSpeed = 3f;
         Scale = new Vector2(1f * target_pos.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
 
         Game.PlaySfxNearby("enemy.roar", Position, pitch: Rand.Float(0.925f, 1.075f), volume: 1f, maxDist: 8f);
@@ -206,7 +206,7 @@ public partial class Charger : Enemy
             {
                 Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * player.PushStrength * (1f + player.TempWeight) * dt;
 
-                if ((IsAttacking || IsCharging) && _damageTime >= DAMAGE_TIME)
+                if ((IsAttacking || IsCharging) && _damageTime > (DAMAGE_TIME / TimeScale))
                 {
                     float damageDealt = player.Damage(DamageToPlayer);
 

@@ -24,7 +24,7 @@ public partial class Exploder : Enemy
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/exploder.png", 5, 6);
             //AnimationPath = "textures/sprites/zombie_spawn.frames";
             //AnimIdlePath = "textures/sprites/zombie_walk.frames";
-            AnimationSpeed = 2f;
+            AnimSpeed = 2f;
             BasePivotY = 0.05f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
@@ -91,7 +91,7 @@ public partial class Exploder : Enemy
             {
                 Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * player.PushStrength * (1f + player.TempWeight) * dt;
 
-                if (IsAttacking && _damageTime >= DAMAGE_TIME)
+                if (IsAttacking && _damageTime > (DAMAGE_TIME / TimeScale))
                 {
                     float damageDealt = player.Damage(DamageToPlayer);
 

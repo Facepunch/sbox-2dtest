@@ -22,12 +22,14 @@ public partial class Thing : Sprite
 	public Shadow Shadow { get; set; } // client only 
 	public float BasePivotY { get; set; }
 
+	public float TimeScale { get; set; }
+
 	float _heightZ = 0.0f;
 	public float HeightZ { set { _heightZ = value; Pivot = new Vector2(0.5f, BasePivotY - _heightZ); } get { return _heightZ; } }
 
 	public Thing()
     {
-
+		TimeScale = 1f;
     }
 
 	public override void Spawn()

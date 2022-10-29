@@ -19,6 +19,9 @@ public class FrozenEnemyStatus : EnemyStatus
 		base.Init(enemy);
 
 		enemy.CreateFrozenVfx();
+		enemy.AnimSpeedModifier = 0.5f;
+		enemy.IsFrozen = true;
+		enemy.TimeScale = 0.5f;
 	}
 
 	public override void Update(float dt)
@@ -31,11 +34,22 @@ public class FrozenEnemyStatus : EnemyStatus
 		if (ElapsedTime > Lifetime)
 			Enemy.RemoveEnemyStatus(TypeLibrary.GetDescription(this.GetType()));
 
-		Enemy.Velocity *= (1f - 15f * dt);
+		//Enemy.Velocity *= (1f - 15f * dt);
     }
+
+	public override void StartDying()
+	{
+		Enemy.AnimSpeedModifier = 1f;
+		Enemy.TimeScale = 1f;
+		Enemy.IsFrozen = false;
+	}
 
 	public override void Remove()
     {
+		Enemy.AnimSpeedModifier = 1f;
+		Enemy.TimeScale = 1f;
+		Enemy.IsFrozen = false;
+
 		Enemy.RemoveFrozenVfx();
 	}
 
