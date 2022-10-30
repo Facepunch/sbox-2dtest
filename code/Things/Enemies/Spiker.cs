@@ -128,7 +128,7 @@ public partial class Spiker : Enemy
         if (closestPlayer == null)
             return;
 
-        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 0.1f + new Vector2(Rand.Float(1f, 1f), Rand.Float(1f, 1f)) * 0.8f;
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 0.1f + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-1f, 1f)) * 0.8f;
         var spike = new EnemySpike
         {
             Position = target_pos,
@@ -137,7 +137,7 @@ public partial class Spiker : Enemy
 
         Game.AddThing(spike);
 
-        Game.PlaySfxNearby("spitter.shoot", Position, pitch: Rand.Float(0.8f, 0.9f), volume: 1f, maxDist: 5f);
+        //Game.PlaySfxNearby("spitter.shoot", Position, pitch: Rand.Float(0.8f, 0.9f), volume: 1f, maxDist: 5f);
     }
 
     public void FinishShooting()
