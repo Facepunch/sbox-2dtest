@@ -44,7 +44,7 @@ public class BurningEnemyStatus : EnemyStatus
 
 		if(_sinceDamageTime > DAMAGE_INTERVAL)
         {
-			Enemy.Damage(Damage, Player);
+			Enemy.DamageFire(Damage, Player);
 			_sinceDamageTime = 0f;
         }
     }
@@ -67,7 +67,7 @@ public class BurningEnemyStatus : EnemyStatus
 		{
 			if (_damageOtherTime > DAMAGE_INTERVAL)
 			{
-				enemy.Damage(Damage, Player);
+				enemy.DamageFire(Damage, Player);
 
 				if(!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))) && Rand.Float(0f, 1f) < SpreadChance)
                 {

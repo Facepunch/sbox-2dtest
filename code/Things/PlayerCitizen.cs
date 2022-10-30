@@ -95,6 +95,7 @@ public partial class PlayerCitizen : Thing
 	public float FreezeLifetime { get; protected set; }
 	public float FreezeTimeScale { get; protected set; }
 	public float FreezeOnMeleeChance { get; protected set; }
+	public float FreezeFireDamageMultiplier { get; protected set; }
 
 	public float LastAmmoDamageMultiplier { get; protected set; }
 
@@ -195,6 +196,7 @@ public partial class PlayerCitizen : Thing
 		FreezeLifetime = 3f;
 		FreezeTimeScale = 0.6f;
 		FreezeOnMeleeChance = 0f;
+		FreezeFireDamageMultiplier = 1f;
 
 		CoinAttractRange = 1.7f;
 		CoinAttractStrength = 3.1f;
@@ -366,9 +368,18 @@ public partial class PlayerCitizen : Thing
         {
             if (Input.Pressed(InputButton.Run))
             {
-                //Game.Restart();
-                AddExperience(GetExperienceReqForLevel(Level));
-                return;
+				//Game.Restart();
+				//AddExperience(GetExperienceReqForLevel(Level));
+
+				for(int i = 0; i < 9; i++)
+                {
+					AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
+					AddStatus(TypeLibrary.GetDescription(typeof(FireIgniteStatus)));
+					AddStatus(TypeLibrary.GetDescription(typeof(FreezeBurnStatus)));
+					AddStatus(TypeLibrary.GetDescription(typeof(FireDamageStatus)));
+				}
+
+				return;
             }
 
             var gridPos = Game.GetGridSquareForPos(Position);
@@ -814,10 +825,7 @@ public partial class PlayerCitizen : Thing
 	[ConCmd.Server("add_status")]
 	public static void AddStatusCmd(int typeIdentity)
     {
-        Log.Info("AddStatusCmd: " + typeIdentity);
 		TypeDescription type = StatusManager.IdentityToType(typeIdentity);
-		Log.Info("type: " + type);
-
 		var player = ConsoleSystem.Caller.Pawn as PlayerCitizen;
 		player.AddStatus(type);
 	}

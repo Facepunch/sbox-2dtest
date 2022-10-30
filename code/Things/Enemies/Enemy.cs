@@ -314,6 +314,14 @@ public abstract partial class Enemy : Thing
 		}
 	}
 
+	public virtual void DamageFire(float damage, PlayerCitizen player)
+    {
+		if (IsFrozen)
+			damage *= player.FreezeFireDamageMultiplier;
+
+		Damage(damage, player);
+    }
+
 	public virtual void StartDying(PlayerCitizen player)
 	{
 		IsDying = true;
