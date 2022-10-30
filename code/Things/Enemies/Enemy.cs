@@ -28,7 +28,7 @@ public abstract partial class Enemy : Thing
 
 	public bool IsAttacking { get; private set; }
 	private float _aggroTimer;
-	protected const float AGGRO_RANGE = 1.4f;
+	public float AggroRange { get; protected set; }
 	protected const float AGGRO_START_TIME = 0.2f;
 	protected const float AGGRO_LOSE_TIME = 0.4f;
 
@@ -75,6 +75,7 @@ public abstract partial class Enemy : Thing
 			Deceleration = 1.47f;
 			DecelerationAttacking = 1.33f;
 			DeathTime = 0.3f;
+			AggroRange = 1.4f;
 
 			AnimSpawnPath = "textures/sprites/zombie_spawn.frames";
 			AnimIdlePath = "textures/sprites/zombie_walk.frames";
@@ -170,7 +171,7 @@ public abstract partial class Enemy : Thing
 	protected virtual void HandleAttacking(PlayerCitizen targetPlayer, float dt)
     {
 		float dist_sqr = (targetPlayer.Position - Position).LengthSquared;
-		float attack_dist_sqr = MathF.Pow(AGGRO_RANGE, 2f);
+		float attack_dist_sqr = MathF.Pow(AggroRange, 2f);
 
 		if (!IsAttacking)
 		{
@@ -220,7 +221,7 @@ public abstract partial class Enemy : Thing
 		else
         {
 			float dist_sqr = (targetPlayer.Position - Position).LengthSquared;
-			float attack_dist_sqr = MathF.Pow(AGGRO_RANGE, 2f);
+			float attack_dist_sqr = MathF.Pow(AggroRange, 2f);
 			AnimSpeed = Utils.Map(dist_sqr, attack_dist_sqr, 0f, 1f, 4f, EasingType.Linear);
 
 			if(!IsFrozen)

@@ -28,8 +28,8 @@ public partial class MyGame : Sandbox.Game
 	public readonly List<PlayerCitizen> PlayerList = new();
 
 	public int EnemyCount { get; private set; }
-	public const float MAX_ENEMY_COUNT = 350;
-	//public const float MAX_ENEMY_COUNT = 0;
+	//public const float MAX_ENEMY_COUNT = 350;
+	public const float MAX_ENEMY_COUNT = 30;
 
     public int CoinCount { get; private set; }
 	public const float MAX_COIN_COUNT = 200;
@@ -139,6 +139,8 @@ public partial class MyGame : Sandbox.Game
 		var pos = new Vector2(Rand.Float(BOUNDS_MIN.x, BOUNDS_MAX.x), Rand.Float(BOUNDS_MIN.y, BOUNDS_MAX.y));
 
 		Enemy enemy = null;
+
+		enemy = new Spiker();
 
 		float exploderChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 180f, 0.05f, 0.1f);
 		if (enemy == null && Rand.Float(0f, 1f) < exploderChance)
