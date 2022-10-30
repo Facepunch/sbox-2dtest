@@ -474,7 +474,7 @@ public partial class PlayerCitizen : Thing
 
 		Vector2 dashDir = Velocity.LengthSquared > 0f ? Velocity.Normal : AimDir;
 		_dashVelocity = dashDir * DashStrength;
-		TempWeight = 15f;
+		TempWeight = 2f;
 
 		if (NumDashesAvailable == (int)NumDashes)
 			_dashTimer = DashCooldown;

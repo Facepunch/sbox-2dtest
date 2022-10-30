@@ -148,6 +148,10 @@ public partial class MyGame : Sandbox.Game
 		if (enemy == null && Rand.Float(0f, 1f) < spitterChance)
 			enemy = new Spitter();
 
+		float runnerChance = ElapsedTime < 120f ? 0f : Utils.Map(ElapsedTime, 120f, 800f, 0.05f, 0.2f, EasingType.QuadIn);
+		if (enemy == null && Rand.Float(0f, 1f) < runnerChance)
+			enemy = new Runner();
+
 		float chargerChance = ElapsedTime < 240f ? 0f : Utils.Map(ElapsedTime, 240f, 800f, 0.05f, 0.1f);
 		if (enemy == null && Rand.Float(0f, 1f) < chargerChance)
 			enemy = new Charger();
