@@ -34,6 +34,8 @@ public class FrozenEnemyStatus : EnemyStatus
 
 	public void SetTimeScale(float timeScale)
     {
+		timeScale = MathF.Max(timeScale, 0.01f);
+
 		if(timeScale < TimeScale)
 		{
 			Enemy.AnimSpeedModifier = timeScale;

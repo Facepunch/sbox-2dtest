@@ -213,11 +213,7 @@ public partial class Charger : Enemy
                     if (damageDealt > 0f)
                     {
                         Game.PlaySfxNearby("zombie.attack.player", Position, pitch: Utils.Map(player.Health, player.MaxHp, 0f, 0.95f, 1.15f, EasingType.QuadIn), volume: 1f, maxDist: 5.5f);
-
-                        if (player.ThornsPercent > 0f)
-                        {
-                            Damage(damageDealt * player.ThornsPercent * player.GetDamageMultiplier(), player, false);
-                        }
+                        OnDamagePlayer(player, damageDealt);
                     }
 
                     _damageTime = 0f;

@@ -223,7 +223,8 @@ public abstract partial class Enemy : Thing
 			float attack_dist_sqr = MathF.Pow(AGGRO_RANGE, 2f);
 			AnimSpeed = Utils.Map(dist_sqr, attack_dist_sqr, 0f, 1f, 4f, EasingType.Linear);
 
-			Scale = new Vector2(1f * targetPlayer.Position.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
+			if(!IsFrozen)
+				Scale = new Vector2(1f * targetPlayer.Position.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
 		}
 	}
 
@@ -492,9 +493,26 @@ public abstract partial class Enemy : Thing
 
 	public void Freeze(PlayerCitizen player)
     {
+		if (IsDying)
+			return;
+
 		FrozenEnemyStatus frozen = (FrozenEnemyStatus)AddEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus)));
 		frozen.Player = player;
 		frozen.SetLifetime(player.FreezeLifetime);
 		frozen.SetTimeScale(player.FreezeTimeScale);
+	}
+
+	protected virtual void OnDamagePlayer(PlayerCitizen player, float damage)
+    {
+		if (player.ThornsPercent > 0f)
+			Damage(damage * player.ThornsPercent * player.GetDamageMultiplier(), player, false);
+
+		if (Rand.Float(0f, 1f) < player.FreezeOnMeleeChance)
+		{
+			if (!HasEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus))))
+				Game.PlaySfxNearby("burn", Position, pitch: Rand.Float(1.5f, 1.6f), volume: 1f, maxDist: 5f);
+
+			Freeze(player);
+		}
 	}
 }
