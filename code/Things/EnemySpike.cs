@@ -16,6 +16,8 @@ public partial class EnemySpike : Thing
 	public float Damage { get; set; }
 	public float Lifetime { get; set; }
 
+	public SpikeBackground Background { get; set; }
+
 	public List<Thing> _hitThings = new List<Thing>();
 
 	public override void Spawn()
@@ -24,7 +26,7 @@ public partial class EnemySpike : Thing
 
 		if(Host.IsServer)
         {
-			SpriteTexture = SpriteTexture.Atlas("textures/sprites/spike.png", 3, 3);
+			SpriteTexture = SpriteTexture.Atlas("textures/sprites/spike_top.png", 3, 3);
 			AnimationPath = "textures/sprites/spike.frames";
 			AnimationSpeed = 3f;
 
@@ -47,14 +49,15 @@ public partial class EnemySpike : Thing
 		Filter = SpriteFilter.Pixelated;
 	}
 
- //   public override void ClientSpawn()
- //   {
- //       base.ClientSpawn();
+    public override void ClientSpawn()
+    {
+        base.ClientSpawn();
 
-	//	SpawnShadow(Radius * 3f);
-	//}
+		Background = new SpikeBackground();
+		Background.Position = Position;
+	}
 
-	public override void Update(float dt)
+    public override void Update(float dt)
 	{
 		if (Game.IsGameOver)
 			return;
@@ -115,4 +118,63 @@ public partial class EnemySpike : Thing
 			}
 		}
 	}
+
+	public override void Remove()
+	{
+		RemoveClient();
+		base.Remove();
+	}
+
+	[ClientRpc]
+	public void RemoveClient()
+	{
+		Background.Delete();
+	}
 }
+
+public partial class SpikeBackground : Sprite
+{
+	public Thing Thing { get; set; }
+
+	public override void Spawn()
+	{
+		base.Spawn();
+
+		SpriteTexture = SpriteTexture.Atlas("textures/sprites/spike_bottom.png", 3, 3);
+		AnimationPath = "textures/sprites/spike.frames";
+		AnimationSpeed = 3f;
+
+		Depth = -217f;
+		Filter = SpriteFilter.Pixelated;
+		Scale = new Vector2(Rand.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * 1.3f;
+	}
+
+	public override void ClientSpawn()
+	{
+		base.ClientSpawn();
+
+	}
+
+	//public void SetThing(Thing thing)
+	//{
+	//	Thing = thing;
+	//	Filter = SpriteFilter.Pixelated;
+	//}
+
+	//[Event.Tick.Client]
+	//public void ClientTick()
+	//{
+	//	if (Thing == null || !Thing.IsValid())
+	//	{
+	//		Delete();
+	//		return;
+	//	}
+
+	//	Position = Thing.Position;
+	//	ColorTint = new Color(0f, 0f, 0f, Thing.ShadowOpacity);
+	//	Scale = Thing.ShadowScale;
+
+	//	//DebugOverlay.Text("ColorFill: " + ColorFill.ToString(), Position + new Vector2(0.1f, -0.1f), 0f, float.MaxValue);
+	//}
+}
+
