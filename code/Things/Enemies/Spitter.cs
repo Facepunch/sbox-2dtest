@@ -104,6 +104,7 @@ public partial class Spitter : Enemy
         _shotTimer = SHOOT_TIME;
         IsShooting = true;
         Game.PlaySfxNearby("spitter.prepare", Position, pitch: Rand.Float(0.9f, 1.0f), volume: 1f, maxDist: 4f);
+        CanAttack = false;
     }
 
     public void Shoot()
@@ -127,6 +128,7 @@ public partial class Spitter : Enemy
         Velocity *= 0.25f;
         _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
         IsShooting = false;
+        CanAttack = true;
         Game.PlaySfxNearby("spitter.shoot", Position, pitch: Rand.Float(0.8f, 0.9f), volume: 1f, maxDist: 5f);
     }
 

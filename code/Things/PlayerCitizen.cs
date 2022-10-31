@@ -371,15 +371,16 @@ public partial class PlayerCitizen : Thing
                 //Game.Restart();
                 AddExperience(GetExperienceReqForLevel(Level));
 
-				//for(int i = 0; i < 9; i++)
-    //            {
-				//	AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
-				//	AddStatus(TypeLibrary.GetDescription(typeof(FireIgniteStatus)));
-				//	AddStatus(TypeLibrary.GetDescription(typeof(FreezeBurnStatus)));
-				//	AddStatus(TypeLibrary.GetDescription(typeof(FireDamageStatus)));
-				//}
+				for(int i = 0; i < 9; i++)
+                {
+                    AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
+					AddStatus(TypeLibrary.GetDescription(typeof(FreezeArmorStatus)));
+					//AddStatus(TypeLibrary.GetDescription(typeof(FireIgniteStatus)));
+					//AddStatus(TypeLibrary.GetDescription(typeof(FreezeBurnStatus)));
+					//AddStatus(TypeLibrary.GetDescription(typeof(FireDamageStatus)));
+				}
 
-				return;
+                return;
             }
 
             var gridPos = Game.GetGridSquareForPos(Position);

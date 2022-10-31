@@ -116,6 +116,7 @@ public partial class Spiker : Enemy
     {
         _shotTimer = SHOOT_TIME;
         IsShooting = true;
+        CanAttack = false;
         _hasShot = false;
         _prepareStartTime = 0f;
         Velocity *= 0.25f;
@@ -144,6 +145,7 @@ public partial class Spiker : Enemy
     {
         _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
         IsShooting = false;
+        CanAttack = true;
     }
 
     public override void Colliding(Thing other, float percent, float dt)

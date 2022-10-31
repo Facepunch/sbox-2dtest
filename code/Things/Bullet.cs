@@ -131,7 +131,7 @@ public partial class Bullet : Thing
 				if (FreezeChance > 0f && Rand.Float(0f, 1f) < FreezeChance)
 				{
 					if (!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus))))
-						Game.PlaySfxNearby("burn", Position, pitch: Rand.Float(1.5f, 1.6f), volume: 1f, maxDist: 5f);
+						Game.PlaySfxNearby("frozen", Position, pitch: Rand.Float(1.2f, 1.3f), volume: 1.6f, maxDist: 6f);
 
 					enemy.Freeze(Shooter);
 				}

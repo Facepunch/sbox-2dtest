@@ -170,7 +170,7 @@ public partial class MyGame : Sandbox.Game
 		AddThing(enemy);
 		EnemyCount++;
 
-		PlaySfxNearby("zombie.dirt", pos, pitch: Rand.Float(0.6f, 0.8f), volume: 0.7f, maxDist: 5.5f);
+		PlaySfxNearby("zombie.dirt", pos, pitch: Rand.Float(0.6f, 0.8f), volume: 0.7f, maxDist: 7.5f);
 	}
 
 	public void SpawnCoin(Vector2 pos)

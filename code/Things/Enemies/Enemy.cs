@@ -28,6 +28,7 @@ public abstract partial class Enemy : Thing
 
 	public bool IsAttacking { get; private set; }
 	private float _aggroTimer;
+	public bool CanAttack { get; set; }
 	public float AggroRange { get; protected set; }
 	protected const float AGGRO_START_TIME = 0.2f;
 	protected const float AGGRO_LOSE_TIME = 0.4f;
@@ -76,6 +77,7 @@ public abstract partial class Enemy : Thing
 			DecelerationAttacking = 1.33f;
 			DeathTime = 0.3f;
 			AggroRange = 1.4f;
+			CanAttack = true;
 
 			AnimSpawnPath = "textures/sprites/zombie_spawn.frames";
 			AnimIdlePath = "textures/sprites/zombie_walk.frames";
@@ -173,7 +175,7 @@ public abstract partial class Enemy : Thing
 		float dist_sqr = (targetPlayer.Position - Position).LengthSquared;
 		float attack_dist_sqr = MathF.Pow(AggroRange, 2f);
 
-		if (!IsAttacking)
+		if (!IsAttacking && CanAttack)
 		{
 			if (dist_sqr < attack_dist_sqr)
 			{
@@ -519,7 +521,7 @@ public abstract partial class Enemy : Thing
 		if (Rand.Float(0f, 1f) < player.FreezeOnMeleeChance)
 		{
 			if (!HasEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus))))
-				Game.PlaySfxNearby("burn", Position, pitch: Rand.Float(1.5f, 1.6f), volume: 1f, maxDist: 5f);
+				Game.PlaySfxNearby("frozen", Position, pitch: Rand.Float(1.1f, 1.2f), volume: 1.5f, maxDist: 5f);
 
 			Freeze(player);
 		}
