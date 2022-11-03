@@ -175,21 +175,24 @@ public abstract partial class Enemy : Thing
 		float dist_sqr = (targetPlayer.Position - Position).LengthSquared;
 		float attack_dist_sqr = MathF.Pow(AggroRange, 2f);
 
-		if (!IsAttacking && CanAttack)
+		if (!IsAttacking)
 		{
-			if (dist_sqr < attack_dist_sqr)
-			{
-				_aggroTimer += dt;
-				if (_aggroTimer > AGGRO_START_TIME)
+			if(CanAttack)
+            {
+				if (dist_sqr < attack_dist_sqr)
 				{
-					IsAttacking = true;
-					AnimationPath = AnimAttackPath;
+					_aggroTimer += dt;
+					if (_aggroTimer > AGGRO_START_TIME)
+					{
+						IsAttacking = true;
+						AnimationPath = AnimAttackPath;
+						_aggroTimer = 0f;
+					}
+				}
+				else
+				{
 					_aggroTimer = 0f;
 				}
-			}
-			else
-			{
-				_aggroTimer = 0f;
 			}
 		}
 		else

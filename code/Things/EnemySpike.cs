@@ -65,7 +65,7 @@ public partial class EnemySpike : Thing
 		base.Update(dt);
 
 		//DebugText(SpawnTime.ToString());
-  //      Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
+        //Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
 
 		Depth = -Position.y * 10f;
 

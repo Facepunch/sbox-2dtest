@@ -19,7 +19,7 @@ public partial class Spiker : Enemy
 
     public bool IsShooting { get; private set; }
     private float _shotTimer;
-    private const float SHOOT_TIME = 2f;
+    private const float SHOOT_TIME = 4f;
     private bool _hasShot;
     private TimeSince _prepareStartTime;
 
@@ -29,9 +29,13 @@ public partial class Spiker : Enemy
 
         if (Host.IsServer)
         {
-            SpriteTexture = SpriteTexture.Atlas("textures/sprites/spiker.png", 5, 6);
-            //AnimationPath = "textures/sprites/zombie_spawn.frames";
-            //AnimIdlePath = "textures/sprites/zombie_walk.frames";
+            SpriteTexture = SpriteTexture.Atlas("textures/sprites/spiker3.png", 7, 7);
+
+            AnimSpawnPath = "textures/sprites/spiker_spawn.frames";
+            AnimIdlePath = "textures/sprites/zombie_walk.frames";
+            AnimAttackPath = "textures/sprites/spiker_attack.frames";
+            AnimDiePath = "textures/sprites/spiker_die.frames";
+
             AnimSpeed = 4f;
             BasePivotY = 0.05f;
             HeightZ = 0f;
@@ -41,12 +45,12 @@ public partial class Spiker : Enemy
             DecelerationAttacking = 2.35f;
             AggroRange = 0.75f;
 
-            Radius = 0.225f;
+            Radius = 0.25f;
             Health = 26f;
             MaxHealth = Health;
             DamageToPlayer = 9f;
 
-            ScaleFactor = 0.75f;
+            ScaleFactor = 1.25f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
@@ -65,6 +69,8 @@ public partial class Spiker : Enemy
         if (Game.IsGameOver)
             return;
 
+        Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
+
         base.Update(dt);
     }
 
@@ -78,7 +84,7 @@ public partial class Spiker : Enemy
 
         if(IsShooting)
         {
-            DebugText("SHOOTING...");
+            DebugText("SHOOTING... " + _shotTimer.ToString("#.#"));
 
             if(!_hasShot && _prepareStartTime > 0.75f)
             {
@@ -120,6 +126,7 @@ public partial class Spiker : Enemy
         _hasShot = false;
         _prepareStartTime = 0f;
         Velocity *= 0.25f;
+        AnimationPath = "textures/sprites/spiker_shoot.frames";
         Game.PlaySfxNearby("spitter.prepare", Position, pitch: Rand.Float(0.9f, 1.0f), volume: 1f, maxDist: 4f);
     }
 
@@ -146,6 +153,7 @@ public partial class Spiker : Enemy
         _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
         IsShooting = false;
         CanAttack = true;
+        AnimationPath = AnimIdlePath;
     }
 
     public override void Colliding(Thing other, float percent, float dt)
