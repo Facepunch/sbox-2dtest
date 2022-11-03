@@ -45,18 +45,18 @@ public partial class Spiker : Enemy
             DecelerationAttacking = 2.35f;
             AggroRange = 0.75f;
 
-            Radius = 0.25f;
-            Health = 26f;
+            Radius = 0.27f;
+            Health = 80f;
             MaxHealth = Health;
             DamageToPlayer = 9f;
 
-            ScaleFactor = 1.25f;
+            ScaleFactor = 1.4f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 0.925f;
+            ShadowScale = 1.1f;
             _damageTime = DAMAGE_TIME;
             _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
 
@@ -69,7 +69,7 @@ public partial class Spiker : Enemy
         if (Game.IsGameOver)
             return;
 
-        Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
+        //Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
 
         base.Update(dt);
     }
@@ -84,13 +84,15 @@ public partial class Spiker : Enemy
 
         if(IsShooting)
         {
-            DebugText("SHOOTING... " + _shotTimer.ToString("#.#"));
-
+            //DebugText("SHOOTING... " + _shotTimer.ToString("#.#"));
+            Velocity *= (1f - dt * (IsAttacking ? DecelerationAttacking : Deceleration));
             if(!_hasShot && _prepareStartTime > 0.75f)
             {
                 CreateSpike();
                 _hasShot = true;
             }
+
+            Velocity *= (1f - dt * 4f);
 
             _shotTimer -= dt;
             if(_shotTimer < 0f)
@@ -123,11 +125,12 @@ public partial class Spiker : Enemy
         _shotTimer = SHOOT_TIME;
         IsShooting = true;
         CanAttack = false;
+        CanTurn = false;
         _hasShot = false;
         _prepareStartTime = 0f;
         Velocity *= 0.25f;
         AnimationPath = "textures/sprites/spiker_shoot.frames";
-        Game.PlaySfxNearby("spitter.prepare", Position, pitch: Rand.Float(0.9f, 1.0f), volume: 1f, maxDist: 4f);
+        //Game.PlaySfxNearby("spitter.prepare", Position, pitch: Rand.Float(0.9f, 1.0f), volume: 1f, maxDist: 4f);
     }
 
     public void CreateSpike()
@@ -145,7 +148,7 @@ public partial class Spiker : Enemy
 
         Game.AddThing(spike);
 
-        //Game.PlaySfxNearby("spitter.shoot", Position, pitch: Rand.Float(0.8f, 0.9f), volume: 1f, maxDist: 5f);
+        Game.PlaySfxNearby("spike.prepare", target_pos, pitch: Rand.Float(0.95f, 1.05f), volume: 1.5f, maxDist: 5f);
     }
 
     public void FinishShooting()
@@ -153,6 +156,7 @@ public partial class Spiker : Enemy
         _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
         IsShooting = false;
         CanAttack = true;
+        CanTurn = true;
         AnimationPath = AnimIdlePath;
     }
 

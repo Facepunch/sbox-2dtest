@@ -184,6 +184,8 @@ public partial class MyGame : Sandbox.Game
 			Position = pos,
 		};
 
+		//coin.SetValue( 
+
 		AddThing(coin);
 		CoinCount++;
 	}

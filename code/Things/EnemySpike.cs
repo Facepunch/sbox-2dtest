@@ -20,27 +20,28 @@ public partial class EnemySpike : Thing
 
 	public List<Thing> _hitThings = new List<Thing>();
 
+	private bool _playedSfx;
+
 	public override void Spawn()
 	{
 		base.Spawn();
 
 		if(Host.IsServer)
         {
-			SpriteTexture = SpriteTexture.Atlas("textures/sprites/spike_top.png", 3, 3);
+			SpriteTexture = SpriteTexture.Atlas("textures/sprites/spike_top2.png", 3, 3);
 			AnimationPath = "textures/sprites/spike.frames";
 			AnimationSpeed = 3f;
 
-			Scale = new Vector2(Rand.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * 1.3f;
+			Scale = new Vector2(Rand.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * 1.2f;
 			SpawnTime = 0f;
 			Damage = 10f;
-			Radius = 0.3f;
+			Radius = 0.275f;
 			BasePivotY = 0.5f;
             HeightZ = 0f;
 			//Pivot = new Vector2(0.5f, -0.9f);
 
 			ShadowOpacity = 0.8f;
 			ShadowScale = 0.6f;
-			ColorTint = Color.Red;
 			Lifetime = 2.1f;
 
 			CollideWith.Add(typeof(PlayerCitizen));
@@ -68,6 +69,12 @@ public partial class EnemySpike : Thing
         //Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
 
 		Depth = -Position.y * 10f;
+
+		if(!_playedSfx && SpawnTime > 1.15f)
+        {
+			Game.PlaySfxNearby("spike.thrust", Position, pitch: Rand.Float(1.15f, 1.3f), volume: 1.5f, maxDist: 6f);
+			_playedSfx = true;
+        }
 
 		if (SpawnTime > Lifetime)
         {
@@ -110,9 +117,10 @@ public partial class EnemySpike : Thing
 				if (_hitThings.Contains(player))
 					return;
 
+				Game.PlaySfxNearby("spike.stab", player.Position, pitch: Rand.Float(0.85f, 0.9f), volume: 1.6f, maxDist: 6f);
+				//Game.PlaySfxNearby("splash", player.Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1.5f, maxDist: 5f);
 				player.Damage(Damage);
 				//player.Velocity += Direction * 2f;
-				Game.PlaySfxNearby("splash", Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1f, maxDist: 4f);
 
 				_hitThings.Add(player);
 			}

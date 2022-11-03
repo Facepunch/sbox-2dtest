@@ -29,6 +29,7 @@ public abstract partial class Enemy : Thing
 	public bool IsAttacking { get; private set; }
 	private float _aggroTimer;
 	public bool CanAttack { get; set; }
+	public bool CanTurn { get; set; }
 	public float AggroRange { get; protected set; }
 	protected const float AGGRO_START_TIME = 0.2f;
 	protected const float AGGRO_LOSE_TIME = 0.4f;
@@ -78,6 +79,7 @@ public abstract partial class Enemy : Thing
 			DeathTime = 0.3f;
 			AggroRange = 1.4f;
 			CanAttack = true;
+			CanTurn = true;
 
 			AnimSpawnPath = "textures/sprites/zombie_spawn.frames";
 			AnimIdlePath = "textures/sprites/zombie_walk.frames";
@@ -220,7 +222,7 @@ public abstract partial class Enemy : Thing
         {
 			AnimSpeed = Utils.Map(Utils.FastSin(MoveTimeOffset + Time.Now * 7.5f), -1f, 1f, 0.75f, 3f, EasingType.ExpoIn);
 
-			if (MathF.Abs(Velocity.x) > 0.175f && !IsFrozen)
+			if (MathF.Abs(Velocity.x) > 0.175f && !IsFrozen && CanTurn)
 				Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * ScaleFactor;
 		}
 		else
@@ -229,7 +231,7 @@ public abstract partial class Enemy : Thing
 			float attack_dist_sqr = MathF.Pow(AggroRange, 2f);
 			AnimSpeed = Utils.Map(dist_sqr, attack_dist_sqr, 0f, 1f, 4f, EasingType.Linear);
 
-			if(!IsFrozen)
+			if(!IsFrozen && CanTurn)
 				Scale = new Vector2(1f * targetPlayer.Position.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
 		}
 	}
