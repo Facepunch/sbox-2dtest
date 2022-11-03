@@ -8,8 +8,8 @@
 			{
 				PlaybackRate = 1
 				Repetitions = 1
-				FirstFrameIndex = 30
-				LastFrameIndex = 42
+				FirstFrameIndex = 42
+				LastFrameIndex = 30
 				TotalFrameCount = 13
 			},
 		]

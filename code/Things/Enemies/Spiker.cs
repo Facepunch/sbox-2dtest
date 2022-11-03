@@ -22,6 +22,7 @@ public partial class Spiker : Enemy
     private const float SHOOT_TIME = 4f;
     private bool _hasShot;
     private TimeSince _prepareStartTime;
+    private bool _hasReversed;
 
     public override void Spawn()
     {
@@ -84,12 +85,18 @@ public partial class Spiker : Enemy
 
         if(IsShooting)
         {
-            //DebugText("SHOOTING... " + _shotTimer.ToString("#.#"));
+            //DebugText("SHOOTING... " + _shotTimer.ToString("#.#") + " shot: " + _hasShot + " rev: " + _hasReversed);
             Velocity *= (1f - dt * (IsAttacking ? DecelerationAttacking : Deceleration));
-            if(!_hasShot && _prepareStartTime > 0.75f)
+            if(!_hasShot && _prepareStartTime > 1f)
             {
                 CreateSpike();
                 _hasShot = true;
+            }
+
+            if (!_hasReversed && _prepareStartTime > 3f)
+            {
+                _hasReversed = true;
+                AnimationPath = "textures/sprites/spiker_shoot_reverse.frames";
             }
 
             Velocity *= (1f - dt * 4f);
@@ -127,6 +134,7 @@ public partial class Spiker : Enemy
         CanAttack = false;
         CanTurn = false;
         _hasShot = false;
+        _hasReversed = false;
         _prepareStartTime = 0f;
         Velocity *= 0.25f;
         AnimationPath = "textures/sprites/spiker_shoot.frames";
@@ -149,6 +157,7 @@ public partial class Spiker : Enemy
         Game.AddThing(spike);
 
         Game.PlaySfxNearby("spike.prepare", target_pos, pitch: Rand.Float(0.95f, 1.05f), volume: 1.5f, maxDist: 5f);
+        //DebugOverlay.Line(Position, target_pos, new Color(0f, 0f, 1f, 0.5f), 2f, false);
     }
 
     public void FinishShooting()
