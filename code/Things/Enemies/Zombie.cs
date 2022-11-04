@@ -34,7 +34,7 @@ public partial class Zombie : Enemy
             MaxHealth = Health;
             DamageToPlayer = 6f;
 
-            ScaleFactor = 0.8f;
+            ScaleFactor = 0.85f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));

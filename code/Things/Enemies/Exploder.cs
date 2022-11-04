@@ -14,6 +14,14 @@ public partial class Exploder : Enemy
     private const float DAMAGE_TIME = 0.75f;
 
     private const float EXPLOSION_RADIUS = 1.45f;
+    private const float EXPLOSION_DAMAGE = 40f;
+
+    public bool IsExploding { get; set; }
+    private TimeSince _explodeStartTime;
+    private bool _hasExploded;
+    private bool _hasStartedLooping;
+
+    private PlayerCitizen _playerWhoKilledUs;
 
     public override void Spawn()
     {
@@ -21,28 +29,30 @@ public partial class Exploder : Enemy
 
         if (Host.IsServer)
         {
-            SpriteTexture = SpriteTexture.Atlas("textures/sprites/exploder.png", 5, 6);
+            SpriteTexture = SpriteTexture.Atlas("textures/sprites/exploder.png", 6, 6);
             //AnimationPath = "textures/sprites/zombie_spawn.frames";
             //AnimIdlePath = "textures/sprites/zombie_walk.frames";
             AnimSpeed = 2f;
-            BasePivotY = 0.05f;
+            BasePivotY = 0.1f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
             PushStrength = 12f;
+            Deceleration = 1.87f;
+            DecelerationAttacking = 1.53f;
 
-            Radius = 0.215f;
-            Health = 20f;
+            Radius = 0.24f;
+            Health = 40f;
             MaxHealth = Health;
             DamageToPlayer = 12f;
             DeathTime = 0.2f;
 
-            ScaleFactor = 0.85f;
+            ScaleFactor = 1.1f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 0.975f;
+            ShadowScale = 1.05f;
             _damageTime = DAMAGE_TIME;
 
             AnimationPath = AnimSpawnPath;
@@ -60,6 +70,18 @@ public partial class Exploder : Enemy
         if (Game.IsGameOver)
             return;
 
+        if(IsExploding)
+        {
+            if(!_hasStartedLooping && _explodeStartTime > 0.5f)
+            {
+                AnimationPath = "textures/sprites/exploder_explode_loop.frames";
+                _hasStartedLooping = true;
+            }
+
+            if (!_hasExploded && _explodeStartTime > 1.5f)
+                Explode();
+        }
+
         base.Update(dt);
     }
 
@@ -72,8 +94,12 @@ public partial class Exploder : Enemy
             return;
 
         Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
-        float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
-        Position += Velocity * dt * speed;
+
+        if(!IsExploding)
+        {
+            float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.3f : 0.2f);
+            Position += Velocity * dt * speed;
+        }
     }
 
     public override void Colliding(Thing other, float percent, float dt)
@@ -107,6 +133,31 @@ public partial class Exploder : Enemy
         }
     }
 
+    public override void StartDying(PlayerCitizen player)
+    {
+        if (!IsExploding)
+        {
+            StartExploding();
+            _playerWhoKilledUs = player;
+        }
+    }
+
+    public void StartExploding()
+    {
+        IsExploding = true;
+        _explodeStartTime = 0f;
+        AnimationPath = "textures/sprites/exploder_explode_start.frames";
+        CanAttack = false;
+        CanTurn = false;
+    }
+
+    public void Explode()
+    {
+        base.StartDying(_playerWhoKilledUs);
+        _hasExploded = true;
+        IsExploding = false;
+    }
+
     [ClientRpc]
     public override void StartDyingClient()
     {
@@ -133,13 +184,13 @@ public partial class Exploder : Enemy
             {
                 var dist_sqr = (thing.Position - Position).LengthSquared;
                 if (dist_sqr < MathF.Pow(EXPLOSION_RADIUS, 2f))
-                    enemy.Damage(30f, null, false);
+                    enemy.Damage(EXPLOSION_DAMAGE, null, false);
             }
             else if(thing is PlayerCitizen player)
             {
                 var dist_sqr = (thing.Position - Position).LengthSquared;
                 if (dist_sqr < MathF.Pow(EXPLOSION_RADIUS, 2f) * 0.95f)
-                    player.Damage(30f);
+                    player.Damage(EXPLOSION_DAMAGE);
             }
                 
         }
