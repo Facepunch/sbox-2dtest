@@ -18,8 +18,9 @@ public partial class Spitter : Enemy
     private const float SHOOT_DELAY_MAX = 3f;
 
     public bool IsShooting { get; private set; }
-    private float _shotTimer;
-    private const float SHOOT_TIME = 1f;
+    private bool _hasShot;
+
+    private TimeSince _prepareShootTime;
 
     public override void Spawn()
     {
@@ -27,27 +28,31 @@ public partial class Spitter : Enemy
 
         if (Host.IsServer)
         {
-            SpriteTexture = SpriteTexture.Atlas("textures/sprites/spitter.png", 5, 6);
-            //AnimationPath = "textures/sprites/zombie_spawn.frames";
-            //AnimIdlePath = "textures/sprites/zombie_walk.frames";
+            SpriteTexture = SpriteTexture.Atlas("textures/sprites/spitter.png", 7, 6);
+
+            AnimSpawnPath = "textures/sprites/spitter_spawn.frames";
+            AnimIdlePath = "textures/sprites/zombie_walk.frames";
+            AnimAttackPath = "textures/sprites/spitter_attack.frames";
+            AnimDiePath = "textures/sprites/spitter_die.frames";
+
             AnimSpeed = 2f;
             BasePivotY = 0.05f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
             PushStrength = 8f;
 
-            Radius = 0.225f;
-            Health = 26f;
+            Radius = 0.25f;
+            Health = 50f;
             MaxHealth = Health;
             DamageToPlayer = 9f;
 
-            ScaleFactor = 0.75f;
+            ScaleFactor = 1f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 0.925f;
+            ShadowScale = 1.1f;
             _damageTime = DAMAGE_TIME;
             _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
 
@@ -73,12 +78,13 @@ public partial class Spitter : Enemy
 
         if(IsShooting)
         {
-            _shotTimer -= dt;
-            if(_shotTimer < 0f)
-            {
+            if(!_hasShot && _prepareShootTime > 1.0f)
                 Shoot();
-                return;
-            }
+
+            if(_prepareShootTime > 1.6f)
+                FinishShooting();
+
+            return;
         } 
         else
         {
@@ -101,9 +107,11 @@ public partial class Spitter : Enemy
 
     public void PrepareToShoot()
     {
-        _shotTimer = SHOOT_TIME;
+        _prepareShootTime = 0f;
         IsShooting = true;
-        Game.PlaySfxNearby("spitter.prepare", Position, pitch: Rand.Float(0.9f, 1.0f), volume: 1f, maxDist: 4f);
+        _hasShot = false;
+        AnimationPath = "textures/sprites/spitter_shoot.frames";
+        Game.PlaySfxNearby("spitter.prepare", Position, pitch: Rand.Float(1f, 1.1f), volume: 0.6f, maxDist: 2.75f);
         CanAttack = false;
     }
 
@@ -117,19 +125,30 @@ public partial class Spitter : Enemy
         var dir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-10f, 10f));
         var bullet = new EnemyBullet
         {
-            Position = Position,
-            Depth = -1f,
+            Position = Position + dir * 0.05f,
+            Depth = 1f,
             Direction = dir,
             Shooter = this,
         };
 
+        if(dir.x < 0f)
+            bullet.Scale = new Vector2(-bullet.Scale.x, bullet.Scale.y);
+
         Game.AddThing(bullet);
 
         Velocity *= 0.25f;
+        _hasShot = true;
+
+        Game.PlaySfxNearby("spitter.shoot", Position, pitch: Rand.Float(0.8f, 0.9f), volume: 0.9f, maxDist: 5f);
+        AnimationPath = "textures/sprites/spitter_shoot_reverse.frames";
+    }
+
+    public void FinishShooting()
+    {
+        AnimationPath = AnimIdlePath;
+        CanAttack = true;
         _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
         IsShooting = false;
-        CanAttack = true;
-        Game.PlaySfxNearby("spitter.shoot", Position, pitch: Rand.Float(0.8f, 0.9f), volume: 1f, maxDist: 5f);
     }
 
     public override void Colliding(Thing other, float percent, float dt)

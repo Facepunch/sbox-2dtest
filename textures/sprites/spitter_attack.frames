@@ -1,0 +1,33 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+	data = 
+	{
+		FrameRate = 4
+		Sequences = 
+		[
+			{
+				PlaybackRate = 1
+				Repetitions = 1
+				FirstFrameIndex = 26
+				LastFrameIndex = 27
+				TotalFrameCount = 2
+			},
+			{
+				PlaybackRate = 1
+				Repetitions = 1
+				FirstFrameIndex = 26
+				LastFrameIndex = 26
+				TotalFrameCount = 1
+			},
+			{
+				PlaybackRate = 1
+				Repetitions = 1
+				FirstFrameIndex = 28
+				LastFrameIndex = 28
+				TotalFrameCount = 1
+			},
+		]
+		Looping = true
+		Duration = 1
+	}
+}

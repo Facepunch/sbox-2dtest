@@ -24,21 +24,23 @@ public partial class EnemyBullet : Thing
 
 		if(Host.IsServer)
         {
-			SpriteTexture = "textures/sprites/bullet.png";
+			SpriteTexture = SpriteTexture.Atlas("textures/sprites/enemy_bullet.png", 3, 4);
+			AnimationPath = "textures/sprites/enemy_bullet.frames";
+			AnimationSpeed = 8f;
 
-			Scale = new Vector2(0.3f, 0.3f);
+			Scale = new Vector2(0.35f, 0.35f);
 			SpawnTime = 0f;
-			Damage = 10f;
-			Radius = 0.1f;
-			BasePivotY = -0.9f;
+			Damage = 8f;
+			Radius = 0.075f;
+			BasePivotY = -1.1f;
 			HeightZ = 0f;
 			//Pivot = new Vector2(0.5f, -0.9f);
 
 			ShadowOpacity = 0.8f;
 			ShadowScale = 0.6f;
 			ColorTint = Color.Red;
-			Lifetime = 6f;
-			Speed = 1.8f;
+			Lifetime = 7f;
+			Speed = 1.7f;
 
 			CollideWith.Add(typeof(PlayerCitizen));
 		}

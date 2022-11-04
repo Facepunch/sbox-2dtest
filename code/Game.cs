@@ -140,7 +140,7 @@ public partial class MyGame : Sandbox.Game
 
 		Enemy enemy = null;
 
-		enemy = new Spiker();
+		enemy = new Spitter();
 
 		float exploderChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 180f, 0.05f, 0.1f);
 		if (enemy == null && Rand.Float(0f, 1f) < exploderChance)
