@@ -33,7 +33,7 @@ public partial class Exploder : Enemy
             //AnimationPath = "textures/sprites/zombie_spawn.frames";
             //AnimIdlePath = "textures/sprites/zombie_walk.frames";
             AnimSpeed = 2f;
-            BasePivotY = 0.1f;
+            BasePivotY = 0.09f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
             PushStrength = 12f;

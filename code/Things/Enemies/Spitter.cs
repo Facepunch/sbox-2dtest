@@ -36,7 +36,7 @@ public partial class Spitter : Enemy
             AnimDiePath = "textures/sprites/spitter_die.frames";
 
             AnimSpeed = 2f;
-            BasePivotY = 0.05f;
+            BasePivotY = 0.1f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
             PushStrength = 8f;

@@ -57,7 +57,7 @@ public partial class Spiker : Enemy
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 1.1f;
+            ShadowScale = 1.15f;
             _damageTime = DAMAGE_TIME;
             _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
 

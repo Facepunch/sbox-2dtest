@@ -18,7 +18,7 @@ public partial class Charger : Enemy
     private const float CHARGE_DELAY_MAX = 3f;
 
     public bool IsPreparingToCharge { get; private set; }
-    public bool IsCharging{ get; private set; }
+    public bool IsCharging { get; private set; }
     private float _prepareTimer;
     private const float PREPARE_TIME = 1f;
     private float _chargeTimer;
@@ -34,26 +34,26 @@ public partial class Charger : Enemy
 
         if (Host.IsServer)
         {
-            SpriteTexture = SpriteTexture.Atlas("textures/sprites/charger.png", 5, 6);
+            SpriteTexture = SpriteTexture.Atlas("textures/sprites/charger.png", 6, 6);
             AnimSpeed = 2f;
-            BasePivotY = 0.05f;
+            BasePivotY = 0.08f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
 
             Radius = 0.275f;
-            Health = 50f;
+            Health = 75f;
             MaxHealth = Health;
             DamageToPlayer = 10f;
 
             PushStrength = 15f;
 
-            ScaleFactor = 1.0f;
+            ScaleFactor = 1.25f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 1.05f;
+            ShadowScale = 1.25f;
             _damageTime = DAMAGE_TIME;
             _chargeDelayTimer = Rand.Float(CHARGE_DELAY_MIN, CHARGE_DELAY_MAX);
 
@@ -99,8 +99,9 @@ public partial class Charger : Enemy
             if(_chargeTimer < 0f)
             {
                 IsCharging = false;
-                ColorTint = Color.White;
+                //ColorTint = Color.White;
                 AnimationPath = AnimIdlePath;
+                CanTurn = true;
             }
             else
             {
@@ -165,6 +166,9 @@ public partial class Charger : Enemy
         _prepareTimer = PREPARE_TIME;
         IsPreparingToCharge = true;
         Game.PlaySfxNearby("enemy.roar.prepare", Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1f, maxDist: 5f);
+        AnimationPath = "textures/sprites/charger_charge_start.frames";
+        CanTurn = false;
+        CanAttack = false;
     }
 
     public void Charge()
@@ -179,12 +183,13 @@ public partial class Charger : Enemy
         IsPreparingToCharge = false;
         IsCharging = true;
         _chargeTimer = CHARGE_TIME;
+        CanAttack = true;
 
         _chargeDelayTimer = Rand.Float(CHARGE_DELAY_MIN, CHARGE_DELAY_MAX);
-        ColorTint = new Color(1f, 0f, 0f);
+        //ColorTint = new Color(1f, 0f, 0f);
         _chargeVel = Vector2.Zero;
+        AnimationPath = "textures/sprites/charger_charge_loop.frames";
 
-        AnimationPath = AnimAttackPath;
         AnimSpeed = 3f;
         Scale = new Vector2(1f * target_pos.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
 
