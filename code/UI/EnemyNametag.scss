@@ -1,0 +1,75 @@
+//@import "/UI/Theme.scss";
+
+EnemyNametag {
+    position: absolute;
+    //border: 1px solid white;
+    width: 300px;
+    flex-direction: column;
+    //text-align: center;
+    //flex-direction: column;
+    //align-content: center;
+    //text-anchor: middle;
+    //align-items: center;
+    justify-content: center;
+    //&.invisible {
+    //    display: none;
+    //}
+
+    &.invisible {
+        display: none;
+    }
+
+    .hpbar {
+        width: 100px;
+        height: 8px;
+        //border: 2px solid blue;
+        background-color: #00000099;
+        align-self: center;
+        position: absolute;
+        bottom: -12px;
+
+        &.invisible {
+            display: none;
+        }
+    }
+
+    .hpbaroverlay {
+        width: 0px;
+        height: 8px;
+        //border: 2px solid blue;
+        background-color: green;
+        //text-anchor: initial;
+        position: absolute;
+        bottom: -12px;
+        align-self: center;
+        transform-origin: left;
+        //transform: scaleX(0.5);
+        transition: transform 0.1s ease-out, opacity 0.25s linear, background-color 0.25s linear;
+        opacity: 1;
+        //z-index: 2;
+
+        &.invisible {
+            display: none;
+        }
+    }
+
+    .hpbardelta {
+        width: 0px;
+        height: 8px;
+        //border: 2px solid blue;
+        background-color: white;
+        //text-anchor: initial;
+        position: absolute;
+        bottom: -12px;
+        align-self: center;
+        transform-origin: left;
+        //transform: scaleX(0.5);
+        transition: transform 0.4s ease-out;
+        opacity: 1;
+        //z-index: 1;
+
+        &.invisible {
+            display: none;
+        }
+    }
+}

@@ -73,6 +73,8 @@ public partial class MyGame : Sandbox.Game
 
 			ElapsedTime = 0f;
 			StatusManager = new StatusManager();
+
+			SpawnEnemy(TypeLibrary.GetDescription(typeof(Boss)), new Vector2(0f, 1f));
 		}
 
 		if (Host.IsClient)

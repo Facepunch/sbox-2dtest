@@ -22,6 +22,8 @@ public partial class Boss : Enemy
 
     private TimeSince _prepareShootTime;
 
+    public EnemyNametag Nametag { get; private set; }
+
     public override void Spawn()
     {
         base.Spawn();
@@ -42,7 +44,7 @@ public partial class Boss : Enemy
             PushStrength = 50f;
 
             Radius = 0.42f;
-            Health = 1000f;
+            Health = 2000f;
             MaxHealth = Health;
             DamageToPlayer = 9f;
 
@@ -60,12 +62,19 @@ public partial class Boss : Enemy
         }
     }
 
+    public override void ClientSpawn()
+    {
+        base.ClientSpawn();
+
+        Nametag = Game.Hud.SpawnEnemyNametag(this);
+    }
+
     public override void Update(float dt)
     {
         if (Game.IsGameOver)
             return;
 
-        Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
+        //Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
 
         base.Update(dt);
     }
@@ -182,5 +191,12 @@ public partial class Boss : Enemy
                 }
             }
         }
+    }
+
+    [ClientRpc]
+    public override void StartDyingClient()
+    {
+        base.StartDyingClient();
+        Nametag.SetVisible(false);
     }
 }

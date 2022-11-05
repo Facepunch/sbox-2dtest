@@ -74,6 +74,14 @@ public partial class HUD : RootPanel
 		return nametag;
 	}
 
+	public EnemyNametag SpawnEnemyNametag(Enemy enemy)
+	{
+		var nametag = AddChild<EnemyNametag>();
+		nametag.Enemy = enemy;
+
+		return nametag;
+	}
+
 	public void GameOver()
     {
 		DeathPanel = AddChild<DeathPanel>("death_panel_root");

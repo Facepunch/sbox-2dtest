@@ -16,7 +16,7 @@ public abstract partial class Enemy : Thing
 	private float _flashTimer;
 	private bool _isFlashing;
 
-	public float MaxHealth { get; protected set; }
+	[Net] public float MaxHealth { get; protected set; }
 
 	public bool IsSpawning { get; private set; }
 	public float ElapsedTime { get; private set; }
