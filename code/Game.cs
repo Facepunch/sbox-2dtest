@@ -141,7 +141,7 @@ public partial class MyGame : Sandbox.Game
 		Enemy enemy = null;
 
 		if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
-			enemy = new Charger();
+			enemy = new Runner();
 		if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
 			enemy = new Spitter();
 		if (enemy == null && Rand.Float(0f, 1f) < 0.5f)

@@ -24,25 +24,26 @@ public partial class Runner : Enemy
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/runner.png", 5, 6);
             AnimSpeed = 2f;
-            BasePivotY = 0.05f;
+            BasePivotY = 0.07f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
             PushStrength = 10f;
             Deceleration = 0.47f;
             DecelerationAttacking = 0.33f;
+            AggroRange = 2.5f;
 
             Radius = 0.25f;
-            Health = 30f;
+            Health = 70f;
             MaxHealth = Health;
-            DamageToPlayer = 6f;
+            DamageToPlayer = 10f;
 
-            ScaleFactor = 0.8f;
+            ScaleFactor = 1.0f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 0.95f;
+            ShadowScale = 1.1f;
             _damageTime = DAMAGE_TIME;
 
             HasTarget = false;
@@ -87,7 +88,7 @@ public partial class Runner : Enemy
             if(player_dist_sqr < 3.5f * 3.5f)
             {
                 HasTarget = true;
-                Game.PlaySfxNearby("zombie.spawn0", Position, pitch: Rand.Float(0.9f, 1.1f), volume: 1f, maxDist: 4f);
+                Game.PlaySfxNearby("runner.howl", Position, pitch: Rand.Float(0.9f, 1.1f), volume: 1f, maxDist: 6f);
             }
         }
 
@@ -96,6 +97,13 @@ public partial class Runner : Enemy
 
         float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
         Position += Velocity * dt * speed;
+    }
+
+    public override void StartAttacking()
+    {
+        base.StartAttacking();
+
+        Game.PlaySfxNearby("runner.bark", Position, pitch: Rand.Float(0.9f, 1.1f), volume: 1f, maxDist: 4f);
     }
 
     public override void Colliding(Thing other, float percent, float dt)
@@ -119,7 +127,7 @@ public partial class Runner : Enemy
                     
                     if (damageDealt > 0f)
                     {
-                        Game.PlaySfxNearby("zombie.attack.player", Position, pitch: Utils.Map(player.Health, player.MaxHp, 0f, 0.95f, 1.15f, EasingType.QuadIn), volume: 1f, maxDist: 5.5f);
+                        Game.PlaySfxNearby("runner.bite", Position, pitch: Utils.Map(player.Health, player.MaxHp, 0f, 0.9f, 0.95f, EasingType.QuadIn), volume: 1f, maxDist: 5.5f);
                         OnDamagePlayer(player, damageDealt);
                         //player.Velocity += (Position - player.Position).Normal * 1.5f;
                     }

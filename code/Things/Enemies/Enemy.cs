@@ -186,8 +186,7 @@ public abstract partial class Enemy : Thing
 					_aggroTimer += dt;
 					if (_aggroTimer > AGGRO_START_TIME)
 					{
-						IsAttacking = true;
-						AnimationPath = AnimAttackPath;
+						StartAttacking();
 						_aggroTimer = 0f;
 					}
 				}
@@ -214,6 +213,12 @@ public abstract partial class Enemy : Thing
 				_aggroTimer = 0f;
 			}
 		}
+	}
+
+	public virtual void StartAttacking()
+    {
+		IsAttacking = true;
+		AnimationPath = AnimAttackPath;
 	}
 
 	protected virtual void UpdateSprite(PlayerCitizen targetPlayer)
