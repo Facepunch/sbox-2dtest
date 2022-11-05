@@ -71,11 +71,6 @@ public partial class MyGame : Sandbox.Game
 				}
 			}
 
-			for (var i = 0; i < 5; ++i)
-			{
-                SpawnEnemy();
-            }
-
 			ElapsedTime = 0f;
 			StatusManager = new StatusManager();
 		}
@@ -138,33 +133,44 @@ public partial class MyGame : Sandbox.Game
 
 		var pos = new Vector2(Rand.Float(BOUNDS_MIN.x, BOUNDS_MAX.x), Rand.Float(BOUNDS_MIN.y, BOUNDS_MAX.y));
 
+		TypeDescription type;
+
 		Enemy enemy = null;
 
 		if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
-			enemy = new Runner();
+			type = TypeLibrary.GetDescription(typeof(Runner));
 		if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
-			enemy = new Spitter();
+			type = TypeLibrary.GetDescription(typeof(Spitter));
 		if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
-			enemy = new Spiker();
+			type = TypeLibrary.GetDescription(typeof(Spiker));
+		else
+			type = TypeLibrary.GetDescription(typeof(Zombie));
 
 		float exploderChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 180f, 0.05f, 0.1f);
 		if (enemy == null && Rand.Float(0f, 1f) < exploderChance)
-			enemy = new Exploder();
+			type = TypeLibrary.GetDescription(typeof(Exploder));
 
 		float spitterChance = ElapsedTime < 60f ? 0f : Utils.Map(ElapsedTime, 60f, 600f, 0.05f, 0.1f);
 		if (enemy == null && Rand.Float(0f, 1f) < spitterChance)
-			enemy = new Spitter();
+			type = TypeLibrary.GetDescription(typeof(Spitter));
 
 		float runnerChance = ElapsedTime < 120f ? 0f : Utils.Map(ElapsedTime, 120f, 800f, 0.05f, 0.2f, EasingType.QuadIn);
 		if (enemy == null && Rand.Float(0f, 1f) < runnerChance)
-			enemy = new Runner();
+			type = TypeLibrary.GetDescription(typeof(Runner));
 
 		float chargerChance = ElapsedTime < 240f ? 0f : Utils.Map(ElapsedTime, 240f, 800f, 0.05f, 0.1f);
 		if (enemy == null && Rand.Float(0f, 1f) < chargerChance)
-			enemy = new Charger();
+			type = TypeLibrary.GetDescription(typeof(Charger));
 
-		if (enemy == null)
-			enemy = new Zombie();
+		SpawnEnemy(type, pos);
+	}
+
+	void SpawnEnemy(TypeDescription type, Vector2 pos)
+	{
+		if (EnemyCount >= MAX_ENEMY_COUNT)
+			return;
+
+		var enemy = type.Create<Enemy>();
 
 		enemy.Position = pos;
 
@@ -392,6 +398,8 @@ public partial class MyGame : Sandbox.Game
 		_enemySpawnTime = 0f;
 		ElapsedTime = 0f;
 		IsGameOver = false;
+
+		SpawnEnemy(TypeLibrary.GetDescription(typeof(Boss)), new Vector2(0f, 1f));
 
 		RestartClient();
 	}

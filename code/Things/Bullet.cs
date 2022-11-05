@@ -117,7 +117,7 @@ public partial class Bullet : Thing
 				float damage = Damage * (isCrit ? CriticalMultiplier : 1f);
 				enemy.Damage(damage, Shooter, isCrit);
 
-				enemy.Velocity += Velocity.Normal * Force;
+				enemy.Velocity += Velocity.Normal * Force * (8f / enemy.PushStrength);
 				enemy.TempWeight += AddTempWeight;
 
 				if (Rand.Float(0f, 1f) < FireIgniteChance)

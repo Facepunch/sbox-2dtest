@@ -45,7 +45,7 @@ public partial class Charger : Enemy
             MaxHealth = Health;
             DamageToPlayer = 10f;
 
-            PushStrength = 15f;
+            PushStrength = 25f;
 
             ScaleFactor = 1.25f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
