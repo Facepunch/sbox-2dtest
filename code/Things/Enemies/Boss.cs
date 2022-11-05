@@ -11,10 +11,10 @@ namespace Test2D;
 public partial class Boss : Enemy
 {
     private TimeSince _damageTime;
-    private const float DAMAGE_TIME = 0.75f;
+    private const float DAMAGE_TIME = 0.5f;
 
     private float _shootDelayTimer;
-    private const float SHOOT_DELAY_MIN = 2f;
+    private const float SHOOT_DELAY_MIN = 1.25f;
     private const float SHOOT_DELAY_MAX = 3f;
 
     public bool IsShooting { get; private set; }
@@ -30,31 +30,32 @@ public partial class Boss : Enemy
 
         if (Host.IsServer)
         {
-            SpriteTexture = SpriteTexture.Atlas("textures/sprites/spitter.png", 7, 6);
+            SpriteTexture = SpriteTexture.Atlas("textures/sprites/boss.png", 7, 7);
 
-            AnimSpawnPath = "textures/sprites/spitter_spawn.frames";
+            AnimSpawnPath = "textures/sprites/boss_spawn.frames";
             AnimIdlePath = "textures/sprites/zombie_walk.frames";
-            AnimAttackPath = "textures/sprites/spitter_attack.frames";
-            AnimDiePath = "textures/sprites/spitter_die.frames";
+            AnimAttackPath = "textures/sprites/boss_attack.frames";
+            AnimDiePath = "textures/sprites/boss_die.frames";
 
             AnimSpeed = 2f;
-            BasePivotY = 0.1f;
+            BasePivotY = 0.05f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
             PushStrength = 50f;
+            DeathTime = 3f;
 
             Radius = 0.42f;
             Health = 2000f;
             MaxHealth = Health;
-            DamageToPlayer = 9f;
+            DamageToPlayer = 20f;
 
-            ScaleFactor = 1.75f;
+            ScaleFactor = 1.85f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 2.05f;
+            ShadowScale = 2.0f;
             _damageTime = DAMAGE_TIME;
             _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
 
@@ -102,11 +103,11 @@ public partial class Boss : Enemy
             Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
         }
 
-        float speed = 0.9f * (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
+        float speed = 0.9f * (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 1.05f : 0.66f);
         Position += Velocity * dt * speed;
 
         var player_dist_sqr = (closestPlayer.Position - Position).LengthSquared;
-        if (!IsShooting && !IsAttacking && player_dist_sqr < 5f * 5f)
+        if (!IsShooting && !IsAttacking && player_dist_sqr < MathF.Pow(9f, 2f))
         {
             _shootDelayTimer -= dt;
             if(_shootDelayTimer < 0f)
@@ -121,7 +122,7 @@ public partial class Boss : Enemy
         _prepareShootTime = 0f;
         IsShooting = true;
         _hasShot = false;
-        AnimationPath = "textures/sprites/spitter_shoot.frames";
+        AnimationPath = "textures/sprites/boss_shoot.frames";
         Game.PlaySfxNearby("spitter.prepare", Position, pitch: Rand.Float(1f, 1.1f), volume: 0.6f, maxDist: 2.75f);
         CanAttack = false;
     }
@@ -132,33 +133,45 @@ public partial class Boss : Enemy
         if (closestPlayer == null)
             return;
 
-        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 1.5f;
-        var dir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-10f, 10f));
-        var bullet = new EnemyBullet
+        var num_bullets = MathX.FloorToInt(Utils.Map(Health, MaxHealth, 0f, 3f, 8f, EasingType.SineIn)) + Rand.Int(0, 1);
+        var spread = Rand.Float(30f, 60f);
+
+        float currAngleOffset = -spread * 0.5f;
+        float increment = spread / (float)(num_bullets - 1);
+
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 0.5f;
+        Vector2 aim_dir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-15f, 15f));
+
+        for (int i = 0; i < num_bullets; i++)
         {
-            Position = Position + dir * 0.05f,
-            Depth = 1f,
-            Direction = dir,
-            Shooter = this,
-        };
+            var dir = Utils.RotateVector(aim_dir, currAngleOffset + increment * i);
 
-        if(dir.x < 0f)
-            bullet.Scale = new Vector2(-bullet.Scale.x, bullet.Scale.y);
+            var bullet = new EnemyBullet
+            {
+                Position = Position + dir * 0.05f,
+                Depth = 1f,
+                Direction = dir,
+                Shooter = this,
+            };
 
-        Game.AddThing(bullet);
+            if (dir.x < 0f)
+                bullet.Scale = new Vector2(-bullet.Scale.x, bullet.Scale.y);
+
+            Game.AddThing(bullet);
+        }
 
         Velocity *= 0.25f;
         _hasShot = true;
 
+        AnimationPath = "textures/sprites/boss_shoot_reverse.frames";
         Game.PlaySfxNearby("spitter.shoot", Position, pitch: Rand.Float(0.8f, 0.9f), volume: 0.9f, maxDist: 5f);
-        AnimationPath = "textures/sprites/spitter_shoot_reverse.frames";
     }
 
     public void FinishShooting()
     {
         AnimationPath = AnimIdlePath;
         CanAttack = true;
-        _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
+        _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX) * Utils.Map(Health, MaxHealth, 0f, 1f, 0.5f, EasingType.QuadIn);
         IsShooting = false;
     }
 

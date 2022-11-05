@@ -39,7 +39,7 @@ public partial class EnemyBullet : Thing
 			ShadowOpacity = 0.8f;
 			ShadowScale = 0.6f;
 			ColorTint = Color.Red;
-			Lifetime = 7f;
+			Lifetime = 8f;
 			Speed = 1.7f;
 
 			CollideWith.Add(typeof(PlayerCitizen));
