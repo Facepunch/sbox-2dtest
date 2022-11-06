@@ -51,6 +51,9 @@ public partial class Runner : Enemy
             _wanderPos = new Vector2(Rand.Float(Game.BOUNDS_MIN.x + 1f, Game.BOUNDS_MAX.x - 1f), Rand.Float(Game.BOUNDS_MIN.y + 1f, Game.BOUNDS_MAX.y - 1f));
 
             AnimationPath = AnimSpawnPath;
+
+            CoinValueMin = 1;
+            CoinValueMax = 4;
         }
     }
 

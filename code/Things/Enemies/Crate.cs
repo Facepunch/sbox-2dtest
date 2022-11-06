@@ -45,6 +45,9 @@ public partial class Crate : Enemy
             AnimationPath = AnimSpawnPath;
 
             CanAttack = false;
+
+            CoinValueMin = 1;
+            CoinValueMax = 4;
         }
     }
 

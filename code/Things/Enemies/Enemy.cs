@@ -65,6 +65,8 @@ public abstract partial class Enemy : Thing
 	public float AnimSpeed { get { return _animSpeed; } set { _animSpeed = value; AnimationSpeed = _animSpeed * _animSpeedModifier; } }
 	private float _animSpeedModifier;
 	public float AnimSpeedModifier { get { return _animSpeedModifier; } set { _animSpeedModifier = value; AnimationSpeed = _animSpeed * _animSpeedModifier; } }
+	public int CoinValueMin { get; protected set; }
+	public int CoinValueMax { get; protected set; }
 
 	public override void Spawn()
 	{
@@ -91,6 +93,9 @@ public abstract partial class Enemy : Thing
 
 			_animSpeed = 1f;
 			_animSpeedModifier = 1f;
+
+			CoinValueMin = 1;
+			CoinValueMax = 1;
 
 			//ColorTint = new Color(Rand.Float(0.45f, 1f), Rand.Float(0.45f, 1f), Rand.Float(0.45f, 1f));
 		}
@@ -357,13 +362,24 @@ public abstract partial class Enemy : Thing
 
 		_deathScale = Scale;
 
+		DropLoot(player);
+
+		for (int i = EnemyStatuses.Count - 1; i >= 0; i--)
+			EnemyStatuses.Values.ElementAt(i).StartDying();
+
+		Game.PlaySfxNearby("enemy.die", Position, pitch: 1f, volume: 1f, maxDist: 5.5f);
+		StartDyingClient();
+	}
+
+	public virtual void DropLoot(PlayerCitizen player)
+    {
 		var coin_chance = player != null ? Utils.Map(player.Luck, 0f, 10f, 0.5f, 1f) : 0.5f;
 		if (Rand.Float(0f, 1f) < coin_chance)
-        {
-			Game.SpawnCoin(Position);
+		{
+			Game.SpawnCoin(Position, Rand.Int(CoinValueMin, CoinValueMax));
 		}
 		else
-        {
+		{
 			var lowest_hp_percent = 1f;
 			foreach (PlayerCitizen p in Game.AlivePlayers)
 				lowest_hp_percent = MathF.Min(lowest_hp_percent, p.Health / p.MaxHp);
@@ -375,12 +391,6 @@ public abstract partial class Enemy : Thing
 				Game.AddThing(healthPack);
 			}
 		}
-
-		for (int i = EnemyStatuses.Count - 1; i >= 0; i--)
-			EnemyStatuses.Values.ElementAt(i).StartDying();
-
-		Game.PlaySfxNearby("enemy.die", Position, pitch: 1f, volume: 1f, maxDist: 5.5f);
-		StartDyingClient();
 	}
 
 	[ClientRpc]

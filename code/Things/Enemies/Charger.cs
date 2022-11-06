@@ -58,6 +58,9 @@ public partial class Charger : Enemy
             _chargeDelayTimer = Rand.Float(CHARGE_DELAY_MIN, CHARGE_DELAY_MAX);
 
             AnimationPath = AnimSpawnPath;
+
+            CoinValueMin = 2;
+            CoinValueMax = 5;
         }
     }
 

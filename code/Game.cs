@@ -186,7 +186,7 @@ public partial class MyGame : Sandbox.Game
 		PlaySfxNearby("zombie.dirt", pos, pitch: Rand.Float(0.6f, 0.8f), volume: 0.7f, maxDist: 7.5f);
 	}
 
-	public void SpawnCoin(Vector2 pos)
+	public void SpawnCoin(Vector2 pos, int value = 1)
     {
 		// todo: spawn larger amounts less often if reaching max coin cap
 		if (CoinCount >= MAX_COIN_COUNT)
@@ -197,9 +197,9 @@ public partial class MyGame : Sandbox.Game
 			Position = pos,
 		};
 
-		//coin.SetValue( 
+		coin.SetValue(value);
 
-		AddThing(coin);
+        AddThing(coin);
 		CoinCount++;
 	}
 

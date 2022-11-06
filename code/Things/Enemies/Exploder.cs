@@ -56,6 +56,9 @@ public partial class Exploder : Enemy
             _damageTime = DAMAGE_TIME;
 
             AnimationPath = AnimSpawnPath;
+
+            CoinValueMin = 1;
+            CoinValueMax = 2;
         }
     }
 

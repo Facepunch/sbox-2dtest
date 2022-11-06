@@ -57,6 +57,9 @@ public partial class Spitter : Enemy
             _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
 
             AnimationPath = AnimSpawnPath;
+
+            CoinValueMin = 1;
+            CoinValueMax = 2;
         }
     }
 

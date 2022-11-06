@@ -99,7 +99,7 @@ public class ChoiceModal : Panel
 
 		Label reroll_label = new Label();
 		reroll_label.AddClass("reroll_button_label");
-		reroll_label.Text = "Reroll (" + player.NumRerollAvailable + ")";
+		reroll_label.Text = "Reroll [" + player.NumRerollAvailable + "]";
 		rerollButton.AddChild(reroll_label);
 
 		if (player.NumRerollAvailable <= 0)
@@ -121,7 +121,7 @@ public class ChoiceButton : Panel
 	{
 		Label titleLabel = new Label();
 		titleLabel.AddClass("choice_title");
-		titleLabel.Text = status.Title + (status.Level > 1 ? " (" + status.Level + ")" : "");
+		titleLabel.Text = status.Title + (status.Level > 1 ? " [" + status.Level + "]" : "");
         //titleLabel.Text = "Title";
 		AddChild(titleLabel);
 
