@@ -16,23 +16,43 @@ public partial class Crate : Enemy
 
         if (Host.IsServer)
         {
-            SpriteTexture = "textures/sprites/crate.png";
+            SpriteTexture = SpriteTexture.Atlas("textures/sprites/crate.png", 4, 5);
+
+            AnimSpawnPath = "textures/sprites/crate_spawn.frames";
+            AnimIdlePath = "textures/sprites/crate_walk.frames";
+            AnimDiePath = "textures/sprites/crate_die.frames";
+
             BasePivotY = 0.05f;
             HeightZ = 0f;
             PushStrength = 5f;
 
+            Deceleration = 10f;
+
+            SpawnTime = 2f;
+
             Radius = 0.25f;
-            Health = 30f;
+            Health = 50f;
             MaxHealth = Health;
 
-            ScaleFactor = 0.85f;
-            Scale = new Vector2(1f, 1f) * ScaleFactor;
+            ScaleFactor = 0.95f;
+            Scale = new Vector2(Rand.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 0.95f;
+            ShadowScale = 1.3f;
+
+            AnimationPath = AnimSpawnPath;
+
+            CanAttack = false;
         }
+    }
+
+    public override void ClientSpawn()
+    {
+        base.ClientSpawn();
+
+        CanBleedClient = false;
     }
 
     public override void Update(float dt)

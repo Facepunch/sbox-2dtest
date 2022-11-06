@@ -28,8 +28,8 @@ public partial class MyGame : Sandbox.Game
 	public readonly List<PlayerCitizen> PlayerList = new();
 
 	public int EnemyCount { get; private set; }
-	//public const float MAX_ENEMY_COUNT = 350;
-	public const float MAX_ENEMY_COUNT = 30;
+	public const float MAX_ENEMY_COUNT = 350;
+	//public const float MAX_ENEMY_COUNT = 30;
 
     public int CoinCount { get; private set; }
 	public const float MAX_COIN_COUNT = 200;
@@ -74,7 +74,7 @@ public partial class MyGame : Sandbox.Game
 			ElapsedTime = 0f;
 			StatusManager = new StatusManager();
 
-			SpawnBoss(new Vector2(2f, 2f));
+			SpawnCrate(new Vector2(2f, 2f));
 		}
 
 		if (Host.IsClient)
@@ -207,6 +207,11 @@ public partial class MyGame : Sandbox.Game
     {
 		SpawnEnemy(TypeLibrary.GetDescription(typeof(Boss)), pos);
 		PlaySfxNearby("boss.fanfare", pos, pitch: Rand.Float(0.7f, 0.75f), volume: 1.3f, maxDist: 15f);
+	}
+
+	public void SpawnCrate(Vector2 pos)
+	{
+		SpawnEnemy(TypeLibrary.GetDescription(typeof(Crate)), pos);
 	}
 
 	public void HandleThingCollisionForGridSquare(Thing thing, GridSquare gridSquare, float dt)
@@ -407,7 +412,7 @@ public partial class MyGame : Sandbox.Game
 		ElapsedTime = 0f;
 		IsGameOver = false;
 
-		SpawnBoss(new Vector2(2f, 2f));
+		SpawnCrate(new Vector2(2f, 2f));
 
 		RestartClient();
 	}

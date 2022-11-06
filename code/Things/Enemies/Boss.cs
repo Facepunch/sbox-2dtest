@@ -66,7 +66,7 @@ public partial class Boss : Enemy
             DecelerationAttacking = 1.1f;
 
             Radius = 0.42f;
-            Health = 30.2000f;
+            Health = 2000f;
             MaxHealth = Health;
             DamageToPlayer = 20f;
 

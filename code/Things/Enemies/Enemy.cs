@@ -31,6 +31,7 @@ public abstract partial class Enemy : Thing
 	public bool CanAttack { get; set; }
 	public bool CanAttackAnim { get; set; }
 	public bool CanTurn { get; set; }
+	public bool CanBleedClient { get; set; }
 	public float AggroRange { get; protected set; }
 	protected const float AGGRO_START_TIME = 0.2f;
 	protected const float AGGRO_LOSE_TIME = 0.4f;
@@ -101,6 +102,8 @@ public abstract partial class Enemy : Thing
 	public override void ClientSpawn()
 	{
 		base.ClientSpawn();
+
+		CanBleedClient = true;
 
 		SpawnShadow(ShadowScale);
 	}
@@ -383,7 +386,8 @@ public abstract partial class Enemy : Thing
 	[ClientRpc]
 	public virtual void StartDyingClient()
 	{
-		Game.SpawnBloodSplatter(Position);
+		if(CanBleedClient)
+			Game.SpawnBloodSplatter(Position);
 	}
 
 	public virtual void FinishDying()
