@@ -74,7 +74,8 @@ public partial class MyGame : Sandbox.Game
 			ElapsedTime = 0f;
 			StatusManager = new StatusManager();
 
-			SpawnCrate(new Vector2(2f, 2f));
+			for(int i = -7; i <= 7; i++)
+				SpawnCrate(new Vector2(i, 2f));
 		}
 
 		if (Host.IsClient)
@@ -186,11 +187,11 @@ public partial class MyGame : Sandbox.Game
 		PlaySfxNearby("zombie.dirt", pos, pitch: Rand.Float(0.6f, 0.8f), volume: 0.7f, maxDist: 7.5f);
 	}
 
-	public void SpawnCoin(Vector2 pos, int value = 1)
+	public Coin SpawnCoin(Vector2 pos, int value = 1)
     {
 		// todo: spawn larger amounts less often if reaching max coin cap
 		if (CoinCount >= MAX_COIN_COUNT)
-			return;
+			return null;
 
 		var coin = new Coin()
 		{
@@ -201,6 +202,8 @@ public partial class MyGame : Sandbox.Game
 
         AddThing(coin);
 		CoinCount++;
+
+		return coin;
 	}
 
 	public void SpawnBoss(Vector2 pos)
@@ -412,7 +415,8 @@ public partial class MyGame : Sandbox.Game
 		ElapsedTime = 0f;
 		IsGameOver = false;
 
-		SpawnCrate(new Vector2(2f, 2f));
+		for (int i = -7; i <= 7; i++)
+			SpawnCrate(new Vector2(i, 2f));
 
 		RestartClient();
 	}

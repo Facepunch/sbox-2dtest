@@ -31,7 +31,7 @@ public partial class Crate : Enemy
             SpawnTime = 2f;
 
             Radius = 0.25f;
-            Health = 50f;
+            Health = 8.50f;
             MaxHealth = Health;
 
             ScaleFactor = 0.95f;
@@ -47,7 +47,7 @@ public partial class Crate : Enemy
             CanAttack = false;
 
             CoinValueMin = 1;
-            CoinValueMax = 4;
+            CoinValueMax = 2;
         }
     }
 
@@ -89,5 +89,31 @@ public partial class Crate : Enemy
                 Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * player.PushStrength * (1f + player.TempWeight) * dt;
             }
         }
+    }
+
+    public override void DropLoot(PlayerCitizen player)
+    {
+        float RAND_POS = 0.2f;
+
+        int num_coins = Rand.Int(2, 3);
+        for(int i = 0; i < num_coins; i++)
+        {
+            var coin = Game.SpawnCoin(Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)), Rand.Int(CoinValueMin, CoinValueMax));
+
+            if (coin != null)
+                coin.Velocity = (coin.Position - Position) * Rand.Float(2f, 6f);
+        }
+
+        var health_pack_chance = Utils.Map(player.Health, player.MaxHp, 0f, 1.25f, 0.75f);
+        if (Rand.Float(0f, 1f) < health_pack_chance)
+        {
+            var healthPack = new HealthPack() { Position = Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)) };
+            healthPack.Velocity = (healthPack.Position - Position) * Rand.Float(2f, 6f);
+            Game.AddThing(healthPack);
+        }
+
+        var magnet = new Magnet() { Position = Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)) };
+        magnet.Velocity = (magnet.Position - Position) * Rand.Float(2f, 6f);
+        Game.AddThing(magnet);
     }
 }

@@ -14,6 +14,11 @@ public partial class Coin : Thing
 
 	//public float Lifetime { get; set; }
 
+	public bool IsMagnetized { get; private set; }
+	public PlayerCitizen PlayerMagnetized { get; private set; }
+	public TimeSince MagnetizeTime { get; private set; }
+	private const float MAGNETIZE_DURATION = 2.4f;
+
 	public int Value { get; set; }
 
 	public Coin()
@@ -78,6 +83,19 @@ public partial class Coin : Thing
 
 		base.Update(dt);
 
+		if(IsMagnetized)
+        {
+			if (MagnetizeTime > MAGNETIZE_DURATION || PlayerMagnetized == null || !PlayerMagnetized.IsValid || PlayerMagnetized.IsDead)
+			{
+				IsMagnetized = false;
+				PlayerMagnetized = null;
+			}
+			else
+            {
+				Velocity += (PlayerMagnetized.Position - Position).Normal * 0.125f * Utils.Map(MagnetizeTime, 0f, MAGNETIZE_DURATION, 1f, 0f, EasingType.QuadIn);
+            }
+        }
+
 		Position += Velocity * dt;
 		Position = new Vector2(MathX.Clamp(Position.x, Game.BOUNDS_MIN.x + Radius, Game.BOUNDS_MAX.x - Radius), MathX.Clamp(Position.y, Game.BOUNDS_MIN.y + Radius, Game.BOUNDS_MAX.y - Radius));
 		Velocity *= (1f - dt * 0.92f);
@@ -137,6 +155,14 @@ public partial class Coin : Thing
 		{
 			SetValue(Value + coin.Value);
 			SpawnCloudClient(coin.Position, Vector2.Zero);
+
+			if(!IsMagnetized && coin.IsMagnetized)
+            {
+				PlayerMagnetized = coin.PlayerMagnetized;
+				IsMagnetized = true;
+				MagnetizeTime = coin.MagnetizeTime;
+            }
+
 			coin.Remove();
 		}
 	}
@@ -200,4 +226,11 @@ public partial class Coin : Thing
 				break;
 		}
 	}
+
+	public void Magnetize(PlayerCitizen player)
+    {
+		PlayerMagnetized = player;
+		IsMagnetized = true;
+		MagnetizeTime = 0f;
+    }
 }

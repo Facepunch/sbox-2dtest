@@ -7,7 +7,7 @@ using static Test2D.MyGame;
 using Sandbox;
 
 namespace Test2D;
-public partial class HealthPack : Thing
+public partial class Magnet : Thing
 {
 	public TimeSince SpawnTime { get; private set; }
 
@@ -15,27 +15,23 @@ public partial class HealthPack : Thing
 
 	public float Lifetime { get; set; }
 
-	public float HpAmount { get; set; }
-
 	public override void Spawn()
 	{
 		base.Spawn();
 
 		if(Host.IsServer)
         {
-			SpriteTexture = "textures/sprites/health_pack.png";
+			SpriteTexture = "textures/sprites/magnet.png";
 			ColorTint = new Color(1f, 1f, 1f, 1f);
 
 			SpawnTime = 0f;
 			Radius = 0.175f;
-			BasePivotY = 0.275f;
+			BasePivotY = 0.2f;
 			HeightZ = 0f;
 			Lifetime = 60f;
 			ShadowOpacity = 0.8f;
 			ShadowScale = 0.8f;
 			Scale = new Vector2(0.6f, 0.6f);
-
-			HpAmount = 20f;
 
 			CollideWith.Add(typeof(Enemy));
 			CollideWith.Add(typeof(PlayerCitizen));
@@ -119,7 +115,12 @@ public partial class HealthPack : Thing
 		{
 			if (!player.IsDead && SpawnTime > 0.1f)
 			{
-				player.Heal(HpAmount);
+				var coins = Entity.All.OfType<Coin>();
+				foreach (Coin coin in coins)
+                {
+					coin.Magnetize(player);
+                }
+
 				Game.PlaySfxNearby("heal", Position, pitch: Utils.Map(player.Health / player.MaxHp, 0f, 1f, 1.5f, 1f), volume: 1.5f, maxDist: 5f);
 				Remove();
 			}
