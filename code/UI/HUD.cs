@@ -35,6 +35,7 @@ public partial class HUD : RootPanel
 	public TimerPanel TimerPanel { get; private set; }
 	public ChoicePanel ChoicePanel { get; set; }
 	public DeathPanel DeathPanel{ get; set; }
+	private EnemyNametag _bossNametag;
 
 	public HUD()
 	{
@@ -76,10 +77,16 @@ public partial class HUD : RootPanel
 
 	public EnemyNametag SpawnEnemyNametag(Enemy enemy)
 	{
-		var nametag = AddChild<EnemyNametag>();
-		nametag.Enemy = enemy;
+		if (_bossNametag != null)
+        {
+			_bossNametag.Delete();
+			_bossNametag = null;
+		}
 
-		return nametag;
+		_bossNametag = AddChild<EnemyNametag>();
+		_bossNametag.Enemy = enemy;
+
+		return _bossNametag;
 	}
 
 	public void GameOver()
