@@ -31,7 +31,7 @@ public partial class EnemyBullet : Thing
 			Scale = new Vector2(0.35f, 0.35f);
 			SpawnTime = 0f;
 			Damage = 8f;
-			Radius = 0.075f;
+			Radius = 0.066f;
 			BasePivotY = -1.1f;
 			HeightZ = 0f;
 			//Pivot = new Vector2(0.5f, -0.9f);
@@ -40,7 +40,7 @@ public partial class EnemyBullet : Thing
 			ShadowScale = 0.6f;
 			ColorTint = Color.Red;
 			Lifetime = 8f;
-			Speed = 1.7f;
+			Speed = 1.6f;
 
 			CollideWith.Add(typeof(PlayerCitizen));
 		}

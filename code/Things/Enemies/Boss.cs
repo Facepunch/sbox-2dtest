@@ -123,7 +123,7 @@ public partial class Boss : Enemy
         IsShooting = true;
         _hasShot = false;
         AnimationPath = "textures/sprites/boss_shoot.frames";
-        Game.PlaySfxNearby("spitter.prepare", Position, pitch: Rand.Float(1f, 1.1f), volume: 0.6f, maxDist: 2.75f);
+        Game.PlaySfxNearby("boss.prepare", Position, pitch: Rand.Float(0.75f, 0.85f), volume: 1.7f, maxDist: 10f);
         CanAttack = false;
     }
 
@@ -154,6 +154,9 @@ public partial class Boss : Enemy
                 Shooter = this,
             };
 
+            bullet.ColorTint = Color.Yellow;
+            bullet.Speed = 1.9f;
+
             if (dir.x < 0f)
                 bullet.Scale = new Vector2(-bullet.Scale.x, bullet.Scale.y);
 
@@ -164,7 +167,7 @@ public partial class Boss : Enemy
         _hasShot = true;
 
         AnimationPath = "textures/sprites/boss_shoot_reverse.frames";
-        Game.PlaySfxNearby("spitter.shoot", Position, pitch: Rand.Float(0.8f, 0.9f), volume: 0.9f, maxDist: 5f);
+        Game.PlaySfxNearby("boss.shoot", Position, pitch: Rand.Float(0.65f, 0.75f), volume: 1.5f, maxDist: 9f);
     }
 
     public void FinishShooting()
@@ -204,6 +207,13 @@ public partial class Boss : Enemy
                 }
             }
         }
+    }
+
+    public override void StartDying(PlayerCitizen player)
+    {
+        base.StartDying(player);
+
+        Game.PlaySfxNearby("boss.die", Position, pitch: Rand.Float(0.75f, 0.8f), volume: 1.5f, maxDist: 15f);
     }
 
     [ClientRpc]

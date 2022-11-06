@@ -74,7 +74,7 @@ public partial class MyGame : Sandbox.Game
 			ElapsedTime = 0f;
 			StatusManager = new StatusManager();
 
-			SpawnEnemy(TypeLibrary.GetDescription(typeof(Boss)), new Vector2(0f, 1f));
+			SpawnBoss(new Vector2(2f, 2f));
 		}
 
 		if (Host.IsClient)
@@ -201,6 +201,12 @@ public partial class MyGame : Sandbox.Game
 
 		AddThing(coin);
 		CoinCount++;
+	}
+
+	public void SpawnBoss(Vector2 pos)
+    {
+		SpawnEnemy(TypeLibrary.GetDescription(typeof(Boss)), pos);
+		PlaySfxNearby("boss.fanfare", pos, pitch: Rand.Float(0.7f, 0.75f), volume: 1.3f, maxDist: 15f);
 	}
 
 	public void HandleThingCollisionForGridSquare(Thing thing, GridSquare gridSquare, float dt)
@@ -401,7 +407,7 @@ public partial class MyGame : Sandbox.Game
 		ElapsedTime = 0f;
 		IsGameOver = false;
 
-		SpawnEnemy(TypeLibrary.GetDescription(typeof(Boss)), new Vector2(0f, 1f));
+		SpawnBoss(new Vector2(2f, 2f));
 
 		RestartClient();
 	}
