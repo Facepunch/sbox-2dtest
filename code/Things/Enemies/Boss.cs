@@ -66,7 +66,7 @@ public partial class Boss : Enemy
             DecelerationAttacking = 1.1f;
 
             Radius = 0.42f;
-            Health = 2000f;
+            Health = 30.2000f;
             MaxHealth = Health;
             DamageToPlayer = 20f;
 
@@ -134,6 +134,7 @@ public partial class Boss : Enemy
                 //ColorTint = Color.White;
                 AnimationPath = AnimIdlePath;
                 CanTurn = true;
+                CanAttackAnim = true;
             }
             else
             {
@@ -175,7 +176,7 @@ public partial class Boss : Enemy
                 Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
             }
 
-            float speed = 1.5f * (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f));
+            float speed = 1.66f * (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f));
             Position += Velocity * dt * speed;
 
             var player_dist_sqr = (closestPlayer.Position - Position).LengthSquared;
@@ -273,6 +274,7 @@ public partial class Boss : Enemy
         AnimationPath = "textures/sprites/boss_charge.frames";
         CanTurn = false;
         CanAttack = false;
+        CanAttackAnim = false;
     }
 
     public void Charge()
@@ -281,7 +283,7 @@ public partial class Boss : Enemy
         if (closestPlayer == null)
             return;
 
-        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 1.5f;
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * Rand.Float(0f, 1.66f);
         _chargeDir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-10f, 10f));
 
         IsPreparingToCharge = false;
@@ -336,6 +338,7 @@ public partial class Boss : Enemy
         base.StartDying(player);
 
         Game.PlaySfxNearby("boss.die", Position, pitch: Rand.Float(0.75f, 0.8f), volume: 1.5f, maxDist: 15f);
+        Game.Victory();
     }
 
     [ClientRpc]

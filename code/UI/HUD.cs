@@ -100,6 +100,18 @@ public partial class HUD : RootPanel
 		}
 	}
 
+	public void Victory()
+	{
+		DeathPanel = AddChild<DeathPanel>("death_panel_root");
+		DeathPanel.Victory();
+
+		if (ChoicePanel != null)
+		{
+			ChoicePanel.Delete();
+			ChoicePanel = null;
+		}
+	}
+
 	public void Restart()
     {
 		TimerPanel.Restart();

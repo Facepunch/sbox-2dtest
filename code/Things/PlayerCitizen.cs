@@ -268,7 +268,7 @@ public partial class PlayerCitizen : Thing
 	{
 		//Utils.DrawCircle(Position, 1.7f, 18, Time.Now, Color.Red);
 		//Log.Info("local player: " + (Game.Client != null));
-		//DebugText("IsChoosingLevelUpReward: " + IsChoosingLevelUpReward);
+		//DebugText("game over: " + Game.IsGameOver);
 		//DebugText(NumDashesAvailable + " / " + NumDashes + "\n\n" + _dashTimer);
 	}
 
@@ -276,8 +276,8 @@ public partial class PlayerCitizen : Thing
 	public void ClientTick()
 	{
 		//Log.Info("local player: " + (Game.Client != null));
-		//DebugText("\n\nClient - Statuses: " + Statuses);
-		if(this == Local.Client.Pawn)
+		//DebugText("\n\nclient game over: " + Game.IsGameOver);
+		if (this == Local.Client.Pawn)
         {
 			Sound.Listener = new()
 			{
@@ -1000,7 +1000,7 @@ public partial class PlayerCitizen : Thing
 	public void CheckForLevelUp()
     {
 		//Log.Info("CheckForLevelUp: " + ExperienceCurrent + " / " + ExperienceRequired + " IsServer: " + Host.IsServer + " Level: " + Level);
-		if (ExperienceCurrent >= ExperienceRequired)
+		if (ExperienceCurrent >= ExperienceRequired && !Game.IsGameOver)
 			LevelUp();
 	}
 

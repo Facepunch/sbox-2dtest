@@ -135,18 +135,18 @@ public partial class MyGame : Sandbox.Game
 
 		var pos = new Vector2(Rand.Float(BOUNDS_MIN.x, BOUNDS_MAX.x), Rand.Float(BOUNDS_MIN.y, BOUNDS_MAX.y));
 
-		TypeDescription type;
+		TypeDescription type = TypeLibrary.GetDescription(typeof(Zombie));
 
 		Enemy enemy = null;
 
-		if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
-			type = TypeLibrary.GetDescription(typeof(Runner));
-		if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
-			type = TypeLibrary.GetDescription(typeof(Spitter));
-		if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
-			type = TypeLibrary.GetDescription(typeof(Spiker));
-		else
-			type = TypeLibrary.GetDescription(typeof(Zombie));
+		//if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
+		//	type = TypeLibrary.GetDescription(typeof(Runner));
+		//if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
+		//	type = TypeLibrary.GetDescription(typeof(Spitter));
+		//if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
+		//	type = TypeLibrary.GetDescription(typeof(Spiker));
+		//else
+		//	type = TypeLibrary.GetDescription(typeof(Zombie));
 
 		float exploderChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 180f, 0.05f, 0.1f);
 		if (enemy == null && Rand.Float(0f, 1f) < exploderChance)
@@ -451,6 +451,21 @@ public partial class MyGame : Sandbox.Game
 
 	[ClientRpc]
 	public void GameOverClient()
+	{
+		Hud.GameOver();
+	}
+
+	public void Victory()
+	{
+		if (IsGameOver)
+			return;
+
+		IsGameOver = true;
+		VictoryClient();
+	}
+
+	[ClientRpc]
+	public void VictoryClient()
 	{
 		Hud.GameOver();
 	}

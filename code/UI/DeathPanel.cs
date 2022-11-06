@@ -8,11 +8,13 @@ namespace Test2D;
 
 public class DeathPanel : Panel
 {
+	public DeathModal DeathModal { get; private set; }
+
 	public DeathPanel()
 	{
-		var icon = new DeathModal(this);
-		icon.AddClass("death_panel");
-		AddChild(icon);
+		DeathModal = new DeathModal(this);
+		DeathModal.AddClass("death_panel");
+		AddChild(DeathModal);
 	}
 
 	public void OnDeathButtonClicked()
@@ -24,21 +26,27 @@ public class DeathPanel : Panel
 			MyGame.Current.Hud.DeathPanel = null;
 		}
 	}
+
+	public void Victory()
+    {
+		DeathModal.TextLabel.Text = "Victory!";
+    }
 }
 
 public class DeathModal : Panel
 {
 	public DeathPanel DeathPanel { get; set; }
+	public Label TextLabel { get; set; }
 
 	public DeathModal(DeathPanel deathPanel)
     {
 		DeathPanel = deathPanel;
 
-		Label label = new Label();
-		label.AddClass("death_label");
-		label.Text = "You're Dead...";
+		TextLabel = new Label();
+		TextLabel.AddClass("death_label");
+		TextLabel.Text = "You're Dead...";
 		//titleLabel.Text = "Title";
-		AddChild(label);
+		AddChild(TextLabel);
 
 		var button = Add.Panel("death_button");
 		button.AddEventListener("onclick", () => DeathPanel.OnDeathButtonClicked());

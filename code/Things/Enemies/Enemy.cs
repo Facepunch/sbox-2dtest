@@ -29,6 +29,7 @@ public abstract partial class Enemy : Thing
 	public bool IsAttacking { get; private set; }
 	private float _aggroTimer;
 	public bool CanAttack { get; set; }
+	public bool CanAttackAnim { get; set; }
 	public bool CanTurn { get; set; }
 	public float AggroRange { get; protected set; }
 	protected const float AGGRO_START_TIME = 0.2f;
@@ -79,6 +80,7 @@ public abstract partial class Enemy : Thing
 			DeathTime = 0.3f;
 			AggroRange = 1.4f;
 			CanAttack = true;
+			CanAttackAnim = true;
 			CanTurn = true;
 
 			AnimSpawnPath = "textures/sprites/zombie_spawn.frames";
@@ -204,7 +206,9 @@ public abstract partial class Enemy : Thing
 				if (_aggroTimer > AGGRO_LOSE_TIME)
 				{
 					IsAttacking = false;
-					AnimationPath = AnimIdlePath;
+
+					if (CanAttackAnim)
+						AnimationPath = AnimIdlePath;
 				}
 			}
 			else
@@ -218,7 +222,9 @@ public abstract partial class Enemy : Thing
 	public virtual void StartAttacking()
     {
 		IsAttacking = true;
-		AnimationPath = AnimAttackPath;
+
+		if(CanAttackAnim)
+			AnimationPath = AnimAttackPath;
 	}
 
 	protected virtual void UpdateSprite(PlayerCitizen targetPlayer)
