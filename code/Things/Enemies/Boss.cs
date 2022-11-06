@@ -10,6 +10,8 @@ namespace Test2D;
 
 public partial class Boss : Enemy
 {
+    public EnemyNametag Nametag { get; private set; }
+
     private TimeSince _damageTime;
     private const float DAMAGE_TIME = 0.5f;
 
@@ -22,7 +24,23 @@ public partial class Boss : Enemy
 
     private TimeSince _prepareShootTime;
 
-    public EnemyNametag Nametag { get; private set; }
+    public bool IsCharging { get; private set; }
+    private float _chargeTimer;
+    private const float CHARGE_TIME_MIN = 1f;
+    private const float CHARGE_TIME_MAX = 2.4f;
+    private float _chargeTime;
+    private Vector2 _chargeDir;
+    private Vector2 _chargeVel;
+    private TimeSince _chargeCloudTimer;
+
+    public bool IsPreparingToCharge { get; private set; }
+    private float _prepareTimer;
+    private const float PREPARE_TIME = 0.8f;
+    private bool _hasLandedCharge;
+
+    private float _chargeDelayTimer;
+    private const float CHARGE_DELAY_MIN = 3f;
+    private const float CHARGE_DELAY_MAX = 6f;
 
     public override void Spawn()
     {
@@ -37,12 +55,15 @@ public partial class Boss : Enemy
             AnimAttackPath = "textures/sprites/boss_attack.frames";
             AnimDiePath = "textures/sprites/boss_die.frames";
 
-            AnimSpeed = 2f;
+            AnimSpeed = 3f;
             BasePivotY = 0.05f;
             HeightZ = 0f;
             //Pivot = new Vector2(0.5f, 0.05f);
             PushStrength = 50f;
             DeathTime = 3f;
+
+            Deceleration = 1.1f;
+            DecelerationAttacking = 1.1f;
 
             Radius = 0.42f;
             Health = 2000f;
@@ -88,31 +109,93 @@ public partial class Boss : Enemy
         if (closestPlayer == null)
             return;
 
-        if(IsShooting)
+        if (IsPreparingToCharge)
         {
-            if(!_hasShot && _prepareShootTime > 1.0f)
-                Shoot();
+            _prepareTimer -= dt;
+            if (_prepareTimer < 0f)
+            {
+                Charge();
+                return;
+            }
+        }
+        else if (IsCharging)
+        {
+            _chargeTimer -= dt;
+            
+            if(!_hasLandedCharge && _chargeTimer < 0.5f)
+            {
+                AnimationPath = "textures/sprites/boss_charge_reverse.frames";
+                _hasLandedCharge = true;
+            }
 
-            if(_prepareShootTime > 1.6f)
-                FinishShooting();
+            if (_chargeTimer < 0f)
+            {
+                IsCharging = false;
+                //ColorTint = Color.White;
+                AnimationPath = AnimIdlePath;
+                CanTurn = true;
+            }
+            else
+            {
+                _chargeVel += _chargeDir * 4f * Utils.MapReturn(_chargeTimer, _chargeTime, 0f, 0f, 1f, EasingType.Linear) * dt;
+                TempWeight += Utils.MapReturn(_chargeTimer, _chargeTime, 0f, 1f, 6f, EasingType.Linear) * dt;
+            }
 
-            return;
-        } 
+            if (_chargeTimer < 0.1f)
+                _chargeVel *= 0f;
+
+            Position += (_chargeVel + Velocity) * dt;
+
+            if (_chargeCloudTimer > 0.25f)
+            {
+                SpawnCloudClient(Position + new Vector2(0f, 0.25f), -_chargeDir * Rand.Float(0.2f, 0.8f));
+                _chargeCloudTimer = Rand.Float(0f, 0.075f);
+
+                if(Health < MaxHealth / 2f)
+                {
+                    var dir = (new Vector2(Rand.Float(-1f, 1f), Rand.Float(-1f, 1f))).Normal;
+                    SpawnBullet(dir);
+                }
+            }
+        }
         else
         {
-            Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
-        }
-
-        float speed = 0.9f * (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 1.05f : 0.66f);
-        Position += Velocity * dt * speed;
-
-        var player_dist_sqr = (closestPlayer.Position - Position).LengthSquared;
-        if (!IsShooting && !IsAttacking && player_dist_sqr < MathF.Pow(9f, 2f))
-        {
-            _shootDelayTimer -= dt;
-            if(_shootDelayTimer < 0f)
+            if (IsShooting)
             {
-                PrepareToShoot();
+                if (!_hasShot && _prepareShootTime > 1.0f)
+                    Shoot();
+
+                if (_prepareShootTime > 1.6f)
+                    FinishShooting();
+
+                return;
+            }
+            else
+            {
+                Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
+            }
+
+            float speed = 1.5f * (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f));
+            Position += Velocity * dt * speed;
+
+            var player_dist_sqr = (closestPlayer.Position - Position).LengthSquared;
+
+            if (!IsPreparingToCharge && !IsCharging && !IsShooting && !IsAttacking && player_dist_sqr < MathF.Pow(9f, 2f))
+            {
+                _shootDelayTimer -= dt;
+                if (_shootDelayTimer < 0f)
+                {
+                    PrepareToShoot();
+                }
+            }
+
+            if (!IsPreparingToCharge && !IsCharging && !IsShooting && !IsAttacking && player_dist_sqr < 8f * 8f)
+            {
+                _chargeDelayTimer -= dt;
+                if (_chargeDelayTimer < 0f)
+                {
+                    PrepareToCharge();
+                }
             }
         }
     }
@@ -145,22 +228,7 @@ public partial class Boss : Enemy
         for (int i = 0; i < num_bullets; i++)
         {
             var dir = Utils.RotateVector(aim_dir, currAngleOffset + increment * i);
-
-            var bullet = new EnemyBullet
-            {
-                Position = Position + dir * 0.05f,
-                Depth = 1f,
-                Direction = dir,
-                Shooter = this,
-            };
-
-            bullet.ColorTint = Color.Yellow;
-            bullet.Speed = 1.9f;
-
-            if (dir.x < 0f)
-                bullet.Scale = new Vector2(-bullet.Scale.x, bullet.Scale.y);
-
-            Game.AddThing(bullet);
+            SpawnBullet(dir);
         }
 
         Velocity *= 0.25f;
@@ -170,12 +238,66 @@ public partial class Boss : Enemy
         Game.PlaySfxNearby("boss.shoot", Position, pitch: Rand.Float(0.65f, 0.75f), volume: 1.5f, maxDist: 9f);
     }
 
+    void SpawnBullet(Vector2 dir)
+    {
+        var bullet = new EnemyBullet
+        {
+            Position = Position + dir * 0.05f,
+            Depth = 1f,
+            Direction = dir,
+            Shooter = this,
+        };
+
+        bullet.ColorTint = Color.Yellow;
+        bullet.Speed = 1.9f;
+
+        if (dir.x < 0f)
+            bullet.Scale = new Vector2(-bullet.Scale.x, bullet.Scale.y);
+
+        Game.AddThing(bullet);
+    }
+
     public void FinishShooting()
     {
         AnimationPath = AnimIdlePath;
         CanAttack = true;
         _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX) * Utils.Map(Health, MaxHealth, 0f, 1f, 0.5f, EasingType.QuadIn);
         IsShooting = false;
+    }
+
+    public void PrepareToCharge()
+    {
+        _prepareTimer = PREPARE_TIME;
+        IsPreparingToCharge = true;
+        Game.PlaySfxNearby("boss.prepare", Position, pitch: Rand.Float(1.05f, 1.1f), volume: 1.75f, maxDist: 10f);
+        AnimationPath = "textures/sprites/boss_charge.frames";
+        CanTurn = false;
+        CanAttack = false;
+    }
+
+    public void Charge()
+    {
+        var closestPlayer = Game.GetClosestPlayer(Position);
+        if (closestPlayer == null)
+            return;
+
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 1.5f;
+        _chargeDir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-10f, 10f));
+
+        IsPreparingToCharge = false;
+        IsCharging = true;
+        _chargeTime = Rand.Float(CHARGE_TIME_MIN, CHARGE_TIME_MAX);
+        _chargeTimer = _chargeTime;
+        CanAttack = true;
+        _hasLandedCharge = false;
+
+        _chargeDelayTimer = Rand.Float(CHARGE_DELAY_MIN, CHARGE_DELAY_MAX) * Utils.Map(Health, MaxHealth, 0f, 1f, 0.5f, EasingType.SineIn);
+        //ColorTint = new Color(1f, 0f, 0f);
+        _chargeVel = Vector2.Zero;
+
+        Scale = new Vector2(1f * target_pos.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
+
+        Game.PlaySfxNearby("boss.charge", Position, pitch: Rand.Float(0.9f, 1.05f), volume: 1.6f, maxDist: 9f);
     }
 
     public override void Colliding(Thing other, float percent, float dt)
