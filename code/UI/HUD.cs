@@ -93,11 +93,7 @@ public partial class HUD : RootPanel
     {
 		DeathPanel = AddChild<DeathPanel>("death_panel_root");
 
-		if (ChoicePanel != null)
-		{
-			ChoicePanel.Delete();
-			ChoicePanel = null;
-		}
+		RemoveChoicePanel();
 	}
 
 	public void Victory()
@@ -105,6 +101,11 @@ public partial class HUD : RootPanel
 		DeathPanel = AddChild<DeathPanel>("death_panel_root");
 		DeathPanel.Victory();
 
+		RemoveChoicePanel();
+	}
+
+	public void RemoveChoicePanel()
+    {
 		if (ChoicePanel != null)
 		{
 			ChoicePanel.Delete();

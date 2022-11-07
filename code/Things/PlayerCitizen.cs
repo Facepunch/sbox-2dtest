@@ -311,7 +311,6 @@ public partial class PlayerCitizen : Thing
 			Position += _dashVelocity * dt;
 
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, dt);
-		//_dashVelocity *= (1f - dt * 7.95f);
 		TempWeight *= (1f - dt * 4.7f);
 
 		ShadowScale = IsDashing ? Utils.MapReturn(DashProgress, 0f, 1f, 1.12f, 0.75f, EasingType.SineInOut) : 1.12f;
@@ -335,13 +334,6 @@ public partial class PlayerCitizen : Thing
 
 		if (MathF.Abs(Input.Left) > 0f)
 			Scale = new Vector2(1f * Input.Left < 0f ? -1f : 1f, 1f) * 1f;
-
-		if(HealthRegen > 0f)
-        {
-			Health += HealthRegen * dt;
-			if(Health > MaxHp)
-				Health = MaxHp;
-        }
 
 		//Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
 		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
@@ -374,10 +366,6 @@ public partial class PlayerCitizen : Thing
 				//for(int i = 0; i < 9; i++)
     //            {
     //                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
-				//	AddStatus(TypeLibrary.GetDescription(typeof(FreezeArmorStatus)));
-				//	//AddStatus(TypeLibrary.GetDescription(typeof(FireIgniteStatus)));
-				//	//AddStatus(TypeLibrary.GetDescription(typeof(FreezeBurnStatus)));
-				//	//AddStatus(TypeLibrary.GetDescription(typeof(FireDamageStatus)));
 				//}
 
                 return;
@@ -399,20 +387,19 @@ public partial class PlayerCitizen : Thing
 				}
 			}
 
-			for (int dx = -1; dx <= 1; dx++)
-			{
-				for (int dy = -1; dy <= 1; dy++)
-				{
-					Game.HandleThingCollisionForGridSquare(this, new GridSquare(GridPos.x + dx, GridPos.y + dy), dt);
-				}
-			}
-
 			if(!IsDead)
             {
 				HandleDashing(dt);
 				HandleStatuses(dt);
 				HandleShooting(dt);
 				HandleFlashing(dt);
+
+				if (HealthRegen > 0f)
+				{
+					Health += HealthRegen * dt;
+					if (Health > MaxHp)
+						Health = MaxHp;
+				}
 			}
 		}
 
@@ -781,6 +768,8 @@ public partial class PlayerCitizen : Thing
 		//EnableDrawing = false;
 		ColorTint = new Color(1f, 1f, 1f, 0.05f);
 		ShadowOpacity = 0.1f;
+		_isFlashing = false;
+		IsReloading = false;
 
 		Game.PlaySfxNearby("die", Position, pitch: Rand.Float(1f, 1.2f), volume: 1.5f, maxDist: 12f);
 		DieClient();
@@ -790,6 +779,7 @@ public partial class PlayerCitizen : Thing
 	public void DieClient()
     {
 		Nametag.SetVisible(false);
+		Game.Hud.RemoveChoicePanel();
 	}
 
 	public float GetDamageMultiplier()
@@ -1064,5 +1054,30 @@ public partial class PlayerCitizen : Thing
 		Health += amount;
 		if (Health > MaxHp)
 			Health = MaxHp;
+	}
+
+	public void Revive()
+    {
+		if (!IsDead)
+			return;
+
+		IsChoosingLevelUpReward = false;
+		IsDashing = false;
+		IsReloading = false;
+		ReloadProgress = 0f;
+		DashProgress = 0f;
+		ExperienceCurrent = 0;
+
+		Health = MaxHp * 0.33f;
+		ColorTint = Color.White;
+
+		IsDead = false;
+		ReviveClient();
+    }
+
+	[ClientRpc]
+	public void ReviveClient()
+	{
+		Nametag.SetVisible(true);
 	}
 }

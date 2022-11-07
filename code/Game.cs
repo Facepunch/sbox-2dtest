@@ -297,6 +297,9 @@ public partial class MyGame : Sandbox.Game
 	public IEnumerable<PlayerCitizen> AlivePlayers => Players
 		.Where(x => !x.IsDead);
 
+	public IEnumerable<PlayerCitizen> DeadPlayers => Players
+		.Where(x => x.IsDead);
+
 	private T GetClosest<T>(IEnumerable<T> enumerable, Vector3 pos, float maxRange, bool ignoreZ, T except)
 		where T : Entity
 	{

@@ -104,7 +104,7 @@ public partial class Crate : Enemy
                 coin.Velocity = (coin.Position - Position) * Rand.Float(2f, 6f);
         }
 
-        var health_pack_chance = Utils.Map(player.Health, player.MaxHp, 0f, 1.25f, 0.75f);
+        var health_pack_chance = player != null ? Utils.Map(player.Health, player.MaxHp, 0f, 1.25f, 0.75f) : 0.1f;
         if (Rand.Float(0f, 1f) < health_pack_chance)
         {
             var healthPack = new HealthPack() { Position = Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)) };
@@ -112,8 +112,16 @@ public partial class Crate : Enemy
             Game.AddThing(healthPack);
         }
 
-        var magnet = new Magnet() { Position = Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)) };
-        magnet.Velocity = (magnet.Position - Position) * Rand.Float(2f, 6f);
-        Game.AddThing(magnet);
+        var magnet_chance = 0.08f;
+        if (Rand.Float(0f, 1f) < magnet_chance)
+        {
+            var magnet = new Magnet() { Position = Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)) };
+            magnet.Velocity = (magnet.Position - Position) * Rand.Float(2f, 6f);
+            Game.AddThing(magnet);
+        }
+
+        var reviveSoul = new ReviveSoul() { Position = Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)) };
+        reviveSoul.Velocity = (reviveSoul.Position - Position) * Rand.Float(2f, 6f);
+        Game.AddThing(reviveSoul);
     }
 }
