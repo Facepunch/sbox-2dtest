@@ -44,6 +44,8 @@ public partial class PlayerCitizen : Thing
 	public float BulletDamage { get; protected set; }
 	public float BulletForce { get; protected set; }
 	public float Recoil { get; private set; }
+
+	[Net]
 	public float MoveSpeed { get; protected set; }
 	public const float BASE_MOVE_SPEED = 14f;
 	public float NumProjectiles { get; protected set; }
