@@ -4,7 +4,7 @@
 HEADER
 {
 	CompileTargets = ( IS_SM_50 && ( PC || VULKAN ) );
-	Description = "Template Shader for S&box";
+	Description = "2D sprite shader";
 }
 
 //=========================================================================================================================
