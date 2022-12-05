@@ -70,7 +70,7 @@ VS
 PS
 {
 	CreateInputTexture2D( Texture, Srgb, 8, "", "", "Color", Default3( 1.0, 1.0, 1.0 ) );
-	CreateTexture2DInRegister( g_tColor, 0 ) < Channel( RGBA, None( Texture ), Srgb ); OutputFormat( DXT5 ); SrgbRead( true ); Filter( BILINEAR ) >;
+	CreateTexture2DInRegister( g_tColor, 0 ) < Channel( RGBA, None( Texture ), Srgb ); OutputFormat( DXT5 ); SrgbRead( true ); Filter( BILINEAR ); >;
 	TextureAttribute( RepresentativeTexture, g_tColor );
 	
 	float2 g_vTextureSize < UiType( VectorText ); Default2( 1.0, 1.0 ); UiGroup( "Transform,10/40" ); Attribute( "TextureSize" ); >;
