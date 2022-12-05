@@ -11,7 +11,7 @@ HEADER
 //=========================================================================================================================
 FEATURES
 {
-    #include "common/features.hlsl"
+	#include "common/features.hlsl"
 
 	Feature(F_PIXELATED, 0..1, "Sprite");
 }
@@ -69,7 +69,7 @@ VS
 
 PS
 {
-    CreateInputTexture2D( Texture, Srgb, 8, "", "", "Color", Default3( 1.0, 1.0, 1.0 ) );
+	CreateInputTexture2D( Texture, Srgb, 8, "", "", "Color", Default3( 1.0, 1.0, 1.0 ) );
 	CreateTexture2DInRegister( g_tColor, 0 ) < Channel( RGBA, None( Texture ), Srgb ); OutputFormat( DXT5 ); SrgbRead( true ); Filter( BILINEAR ) >;
 	TextureAttribute( RepresentativeTexture, g_tColor );
 	
@@ -79,7 +79,7 @@ PS
 
 	StaticCombo( S_PIXELATED, F_PIXELATED, Sys( ALL ) );
 
-    RenderState( BlendEnable, true );
+	RenderState( BlendEnable, true );
 	RenderState( SrcBlend, SRC_ALPHA );
 	RenderState( DstBlend, INV_SRC_ALPHA );
 
@@ -96,15 +96,15 @@ PS
 
 	struct PS_OUTPUT
 	{
-        float4 vColor : SV_Target0;
+		float4 vColor : SV_Target0;
 	};
-    
-    //
+	
+	//
 	// Main
 	//
 	PS_OUTPUT MainPs( PixelInput i )
 	{
-        PS_OUTPUT o;
+		PS_OUTPUT o;
 		
 		#if ( S_PIXELATED )
 			float2 texSize = g_vTextureSize;
@@ -129,6 +129,6 @@ PS
 		o.vColor.rgb = lerp(o.vColor.rgb * g_vColorMultiply.rgb, g_vColorFill.rgb, g_vColorFill.a);
 		o.vColor.a = o.vColor.a * g_vColorMultiply.a;
 
-        return o;
+		return o;
 	}
 }
