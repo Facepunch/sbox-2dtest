@@ -40,7 +40,7 @@ public class BurningEnemyStatus : EnemyStatus
 			return;
 
 		if (ElapsedTime > Lifetime)
-			Enemy.RemoveEnemyStatus(TypeLibrary.GetDescription(this.GetType()));
+			Enemy.RemoveEnemyStatus(TypeLibrary.GetType(this.GetType()));
 
 		if(_sinceDamageTime > DAMAGE_INTERVAL)
         {
@@ -63,13 +63,13 @@ public class BurningEnemyStatus : EnemyStatus
 	{
 		bool didDamage = false;
 
-		if (other is Enemy enemy && !enemy.IsDying && !enemy.HasEnemyStatus(TypeLibrary.GetDescription(this.GetType())))
+		if (other is Enemy enemy && !enemy.IsDying && !enemy.HasEnemyStatus(TypeLibrary.GetType(this.GetType())))
 		{
 			if (_damageOtherTime > DAMAGE_INTERVAL)
 			{
 				enemy.DamageFire(Damage, Player);
 
-				if(!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))) && Rand.Float(0f, 1f) < SpreadChance)
+				if(!enemy.HasEnemyStatus(TypeLibrary.GetType(typeof(BurningEnemyStatus))) && Rand.Float(0f, 1f) < SpreadChance)
                 {
 					enemy.Burn(Player, Damage, Lifetime, SpreadChance);
 					MyGame.Current.PlaySfxNearby("burn", enemy.Position, pitch: Rand.Float(1.15f, 1.35f), volume: 0.7f, maxDist: 4f);

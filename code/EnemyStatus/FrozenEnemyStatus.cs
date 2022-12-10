@@ -49,7 +49,7 @@ public class FrozenEnemyStatus : EnemyStatus
 			return;
 
 		if (ElapsedTime > Lifetime)
-			Enemy.RemoveEnemyStatus(TypeLibrary.GetDescription(this.GetType()));
+			Enemy.RemoveEnemyStatus(TypeLibrary.GetType(this.GetType()));
 
 		Enemy.Velocity *= (1f - Utils.Map(TimeScale, 0.6f, 0f, 3f, 15f) * dt);
     }

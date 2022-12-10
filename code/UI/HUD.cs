@@ -128,5 +128,11 @@ public partial class HUD : RootPanel
 			DeathPanel.Delete();
 			DeathPanel = null;
 		}
-    }
+
+		if (_bossNametag != null)
+		{
+			_bossNametag.Delete();
+			_bossNametag = null;
+		}
+	}
 }

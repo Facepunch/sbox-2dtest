@@ -47,7 +47,7 @@ public partial class PlayerCitizen : Thing
 
 	[Net]
 	public float MoveSpeed { get; protected set; }
-	public const float BASE_MOVE_SPEED = 14f;
+	public const float BASE_MOVE_SPEED = 15f;
 	public float NumProjectiles { get; protected set; }
 	public float BulletSpread { get; protected set; }
 	public float BulletInaccuracy { get; protected set; }
@@ -141,6 +141,8 @@ public partial class PlayerCitizen : Thing
 			//ClientStatuses = new List<Status>();
 
 			InitializeStats();
+
+			Predictable = true;
 		}
 	}
 
@@ -302,7 +304,7 @@ public partial class PlayerCitizen : Thing
 		// garry: pass the mouse offset/aim in the Input command instead of by console command
 		MouseOffset = Input.Cursor.Direction;
 
-        Vector2 inputVector = new Vector2(-Input.Left, Input.Forward);
+        Vector2 inputVector = new Vector2(-Input.AnalogMove.y, Input.AnalogMove.x);
 
 		if(inputVector.LengthSquared > 0f)
             Velocity += inputVector.Normal * MoveSpeed * BASE_MOVE_SPEED * dt;
@@ -334,8 +336,8 @@ public partial class PlayerCitizen : Thing
 
 		Depth = -Position.y * 10f;
 
-		if (MathF.Abs(Input.Left) > 0f)
-			Scale = new Vector2(1f * Input.Left < 0f ? -1f : 1f, 1f) * 1f;
+		if (MathF.Abs(Input.AnalogMove.y) > 0f)
+			Scale = new Vector2(1f * Input.AnalogMove.y < 0f ? -1f : 1f, 1f) * 1f;
 
 		//Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
 		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
@@ -690,16 +692,16 @@ public partial class PlayerCitizen : Thing
         }
     }
 
-	public override void BuildInput(InputBuilder inputBuilder)
+	public override void BuildInput()
 	{
-		base.BuildInput(inputBuilder);
+		base.BuildInput();
 
 		// To account for bullets being raised off the ground
 		var aimOffset = new Vector2( 0f, 0.4f );
 
 		// garry: use put the mouse offset in the input
         MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition) - Position - aimOffset;
-		inputBuilder.Cursor = new Ray(0, MouseOffset);
+		//inputBuilder.Cursor = new Ray(0, MouseOffset);
     }
 
 	public override void FrameSimulate( Client cl )
@@ -1033,8 +1035,7 @@ public partial class PlayerCitizen : Thing
 
 	public int GetExperienceReqForLevel(int level)
     {
-		//return 3 + level + (int)MathF.Round(Utils.Map(level, 1, 100, 0f, 1000f, EasingType.SineIn));
-		return (int)MathF.Round(Utils.Map(level, 1, 100, 3f, 1000f, EasingType.SineIn));
+		return (int)MathF.Round(Utils.Map(level, 1, 120, 3f, 900f, EasingType.SineIn));
 	}
 
 	public void Flash(float time)

@@ -45,7 +45,7 @@ public class StatusManager
     {
         List<(TypeDescription Type, float Weight)> valid = new List<(TypeDescription, float)>();
 
-        foreach (var type in TypeLibrary.GetDescriptions<Status>())
+        foreach (var type in TypeLibrary.GetTypes<Status>())
         {
             //Log.Info("--------------- " + type.Name);
 
@@ -68,7 +68,7 @@ public class StatusManager
                 continue;
             }
 
-            if (attrib.ReqStatuses.Length > 0 && attrib.ReqStatuses.All(x => !player.HasStatus(TypeLibrary.GetDescription(x))))
+            if (attrib.ReqStatuses.Length > 0 && attrib.ReqStatuses.All(x => !player.HasStatus(TypeLibrary.GetType(x))))
             {
                 //Log.Info("not valid - none of the required statuses owned");
                 continue;
@@ -132,6 +132,6 @@ public class StatusManager
 
     public static TypeDescription IdentityToType(int typeIdentity)
     {
-        return TypeLibrary.GetDescriptionByIdent(typeIdentity);
+        return TypeLibrary.GetTypeByIdent(typeIdentity);
     }
 }

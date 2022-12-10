@@ -3,6 +3,7 @@
   "Type": "game",
   "Org": "ryleigh",
   "Ident": "sausagesurvivors",
+  "Tags": null,
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",

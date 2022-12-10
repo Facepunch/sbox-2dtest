@@ -15,9 +15,9 @@ namespace Test2D;
 /// You can use this to create things like HUDs and declare which player class
 /// to use for spawned players.
 /// </summary>
-public partial class MyGame : Sandbox.Game
+public partial class MyGame : GameManager
 {
-	public new static MyGame Current => Sandbox.Game.Current as MyGame;
+	public new static MyGame Current => GameManager.Current as MyGame;
 	
 	public HUD Hud { get; private set; }
 
@@ -41,6 +41,8 @@ public partial class MyGame : Sandbox.Game
 	public float GRID_SIZE = 1f;
 	public Vector2 BOUNDS_MIN;
 	public Vector2 BOUNDS_MAX;
+	public Vector2 BOUNDS_MIN_SPAWN;
+	public Vector2 BOUNDS_MAX_SPAWN;
 
 	private TimeSince _enemySpawnTime;
 
@@ -60,6 +62,8 @@ public partial class MyGame : Sandbox.Game
 	{
 		BOUNDS_MIN = new Vector2(-16f, -12f);
 		BOUNDS_MAX = new Vector2(16f, 12f);
+		BOUNDS_MIN_SPAWN = new Vector2(-15.5f, -11.5f);
+		BOUNDS_MAX_SPAWN = new Vector2(15.5f, 11.5f);
 
 		if ( Host.IsServer )
 		{
@@ -74,8 +78,7 @@ public partial class MyGame : Sandbox.Game
 			ElapsedTime = 0f;
 			StatusManager = new StatusManager();
 
-			for(int i = -7; i <= 7; i++)
-				SpawnCrate(new Vector2(i, 2f));
+			SpawnStartingThings();
 		}
 
 		if (Host.IsClient)
@@ -96,6 +99,17 @@ public partial class MyGame : Sandbox.Game
 
 		BackgroundManager?.Restart();
     }
+
+	public void SpawnStartingThings()
+    {
+		for(int i = 0; i < 3; i++)
+        {
+			var pos = new Vector2(Rand.Float(BOUNDS_MIN_SPAWN.x, BOUNDS_MAX_SPAWN.x), Rand.Float(BOUNDS_MIN_SPAWN.y, BOUNDS_MAX_SPAWN.y));
+			SpawnCrate(pos);
+		}
+
+		//SpawnBoss(new Vector2(3, 3f));
+	}
 
 	[Event.Tick.Server]
 	public void ServerTick()
@@ -122,7 +136,8 @@ public partial class MyGame : Sandbox.Game
 
 	void HandleEnemySpawn()
     {
-		if(_enemySpawnTime > Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.25f, EasingType.QuadOut) * Utils.Map(ElapsedTime, 0f, 60f, 1.5f, 1f) * Utils.Map(ElapsedTime, 0f, 180f, 3f, 1f))
+		var spawnTime = Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.33f, EasingType.QuadOut) * Utils.Map(ElapsedTime, 0f, 80f, 1.5f, 1f) * Utils.Map(ElapsedTime, 0f, 250f, 3f, 1f);
+		if (_enemySpawnTime > spawnTime)
         {
 			SpawnEnemy();
 			_enemySpawnTime = 0f;
@@ -134,36 +149,48 @@ public partial class MyGame : Sandbox.Game
 		if (EnemyCount >= MAX_ENEMY_COUNT)
 			return;
 
-		var pos = new Vector2(Rand.Float(BOUNDS_MIN.x, BOUNDS_MAX.x), Rand.Float(BOUNDS_MIN.y, BOUNDS_MAX.y));
+		var pos = new Vector2(Rand.Float(BOUNDS_MIN_SPAWN.x, BOUNDS_MAX_SPAWN.x), Rand.Float(BOUNDS_MIN_SPAWN.y, BOUNDS_MAX_SPAWN.y));
 
-		TypeDescription type = TypeLibrary.GetDescription(typeof(Zombie));
+		TypeDescription type = TypeLibrary.GetType(typeof(Zombie));
 
-		Enemy enemy = null;
+        //Enemy enemy = null;
 
-		//if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
-		//	type = TypeLibrary.GetDescription(typeof(Runner));
-		//if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
-		//	type = TypeLibrary.GetDescription(typeof(Spitter));
-		//if (enemy == null && Rand.Float(0f, 1f) < 0.5f)
-		//	type = TypeLibrary.GetDescription(typeof(Spiker));
-		//else
-		//	type = TypeLibrary.GetDescription(typeof(Zombie));
+        //if (enemy == null && Rand.Float(0f, 1f) < 0.05f)
+        //          type = TypeLibrary.GetType(typeof(Runner));
+        //      else if (enemy == null && Rand.Float(0f, 1f) < 0.08f)
+        //          type = TypeLibrary.GetType(typeof(Spitter));
+        //else if (enemy == null && Rand.Float(0f, 1f) < 0.05f)
+        //          type = TypeLibrary.GetType(typeof(Spiker));
+        //else if (enemy == null && Rand.Float(0f, 1f) < 0.15f)
+        //	type = TypeLibrary.GetType(typeof(Exploder));
+        //else if (enemy == null && Rand.Float(0f, 1f) < 0.05f)
+        //	type = TypeLibrary.GetType(typeof(Charger));
+        //else
+        //  type = TypeLibrary.GetType(typeof(Zombie));
 
-		float exploderChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 180f, 0.05f, 0.1f);
-		if (enemy == null && Rand.Float(0f, 1f) < exploderChance)
-			type = TypeLibrary.GetDescription(typeof(Exploder));
+        float crateChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 200f, 0.005f, 0.01f);
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < crateChance)
+			type = TypeLibrary.GetType(typeof(Crate));
 
-		float spitterChance = ElapsedTime < 60f ? 0f : Utils.Map(ElapsedTime, 60f, 600f, 0.05f, 0.1f);
-		if (enemy == null && Rand.Float(0f, 1f) < spitterChance)
-			type = TypeLibrary.GetDescription(typeof(Spitter));
+		float exploderChance = ElapsedTime < 35f ? 0f : Utils.Map(ElapsedTime, 35f, 700f, 0.03f, 0.08f);
+        if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < exploderChance)
+            type = TypeLibrary.GetType(typeof(Exploder));
 
-		float runnerChance = ElapsedTime < 120f ? 0f : Utils.Map(ElapsedTime, 120f, 800f, 0.05f, 0.2f, EasingType.QuadIn);
-		if (enemy == null && Rand.Float(0f, 1f) < runnerChance)
-			type = TypeLibrary.GetDescription(typeof(Runner));
+        float spitterChance = ElapsedTime < 90f ? 0f : Utils.Map(ElapsedTime, 90f, 800f, 0.02f, 0.1f);
+        if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < spitterChance)
+            type = TypeLibrary.GetType(typeof(Spitter));
 
-		float chargerChance = ElapsedTime < 240f ? 0f : Utils.Map(ElapsedTime, 240f, 800f, 0.05f, 0.1f);
-		if (enemy == null && Rand.Float(0f, 1f) < chargerChance)
-			type = TypeLibrary.GetDescription(typeof(Charger));
+		float spikerChance = ElapsedTime < 320f ? 0f : Utils.Map(ElapsedTime, 320f, 800f, 0.02f, 0.1f, EasingType.SineIn);
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < spikerChance)
+			type = TypeLibrary.GetType(typeof(Spiker));
+
+		float chargerChance = ElapsedTime < 420f ? 0f : Utils.Map(ElapsedTime, 420f, 800f, 0.03f, 0.075f);
+        if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < chargerChance)
+            type = TypeLibrary.GetType(typeof(Charger));
+
+		float runnerChance = ElapsedTime < 500f ? 0f : Utils.Map(ElapsedTime, 500f, 800f, 0.05f, 0.15f, EasingType.QuadIn);
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < runnerChance)
+			type = TypeLibrary.GetType(typeof(Runner));
 
 		SpawnEnemy(type, pos);
 	}
@@ -208,13 +235,13 @@ public partial class MyGame : Sandbox.Game
 
 	public void SpawnBoss(Vector2 pos)
     {
-		SpawnEnemy(TypeLibrary.GetDescription(typeof(Boss)), pos);
+		SpawnEnemy(TypeLibrary.GetType(typeof(Boss)), pos);
 		PlaySfxNearby("boss.fanfare", pos, pitch: Rand.Float(0.7f, 0.75f), volume: 1.3f, maxDist: 15f);
 	}
 
 	public void SpawnCrate(Vector2 pos)
 	{
-		SpawnEnemy(TypeLibrary.GetDescription(typeof(Crate)), pos);
+		SpawnEnemy(TypeLibrary.GetType(typeof(Crate)), pos);
 	}
 
 	public void HandleThingCollisionForGridSquare(Thing thing, GridSquare gridSquare, float dt)
@@ -418,8 +445,7 @@ public partial class MyGame : Sandbox.Game
 		ElapsedTime = 0f;
 		IsGameOver = false;
 
-		for (int i = -7; i <= 7; i++)
-			SpawnCrate(new Vector2(i, 2f));
+		SpawnStartingThings();
 
 		RestartClient();
 	}
