@@ -39,7 +39,7 @@ public partial class HUD : RootPanel
 
 	public HUD()
 	{
-		Local.Hud = this;
+		Sandbox.Game.RootPanel = this;
 
 		//RootPanel.StyleSheet.Load("ui/HUD.scss");
 		//      RootPanel.AddChild<ToolsPanel>("tools");

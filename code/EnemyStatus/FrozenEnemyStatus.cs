@@ -49,7 +49,7 @@ public class FrozenEnemyStatus : EnemyStatus
 			return;
 
 		if (ElapsedTime > Lifetime)
-			Enemy.RemoveEnemyStatus(TypeLibrary.GetType(this.GetType()));
+			Enemy.RemoveEnemyStatus(this);
 
 		Enemy.Velocity *= (1f - Utils.Map(TimeScale, 0.6f, 0f, 3f, 15f) * dt);
     }
@@ -91,9 +91,9 @@ public partial class FrozenVfx : Sprite
 
 		SpriteTexture = SpriteTexture.Atlas("textures/sprites/frozen.png", 1, 5);
         AnimationPath = "textures/sprites/frozen.frames";
-		AnimationSpeed = Rand.Float(3f, 4f);
+		AnimationSpeed = Sandbox.Game.Random.Float(3f, 4f);
 
-		Scale = new Vector2(Rand.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * Rand.Float(0.9f, 1f);
+		Scale = new Vector2(Sandbox.Game.Random.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * Sandbox.Game.Random.Float(0.9f, 1f);
 
 		ColorTint = new Color(1f, 1f, 1f, 1f);
 		Filter = SpriteFilter.Pixelated;

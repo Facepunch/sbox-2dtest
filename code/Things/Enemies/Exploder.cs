@@ -27,7 +27,7 @@ public partial class Exploder : Enemy
     {
         base.Spawn();
 
-        if (Host.IsServer)
+        if (Sandbox.Game.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/exploder.png", 6, 6);
             //AnimationPath = "textures/sprites/zombie_spawn.frames";
@@ -167,7 +167,7 @@ public partial class Exploder : Enemy
         base.StartDyingClient();
 
         Game.SpawnExplosionEffect(Position);
-        Game.PlaySfxNearby("explode", Position, pitch: Rand.Float(0.9f, 1.1f), volume: 1f, maxDist: 6f);
+        Game.PlaySfxNearby("explode", Position, pitch: Sandbox.Game.Random.Float(0.9f, 1.1f), volume: 1f, maxDist: 6f);
     }
 
     public override void FinishDying()

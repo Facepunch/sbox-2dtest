@@ -17,12 +17,12 @@ public partial class BloodSplatter : Sprite
 		base.Spawn();
 
 		SpriteTexture = SpriteTexture.Atlas("textures/sprites/blood.png", 1, 9);
-		AnimationPath = String.Format("textures/sprites/blood_splatter_{0}.frames", Rand.Int(0, 3).ToString()) ;
-		AnimationSpeed = Rand.Float(2f, 3.5f);
+		AnimationPath = String.Format("textures/sprites/blood_splatter_{0}.frames", Sandbox.Game.Random.Int(0, 3).ToString()) ;
+		AnimationSpeed = Sandbox.Game.Random.Float(2f, 3.5f);
 		Depth = -219f;
 		ColorTint = Color.White;
         Filter = SpriteFilter.Pixelated;
-		Scale = new Vector2((Rand.Float(0f, 1f) > 0.5f ? -1f : 1f) * Rand.Float(0.9f, 1.2f), Rand.Float(0.9f, 1.2f));
+		Scale = new Vector2((Sandbox.Game.Random.Float(0f, 1f) > 0.5f ? -1f : 1f) * Sandbox.Game.Random.Float(0.9f, 1.2f), Sandbox.Game.Random.Float(0.9f, 1.2f));
 		_spawnTime = 0f;
 	}
 

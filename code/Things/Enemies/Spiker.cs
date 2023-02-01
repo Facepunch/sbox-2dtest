@@ -28,7 +28,7 @@ public partial class Spiker : Enemy
     {
         base.Spawn();
 
-        if (Host.IsServer)
+        if (Sandbox.Game.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/spiker3.png", 7, 7);
 
@@ -59,7 +59,7 @@ public partial class Spiker : Enemy
 
             ShadowScale = 1.15f;
             _damageTime = DAMAGE_TIME;
-            _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
+            _shootDelayTimer = Sandbox.Game.Random.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
 
             AnimationPath = AnimSpawnPath;
 
@@ -141,7 +141,7 @@ public partial class Spiker : Enemy
         _prepareStartTime = 0f;
         Velocity *= 0.25f;
         AnimationPath = "textures/sprites/spiker_shoot.frames";
-        //Game.PlaySfxNearby("spitter.prepare", Position, pitch: Rand.Float(0.9f, 1.0f), volume: 1f, maxDist: 4f);
+        //Game.PlaySfxNearby("spitter.prepare", Position, pitch: Sandbox.Game.Random.Float(0.9f, 1.0f), volume: 1f, maxDist: 4f);
     }
 
     public void CreateSpike()
@@ -150,7 +150,7 @@ public partial class Spiker : Enemy
         if (closestPlayer == null)
             return;
 
-        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 0.1f + new Vector2(Rand.Float(-1f, 1f), Rand.Float(-1f, 1f)) * 0.8f;
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 0.1f + new Vector2(Sandbox.Game.Random.Float(-1f, 1f), Sandbox.Game.Random.Float(-1f, 1f)) * 0.8f;
         var spike = new EnemySpike
         {
             Position = target_pos,
@@ -159,13 +159,13 @@ public partial class Spiker : Enemy
 
         Game.AddThing(spike);
 
-        Game.PlaySfxNearby("spike.prepare", target_pos, pitch: Rand.Float(0.95f, 1.05f), volume: 1.5f, maxDist: 5f);
+        Game.PlaySfxNearby("spike.prepare", target_pos, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 1.5f, maxDist: 5f);
         //DebugOverlay.Line(Position, target_pos, new Color(0f, 0f, 1f, 0.5f), 2f, false);
     }
 
     public void FinishShooting()
     {
-        _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
+        _shootDelayTimer = Sandbox.Game.Random.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
         IsShooting = false;
         CanAttack = true;
         CanTurn = true;

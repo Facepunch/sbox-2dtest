@@ -21,9 +21,9 @@ public partial class MyGame : GameManager
 	
 	public HUD Hud { get; private set; }
 
-	public PlayerCitizen LocalPlayer => Local.Client.Pawn as PlayerCitizen; // ONLY FOR CLIENT USE
+	public PlayerCitizen LocalPlayer => Sandbox.Game.LocalClient.Pawn as PlayerCitizen; // ONLY FOR CLIENT USE
 
-	public OrthoCamera MainCamera { get; } = new OrthoCamera();
+	public Camera2D MainCamera { get; } = new Camera2D();
 
 	public readonly List<PlayerCitizen> PlayerList = new();
 
@@ -31,7 +31,7 @@ public partial class MyGame : GameManager
 	public const float MAX_ENEMY_COUNT = 350;
 	//public const float MAX_ENEMY_COUNT = 30;
 
-    public int CoinCount { get; private set; }
+	public int CoinCount { get; private set; }
 	public const float MAX_COIN_COUNT = 200;
 
 	private readonly List<Thing> _things = new();
@@ -65,7 +65,7 @@ public partial class MyGame : GameManager
 		BOUNDS_MIN_SPAWN = new Vector2(-15.5f, -11.5f);
 		BOUNDS_MAX_SPAWN = new Vector2(15.5f, 11.5f);
 
-		if ( Host.IsServer )
+		if ( Sandbox.Game.IsServer )
 		{
 			for (float x = BOUNDS_MIN.x; x < BOUNDS_MAX.x; x += GRID_SIZE)
 			{
@@ -81,10 +81,10 @@ public partial class MyGame : GameManager
 			SpawnStartingThings();
 		}
 
-		if (Host.IsClient)
-        {
+		if (Sandbox.Game.IsClient)
+		{
 			//_ = new MainHud();
-            Hud = new HUD();
+			Hud = new HUD();
 			BackgroundManager = new BackgroundManager();
 
 			_bloodSplatters = new List<Sprite>();
@@ -98,13 +98,13 @@ public partial class MyGame : GameManager
 		base.ClientSpawn();
 
 		BackgroundManager?.Restart();
-    }
+	}
 
 	public void SpawnStartingThings()
-    {
+	{
 		for(int i = 0; i < 3; i++)
-        {
-			var pos = new Vector2(Rand.Float(BOUNDS_MIN_SPAWN.x, BOUNDS_MAX_SPAWN.x), Rand.Float(BOUNDS_MIN_SPAWN.y, BOUNDS_MAX_SPAWN.y));
+		{
+			var pos = new Vector2(Sandbox.Game.Random.Float(BOUNDS_MIN_SPAWN.x, BOUNDS_MAX_SPAWN.x), Sandbox.Game.Random.Float(BOUNDS_MIN_SPAWN.y, BOUNDS_MAX_SPAWN.y));
 			SpawnCrate(pos);
 		}
 
@@ -113,83 +113,83 @@ public partial class MyGame : GameManager
 
 	[Event.Tick.Server]
 	public void ServerTick()
-    {
+	{
 		if (IsGameOver)
 			return;
 
 		var dt = Time.Delta;
 
 		for(int i = _things.Count - 1; i >= 0; i--)
-        {
+		{
 			var thing = _things[i];
 			if (!thing.IsRemoved)
 				thing.Update(dt * thing.TimeScale);
 		}
 
-        //DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
-        //DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
-        //DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
-        //DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
+		//DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
+		//DebugOverlay.Line(BOUNDS_MIN, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
+		//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MAX.x, BOUNDS_MIN.y), 0f, false);
+		//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
 
-        HandleEnemySpawn();
+		HandleEnemySpawn();
 	}
 
 	void HandleEnemySpawn()
-    {
+	{
 		var spawnTime = Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.33f, EasingType.QuadOut) * Utils.Map(ElapsedTime, 0f, 80f, 1.5f, 1f) * Utils.Map(ElapsedTime, 0f, 250f, 3f, 1f);
 		if (_enemySpawnTime > spawnTime)
-        {
+		{
 			SpawnEnemy();
 			_enemySpawnTime = 0f;
-        }
-    }
+		}
+	}
 
 	void SpawnEnemy()
 	{
 		if (EnemyCount >= MAX_ENEMY_COUNT)
 			return;
 
-		var pos = new Vector2(Rand.Float(BOUNDS_MIN_SPAWN.x, BOUNDS_MAX_SPAWN.x), Rand.Float(BOUNDS_MIN_SPAWN.y, BOUNDS_MAX_SPAWN.y));
+		var pos = new Vector2(Sandbox.Game.Random.Float(BOUNDS_MIN_SPAWN.x, BOUNDS_MAX_SPAWN.x), Sandbox.Game.Random.Float(BOUNDS_MIN_SPAWN.y, BOUNDS_MAX_SPAWN.y));
 
 		TypeDescription type = TypeLibrary.GetType(typeof(Zombie));
 
-        //Enemy enemy = null;
+		//Enemy enemy = null;
 
-        //if (enemy == null && Rand.Float(0f, 1f) < 0.05f)
-        //          type = TypeLibrary.GetType(typeof(Runner));
-        //      else if (enemy == null && Rand.Float(0f, 1f) < 0.08f)
-        //          type = TypeLibrary.GetType(typeof(Spitter));
-        //else if (enemy == null && Rand.Float(0f, 1f) < 0.05f)
-        //          type = TypeLibrary.GetType(typeof(Spiker));
-        //else if (enemy == null && Rand.Float(0f, 1f) < 0.15f)
-        //	type = TypeLibrary.GetType(typeof(Exploder));
-        //else if (enemy == null && Rand.Float(0f, 1f) < 0.05f)
-        //	type = TypeLibrary.GetType(typeof(Charger));
-        //else
-        //  type = TypeLibrary.GetType(typeof(Zombie));
+		//if (enemy == null && Sandbox.Game.Random.Float(0f, 1f) < 0.05f)
+		//          type = TypeLibrary.GetType(typeof(Runner));
+		//      else if (enemy == null && Sandbox.Game.Random.Float(0f, 1f) < 0.08f)
+		//          type = TypeLibrary.GetType(typeof(Spitter));
+		//else if (enemy == null && Sandbox.Game.Random.Float(0f, 1f) < 0.05f)
+		//          type = TypeLibrary.GetType(typeof(Spiker));
+		//else if (enemy == null && Sandbox.Game.Random.Float(0f, 1f) < 0.15f)
+		//	type = TypeLibrary.GetType(typeof(Exploder));
+		//else if (enemy == null && Sandbox.Game.Random.Float(0f, 1f) < 0.05f)
+		//	type = TypeLibrary.GetType(typeof(Charger));
+		//else
+		//  type = TypeLibrary.GetType(typeof(Zombie));
 
-        float crateChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 200f, 0.005f, 0.01f);
-		if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < crateChance)
+		float crateChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 200f, 0.005f, 0.01f);
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < crateChance)
 			type = TypeLibrary.GetType(typeof(Crate));
 
 		float exploderChance = ElapsedTime < 35f ? 0f : Utils.Map(ElapsedTime, 35f, 700f, 0.03f, 0.08f);
-        if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < exploderChance)
-            type = TypeLibrary.GetType(typeof(Exploder));
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < exploderChance)
+			type = TypeLibrary.GetType(typeof(Exploder));
 
-        float spitterChance = ElapsedTime < 90f ? 0f : Utils.Map(ElapsedTime, 90f, 800f, 0.02f, 0.1f);
-        if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < spitterChance)
-            type = TypeLibrary.GetType(typeof(Spitter));
+		float spitterChance = ElapsedTime < 90f ? 0f : Utils.Map(ElapsedTime, 90f, 800f, 0.02f, 0.1f);
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < spitterChance)
+			type = TypeLibrary.GetType(typeof(Spitter));
 
 		float spikerChance = ElapsedTime < 320f ? 0f : Utils.Map(ElapsedTime, 320f, 800f, 0.02f, 0.1f, EasingType.SineIn);
-		if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < spikerChance)
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < spikerChance)
 			type = TypeLibrary.GetType(typeof(Spiker));
 
 		float chargerChance = ElapsedTime < 420f ? 0f : Utils.Map(ElapsedTime, 420f, 800f, 0.03f, 0.075f);
-        if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < chargerChance)
-            type = TypeLibrary.GetType(typeof(Charger));
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < chargerChance)
+			type = TypeLibrary.GetType(typeof(Charger));
 
 		float runnerChance = ElapsedTime < 500f ? 0f : Utils.Map(ElapsedTime, 500f, 800f, 0.05f, 0.15f, EasingType.QuadIn);
-		if (type == TypeLibrary.GetType(typeof(Zombie)) && Rand.Float(0f, 1f) < runnerChance)
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < runnerChance)
 			type = TypeLibrary.GetType(typeof(Runner));
 
 		SpawnEnemy(type, pos);
@@ -211,11 +211,11 @@ public partial class MyGame : GameManager
 		AddThing(enemy);
 		EnemyCount++;
 
-		PlaySfxNearby("zombie.dirt", pos, pitch: Rand.Float(0.6f, 0.8f), volume: 0.7f, maxDist: 7.5f);
+		PlaySfxNearby("zombie.dirt", pos, pitch: Sandbox.Game.Random.Float(0.6f, 0.8f), volume: 0.7f, maxDist: 7.5f);
 	}
 
 	public Coin SpawnCoin(Vector2 pos, int value = 1)
-    {
+	{
 		// todo: spawn larger amounts less often if reaching max coin cap
 		if (CoinCount >= MAX_COIN_COUNT)
 			return null;
@@ -227,16 +227,16 @@ public partial class MyGame : GameManager
 
 		coin.SetValue(value);
 
-        AddThing(coin);
+		AddThing(coin);
 		CoinCount++;
 
 		return coin;
 	}
 
 	public void SpawnBoss(Vector2 pos)
-    {
+	{
 		SpawnEnemy(TypeLibrary.GetType(typeof(Boss)), pos);
-		PlaySfxNearby("boss.fanfare", pos, pitch: Rand.Float(0.7f, 0.75f), volume: 1.3f, maxDist: 15f);
+		PlaySfxNearby("boss.fanfare", pos, pitch: Sandbox.Game.Random.Float(0.7f, 0.75f), volume: 1.3f, maxDist: 15f);
 	}
 
 	public void SpawnCrate(Vector2 pos)
@@ -254,7 +254,7 @@ public partial class MyGame : GameManager
 			return;
 
 		for(int i = things.Count - 1; i >= 0; i--)
-        {
+		{
 			if (i >= things.Count)
 				continue;
 			//Log.Info("!!! " + thing.Name + " --- " + i.ToString() + " count: " + things.Count);
@@ -268,13 +268,13 @@ public partial class MyGame : GameManager
 
 			bool isValidType = false;
 			foreach(var t in thing.CollideWith)
-            {
+			{
 				if(t.IsAssignableFrom(other.GetType()))
-                {
+				{
 					isValidType = true;
 					break;
-                }
-            }
+				}
+			}
 
 			if (!isValidType)
 				continue;
@@ -291,7 +291,7 @@ public partial class MyGame : GameManager
 	}
 
 	public void AddThingsInGridSquare(GridSquare gridSquare, List<Thing> things)
-    {
+	{
 		if (!ThingGridPositions.ContainsKey(gridSquare))
 			return;
 
@@ -301,7 +301,7 @@ public partial class MyGame : GameManager
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
 	/// </summary>
-	public override void ClientJoined( Client client )
+	public override void ClientJoined( IClient client )
 	{
 		base.ClientJoined( client );
 
@@ -312,12 +312,7 @@ public partial class MyGame : GameManager
 		AddThing(player);
 	}
 
-	public override CameraMode FindActiveCamera()
-	{
-		return MainCamera;
-	}
-
-	public IEnumerable<PlayerCitizen> Players => Client.All
+	public IEnumerable<PlayerCitizen> Players => Sandbox.Game.Clients
 		.Select(x => x.Pawn)
 		.OfType<PlayerCitizen>();
 
@@ -346,24 +341,24 @@ public partial class MyGame : GameManager
 	}
 
 	public GridSquare GetGridSquareForPos(Vector2 pos)
-    {
+	{
 		return new GridSquare((int)MathF.Floor(pos.x), (int)MathF.Floor(pos.y));
-    }
+	}
 
 	public List<Thing> GetThingsInGridSquare(GridSquare gridSquare)
-    {
+	{
 		if(ThingGridPositions.ContainsKey(gridSquare))
-        {
+		{
 			return ThingGridPositions[gridSquare];
-        }
+		}
 
 		return null;
-    }
+	}
 
 	public bool IsGridSquareInArena(GridSquare gridSquare)
-    {
+	{
 		return ThingGridPositions.ContainsKey(gridSquare);
-    }
+	}
 
 	public void RegisterThingGridSquare(Thing thing, GridSquare gridSquare)
 	{
@@ -380,14 +375,14 @@ public partial class MyGame : GameManager
 	}
 
 	public void AddThing(Thing thing)
-    {
+	{
 		_things.Add(thing);
 		thing.GridPos = GetGridSquareForPos(thing.Position);
 		RegisterThingGridSquare(thing, thing.GridPos);
 	}
 
 	public void RemoveThing(Thing thing)
-    {
+	{
 		if (ThingGridPositions.ContainsKey(thing.GridPos))
 		{
 			ThingGridPositions[thing.GridPos].Remove(thing);
@@ -403,7 +398,7 @@ public partial class MyGame : GameManager
 	public static void RestartCmd()
 	{
 		Current.Restart();
-		MyGame.Current.PlaySfxTarget(To.Everyone, "restart", Vector2.Zero, Rand.Float(0.95f, 1.05f), 0.66f);
+		MyGame.Current.PlaySfxTarget(To.Everyone, "restart", Vector2.Zero, Sandbox.Game.Random.Float(0.95f, 1.05f), 0.66f);
 	}
 
 	public void Restart()
@@ -412,10 +407,10 @@ public partial class MyGame : GameManager
 		{
 			var thing = _things[i];
 			if(thing is not PlayerCitizen)
-            {
+			{
 				//thing.Delete();
 				thing.Remove();
-            }
+			}
 		}
 
 		_things.Clear();
@@ -424,10 +419,10 @@ public partial class MyGame : GameManager
 		{
 			var player = PlayerList[i];
 			if(player == null || !player.IsValid)
-            {
+			{
 				PlayerList.Remove(player);
 				continue;
-            }
+			}
 
 			player.InitializeStats();
 			player.Position = new Vector2(0f + i * 0.5f, 0f);
@@ -435,9 +430,9 @@ public partial class MyGame : GameManager
 		}
 
 		foreach (KeyValuePair<GridSquare, List<Thing>> pair in ThingGridPositions)
-        {
+		{
 			pair.Value.Clear();
-        }
+		}
 
 		EnemyCount = 0;
 		CoinCount = 0;
@@ -470,16 +465,16 @@ public partial class MyGame : GameManager
 	}
 
 	public void PlayerDied(PlayerCitizen player)
-    {
+	{
 		int numPlayersAlive = Players.Where(x => !x.IsDead).Count();
 		if(numPlayersAlive == 0)
-        {
+		{
 			GameOver();
-        }
+		}
 	}
 
 	public void GameOver()
-    {
+	{
 		if (IsGameOver)
 			return;
 
@@ -509,13 +504,13 @@ public partial class MyGame : GameManager
 	}
 
 	public BloodSplatter SpawnBloodSplatter(Vector2 pos)
-    {
-		Host.AssertClient();
+	{
+		Sandbox.Game.AssertClient();
 
 		var bloodSplatter = new BloodSplatter()
 		{
 			Position = pos,
-			Lifetime = Utils.Map(_bloodSplatters.Count, 0, 100, 10f, 1f) * Rand.Float(0.8f, 1.2f),
+			Lifetime = Utils.Map(_bloodSplatters.Count, 0, 100, 10f, 1f) * Sandbox.Game.Random.Float(0.8f, 1.2f),
 		};
 
 		_bloodSplatters.Add(bloodSplatter);
@@ -523,19 +518,19 @@ public partial class MyGame : GameManager
 	}
 
 	public void RemoveBloodSplatter(BloodSplatter blood)
-    {
+	{
 		if(_bloodSplatters.Contains(blood))
 			_bloodSplatters.Remove(blood);
-    }
+	}
 
 	public Cloud SpawnCloud(Vector2 pos)
 	{
-		Host.AssertClient();
+		Sandbox.Game.AssertClient();
 
 		var cloud = new Cloud()
 		{
 			Position = pos,
-			Lifetime = 0.7f * Rand.Float(0.8f, 1.2f),
+			Lifetime = 0.7f * Sandbox.Game.Random.Float(0.8f, 1.2f),
 		};
 
 		_clouds.Add(cloud);
@@ -550,7 +545,7 @@ public partial class MyGame : GameManager
 
 	public ExplosionEffect SpawnExplosionEffect(Vector2 pos)
 	{
-		Host.AssertClient();
+		Sandbox.Game.AssertClient();
 
 		var explosion = new ExplosionEffect()
 		{
@@ -579,7 +574,7 @@ public partial class MyGame : GameManager
 			{
 				var dist = (player.Position - worldPos).Length;
 				var falloff = Utils.Map(dist, 0f, maxDist, 1f, 0f, EasingType.SineIn);
-                var pos = playerPos + (worldPos - playerPos) * 0.1f;
+				var pos = playerPos + (worldPos - playerPos) * 0.1f;
 
 				var sound = Sound.FromWorld(To.Single(player.Client), name, new Vector3(pos.x, pos.y, 512f));
 				sound.SetPitch(pitch);
@@ -619,12 +614,12 @@ public partial class MyGame : GameManager
 	//	sound.SetVolume(volume);
 	//}
 
-    Vector2 OffsetSoundPos(Vector2 worldPos)
-    {
-        if (Sound.Listener == null)
-            return worldPos;
+	Vector2 OffsetSoundPos(Vector2 worldPos)
+	{
+		if (Sound.Listener == null)
+			return worldPos;
 
-        Vector2 listenerPos = (Vector2)Sound.Listener.Value.Position;
-        return listenerPos + (worldPos - listenerPos) * 0.1f;
-    }
+		Vector2 listenerPos = (Vector2)Sound.Listener.Value.Position;
+		return listenerPos + (worldPos - listenerPos) * 0.1f;
+	}
 }

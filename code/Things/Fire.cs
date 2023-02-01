@@ -23,11 +23,11 @@ public partial class Fire : Thing
 	{
 		base.Spawn();
 
-		if(Host.IsServer)
+		if(Sandbox.Game.IsServer)
         {
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/fire_spritesheet.png", 1, 4);
 			AnimationPath = "textures/sprites/fire.frames";
-			AnimationSpeed = Rand.Float(3f, 6f);
+			AnimationSpeed = Sandbox.Game.Random.Float(3f, 6f);
 			ColorTint = new Color(1f, 1f, 1f, 1f);
 
 			SpawnTime = 0f;
@@ -102,10 +102,10 @@ public partial class Fire : Thing
 
 			if(!enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime > 1.0f))
             {
-				if (!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))))
+				if (!enemy.HasEnemyStatus<BurningEnemyStatus>())
                 {
 					enemy.Burn(Shooter, Shooter.FireDamage * Shooter.GetDamageMultiplier(), Shooter.FireLifetime, Shooter.FireSpreadChance);
-					Game.PlaySfxNearby("burn", Position, pitch: Rand.Float(0.95f, 1.15f), volume: 1f, maxDist: 5f);
+					Game.PlaySfxNearby("burn", Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.15f), volume: 1f, maxDist: 5f);
 				}
 			}
 		}

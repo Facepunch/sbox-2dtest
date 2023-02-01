@@ -17,11 +17,11 @@ public partial class Cloud : Sprite
 		base.Spawn();
 
 		SpriteTexture = "textures/sprites/cloud.png";
-		//AnimationPath = String.Format("textures/sprites/blood_splatter_{0}.frames", Rand.Int(0, 3).ToString()) ;
-		//AnimationSpeed = Rand.Float(2f, 3.5f);
+		//AnimationPath = String.Format("textures/sprites/blood_splatter_{0}.frames", Sandbox.Game.Random.Int(0, 3).ToString()) ;
+		//AnimationSpeed = Sandbox.Game.Random.Float(2f, 3.5f);
 		ColorTint = new Color(1f, 1f, 1f, 0.15f);
         Filter = SpriteFilter.Pixelated;
-		Scale = new Vector2((Rand.Float(0f, 1f) > 0.5f ? -1f : 1f) * Rand.Float(0.7f, 0.9f), Rand.Float(0.6f, 0.8f));
+		Scale = new Vector2((Sandbox.Game.Random.Float(0f, 1f) > 0.5f ? -1f : 1f) * Sandbox.Game.Random.Float(0.7f, 0.9f), Sandbox.Game.Random.Float(0.6f, 0.8f));
 		_spawnTime = 0f;
 	}
 

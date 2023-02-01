@@ -30,7 +30,7 @@ public partial class Bullet : Thing
 	{
 		base.Spawn();
 
-		if(Host.IsServer)
+		if(Sandbox.Game.IsServer)
         {
 			SpriteTexture = "textures/sprites/bullet.png";
 
@@ -113,25 +113,25 @@ public partial class Bullet : Thing
 
 				Game.PlaySfxNearby("enemy.hit", Position, pitch: Utils.Map(enemy.Health, enemy.MaxHealth, 0f, 0.9f, 1.3f, EasingType.SineIn), volume: 1f, maxDist: 4f);
 
-				bool isCrit = Rand.Float(0f, 1f) < CriticalChance;
+				bool isCrit = Sandbox.Game.Random.Float(0f, 1f) < CriticalChance;
 				float damage = Damage * (isCrit ? CriticalMultiplier : 1f);
 				enemy.Damage(damage, Shooter, isCrit);
 
 				enemy.Velocity += Velocity.Normal * Force * (8f / enemy.PushStrength);
 				enemy.TempWeight += AddTempWeight;
 
-				if (Rand.Float(0f, 1f) < FireIgniteChance)
+				if (Sandbox.Game.Random.Float(0f, 1f) < FireIgniteChance)
 				{
-					if (!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus))))
-						Game.PlaySfxNearby("burn", Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1f, maxDist: 5f);
+					if (!enemy.HasEnemyStatus<BurningEnemyStatus>())
+						Game.PlaySfxNearby("burn", Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 1f, maxDist: 5f);
 
 					enemy.Burn(Shooter, Shooter.FireDamage * Shooter.GetDamageMultiplier(), Shooter.FireLifetime, Shooter.FireSpreadChance);
 				}
 
-				if (FreezeChance > 0f && Rand.Float(0f, 1f) < FreezeChance)
+				if (FreezeChance > 0f && Sandbox.Game.Random.Float(0f, 1f) < FreezeChance)
 				{
-					if (!enemy.HasEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus))))
-						Game.PlaySfxNearby("frozen", Position, pitch: Rand.Float(1.2f, 1.3f), volume: 1.6f, maxDist: 6f);
+					if (!enemy.HasEnemyStatus<FrozenEnemyStatus>())
+						Game.PlaySfxNearby("frozen", Position, pitch: Sandbox.Game.Random.Float(1.2f, 1.3f), volume: 1.6f, maxDist: 6f);
 
 					enemy.Freeze(Shooter);
 				}

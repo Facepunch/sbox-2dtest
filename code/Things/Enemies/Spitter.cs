@@ -26,7 +26,7 @@ public partial class Spitter : Enemy
     {
         base.Spawn();
 
-        if (Host.IsServer)
+        if (Sandbox.Game.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/spitter.png", 7, 6);
 
@@ -54,7 +54,7 @@ public partial class Spitter : Enemy
 
             ShadowScale = 1.1f;
             _damageTime = DAMAGE_TIME;
-            _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
+            _shootDelayTimer = Sandbox.Game.Random.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
 
             AnimationPath = AnimSpawnPath;
 
@@ -114,7 +114,7 @@ public partial class Spitter : Enemy
         IsShooting = true;
         _hasShot = false;
         AnimationPath = "textures/sprites/spitter_shoot.frames";
-        Game.PlaySfxNearby("spitter.prepare", Position, pitch: Rand.Float(1f, 1.1f), volume: 0.6f, maxDist: 2.75f);
+        Game.PlaySfxNearby("spitter.prepare", Position, pitch: Sandbox.Game.Random.Float(1f, 1.1f), volume: 0.6f, maxDist: 2.75f);
         CanAttack = false;
     }
 
@@ -125,7 +125,7 @@ public partial class Spitter : Enemy
             return;
 
         var target_pos = closestPlayer.Position + closestPlayer.Velocity * 1.5f;
-        var dir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-10f, 10f));
+        var dir = Utils.RotateVector((target_pos - Position).Normal, Sandbox.Game.Random.Float(-10f, 10f));
         var bullet = new EnemyBullet
         {
             Position = Position + dir * 0.05f,
@@ -142,7 +142,7 @@ public partial class Spitter : Enemy
         Velocity *= 0.25f;
         _hasShot = true;
 
-        Game.PlaySfxNearby("spitter.shoot", Position, pitch: Rand.Float(0.8f, 0.9f), volume: 0.9f, maxDist: 5f);
+        Game.PlaySfxNearby("spitter.shoot", Position, pitch: Sandbox.Game.Random.Float(0.8f, 0.9f), volume: 0.9f, maxDist: 5f);
         AnimationPath = "textures/sprites/spitter_shoot_reverse.frames";
     }
 
@@ -150,7 +150,7 @@ public partial class Spitter : Enemy
     {
         AnimationPath = AnimIdlePath;
         CanAttack = true;
-        _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
+        _shootDelayTimer = Sandbox.Game.Random.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
         IsShooting = false;
     }
 

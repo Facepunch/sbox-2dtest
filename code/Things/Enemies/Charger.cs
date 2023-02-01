@@ -32,7 +32,7 @@ public partial class Charger : Enemy
     {
         base.Spawn();
 
-        if (Host.IsServer)
+        if (Sandbox.Game.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/charger.png", 6, 6);
             AnimSpeed = 2f;
@@ -55,7 +55,7 @@ public partial class Charger : Enemy
 
             ShadowScale = 1.25f;
             _damageTime = DAMAGE_TIME;
-            _chargeDelayTimer = Rand.Float(CHARGE_DELAY_MIN, CHARGE_DELAY_MAX);
+            _chargeDelayTimer = Sandbox.Game.Random.Float(CHARGE_DELAY_MIN, CHARGE_DELAY_MAX);
 
             AnimationPath = AnimSpawnPath;
 
@@ -116,8 +116,8 @@ public partial class Charger : Enemy
 
             if(_chargeCloudTimer > 0.25f)
             {
-                SpawnCloudClient(Position + new Vector2(0f, 0.25f), -_chargeDir * Rand.Float(0.2f, 0.8f));
-                _chargeCloudTimer = Rand.Float(0f, 0.075f);
+                SpawnCloudClient(Position + new Vector2(0f, 0.25f), -_chargeDir * Sandbox.Game.Random.Float(0.2f, 0.8f));
+                _chargeCloudTimer = Sandbox.Game.Random.Float(0f, 0.075f);
             }
         }
         else
@@ -168,7 +168,7 @@ public partial class Charger : Enemy
     {
         _prepareTimer = PREPARE_TIME;
         IsPreparingToCharge = true;
-        Game.PlaySfxNearby("enemy.roar.prepare", Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1f, maxDist: 5f);
+        Game.PlaySfxNearby("enemy.roar.prepare", Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 1f, maxDist: 5f);
         AnimationPath = "textures/sprites/charger_charge_start.frames";
         CanTurn = false;
         CanAttack = false;
@@ -181,14 +181,14 @@ public partial class Charger : Enemy
             return;
 
         var target_pos = closestPlayer.Position + closestPlayer.Velocity * 1.5f;
-        _chargeDir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-10f, 10f));
+        _chargeDir = Utils.RotateVector((target_pos - Position).Normal, Sandbox.Game.Random.Float(-10f, 10f));
 
         IsPreparingToCharge = false;
         IsCharging = true;
         _chargeTimer = CHARGE_TIME;
         CanAttack = true;
 
-        _chargeDelayTimer = Rand.Float(CHARGE_DELAY_MIN, CHARGE_DELAY_MAX);
+        _chargeDelayTimer = Sandbox.Game.Random.Float(CHARGE_DELAY_MIN, CHARGE_DELAY_MAX);
         //ColorTint = new Color(1f, 0f, 0f);
         _chargeVel = Vector2.Zero;
         AnimationPath = "textures/sprites/charger_charge_loop.frames";
@@ -196,7 +196,7 @@ public partial class Charger : Enemy
         AnimSpeed = 3f;
         Scale = new Vector2(1f * target_pos.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
 
-        Game.PlaySfxNearby("enemy.roar", Position, pitch: Rand.Float(0.925f, 1.075f), volume: 1f, maxDist: 8f);
+        Game.PlaySfxNearby("enemy.roar", Position, pitch: Sandbox.Game.Random.Float(0.925f, 1.075f), volume: 1f, maxDist: 8f);
     }
 
     public override void Colliding(Thing other, float percent, float dt)

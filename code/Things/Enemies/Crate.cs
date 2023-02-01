@@ -14,7 +14,7 @@ public partial class Crate : Enemy
     {
         base.Spawn();
 
-        if (Host.IsServer)
+        if (Sandbox.Game.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/crate.png", 4, 5);
 
@@ -35,7 +35,7 @@ public partial class Crate : Enemy
             MaxHealth = Health;
 
             ScaleFactor = 0.95f;
-            Scale = new Vector2(Rand.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * ScaleFactor;
+            Scale = new Vector2(Sandbox.Game.Random.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
@@ -95,36 +95,36 @@ public partial class Crate : Enemy
     {
         float RAND_POS = 0.2f;
 
-        int num_coins = Rand.Int(2, 3);
+        int num_coins = Sandbox.Game.Random.Int(2, 3);
         for(int i = 0; i < num_coins; i++)
         {
-            var coin = Game.SpawnCoin(Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)), Rand.Int(CoinValueMin, CoinValueMax));
+            var coin = Game.SpawnCoin(Position + new Vector2(Sandbox.Game.Random.Float(-RAND_POS, RAND_POS), Sandbox.Game.Random.Float(-RAND_POS, RAND_POS)), Sandbox.Game.Random.Int(CoinValueMin, CoinValueMax));
 
             if (coin != null)
-                coin.Velocity = (coin.Position - Position) * Rand.Float(2f, 6f);
+                coin.Velocity = (coin.Position - Position) * Sandbox.Game.Random.Float(2f, 6f);
         }
 
         var health_pack_chance = player != null ? Utils.Map(player.Health, player.MaxHp, 0f, 0.2f, 0.75f) : 0.1f;
-        if (Rand.Float(0f, 1f) < health_pack_chance)
+        if (Sandbox.Game.Random.Float(0f, 1f) < health_pack_chance)
         {
-            var healthPack = new HealthPack() { Position = Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)) };
-            healthPack.Velocity = (healthPack.Position - Position) * Rand.Float(2f, 6f);
+            var healthPack = new HealthPack() { Position = Position + new Vector2(Sandbox.Game.Random.Float(-RAND_POS, RAND_POS), Sandbox.Game.Random.Float(-RAND_POS, RAND_POS)) };
+            healthPack.Velocity = (healthPack.Position - Position) * Sandbox.Game.Random.Float(2f, 6f);
             Game.AddThing(healthPack);
         }
 
         var magnet_chance = 0.08f;
-        if (Rand.Float(0f, 1f) < magnet_chance)
+        if (Sandbox.Game.Random.Float(0f, 1f) < magnet_chance)
         {
-            var magnet = new Magnet() { Position = Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)) };
-            magnet.Velocity = (magnet.Position - Position) * Rand.Float(2f, 6f);
+            var magnet = new Magnet() { Position = Position + new Vector2(Sandbox.Game.Random.Float(-RAND_POS, RAND_POS), Sandbox.Game.Random.Float(-RAND_POS, RAND_POS)) };
+            magnet.Velocity = (magnet.Position - Position) * Sandbox.Game.Random.Float(2f, 6f);
             Game.AddThing(magnet);
         }
 
         var revive_chance = Game.DeadPlayers.ToList().Count * 0.33f;
-        if (Rand.Float(0f, 1f) < revive_chance)
+        if (Sandbox.Game.Random.Float(0f, 1f) < revive_chance)
         {
-            var reviveSoul = new ReviveSoul() { Position = Position + new Vector2(Rand.Float(-RAND_POS, RAND_POS), Rand.Float(-RAND_POS, RAND_POS)) };
-            reviveSoul.Velocity = (reviveSoul.Position - Position) * Rand.Float(2f, 6f);
+            var reviveSoul = new ReviveSoul() { Position = Position + new Vector2(Sandbox.Game.Random.Float(-RAND_POS, RAND_POS), Sandbox.Game.Random.Float(-RAND_POS, RAND_POS)) };
+            reviveSoul.Velocity = (reviveSoul.Position - Position) * Sandbox.Game.Random.Float(2f, 6f);
             Game.AddThing(reviveSoul);
         }
     }

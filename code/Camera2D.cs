@@ -7,9 +7,16 @@ using Sandbox;
 
 namespace Test2D;
 
-public partial class OrthoCamera : CameraMode
+public partial class Camera2D
 {
-	public new float Rotation { get; set; }
+	private readonly SceneCamera _inner;
+
+	public static implicit operator SceneCamera( Camera2D camera )
+	{
+		return camera._inner;
+	}
+
+	public float Rotation { get; set; }
 		
 	/// <summary>
 	/// Z position in world space of the camera.
@@ -20,7 +27,7 @@ public partial class OrthoCamera : CameraMode
 	/// <summary>
 	/// World space position of the center of the view.
 	/// </summary>
-	public new Vector2 Position { get; set; }
+	public Vector2 Position { get; set; }
 	public Vector2 LowerLeftWorld { get; set; }
 	public Vector2 UpperRightWorld { get; set; }
 	public Vector2 WorldSize { get; set; }
@@ -30,10 +37,25 @@ public partial class OrthoCamera : CameraMode
 	/// </summary>
 	public float Size { get; set; } = 5f;
 
-	public OrthoCamera()
+	public float ZNear
 	{
-		Ortho = true;
-		OrthoSize = 0.01f;
+		get => _inner.ZNear;
+		set => _inner.ZNear = value;
+	}
+
+	public float ZFar
+	{
+		get => _inner.ZFar;
+		set => _inner.ZFar = value;
+	}
+
+	public Camera2D( string name = "Unnamed 2D" )
+	{
+		_inner = new SceneCamera( name )
+		{
+			Ortho = true,
+			OrthoHeight = 0.01f
+		};
 
 		Depth = 512f;
 
@@ -41,13 +63,14 @@ public partial class OrthoCamera : CameraMode
 		ZFar = 1024f;
 	}
 
-	public override void Update()
+	public void Update()
 	{
 		Size = 10f;
-		OrthoSize = Size / Screen.Height;
 
-		base.Rotation = global::Rotation.FromYaw( 90f + Rotation ) * global::Rotation.FromPitch( 90f );
-		base.Position = new Vector3( Position, Depth );
+		_inner.OrthoHeight = Size / Screen.Height;
+
+		_inner.Rotation = global::Rotation.FromYaw( 90f + Rotation ) * global::Rotation.FromPitch( 90f );
+		_inner.Position = new Vector3( Position, Depth );
 
 		LowerLeftWorld = ScreenToWorld(new Vector2(0, Screen.Height));
 		UpperRightWorld = ScreenToWorld(new Vector2(Screen.Width, 0));
@@ -55,7 +78,7 @@ public partial class OrthoCamera : CameraMode
 	}
 
 	public Vector2 ScreenToWorld(Vector2 screenPos)
-    {
+	{
 		screenPos /= Screen.Size;
 		screenPos -= new Vector2(0.5f, 0.5f);
 		screenPos *= Size;
@@ -64,7 +87,7 @@ public partial class OrthoCamera : CameraMode
 		screenPos += Position;
 
 		return screenPos;
-    }
+	}
 
 	public Vector2 WorldToScreen(Vector2 worldPos)
 	{

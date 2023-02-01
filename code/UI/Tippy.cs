@@ -51,7 +51,7 @@ internal class Tippy : Panel
 
 		RemoveClass( "unset" );
 
-		var hud = Local.Hud.Box.Rect;
+		var hud = Sandbox.Game.RootPanel.Box.Rect;
 		if ( !hud.IsInside( layoutRect, true ) )
 		{
 			SetPosition( Pivots.TopLeft );
@@ -60,8 +60,8 @@ internal class Tippy : Panel
 
 	private void SetPosition( Pivots pivot )
 	{
-		var scale = Local.Hud.ScaleFromScreen;
-		var hudsize = Local.Hud.Box.Rect.Size;
+		var scale = Sandbox.Game.RootPanel.ScaleFromScreen;
+		var hudsize = Sandbox.Game.RootPanel.Box.Rect.Size;
 		var r = Target.Box.RectOuter;
 
 		switch ( pivot )
@@ -69,36 +69,36 @@ internal class Tippy : Panel
 			case Pivots.TopRight:
 				Style.Right = null;
 				Style.Bottom = null;
-				Style.Left = r.right * scale;
-				Style.Top = r.top * scale;
+				Style.Left = r.Right * scale;
+				Style.Top = r.Top * scale;
 				break;
 			case Pivots.TopLeft:
 				Style.Left = null;
 				Style.Bottom = null;
-				Style.Right = (hudsize.x - r.left) * scale;
-				Style.Top = r.top * scale;
+				Style.Right = (hudsize.x - r.Left) * scale;
+				Style.Top = r.Top * scale;
 				break;
 			case Pivots.BottomRight:
 				Style.Right = null;
 				Style.Top = null;
-				Style.Left = r.right * scale;
-				Style.Bottom = (hudsize.y - r.bottom) * scale;
+				Style.Left = r.Right * scale;
+				Style.Bottom = (hudsize.y - r.Bottom) * scale;
 				break;
 			case Pivots.BottomLeft:
 				Style.Left = null;
 				Style.Top = null;
-				Style.Right = (hudsize.x - r.left) * scale;
-				Style.Bottom = (hudsize.y - r.bottom) * scale;
+				Style.Right = (hudsize.x - r.Left) * scale;
+				Style.Bottom = (hudsize.y - r.Bottom) * scale;
 				break;
 		}
 	}
 
 	public static Tippy Create( Panel target, Pivots pivot )
 	{
-		if ( Local.Hud == null ) throw new System.Exception( "Hud null" );
+		if ( Sandbox.Game.RootPanel == null ) throw new System.Exception( "Hud null" );
 
 		var result = new Tippy();
-		result.Parent = Local.Hud;
+		result.Parent = Sandbox.Game.RootPanel;
 		result.Pivot = pivot;
 		result.Target = target;
 		result.AddClass( "unset" );

@@ -16,18 +16,18 @@ public class ModifierData
 	public float priority;
 
 	public ModifierData(float _value, ModifierType _type, float _priority = 0f)
-    {
+	{
 		value = _value;
 		type = _type;
 		priority = _priority;
-    }
+	}
 }
 
 public partial class PlayerCitizen : Thing
 {
 	public Vector2 MouseOffset { get; private set; }
 	
-    public Arrow ArrowAimer { get; private set; }
+	public Arrow ArrowAimer { get; private set; }
 	public Vector2 AimDir { get; private set; }
 
 	public bool IsDead { get; private set; }
@@ -127,8 +127,8 @@ public partial class PlayerCitizen : Thing
 		//Scale = new Vector2(1f, 142f / 153f);
 		//Scale = new Vector2(1f, 35f / 16f) * 0.5f;
 
-		if (Host.IsServer)
-        {
+		if (Sandbox.Game.IsServer)
+		{
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/player_spritesheet.png", 2, 2);
 			BasePivotY = 0.05f;
 			HeightZ = 0f;
@@ -147,7 +147,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	public void InitializeStats()
-    {
+	{
 		AnimationPath = "textures/sprites/player_idle.frames";
 		AnimationSpeed = 0.66f;
 		
@@ -242,16 +242,16 @@ public partial class PlayerCitizen : Thing
 
 	[ClientRpc]
 	public void InitializeStatsClient()
-    {
+	{
 		Nametag?.SetVisible(true);
 	}
 
 	public override void ClientSpawn()
-    {
-        base.ClientSpawn();
+	{
+		base.ClientSpawn();
 
 		if (Game.LocalPlayer == this)
-        {
+		{
 			ArrowAimer = new Arrow
 			{
 				Parent = this,
@@ -281,8 +281,8 @@ public partial class PlayerCitizen : Thing
 	{
 		//Log.Info("local player: " + (Game.Client != null));
 		//DebugText("\n\nclient game over: " + Game.IsGameOver);
-		if (this == Local.Client.Pawn)
-        {
+		if (this == Sandbox.Game.LocalPawn)
+		{
 			Sound.Listener = new()
 			{
 				Position = new Vector3(Position.x, Position.y, 512f),
@@ -292,7 +292,7 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
-	public override void Simulate( Client cl )
+	public override void Simulate( IClient cl )
 	{
 		base.Simulate( cl );
 
@@ -302,12 +302,12 @@ public partial class PlayerCitizen : Thing
 		float dt = Time.Delta;
 
 		// garry: pass the mouse offset/aim in the Input command instead of by console command
-		MouseOffset = Input.Cursor.Direction;
+		MouseOffset = Input.MouseDelta;
 
-        Vector2 inputVector = new Vector2(-Input.AnalogMove.y, Input.AnalogMove.x);
+		Vector2 inputVector = new Vector2(-Input.AnalogMove.y, Input.AnalogMove.x);
 
 		if(inputVector.LengthSquared > 0f)
-            Velocity += inputVector.Normal * MoveSpeed * BASE_MOVE_SPEED * dt;
+			Velocity += inputVector.Normal * MoveSpeed * BASE_MOVE_SPEED * dt;
 
 		Position += Velocity * dt;
 
@@ -320,12 +320,12 @@ public partial class PlayerCitizen : Thing
 		ShadowScale = IsDashing ? Utils.MapReturn(DashProgress, 0f, 1f, 1.12f, 0.75f, EasingType.SineInOut) : 1.12f;
 
 		if (Velocity.LengthSquared > 0.01f && inputVector.LengthSquared > 0.1f)
-        {
+		{
 			AnimationPath = "textures/sprites/player_walk.frames";
 			AnimationSpeed = Utils.Map(Velocity.Length, 0f, 2f, 1.5f, 2f);
 		} 
 		else
-        {
+		{
 			AnimationPath = "textures/sprites/player_idle.frames";
 			AnimationSpeed = 0.66f;
 		}
@@ -349,33 +349,33 @@ public partial class PlayerCitizen : Thing
 
 		AimDir = MouseOffset.Normal;
 
-        if (ArrowAimer != null)
-        {
-            ArrowAimer.LocalRotation = (MathF.Atan2(AimDir.y, AimDir.x) * (180f / MathF.PI));
-            ArrowAimer.Position = Position + new Vector2(0f, 0.4f) + AimDir * 0.65f;
-        }
+		if (ArrowAimer != null)
+		{
+			ArrowAimer.LocalRotation = (MathF.Atan2(AimDir.y, AimDir.x) * (180f / MathF.PI));
+			ArrowAimer.Position = Position + new Vector2(0f, 0.4f) + AimDir * 0.65f;
+		}
 
 		if (cl.IsBot)
-        {
-			MouseOffset = new Vector2(Rand.Float(-10f, 10f), Rand.Float(-10f, 10f));
-        }
+		{
+			MouseOffset = new Vector2(Sandbox.Game.Random.Float(-10f, 10f), Sandbox.Game.Random.Float(-10f, 10f));
+		}
 
-		if (Host.IsServer)
-        {
-            if (Input.Pressed(InputButton.Run))
-            {
-                //Game.Restart();
-                AddExperience(GetExperienceReqForLevel(Level));
+		if (Sandbox.Game.IsServer)
+		{
+			if (Input.Pressed(InputButton.Run))
+			{
+				//Game.Restart();
+				AddExperience(GetExperienceReqForLevel(Level));
 
 				//for(int i = 0; i < 9; i++)
-    //            {
-    //                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
+	//            {
+	//                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
 				//}
 
-                return;
-            }
+				return;
+			}
 
-            var gridPos = Game.GetGridSquareForPos(Position);
+			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
 			{
 				Game.DeregisterThingGridSquare(this, GridPos);
@@ -392,7 +392,7 @@ public partial class PlayerCitizen : Thing
 			}
 
 			if(!IsDead)
-            {
+			{
 				HandleDashing(dt);
 				HandleStatuses(dt);
 				HandleShooting(dt);
@@ -421,7 +421,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	void HandleDashing(float dt)
-    {
+	{
 		int numDashes = (int)MathF.Round(NumDashes);
 		if (NumDashesAvailable < numDashes)
 		{
@@ -434,21 +434,21 @@ public partial class PlayerCitizen : Thing
 		}
 
 		if (_dashInvulnTimer > 0f)
-        {
+		{
 			_dashInvulnTimer -= dt;
 			DashProgress = Utils.Map(_dashInvulnTimer, DashInvulnTime, 0f, 0f, 1f);
 			if (_dashInvulnTimer <= 0f)
-            {
+			{
 				IsDashing = false;
 				ColorTint = Color.White;
 				DashFinished();
 			}
 			else
-            {
-                ColorTint = new Color(Rand.Float(0.1f, 0.25f), Rand.Float(0.1f, 0.25f), 1f);
+			{
+				ColorTint = new Color(Sandbox.Game.Random.Float(0.1f, 0.25f), Sandbox.Game.Random.Float(0.1f, 0.25f), 1f);
 
-				if(_dashCloudTime > Rand.Float(0.1f, 0.2f))
-                {
+				if(_dashCloudTime > Sandbox.Game.Random.Float(0.1f, 0.2f))
+				{
 					SpawnCloudClient();
 					_dashCloudTime = 0f;
 				}
@@ -460,7 +460,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	public void Dash()
-    {
+	{
 		if (NumDashesAvailable <= 0)
 			return;
 
@@ -487,28 +487,28 @@ public partial class PlayerCitizen : Thing
 	[ClientRpc]
 	public void SpawnCloudClient()
 	{
-		Game.SpawnCloud(Position + new Vector2(Rand.Float(1f, 1f), Rand.Float(1f, 1f)) * 0.05f);
+		Game.SpawnCloud(Position + new Vector2(Sandbox.Game.Random.Float(1f, 1f), Sandbox.Game.Random.Float(1f, 1f)) * 0.05f);
 	}
 
 	public void DashFinished()
-    {
+	{
 		ForEachStatus(status => status.OnDashFinished());
 	}
 
 	public void DashRecharged()
-    {
+	{
 		NumDashesAvailable++;
 		var numDashes = (int)MathF.Round(NumDashes);
 		if (NumDashesAvailable > numDashes)
 			NumDashesAvailable = numDashes;
 
 		if(NumDashesAvailable < numDashes)
-        {
+		{
 			_dashTimer = DashCooldown;
 			DashRechargeProgress = 0f;
 		}
 		else
-        {
+		{
 			DashRechargeProgress = 1f;
 		}
 			
@@ -532,11 +532,11 @@ public partial class PlayerCitizen : Thing
 	}
 
 	void HandleStatuses(float dt)
-    {
+	{
 		string debug = "";
 
 		foreach (KeyValuePair<int, Status> pair in Statuses)
-        {
+		{
 			Status status = pair.Value;
 			if (status.ShouldUpdate)
 				status.Update(dt);
@@ -545,10 +545,10 @@ public partial class PlayerCitizen : Thing
 		}
 
 		//DebugText(debug);
-    }
+	}
 
 	void HandleShooting(float dt)
-    {
+	{
 		if (IsReloading)
 		{
 			ReloadProgress = Utils.Map(Timer, ReloadTime, 0f, 0f, 1f);
@@ -559,10 +559,10 @@ public partial class PlayerCitizen : Thing
 			}
 		}
 		else
-        {
+		{
 			Timer -= dt * AttackSpeed;
 			if (Timer <= 0f)
-            {
+			{
 				Shoot(isLastAmmo: AmmoCount == 1);
 				AmmoCount--;
 
@@ -585,7 +585,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	void HandleFlashing(float dt)
-    {
+	{
 		if (_isFlashing)
 		{
 			_flashTimer -= dt;
@@ -653,7 +653,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	void Reload()
-    {
+	{
 		AmmoCount = (int)MaxAmmoCount;
 		IsReloading = false;
 		_shotNum = 0;
@@ -663,7 +663,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	void HandleBounds()
-    {
+	{
 		var x_min = Game.BOUNDS_MIN.x + Radius;
 		var x_max = Game.BOUNDS_MAX.x - Radius;
 		var y_min = Game.BOUNDS_MIN.y;
@@ -686,11 +686,11 @@ public partial class PlayerCitizen : Thing
 			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
 		}
 		else if (Position.y > y_max)
-        {
-            Position = new Vector2(Position.x, y_max);
-            Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
-        }
-    }
+		{
+			Position = new Vector2(Position.x, y_max);
+			Velocity = new Vector2(Velocity.x, Velocity.y * -1f);
+		}
+	}
 
 	public override void BuildInput()
 	{
@@ -700,11 +700,11 @@ public partial class PlayerCitizen : Thing
 		var aimOffset = new Vector2( 0f, 0.4f );
 
 		// garry: use put the mouse offset in the input
-        MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition) - Position - aimOffset;
+		MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition) - Position - aimOffset;
 		//inputBuilder.Cursor = new Ray(0, MouseOffset);
-    }
+	}
 
-	public override void FrameSimulate( Client cl )
+	public override void FrameSimulate( IClient cl )
 	{
 		base.FrameSimulate( cl );
 
@@ -721,18 +721,18 @@ public partial class PlayerCitizen : Thing
 
 	[ConCmd.Server]
 	public static void SetMouseOffset(Vector2 offset)
-    {
+	{
 		if (ConsoleSystem.Caller.Pawn is PlayerCitizen p)
-        {
+		{
 			p.MouseOffset = offset;
-        }
-    }
+		}
+	}
 
 	// returns actual damage amount taken
 	public float Damage(float damage)
-    {
+	{
 		if (IsDashing)
-        {
+		{
 			// show DODGED! floater
 			return 0f;
 		}
@@ -741,29 +741,29 @@ public partial class PlayerCitizen : Thing
 			damage *= (1f - MathX.Clamp(DamageReductionPercent, 0f, 1f));
 
 		Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Rand.Float(0.5f, 4f), Rand.Float(8.5f, 10.5f)) * 0.1f, damage, DamageType.Player);
+		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(0.5f, 4f), Sandbox.Game.Random.Float(8.5f, 10.5f)) * 0.1f, damage, DamageType.Player);
 		Flash(0.125f);
 
 		DamageClient(damage);
 
 		if (Health <= 0f)
-        {
+		{
 			Die();
 		}
 
 		return damage;
-    }
+	}
 
 	[ClientRpc]
 	public void DamageClient(float damage)
 	{
 		var blood = Game.SpawnBloodSplatter(Position);
-		blood.Scale *= Utils.Map(damage, 1f, 20f, 0.3f, 0.5f, EasingType.QuadIn) * Rand.Float(0.8f, 1.2f);
+		blood.Scale *= Utils.Map(damage, 1f, 20f, 0.3f, 0.5f, EasingType.QuadIn) * Sandbox.Game.Random.Float(0.8f, 1.2f);
 		blood.Lifetime *= 0.3f;
 	}
 
 	public void Die()
-    {
+	{
 		if (IsDead)
 			return;
 
@@ -775,19 +775,19 @@ public partial class PlayerCitizen : Thing
 		_isFlashing = false;
 		IsReloading = false;
 
-		Game.PlaySfxNearby("die", Position, pitch: Rand.Float(1f, 1.2f), volume: 1.5f, maxDist: 12f);
+		Game.PlaySfxNearby("die", Position, pitch: Sandbox.Game.Random.Float(1f, 1.2f), volume: 1.5f, maxDist: 12f);
 		DieClient();
 	}
 
 	[ClientRpc]
 	public void DieClient()
-    {
+	{
 		Nametag.SetVisible(false);
 		Game.Hud.RemoveChoicePanel();
 	}
 
 	public float GetDamageMultiplier()
-    {
+	{
 		float damageMultiplier = 1f + Utils.Map(Health, MaxHp, 0f, 0f, LowHealthDamageMultiplier);
 
 		if (damageMultiplier < -1f)
@@ -800,8 +800,8 @@ public partial class PlayerCitizen : Thing
 	{
 		base.Colliding(other, percent, dt);
 
-        if (IsDead)
-            return;
+		if (IsDead)
+			return;
 
 		if (other is Enemy enemy && !enemy.IsDying)
 		{
@@ -809,37 +809,37 @@ public partial class PlayerCitizen : Thing
 			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * (1f + other.TempWeight) * spawnFactor * dt;
 		}
 		else if(other is PlayerCitizen player)
-        {
+		{
 			if(!player.IsDead)
-            {
+			{
 				Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * (1f + other.TempWeight) * dt;
 			}
-        }
+		}
 	}
 
 	[ConCmd.Server("add_status")]
 	public static void AddStatusCmd(int typeIdentity)
-    {
+	{
 		TypeDescription type = StatusManager.IdentityToType(typeIdentity);
 		var player = ConsoleSystem.Caller.Pawn as PlayerCitizen;
 		player.AddStatus(type);
 	}
 
 	public void AddStatus(TypeDescription type)
-    {
+	{
 		Log.Info("AddStatus: " + type.TargetType.ToString());
 
 		Status status = null;
 		var typeIdentity = type.Identity;
 
 		if(Statuses.ContainsKey(typeIdentity))
-        {
+		{
 			status = Statuses[typeIdentity];
 			status.Level++;
 		}
 			
 		if (status == null)
-        {
+		{
 			status = StatusManager.CreateStatus(type);
 			Statuses.Add(typeIdentity, status);
 			status.Init(this);
@@ -851,7 +851,7 @@ public partial class PlayerCitizen : Thing
 		//foreach (KeyValuePair<TypeDescription, Status> pair in Statuses)
   //          AddStatusClient(StatusManager.TypeToIdentity(pair.Key), pair.Value);
 
-        RefreshStatusHud();
+		RefreshStatusHud();
 
 		IsChoosingLevelUpReward = false;
 		CheckForLevelUp();
@@ -875,7 +875,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	public int GetStatusLevel(TypeDescription type)
-    {
+	{
 		if(Statuses.ContainsKey(type.Identity))
 			return Statuses[type.Identity].Level;
 
@@ -883,7 +883,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	public void Modify(Status caller, string propertyName, float value, ModifierType type, float priority = 0f, bool update = true)
-    {
+	{
 		//Log.Info("------------- Modify - caller: " + caller + ", " + propertyName + ", " + value + ", " + type);
 
 		if (!_modifiers.ContainsKey(caller))
@@ -893,13 +893,13 @@ public partial class PlayerCitizen : Thing
 
 		if (update)
 			UpdateProperty(propertyName);
-    }
+	}
 
 	void UpdateProperty(string propertyName)
-    {
+	{
 		if (!_original_properties.ContainsKey(propertyName))
 		{
-			var property = TypeLibrary.GetDescription<PlayerCitizen>().GetProperty(propertyName);
+			var property = TypeLibrary.GetType<PlayerCitizen>().GetProperty(propertyName);
 			_original_properties.Add(propertyName, (float)property.GetValue(this));
 			//Log.Info ("... storing original property... - " + propertyName + ": " + ((float)property.GetValue(this)));
 		}
@@ -912,7 +912,7 @@ public partial class PlayerCitizen : Thing
 		float total_mult = 1f;
 
 		foreach (Status caller in _modifiers.Keys)
-        {
+		{
 			var dict = _modifiers[caller];
 			if (dict.ContainsKey(propertyName))
 			{
@@ -944,7 +944,7 @@ public partial class PlayerCitizen : Thing
 		curr_value *= total_mult;
 
 		SetProperty(propertyName, curr_value);
-    }
+	}
 
 	//public void RemoveStatus(Status status)
  //   {
@@ -954,53 +954,53 @@ public partial class PlayerCitizen : Thing
  //   }
 
 	public void RemoveModifiers(Status status)
-    {
+	{
 		if (!_modifiers.ContainsKey(status))
 			return;
 
 		var dict = _modifiers[status];
 		foreach(string propertyName in dict.Keys)
-        {
+		{
 			dict.Remove(propertyName);
 			UpdateProperty(propertyName);
-        }
+		}
 
-        _modifiers.Remove(status);
-    }
+		_modifiers.Remove(status);
+	}
 
 	void SetProperty(string propertyName, float value)
-    {
-		var property = TypeLibrary.GetDescription<PlayerCitizen>().GetProperty(propertyName);
+	{
+		var property = TypeLibrary.GetType<PlayerCitizen>().GetProperty(propertyName);
 		if (property == null)
-        {
+		{
 			Log.Error("property " + propertyName + " doesn't exist!");
 			return;
-        }
+		}
 
 		TypeLibrary.SetProperty(this, propertyName, value);
 	}
 
 	public void AddExperience(int xp)
-    {
-		Host.AssertServer();
+	{
+		Sandbox.Game.AssertServer();
 
 		ExperienceTotal += xp;
 		ExperienceCurrent += xp;
 
 		if (!IsChoosingLevelUpReward)
 			CheckForLevelUp();
-    }
+	}
 
 	public void CheckForLevelUp()
-    {
-		//Log.Info("CheckForLevelUp: " + ExperienceCurrent + " / " + ExperienceRequired + " IsServer: " + Host.IsServer + " Level: " + Level);
+	{
+		//Log.Info("CheckForLevelUp: " + ExperienceCurrent + " / " + ExperienceRequired + " IsServer: " + Sandbox.Game.IsServer + " Level: " + Level);
 		if (ExperienceCurrent >= ExperienceRequired && !Game.IsGameOver)
 			LevelUp();
 	}
 
 	public void LevelUp()
-    {
-		Host.AssertServer();
+	{
+		Sandbox.Game.AssertServer();
 
 		ExperienceCurrent -= ExperienceRequired;
 
@@ -1008,20 +1008,20 @@ public partial class PlayerCitizen : Thing
 		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
 		NumRerollAvailable++;
 
-		//Log.Info("Level Up - now level: " + Level + " IsServer: " + Host.IsServer);
+		//Log.Info("Level Up - now level: " + Level + " IsServer: " + Sandbox.Game.IsServer);
 
 		IsChoosingLevelUpReward = true;
 
 		LevelUpClient();
-    }
+	}
 
 	[ClientRpc]
 	public void LevelUpClient()
-    {
-		if(this == Local.Pawn)
-        {
+	{
+		if(this == Sandbox.Game.LocalPawn)
+		{
 			Game.Hud.SpawnChoicePanel();
-			Game.PlaySfxTarget(To.Single(Local.Client), "levelup", Position, Rand.Float(0.95f, 1.05f), 0.66f);
+			Game.PlaySfxTarget(To.Single(Sandbox.Game.LocalClient), "levelup", Position, Sandbox.Game.Random.Float(0.95f, 1.05f), 0.66f);
 		}
 	}
 
@@ -1034,7 +1034,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	public int GetExperienceReqForLevel(int level)
-    {
+	{
 		return (int)MathF.Round(Utils.Map(level, 1, 120, 3f, 900f, EasingType.SineIn));
 	}
 
@@ -1049,7 +1049,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	public void Heal (float amount)
-    {
+	{
 		ColorTint = new Color(0f, 1f, 0f);
 		_isFlashing = true;
 		_flashTimer = 0.2f;
@@ -1060,7 +1060,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	public void Revive()
-    {
+	{
 		if (!IsDead)
 			return;
 
@@ -1076,7 +1076,7 @@ public partial class PlayerCitizen : Thing
 
 		IsDead = false;
 		ReviveClient();
-    }
+	}
 
 	[ClientRpc]
 	public void ReviveClient()

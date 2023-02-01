@@ -26,13 +26,13 @@ public partial class EnemySpike : Thing
 	{
 		base.Spawn();
 
-		if(Host.IsServer)
+		if(Sandbox.Game.IsServer)
         {
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/spike_top2.png", 3, 3);
 			AnimationPath = "textures/sprites/spike.frames";
 			AnimationSpeed = 3f;
 
-			Scale = new Vector2(Rand.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * 1.2f;
+			Scale = new Vector2(Sandbox.Game.Random.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * 1.2f;
 			SpawnTime = 0f;
 			Damage = 10f;
 			Radius = 0.275f;
@@ -72,7 +72,7 @@ public partial class EnemySpike : Thing
 
 		if(!_playedSfx && SpawnTime > 1.15f)
         {
-			Game.PlaySfxNearby("spike.thrust", Position, pitch: Rand.Float(1.15f, 1.3f), volume: 1.5f, maxDist: 6f);
+			Game.PlaySfxNearby("spike.thrust", Position, pitch: Sandbox.Game.Random.Float(1.15f, 1.3f), volume: 1.5f, maxDist: 6f);
 			_playedSfx = true;
         }
 
@@ -117,8 +117,8 @@ public partial class EnemySpike : Thing
 				if (_hitThings.Contains(player))
 					return;
 
-				Game.PlaySfxNearby("spike.stab", player.Position, pitch: Rand.Float(0.85f, 0.9f), volume: 1.6f, maxDist: 6f);
-				//Game.PlaySfxNearby("splash", player.Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1.5f, maxDist: 5f);
+				Game.PlaySfxNearby("spike.stab", player.Position, pitch: Sandbox.Game.Random.Float(0.85f, 0.9f), volume: 1.6f, maxDist: 6f);
+				//Game.PlaySfxNearby("splash", player.Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 1.5f, maxDist: 5f);
 				player.Damage(Damage);
 				//player.Velocity += Direction * 2f;
 
@@ -154,7 +154,7 @@ public partial class SpikeBackground : Sprite
 
 		Depth = -217f;
 		Filter = SpriteFilter.Pixelated;
-		Scale = new Vector2(Rand.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * 1.3f;
+		Scale = new Vector2(Sandbox.Game.Random.Float(0f, 1f) < 0.5f ? -1f : 1f, 1f) * 1.3f;
 	}
 
 	public override void ClientSpawn()

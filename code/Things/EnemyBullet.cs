@@ -22,7 +22,7 @@ public partial class EnemyBullet : Thing
 	{
 		base.Spawn();
 
-		if(Host.IsServer)
+		if(Sandbox.Game.IsServer)
         {
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/enemy_bullet.png", 3, 4);
 			AnimationPath = "textures/sprites/enemy_bullet.frames";
@@ -105,7 +105,7 @@ public partial class EnemyBullet : Thing
             {
 				player.Damage(Damage);
 				player.Velocity += Direction * 2f;
-				Game.PlaySfxNearby("splash", Position, pitch: Rand.Float(0.95f, 1.05f), volume: 1f, maxDist: 4f);
+				Game.PlaySfxNearby("splash", Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 1f, maxDist: 4f);
 				Remove();
 			}
 		}

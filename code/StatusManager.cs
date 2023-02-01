@@ -87,7 +87,7 @@ public class StatusManager
         while(output.Count < numStatuses)
         {
             float totalWeight = valid.Sum(x => x.Weight);
-            var rand = Rand.Float(0f, totalWeight);
+            var rand = Sandbox.Game.Random.Float(0f, totalWeight);
             //Log.Info("--- output.Count: " + output.Count + " totalWeight: " + totalWeight +" rand: " + rand);
 
             for (int i = valid.Count - 1; i >= 0; i--)

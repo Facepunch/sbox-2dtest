@@ -19,7 +19,7 @@ public class DeathPanel : Panel
 
 	public void OnDeathButtonClicked()
 	{
-		if (Local.Client.IsListenServerHost)
+		if (Sandbox.Game.LocalClient.IsListenServerHost)
         {
 			MyGame.RestartCmd();
 			Delete();
@@ -56,7 +56,7 @@ public class DeathModal : Panel
 		button_label.Text = "Retry";
 		button.AddChild(button_label);
 
-		if(!Local.Client.IsListenServerHost)
+		if(!Sandbox.Game.LocalClient.IsListenServerHost)
         {
 			button.AddClass("disabled");
 			button_label.Text += " (Host only)";

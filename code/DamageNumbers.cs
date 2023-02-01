@@ -16,7 +16,7 @@ internal static class DamageNumbers
 		else
         {
 			float fractional = amount - MathF.Floor(amount);
-			if (fractional > 0f && Rand.Float(0f, 1f) > fractional)
+			if (fractional > 0f && Sandbox.Game.Random.Float(0f, 1f) > fractional)
 				amount = MathF.Ceiling(amount);
 			else
 				amount = MathF.Floor(amount);

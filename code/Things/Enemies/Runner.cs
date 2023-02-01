@@ -20,7 +20,7 @@ public partial class Runner : Enemy
     {
         base.Spawn();
 
-        if (Host.IsServer)
+        if (Sandbox.Game.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/runner.png", 5, 6);
             AnimSpeed = 2f;
@@ -48,7 +48,7 @@ public partial class Runner : Enemy
 
             HasTarget = false;
 
-            _wanderPos = new Vector2(Rand.Float(Game.BOUNDS_MIN.x + 1f, Game.BOUNDS_MAX.x - 1f), Rand.Float(Game.BOUNDS_MIN.y + 1f, Game.BOUNDS_MAX.y - 1f));
+            _wanderPos = new Vector2(Sandbox.Game.Random.Float(Game.BOUNDS_MIN.x + 1f, Game.BOUNDS_MAX.x - 1f), Sandbox.Game.Random.Float(Game.BOUNDS_MIN.y + 1f, Game.BOUNDS_MAX.y - 1f));
 
             AnimationPath = AnimSpawnPath;
 
@@ -82,7 +82,7 @@ public partial class Runner : Enemy
             var wander_dist_sqr = (_wanderPos - Position).LengthSquared;
             if(wander_dist_sqr < 0.25f)
             {
-                _wanderPos = new Vector2(MathX.Clamp(closestPlayer.Position.x + Rand.Float(-3f, 3f), Game.BOUNDS_MIN.x + 1f, Game.BOUNDS_MAX.x - 1f), MathX.Clamp(closestPlayer.Position.y + Rand.Float(-3f, 3f), Game.BOUNDS_MIN.y + 1f, Game.BOUNDS_MAX.y - 1f));
+                _wanderPos = new Vector2(MathX.Clamp(closestPlayer.Position.x + Sandbox.Game.Random.Float(-3f, 3f), Game.BOUNDS_MIN.x + 1f, Game.BOUNDS_MAX.x - 1f), MathX.Clamp(closestPlayer.Position.y + Sandbox.Game.Random.Float(-3f, 3f), Game.BOUNDS_MIN.y + 1f, Game.BOUNDS_MAX.y - 1f));
             }
 
             Velocity += (_wanderPos - Position).Normal * dt;
@@ -91,7 +91,7 @@ public partial class Runner : Enemy
             if(player_dist_sqr < 3.5f * 3.5f)
             {
                 HasTarget = true;
-                Game.PlaySfxNearby("runner.howl", Position, pitch: Rand.Float(0.9f, 1.1f), volume: 1f, maxDist: 6f);
+                Game.PlaySfxNearby("runner.howl", Position, pitch: Sandbox.Game.Random.Float(0.9f, 1.1f), volume: 1f, maxDist: 6f);
             }
         }
 
@@ -106,7 +106,7 @@ public partial class Runner : Enemy
     {
         base.StartAttacking();
 
-        Game.PlaySfxNearby("runner.bark", Position, pitch: Rand.Float(0.9f, 1.1f), volume: 1f, maxDist: 4f);
+        Game.PlaySfxNearby("runner.bark", Position, pitch: Sandbox.Game.Random.Float(0.9f, 1.1f), volume: 1f, maxDist: 4f);
     }
 
     public override void Colliding(Thing other, float percent, float dt)

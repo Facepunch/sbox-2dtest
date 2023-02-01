@@ -30,7 +30,7 @@ public partial class Coin : Thing
 	{
 		base.Spawn();
 
-		if (Host.IsServer)
+		if (Sandbox.Game.IsServer)
 		{
 			SpriteTexture = SpriteTexture.Atlas("textures/sprites/xp.png", 5, 4);
 			AnimationPath = "textures/sprites/xp_1.frames";
@@ -49,7 +49,7 @@ public partial class Coin : Thing
 
 			ShadowOpacity = 0.8f;
 			ShadowScale = 0.4f;
-			//SetValue(Rand.Int(1, 7));
+			//SetValue(Sandbox.Game.Random.Int(1, 7));
 		}
 
 		Filter = SpriteFilter.Pixelated;

@@ -28,9 +28,9 @@ public partial class Thing : Sprite
 	public float HeightZ { set { _heightZ = value; Pivot = new Vector2(0.5f, BasePivotY - _heightZ); } get { return _heightZ; } }
 
 	public Thing()
-    {
+	{
 		TimeScale = 1f;
-    }
+	}
 
 	public override void Spawn()
 	{
@@ -38,7 +38,7 @@ public partial class Thing : Sprite
 	}
 
 	public virtual void Update(float dt)
-    {
+	{
 		//Utils.DrawCircle(Position, Radius, 8, Time.Now, Color.Red);
 		//DebugText(Radius.ToString("#.#"));
 		//DebugText("Depth: " + Depth);
@@ -46,9 +46,9 @@ public partial class Thing : Sprite
 	}
 
 	public virtual void Colliding(Thing other, float percent, float dt)
-    {
+	{
 
-    }
+	}
 
 	public virtual void Remove()
 	{
@@ -58,12 +58,12 @@ public partial class Thing : Sprite
 	}
 
 	public void DebugText(string text)
-    {
+	{
 		DebugOverlay.Text(text, Position + new Vector2(0.1f, -0.1f), 0f, float.MaxValue);
-    }
+	}
 
 	protected void SpawnShadow(float size)
-    {
+	{
 		Shadow = new Shadow();
 		Shadow.SetThing(this);
 		Shadow.Scale = size;

@@ -257,7 +257,7 @@ public partial class Sprite : Entity
         var srcMat = Material.Load($"materials/sprite_{filter.ToString().ToLowerInvariant()}.vmat");
 			
 		mat = srcMat.CreateCopy();
-        mat.OverrideTexture("g_tColor", texture);
+        mat.Set( "g_tColor", texture );
 
 		// TODO: this makes sprites render multiple times??
 		// MaterialDict[(texture.ResourcePath, filter)] = mat;
@@ -350,7 +350,7 @@ public partial class Sprite : Entity
 
         Transmit = TransmitType.Always;
 
-        if ( IsClientOnly || IsServer )
+        if ( IsClientOnly || Sandbox.Game.IsServer )
 		{
 			EnableDrawing = true;
 
@@ -362,7 +362,7 @@ public partial class Sprite : Entity
     [Event.PreRender]
 	private void ClientPreRender()
 	{
-		var scene = Map.Scene;
+		var scene = Sandbox.Game.SceneWorld;
 
 		if ( !scene.IsValid() ) return;
 

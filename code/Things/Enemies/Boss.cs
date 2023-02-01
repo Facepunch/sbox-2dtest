@@ -46,7 +46,7 @@ public partial class Boss : Enemy
     {
         base.Spawn();
 
-        if (Host.IsServer)
+        if (Sandbox.Game.IsServer)
         {
             SpriteTexture = SpriteTexture.Atlas("textures/sprites/boss.png", 7, 7);
 
@@ -78,7 +78,7 @@ public partial class Boss : Enemy
 
             ShadowScale = 2.0f;
             _damageTime = DAMAGE_TIME;
-            _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
+            _shootDelayTimer = Sandbox.Game.Random.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
 
             AnimationPath = AnimSpawnPath;
         }
@@ -149,12 +149,12 @@ public partial class Boss : Enemy
 
             if (_chargeCloudTimer > 0.25f)
             {
-                SpawnCloudClient(Position + new Vector2(0f, 0.25f), -_chargeDir * Rand.Float(0.2f, 0.8f));
-                _chargeCloudTimer = Rand.Float(0f, 0.075f);
+                SpawnCloudClient(Position + new Vector2(0f, 0.25f), -_chargeDir * Sandbox.Game.Random.Float(0.2f, 0.8f));
+                _chargeCloudTimer = Sandbox.Game.Random.Float(0f, 0.075f);
 
                 if(Health < MaxHealth / 2f)
                 {
-                    var dir = (new Vector2(Rand.Float(-1f, 1f), Rand.Float(-1f, 1f))).Normal;
+                    var dir = (new Vector2(Sandbox.Game.Random.Float(-1f, 1f), Sandbox.Game.Random.Float(-1f, 1f))).Normal;
                     SpawnBullet(dir);
                 }
             }
@@ -207,7 +207,7 @@ public partial class Boss : Enemy
         IsShooting = true;
         _hasShot = false;
         AnimationPath = "textures/sprites/boss_shoot.frames";
-        Game.PlaySfxNearby("boss.prepare", Position, pitch: Rand.Float(0.75f, 0.85f), volume: 1.7f, maxDist: 10f);
+        Game.PlaySfxNearby("boss.prepare", Position, pitch: Sandbox.Game.Random.Float(0.75f, 0.85f), volume: 1.7f, maxDist: 10f);
         CanAttack = false;
     }
 
@@ -217,14 +217,14 @@ public partial class Boss : Enemy
         if (closestPlayer == null)
             return;
 
-        var num_bullets = MathX.FloorToInt(Utils.Map(Health, MaxHealth, 0f, 3f, 8f, EasingType.SineIn)) + Rand.Int(0, 1);
-        var spread = Rand.Float(30f, 60f);
+        var num_bullets = MathX.FloorToInt(Utils.Map(Health, MaxHealth, 0f, 3f, 8f, EasingType.SineIn)) + Sandbox.Game.Random.Int(0, 1);
+        var spread = Sandbox.Game.Random.Float(30f, 60f);
 
         float currAngleOffset = -spread * 0.5f;
         float increment = spread / (float)(num_bullets - 1);
 
         var target_pos = closestPlayer.Position + closestPlayer.Velocity * 0.5f;
-        Vector2 aim_dir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-15f, 15f));
+        Vector2 aim_dir = Utils.RotateVector((target_pos - Position).Normal, Sandbox.Game.Random.Float(-15f, 15f));
 
         for (int i = 0; i < num_bullets; i++)
         {
@@ -236,7 +236,7 @@ public partial class Boss : Enemy
         _hasShot = true;
 
         AnimationPath = "textures/sprites/boss_shoot_reverse.frames";
-        Game.PlaySfxNearby("boss.shoot", Position, pitch: Rand.Float(0.65f, 0.75f), volume: 1.5f, maxDist: 9f);
+        Game.PlaySfxNearby("boss.shoot", Position, pitch: Sandbox.Game.Random.Float(0.65f, 0.75f), volume: 1.5f, maxDist: 9f);
     }
 
     void SpawnBullet(Vector2 dir)
@@ -262,7 +262,7 @@ public partial class Boss : Enemy
     {
         AnimationPath = AnimIdlePath;
         CanAttack = true;
-        _shootDelayTimer = Rand.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX) * Utils.Map(Health, MaxHealth, 0f, 1f, 0.5f, EasingType.QuadIn);
+        _shootDelayTimer = Sandbox.Game.Random.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX) * Utils.Map(Health, MaxHealth, 0f, 1f, 0.5f, EasingType.QuadIn);
         IsShooting = false;
     }
 
@@ -270,7 +270,7 @@ public partial class Boss : Enemy
     {
         _prepareTimer = PREPARE_TIME;
         IsPreparingToCharge = true;
-        Game.PlaySfxNearby("boss.prepare", Position, pitch: Rand.Float(1.05f, 1.1f), volume: 1.75f, maxDist: 10f);
+        Game.PlaySfxNearby("boss.prepare", Position, pitch: Sandbox.Game.Random.Float(1.05f, 1.1f), volume: 1.75f, maxDist: 10f);
         AnimationPath = "textures/sprites/boss_charge.frames";
         CanTurn = false;
         CanAttack = false;
@@ -283,23 +283,23 @@ public partial class Boss : Enemy
         if (closestPlayer == null)
             return;
 
-        var target_pos = closestPlayer.Position + closestPlayer.Velocity * Rand.Float(0f, 1.66f);
-        _chargeDir = Utils.RotateVector((target_pos - Position).Normal, Rand.Float(-10f, 10f));
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * Sandbox.Game.Random.Float(0f, 1.66f);
+        _chargeDir = Utils.RotateVector((target_pos - Position).Normal, Sandbox.Game.Random.Float(-10f, 10f));
 
         IsPreparingToCharge = false;
         IsCharging = true;
-        _chargeTime = Rand.Float(CHARGE_TIME_MIN, CHARGE_TIME_MAX);
+        _chargeTime = Sandbox.Game.Random.Float(CHARGE_TIME_MIN, CHARGE_TIME_MAX);
         _chargeTimer = _chargeTime;
         CanAttack = true;
         _hasLandedCharge = false;
 
-        _chargeDelayTimer = Rand.Float(CHARGE_DELAY_MIN, CHARGE_DELAY_MAX) * Utils.Map(Health, MaxHealth, 0f, 1f, 0.5f, EasingType.SineIn);
+        _chargeDelayTimer = Sandbox.Game.Random.Float(CHARGE_DELAY_MIN, CHARGE_DELAY_MAX) * Utils.Map(Health, MaxHealth, 0f, 1f, 0.5f, EasingType.SineIn);
         //ColorTint = new Color(1f, 0f, 0f);
         _chargeVel = Vector2.Zero;
 
         Scale = new Vector2(1f * target_pos.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
 
-        Game.PlaySfxNearby("boss.charge", Position, pitch: Rand.Float(0.9f, 1.05f), volume: 1.6f, maxDist: 9f);
+        Game.PlaySfxNearby("boss.charge", Position, pitch: Sandbox.Game.Random.Float(0.9f, 1.05f), volume: 1.6f, maxDist: 9f);
     }
 
     public override void Colliding(Thing other, float percent, float dt)
@@ -337,7 +337,7 @@ public partial class Boss : Enemy
     {
         base.StartDying(player);
 
-        Game.PlaySfxNearby("boss.die", Position, pitch: Rand.Float(0.75f, 0.8f), volume: 1.5f, maxDist: 15f);
+        Game.PlaySfxNearby("boss.die", Position, pitch: Sandbox.Game.Random.Float(0.75f, 0.8f), volume: 1.5f, maxDist: 15f);
         Game.Victory();
     }
 

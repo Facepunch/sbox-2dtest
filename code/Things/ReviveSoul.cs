@@ -17,7 +17,7 @@ public partial class ReviveSoul : Thing
 	{
 		base.Spawn();
 
-		if(Host.IsServer)
+		if(Sandbox.Game.IsServer)
         {
 			SpriteTexture = "textures/sprites/soul.png";
 			ColorTint = new Color(1f, 1f, 1f, 0.6f);

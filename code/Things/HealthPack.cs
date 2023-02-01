@@ -21,7 +21,7 @@ public partial class HealthPack : Thing
 	{
 		base.Spawn();
 
-		if(Host.IsServer)
+		if(Sandbox.Game.IsServer)
         {
 			SpriteTexture = "textures/sprites/health_pack.png";
 			ColorTint = new Color(1f, 1f, 1f, 1f);

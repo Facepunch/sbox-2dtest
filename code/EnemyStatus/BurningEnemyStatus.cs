@@ -40,7 +40,7 @@ public class BurningEnemyStatus : EnemyStatus
 			return;
 
 		if (ElapsedTime > Lifetime)
-			Enemy.RemoveEnemyStatus(TypeLibrary.GetType(this.GetType()));
+			Enemy.RemoveEnemyStatus(this);
 
 		if(_sinceDamageTime > DAMAGE_INTERVAL)
         {
@@ -63,16 +63,16 @@ public class BurningEnemyStatus : EnemyStatus
 	{
 		bool didDamage = false;
 
-		if (other is Enemy enemy && !enemy.IsDying && !enemy.HasEnemyStatus(TypeLibrary.GetType(this.GetType())))
+		if (other is Enemy enemy && !enemy.IsDying && !enemy.HasEnemyStatus(this))
 		{
 			if (_damageOtherTime > DAMAGE_INTERVAL)
 			{
 				enemy.DamageFire(Damage, Player);
 
-				if(!enemy.HasEnemyStatus(TypeLibrary.GetType(typeof(BurningEnemyStatus))) && Rand.Float(0f, 1f) < SpreadChance)
+				if(!enemy.HasEnemyStatus<BurningEnemyStatus>() && Sandbox.Game.Random.Float(0f, 1f) < SpreadChance)
                 {
 					enemy.Burn(Player, Damage, Lifetime, SpreadChance);
-					MyGame.Current.PlaySfxNearby("burn", enemy.Position, pitch: Rand.Float(1.15f, 1.35f), volume: 0.7f, maxDist: 4f);
+					MyGame.Current.PlaySfxNearby("burn", enemy.Position, pitch: Sandbox.Game.Random.Float(1.15f, 1.35f), volume: 0.7f, maxDist: 4f);
 				}
 
 				didDamage = true;
@@ -107,7 +107,7 @@ public partial class BurningVfx : Sprite
 
 		SpriteTexture = SpriteTexture.Atlas("textures/sprites/fire_spritesheet.png", 1, 4);
 		AnimationPath = "textures/sprites/fire.frames";
-		AnimationSpeed = Rand.Float(3f, 6f);
+		AnimationSpeed = Sandbox.Game.Random.Float(3f, 6f);
 
 		ColorTint = new Color(1f, 1f, 1f, 1f);
 		Filter = SpriteFilter.Pixelated;

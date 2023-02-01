@@ -17,7 +17,7 @@ public partial class Magnet : Thing
 	{
 		base.Spawn();
 
-		if(Host.IsServer)
+		if(Sandbox.Game.IsServer)
         {
 			SpriteTexture = "textures/sprites/magnet.png";
 			ColorTint = new Color(1f, 1f, 1f, 1f);

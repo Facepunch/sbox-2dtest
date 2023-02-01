@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Test2D.MyGame;
 using Sandbox;
+using Sandbox.Diagnostics;
 
 namespace Test2D;
 
@@ -72,9 +71,9 @@ public abstract partial class Enemy : Thing
 	{
 		base.Spawn();
 
-		if (Host.IsServer)
+		if (Sandbox.Game.IsServer)
 		{
-			MoveTimeOffset = Rand.Float(0f, 4f);
+			MoveTimeOffset = Sandbox.Game.Random.Float(0f, 4f);
 			IsSpawning = true;
 			ElapsedTime = 0f;
 			SpawnTime = 1.75f;
@@ -97,7 +96,7 @@ public abstract partial class Enemy : Thing
 			CoinValueMin = 1;
 			CoinValueMax = 1;
 
-			//ColorTint = new Color(Rand.Float(0.45f, 1f), Rand.Float(0.45f, 1f), Rand.Float(0.45f, 1f));
+			//ColorTint = new Color(Sandbox.Game.Random.Float(0.45f, 1f), Sandbox.Game.Random.Float(0.45f, 1f), Sandbox.Game.Random.Float(0.45f, 1f));
 		}
 
 		Filter = SpriteFilter.Pixelated;
@@ -170,7 +169,7 @@ public abstract partial class Enemy : Thing
 	protected virtual void HandleStatuses(float dt)
 	{
 		for (int i = EnemyStatuses.Count - 1; i >= 0; i--)
-        {
+		{
 			var status = EnemyStatuses.Values.ElementAt(i);
 			if (status.ShouldUpdate)
 				status.Update(dt);
@@ -178,19 +177,19 @@ public abstract partial class Enemy : Thing
 	}
 
 	protected virtual void HandleDeceleration(float dt)
-    {
+	{
 		Velocity *= (1f - dt * (IsAttacking ? DecelerationAttacking : Deceleration));
 	}
 
 	protected virtual void HandleAttacking(PlayerCitizen targetPlayer, float dt)
-    {
+	{
 		float dist_sqr = (targetPlayer.Position - Position).LengthSquared;
 		float attack_dist_sqr = MathF.Pow(AggroRange, 2f);
 
 		if (!IsAttacking)
 		{
 			if(CanAttack)
-            {
+			{
 				if (dist_sqr < attack_dist_sqr)
 				{
 					_aggroTimer += dt;
@@ -228,7 +227,7 @@ public abstract partial class Enemy : Thing
 	}
 
 	public virtual void StartAttacking()
-    {
+	{
 		IsAttacking = true;
 
 		if(CanAttackAnim)
@@ -236,16 +235,16 @@ public abstract partial class Enemy : Thing
 	}
 
 	protected virtual void UpdateSprite(PlayerCitizen targetPlayer)
-    {
+	{
 		if(!IsAttacking)
-        {
+		{
 			AnimSpeed = Utils.Map(Utils.FastSin(MoveTimeOffset + Time.Now * 7.5f), -1f, 1f, 0.75f, 3f, EasingType.ExpoIn);
 
 			if (MathF.Abs(Velocity.x) > 0.175f && !IsFrozen && CanTurn)
 				Scale = new Vector2(1f * Velocity.x < 0f ? 1f : -1f, 1f) * ScaleFactor;
 		}
 		else
-        {
+		{
 			float dist_sqr = (targetPlayer.Position - Position).LengthSquared;
 			float attack_dist_sqr = MathF.Pow(AggroRange, 2f);
 			AnimSpeed = Utils.Map(dist_sqr, attack_dist_sqr, 0f, 1f, 4f, EasingType.Linear);
@@ -299,10 +298,10 @@ public abstract partial class Enemy : Thing
 		else
 		{
 			if(_spawnCloudTime > (0.3f / TimeScale))
-            {
-				SpawnCloudClient(Position + new Vector2(0f, 0.25f), new Vector2(Rand.Float(-1f, 1f), Rand.Float(-1f, 1f)).Normal * Rand.Float(0.2f, 0.6f));
-				_spawnCloudTime = Rand.Float(0f, 0.15f);
-            }
+			{
+				SpawnCloudClient(Position + new Vector2(0f, 0.25f), new Vector2(Sandbox.Game.Random.Float(-1f, 1f), Sandbox.Game.Random.Float(-1f, 1f)).Normal * Sandbox.Game.Random.Float(0.2f, 0.6f));
+				_spawnCloudTime = Sandbox.Game.Random.Float(0f, 0.15f);
+			}
 
 			ShadowOpacity = Utils.Map(ElapsedTime, 0f, SpawnTime, 0f, SHADOW_FULL_OPACITY);
 		}
@@ -328,7 +327,7 @@ public abstract partial class Enemy : Thing
 			return;
 
 		Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Rand.Float(1.25f, 2.55f), Rand.Float(4f, 8f)) * 0.1f, damage, isCrit ? DamageType.Crit : DamageType.Normal);
+		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(1.25f, 2.55f), Sandbox.Game.Random.Float(4f, 8f)) * 0.1f, damage, isCrit ? DamageType.Crit : DamageType.Normal);
 
 		if (Health <= 0f)
 		{
@@ -336,18 +335,18 @@ public abstract partial class Enemy : Thing
 			Flash(0.05f);
 		} 
 		else
-        {
+		{
 			Flash(0.12f);
 		}
 	}
 
 	public virtual void DamageFire(float damage, PlayerCitizen player)
-    {
+	{
 		if (IsFrozen)
 			damage *= player.FreezeFireDamageMultiplier;
 
 		Damage(damage, player);
-    }
+	}
 
 	public virtual void StartDying(PlayerCitizen player)
 	{
@@ -372,11 +371,11 @@ public abstract partial class Enemy : Thing
 	}
 
 	public virtual void DropLoot(PlayerCitizen player)
-    {
+	{
 		var coin_chance = player != null ? Utils.Map(player.Luck, 0f, 10f, 0.5f, 1f) : 0.5f;
-		if (Rand.Float(0f, 1f) < coin_chance)
+		if (Sandbox.Game.Random.Float(0f, 1f) < coin_chance)
 		{
-			Game.SpawnCoin(Position, Rand.Int(CoinValueMin, CoinValueMax));
+			Game.SpawnCoin(Position, Sandbox.Game.Random.Int(CoinValueMin, CoinValueMax));
 		}
 		else
 		{
@@ -385,7 +384,7 @@ public abstract partial class Enemy : Thing
 				lowest_hp_percent = MathF.Min(lowest_hp_percent, p.Health / p.MaxHp);
 
 			var health_pack_chance = Utils.Map(lowest_hp_percent, 1f, 0f, 0f, 0.1f);
-			if (Rand.Float(0f, 1f) < health_pack_chance)
+			if (Sandbox.Game.Random.Float(0f, 1f) < health_pack_chance)
 			{
 				var healthPack = new HealthPack() { Position = Position };
 				Game.AddThing(healthPack);
@@ -405,17 +404,17 @@ public abstract partial class Enemy : Thing
 		Remove();
 	}
 
-    public override void Remove()
-    {
+	public override void Remove()
+	{
 		for (int i = EnemyStatuses.Count - 1; i >= 0; i--)
 			EnemyStatuses.Values.ElementAt(i).Remove();
 
 		EnemyStatuses.Clear();
 
-        base.Remove();
-    }
+		base.Remove();
+	}
 
-    public void Flash(float time)
+	public void Flash(float time)
 	{
 		if (_isFlashing)
 			return;
@@ -437,7 +436,7 @@ public abstract partial class Enemy : Thing
 	}
 
 	void CheckCollisions(float dt)
-    {
+	{
 		for (int dx = -1; dx <= 1; dx++)
 		{
 			for (int dy = -1; dy <= 1; dy++)
@@ -453,42 +452,62 @@ public abstract partial class Enemy : Thing
 			EnemyStatuses.Values.ElementAt(i).Colliding(other, percent, dt);
 	}
 
-	public EnemyStatus AddEnemyStatus(TypeDescription type)
-	{
-		if(EnemyStatuses.ContainsKey(type))
-        {
-			EnemyStatuses[type].Refresh();
-			return EnemyStatuses[type];
-        }
+	public TStatus AddEnemyStatus<TStatus>()
+		where TStatus : EnemyStatus
+    {
+        var type = TypeLibrary.GetType<TStatus>();
+
+		if(EnemyStatuses.TryGetValue( type, out var status ) )
+		{
+            status.Refresh();
+			return (TStatus) status;
+		}
 		else
-        {
-            var enemyStatus = type.Create<EnemyStatus>();
-			EnemyStatuses.Add(type, enemyStatus);
-			enemyStatus.Init(this);
-			return enemyStatus;
+		{
+			status = type.Create<EnemyStatus>();
+			EnemyStatuses.Add(type, status);
+            status.Init(this);
+			return (TStatus) status;
 		}
 	}
 
-	public void RemoveEnemyStatus(TypeDescription type)
+    public void RemoveEnemyStatus<TStatus>( TStatus status )
+        where TStatus : EnemyStatus
     {
-		if (EnemyStatuses.ContainsKey(type))
+        if ( EnemyStatuses.Remove( TypeLibrary.GetType<TStatus>(), out var existing ) )
         {
-			EnemyStatuses[type].Remove();
-			EnemyStatuses.Remove(type);
-		}
-	}
+			Assert.AreEqual( existing, status );
+            status.Remove();
+        }
+    }
 
-	public EnemyStatus GetEnemyStatus(TypeDescription type)
-	{
-		if (EnemyStatuses.ContainsKey(type))
-			return EnemyStatuses[type];
-
-		return null;
-	}
-
-	public bool HasEnemyStatus(TypeDescription type)
+    private void RemoveEnemyStatus<TStatus>()
+        where TStatus : EnemyStatus
     {
-		return EnemyStatuses.ContainsKey(type);
+        if ( EnemyStatuses.Remove( TypeLibrary.GetType<TStatus>(), out var status ) )
+        {
+			status.Remove();
+        }
+	}
+
+	private TStatus GetEnemyStatus<TStatus>()
+	    where TStatus : EnemyStatus
+    {
+        return EnemyStatuses.TryGetValue( TypeLibrary.GetType<TStatus>(), out var status )
+            ? (TStatus)status
+            : null;
+    }
+
+    public bool HasEnemyStatus<TStatus>(TStatus status)
+        where TStatus : EnemyStatus
+    {
+        return EnemyStatuses.TryGetValue( TypeLibrary.GetType<TStatus>(), out var existing ) && existing == status;
+    }
+
+    public bool HasEnemyStatus<TStatus>()
+        where TStatus : EnemyStatus
+    {
+        return EnemyStatuses.ContainsKey( TypeLibrary.GetType<TStatus>() );
     }
 
 	[ClientRpc]
@@ -501,7 +520,7 @@ public abstract partial class Enemy : Thing
 	public void RemoveBurningVfx()
 	{
 		if(_burningVfx != null)
-        {
+		{
 			_burningVfx.Delete();
 			_burningVfx = null;
 		}
@@ -524,34 +543,34 @@ public abstract partial class Enemy : Thing
 	}
 
 	public void Burn(PlayerCitizen player, float damage, float lifetime, float spreadChance)
-	{
-		BurningEnemyStatus burning = (BurningEnemyStatus)AddEnemyStatus(TypeLibrary.GetDescription(typeof(BurningEnemyStatus)));
-		burning.Player = player;
+    {
+        var burning = AddEnemyStatus<BurningEnemyStatus>();
+        burning.Player = player;
 		burning.Damage = damage;
 		burning.Lifetime = lifetime;
 		burning.SpreadChance = spreadChance;
 	}
 
 	public void Freeze(PlayerCitizen player)
-    {
+	{
 		if (IsDying)
 			return;
 
-		FrozenEnemyStatus frozen = (FrozenEnemyStatus)AddEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus)));
+		var frozen = AddEnemyStatus<FrozenEnemyStatus>();
 		frozen.Player = player;
 		frozen.SetLifetime(player.FreezeLifetime);
 		frozen.SetTimeScale(player.FreezeTimeScale);
 	}
 
 	protected virtual void OnDamagePlayer(PlayerCitizen player, float damage)
-    {
+	{
 		if (player.ThornsPercent > 0f)
 			Damage(damage * player.ThornsPercent * player.GetDamageMultiplier(), player, false);
 
-		if (Rand.Float(0f, 1f) < player.FreezeOnMeleeChance)
+		if (Sandbox.Game.Random.Float(0f, 1f) < player.FreezeOnMeleeChance)
 		{
-			if (!HasEnemyStatus(TypeLibrary.GetDescription(typeof(FrozenEnemyStatus))))
-				Game.PlaySfxNearby("frozen", Position, pitch: Rand.Float(1.1f, 1.2f), volume: 1.5f, maxDist: 5f);
+			if (!HasEnemyStatus<FrozenEnemyStatus>())
+				Game.PlaySfxNearby("frozen", Position, pitch: Sandbox.Game.Random.Float(1.1f, 1.2f), volume: 1.5f, maxDist: 5f);
 
 			Freeze(player);
 		}
