@@ -25,6 +25,7 @@ public class ModifierData
 
 public partial class PlayerCitizen : Thing
 {
+	[ClientInput]
 	public Vector2 MouseOffset { get; private set; }
 	
 	public Arrow ArrowAimer { get; private set; }
@@ -300,9 +301,6 @@ public partial class PlayerCitizen : Thing
 			return;
 
 		float dt = Time.Delta;
-
-		// garry: pass the mouse offset/aim in the Input command instead of by console command
-		MouseOffset = Input.MouseDelta;
 
 		Vector2 inputVector = new Vector2(-Input.AnalogMove.y, Input.AnalogMove.x);
 
