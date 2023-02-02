@@ -206,18 +206,36 @@ public partial class Sprite : Entity
 	public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
 	public new Vector2 Position
-	{
-		get => base.Position;
-		set => base.Position = new Vector3( value.x, value.y, base.Position.z );
-	}
-
-	public new Vector2 LocalPosition
     {
-		get => base.LocalPosition;
-		set => base.LocalPosition = new Vector3(value.x, value.y, base.LocalPosition.z);
-	}
+        get => base.Position;
+        set
+        {
+            if ( float.IsNaN( value.x ) || float.IsNaN( value.y ) )
+            {
+				Log.Error( "Tried to set a NaN position!" );
+                return;
+            }
 
-	public float Depth
+            base.Position = new Vector3( value.x, value.y, base.Position.z );
+        }
+    }
+
+    public new Vector2 LocalPosition
+    {
+        get => base.LocalPosition;
+        set
+        {
+            if ( float.IsNaN( value.x ) || float.IsNaN( value.y ) )
+            {
+                Log.Error( "Tried to set a NaN local position!" );
+                return;
+            }
+
+            base.LocalPosition = new Vector3( value.x, value.y, base.LocalPosition.z );
+        }
+    }
+
+    public float Depth
 	{
 		get => base.Position.z;
 		set => base.Position = base.Position.WithZ( value );
