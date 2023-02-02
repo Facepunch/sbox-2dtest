@@ -22,7 +22,7 @@ public partial class EnemyNametag : Panel
         if (Enemy == null || !Enemy.IsValid)
             return;
 
-        var screenPos = MyGame.Current.MainCamera.WorldToScreen(Enemy.Position + new Vector2(0f, 1.66f + Enemy.HeightZ)) * ScaleFromScreen;
+        var screenPos = Camera2D.Current.WorldToScreen(Enemy.Position + new Vector2(0f, 1.66f + Enemy.HeightZ)) * ScaleFromScreen;
 
         Style.Left = screenPos.x - 150;
         Style.Top = screenPos.y;

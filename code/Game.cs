@@ -22,9 +22,7 @@ public partial class MyGame : GameManager
 	public HUD Hud { get; private set; }
 
 	public PlayerCitizen LocalPlayer => Sandbox.Game.LocalClient.Pawn as PlayerCitizen; // ONLY FOR CLIENT USE
-
-	public Camera2D MainCamera { get; } = new Camera2D();
-
+	
 	public readonly List<PlayerCitizen> PlayerList = new();
 
 	public int EnemyCount { get; private set; }
@@ -97,7 +95,9 @@ public partial class MyGame : GameManager
 	{
 		base.ClientSpawn();
 
-		BackgroundManager?.Restart();
+        Camera2D.Current = new Camera2D();
+
+        BackgroundManager?.Restart();
 	}
 
 	public void SpawnStartingThings()
@@ -622,4 +622,10 @@ public partial class MyGame : GameManager
 		Vector2 listenerPos = (Vector2)Sound.Listener.Value.Position;
 		return listenerPos + (worldPos - listenerPos) * 0.1f;
 	}
+
+	[Event.Client.Frame]
+    public void ClientFrame()
+    {
+        Camera2D.Current?.Update();
+    }
 }

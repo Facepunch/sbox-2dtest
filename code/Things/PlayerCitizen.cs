@@ -700,7 +700,7 @@ public partial class PlayerCitizen : Thing
 		var aimOffset = new Vector2( 0f, 0.4f );
 
 		// garry: use put the mouse offset in the input
-		MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.MousePosition) - Position - aimOffset;
+		MouseOffset = Camera2D.Current.ScreenToWorld(Mouse.Position) - Position - aimOffset;
 		//inputBuilder.Cursor = new Ray(0, MouseOffset);
 	}
 
@@ -709,7 +709,7 @@ public partial class PlayerCitizen : Thing
 		base.FrameSimulate( cl );
 
 		var DIST = 7.3f;
-		Game.MainCamera.Position = new Vector2(MathX.Clamp(Position.x, -DIST, DIST), MathX.Clamp(Position.y, -DIST, DIST));
+		Camera2D.Current.Position = new Vector2(MathX.Clamp(Position.x, -DIST, DIST), MathX.Clamp(Position.y, -DIST, DIST));
 
 		//MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
 		//MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.RootPanel.MousePosition) - Position;
