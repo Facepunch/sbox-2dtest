@@ -335,21 +335,21 @@ public partial class PlayerCitizen : Thing
 		if (MathF.Abs(Input.AnalogMove.y) > 0f)
 			Scale = new Vector2(1f * Input.AnalogMove.y < 0f ? -1f : 1f, 1f) * 1f;
 
-        if ( Sandbox.Game.IsClient )
-        {
-            var DIST = 7.3f;
-            Camera2D.Current.Position = new Vector2( MathX.Clamp( Position.x, -DIST, DIST ), MathX.Clamp( Position.y, -DIST, DIST ) );
-        }
+		if ( Sandbox.Game.IsClient )
+		{
+			var DIST = 7.3f;
+			Camera2D.Current.Position = new Vector2( MathX.Clamp( Position.x, -DIST, DIST ), MathX.Clamp( Position.y, -DIST, DIST ) );
+		}
 
-        //Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
-        //Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
+		//Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
+		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
 
-        //DebugOverlay.Text(Position.ToString(), Position);
+		//DebugOverlay.Text(Position.ToString(), Position);
 
-        //DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
-        //DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
+		//DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
+		//DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
 
-        AimDir = MouseOffset.Normal;
+		AimDir = MouseOffset.Normal;
 
 		if (ArrowAimer != null)
 		{
