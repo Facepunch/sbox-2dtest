@@ -40,7 +40,9 @@ public partial class Shadow : Sprite
 	{
 		Thing = thing;
 		Filter = SpriteFilter.Pixelated;
-	}
+
+        Parent = Thing;
+    }
 
 	[Event.Tick.Client]
 	public void ClientTick()
@@ -50,8 +52,8 @@ public partial class Shadow : Sprite
 			Delete();
 			return;
 		}
-			
-		Position = Thing.Position;
+		
+		LocalPosition = Vector2.Zero;
 		ColorTint = new Color(0f, 0f, 0f, Thing.ShadowOpacity);
 		Scale = Thing.ShadowScale;
 

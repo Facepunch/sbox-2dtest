@@ -293,10 +293,8 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
-	public override void Simulate( IClient cl )
+	protected override void OnSimulate( IClient cl )
 	{
-		base.Simulate( cl );
-
 		if (Game.IsGameOver)
 			return;
 
@@ -337,15 +335,21 @@ public partial class PlayerCitizen : Thing
 		if (MathF.Abs(Input.AnalogMove.y) > 0f)
 			Scale = new Vector2(1f * Input.AnalogMove.y < 0f ? -1f : 1f, 1f) * 1f;
 
-		//Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
-		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
+        if ( Sandbox.Game.IsClient )
+        {
+            var DIST = 7.3f;
+            Camera2D.Current.Position = new Vector2( MathX.Clamp( Position.x, -DIST, DIST ), MathX.Clamp( Position.y, -DIST, DIST ) );
+        }
 
-		//DebugOverlay.Text(Position.ToString(), Position);
+        //Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
+        //Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
 
-		//DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
-		//DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
+        //DebugOverlay.Text(Position.ToString(), Position);
 
-		AimDir = MouseOffset.Normal;
+        //DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
+        //DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
+
+        AimDir = MouseOffset.Normal;
 
 		if (ArrowAimer != null)
 		{
@@ -701,22 +705,7 @@ public partial class PlayerCitizen : Thing
 		MouseOffset = Camera2D.Current.ScreenToWorld(Mouse.Position) - Position - aimOffset;
 		//inputBuilder.Cursor = new Ray(0, MouseOffset);
 	}
-
-	public override void FrameSimulate( IClient cl )
-	{
-		base.FrameSimulate( cl );
-
-		var DIST = 7.3f;
-		Camera2D.Current.Position = new Vector2(MathX.Clamp(Position.x, -DIST, DIST), MathX.Clamp(Position.y, -DIST, DIST));
-
-		//MouseOffset = MyGame.Current.MainCamera.ScreenToWorld(MainHud.MousePos) - Position;
-		//MouseOffset = Game.MainCamera.ScreenToWorld(Game.Hud.RootPanel.MousePosition) - Position;
-
-		//SetMouseOffset(MouseOffset);
-
-		//PostProcess.Clear();
-	}
-
+	
 	[ConCmd.Server]
 	public static void SetMouseOffset(Vector2 offset)
 	{

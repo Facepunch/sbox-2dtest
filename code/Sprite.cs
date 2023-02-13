@@ -320,8 +320,15 @@ public partial class Sprite : Entity
 	}
 
 	private void UpdateSceneObject()
-	{
-		SceneObject.Transform = Transform;
+    {
+        if ( Parent is Sprite parent && parent.SceneObject.IsValid() )
+        {
+            SceneObject.Transform = Transform.Concat( parent.SceneObject.Transform, new Transform( base.LocalPosition, base.LocalRotation, base.LocalScale ) );
+        }
+        else
+        {
+            SceneObject.Transform = Transform;
+        }
 
 		// TODO
 		SceneObject.Bounds = new BBox( float.NegativeInfinity, float.PositiveInfinity );
@@ -376,7 +383,22 @@ public partial class Sprite : Entity
 			Rotation = 0f;
 		}
 	}
-	
+
+    public sealed override void Simulate( IClient cl )
+    {
+        OnSimulate( cl );
+
+        if ( Sandbox.Game.IsClient )
+        {
+			UpdateSceneObject();
+        }
+    }
+
+    protected virtual void OnSimulate( IClient cl )
+    {
+
+    }
+
     [Event.PreRender]
 	private void ClientPreRender()
 	{
@@ -391,6 +413,21 @@ public partial class Sprite : Entity
 			SceneObject = new SceneObject( scene, "models/quad.vmdl", Transform ) { Flags = { IsTranslucent = true } };
 		}
 
+        if ( Parent is Sprite parent && parent.SceneObject.IsValid() )
+        {
+            if ( SceneObject.Parent != parent.SceneObject )
+            {
+				parent.SceneObject.AddChild( Name, SceneObject );
+            }
+        }
+        else
+        {
+            if ( SceneObject.Parent.IsValid() )
+            {
+                SceneObject.Parent.RemoveChild( SceneObject );
+            }
+        }
+
 		SceneObject.RenderingEnabled = EnableDrawing && Opacity > 0f;
 
 		if ( !SceneObject.RenderingEnabled ) return;
@@ -399,7 +436,10 @@ public partial class Sprite : Entity
 		UpdateMaterial();
 		UpdateAnim();
 
-		UpdateSceneObject();
+        if ( !IsLocalPawn )
+        {
+            UpdateSceneObject();
+        }
 	}
 
 	protected override void OnDestroy()

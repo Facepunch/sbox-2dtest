@@ -41,7 +41,7 @@ public partial class Nametag : Panel
         var name = Player.Client.Name;
         NameLabel.Text = name[..Math.Min(name.Length, 14)] + " [" + Player.Level.ToString() + "]";
 
-        var screenPos = Camera2D.Current.WorldToScreen(Player.Position + new Vector2(0f, 1.42f + Player.HeightZ)) * ScaleFromScreen;
+        var screenPos = Camera2D.Current.WorldToScreen((Vector2) Player.SceneObject.Position + new Vector2(0f, 1.42f + Player.HeightZ)) * ScaleFromScreen;
 
         Style.Left = screenPos.x - 150;
         Style.Top = screenPos.y;
