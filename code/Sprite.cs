@@ -16,33 +16,33 @@ public enum SpriteFilter
 
 public readonly struct SpriteTexture
 {
-    public static implicit operator SpriteTexture(string texturePath)
-    {
-        return new SpriteTexture(texturePath);
-    }
+	public static implicit operator SpriteTexture(string texturePath)
+	{
+		return new SpriteTexture(texturePath);
+	}
 
-    public static SpriteTexture Single(string texturePath)
-    {
-        return new SpriteTexture(texturePath);
-    }
+	public static SpriteTexture Single(string texturePath)
+	{
+		return new SpriteTexture(texturePath);
+	}
 
-    public static SpriteTexture Atlas(string texturePath, int rows, int cols)
-    {
-        return new SpriteTexture(texturePath, rows, cols);
-    }
+	public static SpriteTexture Atlas(string texturePath, int rows, int cols)
+	{
+		return new SpriteTexture(texturePath, rows, cols);
+	}
 
-    [ResourceType("png")]
+	[ResourceType("png")]
 	public string TexturePath { get; }
 
-    public int AtlasRows { get; }
+	public int AtlasRows { get; }
 	public int AtlasColumns { get; }
 
-    private SpriteTexture(string texturePath, int rows = 1, int cols = 1)
-    {
-        TexturePath = texturePath;
-        AtlasRows = rows;
-        AtlasColumns = cols;
-    }
+	private SpriteTexture(string texturePath, int rows = 1, int cols = 1)
+	{
+		TexturePath = texturePath;
+		AtlasRows = rows;
+		AtlasColumns = cols;
+	}
 }
 
 public partial class Sprite : Entity
@@ -53,66 +53,60 @@ public partial class Sprite : Entity
 
 	private float _localRotation;
 
-	private bool _materialInvalid;
-	private bool _textureInvalid;
-	private bool _animInvalid;
+	private string _lastAnimPath;
+	private string _lastTexturePath;
+	private SpriteFilter _lastFilter;
 
 	internal SceneObject SceneObject { get; private set; }
 
 	public MyGame Game => MyGame.Current;
 
-    public SpriteTexture SpriteTexture
-    {
-        get => IsClientOnly ? ClientSpriteTexture : SpriteTexture.Atlas(NetTexturePath, NetAtlasRows, NetAtlasColumns);
-        set
+	public SpriteTexture SpriteTexture
+	{
+		get => IsClientOnly ? ClientSpriteTexture : SpriteTexture.Atlas(NetTexturePath, NetAtlasRows, NetAtlasColumns);
+		set
 		{
+			var oldValue = ClientSpriteTexture;
+
 			ClientSpriteTexture = value;
 
 			NetTexturePath = value.TexturePath;
 			NetAtlasRows = value.AtlasRows;
 			NetAtlasColumns = value.AtlasColumns;
+		}
+	}
 
-			if ( IsClientOnly )
-	        {
-		        OnNetTexturePathChanged();
-			}
-        }
-    }
-
-    [Net, Change]
+	[Net, Predicted]
 	private string NetTexturePath { get; set; }
 
-    [Net]
+	[Net]
 	private int NetAtlasRows { get; set; }
 
-    [Net]
-    private int NetAtlasColumns { get; set; }
+	[Net]
+	private int NetAtlasColumns { get; set; }
 
 	private SpriteTexture ClientSpriteTexture { get; set; }
 
-    [Net, Change]
+	[Net, Predicted]
 	private string NetAnimationPath { get; set; }
 	private string ClientAnimationPath { get; set; }
 
 	[ResourceType( "frames" )]
-    public string AnimationPath
-    {
-        get => IsClientOnly ? ClientAnimationPath : NetAnimationPath;
-        set
+	public string AnimationPath
+	{
+		get => IsClientOnly ? ClientAnimationPath : NetAnimationPath;
+		set
 		{
+			var oldValue = ClientAnimationPath;
+
 			NetAnimationPath = ClientAnimationPath = value;
+		}
+	}
 
-			if ( IsClientOnly )
-			{
-				OnNetAnimationPathChanged();
-            }
-        }
-    }
+	public float AnimationTimeElapsed { get; set; }
 
-    public float AnimationTimeElapsed { get; set; }
-
-    [Net]
-    private float NetAnimationSpeed { get; set; }
+	[Net, Predicted]
+	private float NetAnimationSpeed { get; set; }
 	private float ClientAnimationSpeed { get; set; }
 
 	public float AnimationSpeed
@@ -121,8 +115,8 @@ public partial class Sprite : Entity
 		set => NetAnimationSpeed = ClientAnimationSpeed = value;
 	}
 
-    [Net, Predicted]
-    private Vector2 NetScale { get; set; } = new Vector2( 1f, 1f );
+	[Net, Predicted]
+	private Vector2 NetScale { get; set; } = new Vector2( 1f, 1f );
 	private Vector2 ClientScale { get; set; } = new Vector2( 1f, 1f );
 
 	public new Vector2 Scale
@@ -141,25 +135,22 @@ public partial class Sprite : Entity
 		set => NetPivot = ClientPivot = value;
 	}
 
-	[Net, Change]
-    private SpriteFilter NetFilter { get; set; }
+	[Net, Predicted]
+	private SpriteFilter NetFilter { get; set; }
 	private SpriteFilter ClientFilter { get; set; }
 
-    public SpriteFilter Filter
-    {
-        get => IsClientOnly ? ClientFilter : NetFilter;
-        set
-        {
-	        NetFilter = ClientFilter = value;
+	public SpriteFilter Filter
+	{
+		get => IsClientOnly ? ClientFilter : NetFilter;
+		set
+		{
+			var oldValue = ClientFilter;
 
-			if ( IsClientOnly )
-            {
-                OnNetFilterChanged();
-            }
-        }
-    }
+			NetFilter = ClientFilter = value;
+		}
+	}
 
-    [Net]
+	[Net, Predicted]
 	private Color NetColorFill { get; set; }
 	private Color ClientColorFill { get; set; }
 
@@ -169,27 +160,27 @@ public partial class Sprite : Entity
 		set => NetColorFill = ClientColorFill = value;
 	}
 
-    [Net]
-    private Color NetColorTint { get; set; } = Color.White;
-    private Color ClientColorTint { get; set; } = Color.White;
+	[Net, Predicted]
+	private Color NetColorTint { get; set; } = Color.White;
+	private Color ClientColorTint { get; set; } = Color.White;
 
-    public Color ColorTint
+	public Color ColorTint
 	{
-	    get => IsClientOnly ? ClientColorTint : NetColorTint;
-	    set => NetColorTint = ClientColorTint = value;
+		get => IsClientOnly ? ClientColorTint : NetColorTint;
+		set => NetColorTint = ClientColorTint = value;
 	}
 
-    [Net]
-    private float NetOpacity { get; set; } = 1f;
-    private float ClientOpacity { get; set; } = 1f;
+	[Net, Predicted]
+	private float NetOpacity { get; set; } = 1f;
+	private float ClientOpacity { get; set; } = 1f;
 
-    public float Opacity
-    {
-	    get => IsClientOnly ? ClientOpacity : NetOpacity;
+	public float Opacity
+	{
+		get => IsClientOnly ? ClientOpacity : NetOpacity;
 		set => NetOpacity = ClientOpacity = value;
-    }
+	}
 
-    [Net]
+	[Net, Predicted]
 	private Rect NetUvRect { get; set; } = new Rect( 0f, 0f, 1f, 1f );
 	private Rect ClientUvRect { get; set; } = new Rect( 0f, 0f, 1f, 1f );
 
@@ -206,36 +197,36 @@ public partial class Sprite : Entity
 	public Vector2 Forward => Vector2.FromDegrees(Rotation + 180f);
 
 	public new Vector2 Position
-    {
-        get => base.Position;
-        set
-        {
-            if ( float.IsNaN( value.x ) || float.IsNaN( value.y ) )
-            {
+	{
+		get => base.Position;
+		set
+		{
+			if ( float.IsNaN( value.x ) || float.IsNaN( value.y ) )
+			{
 				Log.Error( "Tried to set a NaN position!" );
-                return;
-            }
+				return;
+			}
 
-            base.Position = new Vector3( value.x, value.y, base.Position.z );
-        }
-    }
+			base.Position = new Vector3( value.x, value.y, base.Position.z );
+		}
+	}
 
-    public new Vector2 LocalPosition
-    {
-        get => base.LocalPosition;
-        set
-        {
-            if ( float.IsNaN( value.x ) || float.IsNaN( value.y ) )
-            {
-                Log.Error( "Tried to set a NaN local position!" );
-                return;
-            }
+	public new Vector2 LocalPosition
+	{
+		get => base.LocalPosition;
+		set
+		{
+			if ( float.IsNaN( value.x ) || float.IsNaN( value.y ) )
+			{
+				Log.Error( "Tried to set a NaN local position!" );
+				return;
+			}
 
-            base.LocalPosition = new Vector3( value.x, value.y, base.LocalPosition.z );
-        }
-    }
+			base.LocalPosition = new Vector3( value.x, value.y, base.LocalPosition.z );
+		}
+	}
 
-    public float Depth
+	public float Depth
 	{
 		get => base.Position.z;
 		set => base.Position = base.Position.WithZ( value );
@@ -245,7 +236,7 @@ public partial class Sprite : Entity
 	{
 		get => base.Rotation.Angles().yaw + 90f;
 		set => base.Rotation = global::Rotation.FromYaw( value - 90f );
-    }
+	}
 
 	public new float LocalRotation
 	{
@@ -263,72 +254,87 @@ public partial class Sprite : Entity
 		set => base.Velocity = new Vector3(value.x, value.y, 0f);
 	}
 
-    private static Dictionary<(string TexturePath, SpriteFilter Filter), Material> MaterialDict { get; } = new();
+	private static Dictionary<(string TexturePath, SpriteFilter Filter), Material> MaterialDict { get; } = new();
 
-    private static Material GetMaterial( Texture texture, SpriteFilter filter )
-    {
-        if (MaterialDict.TryGetValue((texture.ResourcePath, filter), out var mat))
-        {
-            return mat;
-        }
+	private static Material GetMaterial( Texture texture, SpriteFilter filter )
+	{
+		if (MaterialDict.TryGetValue((texture.ResourcePath, filter), out var mat))
+		{
+			return mat;
+		}
 
-        var srcMat = Material.Load($"materials/sprite_{filter.ToString().ToLowerInvariant()}.vmat");
+		var srcMat = Material.Load($"materials/sprite_{filter.ToString().ToLowerInvariant()}.vmat");
 			
 		mat = srcMat.CreateCopy();
-        mat.Set( "g_tColor", texture );
+		mat.Set( "g_tColor", texture );
 
 		// TODO: this makes sprites render multiple times??
 		// MaterialDict[(texture.ResourcePath, filter)] = mat;
 
-        return mat;
+		return mat;
 	}
 
-    private void UpdateTexture()
-    {
-	    if ( !_textureInvalid ) return;
+	private void UpdateTexture()
+	{
+		if ( _lastTexturePath == SpriteTexture.TexturePath ) return;
 
-	    _textureInvalid = false;
+		try
+		{
+			_texture = string.IsNullOrEmpty( SpriteTexture.TexturePath )
+				? Texture.White
+				: Texture.Load( FileSystem.Mounted, SpriteTexture.TexturePath );
 
-	    _texture = string.IsNullOrEmpty( SpriteTexture.TexturePath )
-		    ? Texture.White
-		    : Texture.Load( FileSystem.Mounted, SpriteTexture.TexturePath );
-
-	    UpdateMaterial();
-    }
+			UpdateMaterial();
+		}
+		finally
+		{
+			_lastTexturePath = SpriteTexture.TexturePath;
+		}
+	}
 	
 	private void UpdateMaterial()
 	{
-		if ( !_materialInvalid ) return;
+		if ( _lastTexturePath == SpriteTexture.TexturePath && _lastFilter == Filter ) return;
 
-		_materialInvalid = false;
-
-		_material = GetMaterial(_texture ?? Texture.White, Filter);
-		SceneObject.SetMaterialOverride( _material );
+		try
+		{
+			_material = GetMaterial( _texture ?? Texture.White, Filter );
+			SceneObject.SetMaterialOverride( _material );
+		}
+		finally
+		{
+			_lastFilter = Filter;
+		}
 	}
 
 	private void UpdateAnim()
 	{
-		if ( !_animInvalid ) return;
+		if ( _lastAnimPath == AnimationPath ) return;
 
-		_animInvalid = false;
+		try
+		{
+			_anim = string.IsNullOrEmpty( AnimationPath )
+				? null
+				: ResourceLibrary.Get<SpriteAnimation>( AnimationPath );
 
-		_anim = string.IsNullOrEmpty( AnimationPath )
-			? null
-			: ResourceLibrary.Get<SpriteAnimation>( AnimationPath );
-
-		AnimationTimeElapsed = 0f;
+			AnimationTimeElapsed = 0f;
+		}
+		finally
+		{
+			_lastAnimPath = AnimationPath;
+		}
 	}
 
 	private void UpdateSceneObject()
-    {
-        if ( Parent is Sprite parent && parent.SceneObject.IsValid() )
-        {
-            SceneObject.Transform = Transform.Concat( parent.SceneObject.Transform, new Transform( base.LocalPosition, base.LocalRotation, base.LocalScale ) );
-        }
-        else
-        {
-            SceneObject.Transform = Transform;
-        }
+	{
+		if ( Parent is Sprite parent && parent.SceneObject.IsValid() )
+		{
+			SceneObject.Transform = Transform.Concat( parent.SceneObject.Transform, new Transform( base.LocalPosition, base.LocalRotation, base.LocalScale ) );
+		}
+		else
+		{
+			SceneObject.Transform = Transform;
+		}
 
 		// TODO
 		SceneObject.Bounds = new BBox( float.NegativeInfinity, float.PositiveInfinity );
@@ -353,29 +359,14 @@ public partial class Sprite : Entity
 			SceneObject.Attributes.Set( "UvMax", UvRect.BottomRight );
 		}
 	}
-
-	private void OnNetTexturePathChanged()
+	
+	public override void Spawn()
 	{
-		_textureInvalid = true;
-	}
+		base.Spawn();
 
-    private void OnNetAnimationPathChanged()
-    {
-	    _animInvalid = true;
-    }
+		Transmit = TransmitType.Always;
 
-    private void OnNetFilterChanged()
-    {
-	    _materialInvalid = true;
-	}
-
-    public override void Spawn()
-    {
-        base.Spawn();
-
-        Transmit = TransmitType.Always;
-
-        if ( IsClientOnly || Sandbox.Game.IsServer )
+		if ( IsClientOnly || Sandbox.Game.IsServer )
 		{
 			EnableDrawing = true;
 
@@ -384,22 +375,25 @@ public partial class Sprite : Entity
 		}
 	}
 
-    public sealed override void Simulate( IClient cl )
-    {
-        OnSimulate( cl );
+	public sealed override void Simulate( IClient cl )
+	{
+		OnSimulate( cl );
 
-        if ( Sandbox.Game.IsClient )
-        {
+		if ( Sandbox.Game.IsClient )
+		{
+			UpdateTexture();
+			UpdateMaterial();
+			UpdateAnim();
 			UpdateSceneObject();
-        }
-    }
+		}
+	}
 
-    protected virtual void OnSimulate( IClient cl )
-    {
+	protected virtual void OnSimulate( IClient cl )
+	{
 
-    }
+	}
 
-    [Event.PreRender]
+	[Event.PreRender]
 	private void ClientPreRender()
 	{
 		var scene = Sandbox.Game.SceneWorld;
@@ -413,33 +407,32 @@ public partial class Sprite : Entity
 			SceneObject = new SceneObject( scene, "models/quad.vmdl", Transform ) { Flags = { IsTranslucent = true } };
 		}
 
-        if ( Parent is Sprite parent && parent.SceneObject.IsValid() )
-        {
-            if ( SceneObject.Parent != parent.SceneObject )
-            {
+		if ( Parent is Sprite parent && parent.SceneObject.IsValid() )
+		{
+			if ( SceneObject.Parent != parent.SceneObject )
+			{
 				parent.SceneObject.AddChild( Name, SceneObject );
-            }
-        }
-        else
-        {
-            if ( SceneObject.Parent.IsValid() )
-            {
-                SceneObject.Parent.RemoveChild( SceneObject );
-            }
-        }
+			}
+		}
+		else
+		{
+			if ( SceneObject.Parent.IsValid() )
+			{
+				SceneObject.Parent.RemoveChild( SceneObject );
+			}
+		}
 
 		SceneObject.RenderingEnabled = EnableDrawing && Opacity > 0f;
 
 		if ( !SceneObject.RenderingEnabled ) return;
-
-		UpdateTexture();
-		UpdateMaterial();
-		UpdateAnim();
-
-        if ( !IsLocalPawn )
-        {
-            UpdateSceneObject();
-        }
+		
+		if ( !IsLocalPawn )
+		{
+			UpdateTexture();
+			UpdateMaterial();
+			UpdateAnim();
+			UpdateSceneObject();
+		}
 	}
 
 	protected override void OnDestroy()
