@@ -276,7 +276,7 @@ public partial class Sprite : Entity
 
 	private void UpdateTexture()
     {
-        if ( SceneObject == null ) return;
+        if ( !SceneObject.IsValid() ) return;
         if ( _lastTexturePath == SpriteTexture.TexturePath ) return;
 
 		try
@@ -295,7 +295,7 @@ public partial class Sprite : Entity
 	
 	private void UpdateMaterial()
     {
-        if ( SceneObject == null ) return;
+        if ( !SceneObject.IsValid() ) return;
 		if ( _lastTexturePath == SpriteTexture.TexturePath && _lastFilter == Filter ) return;
 
 		try
@@ -311,7 +311,7 @@ public partial class Sprite : Entity
 
 	private void UpdateAnim()
     {
-        if ( SceneObject == null ) return;
+        if ( !SceneObject.IsValid() ) return;
         if ( _lastAnimPath == AnimationPath ) return;
 
 		try
