@@ -57,7 +57,7 @@ public partial class Sprite : Entity
 	private string _lastTexturePath;
 	private SpriteFilter _lastFilter;
 
-	internal SceneObject SceneObject { get; private set; }
+	internal SceneObject SceneObject { get; }
 
 	public MyGame Game => MyGame.Current;
 
@@ -254,25 +254,45 @@ public partial class Sprite : Entity
 		set => base.Velocity = new Vector3(value.x, value.y, 0f);
 	}
 
-	private static Dictionary<(string TexturePath, SpriteFilter Filter), Material> MaterialDict { get; } = new();
+    public new Sprite Parent
+    {
+        get => base.Parent as Sprite;
+        set
+        {
+            if ( base.Parent == value ) return;
+
+			(base.Parent as Sprite)?.SceneObject?.RemoveChild( SceneObject );
+
+            base.Parent = value;
+
+            value?.SceneObject?.AddChild( Name, SceneObject );
+        }
+    }
+
+    private static Dictionary<SpriteFilter, Material> BaseMaterialDict { get; } = new();
 
 	private static Material GetMaterial( Texture texture, SpriteFilter filter )
 	{
-		if (MaterialDict.TryGetValue((texture.ResourcePath, filter), out var mat))
-		{
-			return mat;
-		}
 
-		var srcMat = Material.Load($"materials/sprite_{filter.ToString().ToLowerInvariant()}.vmat");
-			
-		mat = srcMat.CreateCopy();
+        if ( !BaseMaterialDict.TryGetValue( filter, out var srcMat ) )
+        {
+            srcMat = Material.Load( $"materials/sprite_{filter.ToString().ToLowerInvariant()}.vmat" );
+            BaseMaterialDict[filter] = srcMat;
+        }
+
+		var mat = srcMat.CreateCopy();
 		mat.Set( "g_tColor", texture );
-
-		// TODO: this makes sprites render multiple times??
-		// MaterialDict[(texture.ResourcePath, filter)] = mat;
 
 		return mat;
 	}
+
+    public Sprite()
+    {
+        if ( Sandbox.Game.IsClient )
+        {
+            SceneObject = new SceneObject( Sandbox.Game.SceneWorld, "models/quad.vmdl", Transform ) { Flags = { IsTranslucent = true } };
+        }
+    }
 
 	private void UpdateTexture()
     {
@@ -330,7 +350,7 @@ public partial class Sprite : Entity
 
 	private void UpdateSceneObject()
 	{
-		if ( Parent is Sprite parent && parent.SceneObject.IsValid() )
+		if ( Parent is { } parent && parent.SceneObject.IsValid() )
 		{
 			SceneObject.Transform = Transform.Concat( parent.SceneObject.Transform, new Transform( base.LocalPosition, base.LocalRotation, base.LocalScale ) );
 		}
@@ -399,33 +419,7 @@ public partial class Sprite : Entity
 	[Event.PreRender]
 	private void ClientPreRender()
 	{
-		var scene = Sandbox.Game.SceneWorld;
-
-		if ( !scene.IsValid() ) return;
-
-		if ( !SceneObject.IsValid() )
-		{
-			if ( !EnableDrawing ) return;
-
-			SceneObject = new SceneObject( scene, "models/quad.vmdl", Transform ) { Flags = { IsTranslucent = true } };
-		}
-
-		if ( Parent is Sprite parent && parent.SceneObject.IsValid() )
-		{
-			if ( SceneObject.Parent != parent.SceneObject )
-			{
-				parent.SceneObject.AddChild( Name, SceneObject );
-			}
-		}
-		else
-		{
-			if ( SceneObject.Parent.IsValid() )
-			{
-				SceneObject.Parent.RemoveChild( SceneObject );
-			}
-		}
-
-		SceneObject.RenderingEnabled = EnableDrawing && Opacity > 0f;
+        SceneObject.RenderingEnabled = EnableDrawing && Opacity > 0f;
 
 		if ( !SceneObject.RenderingEnabled ) return;
 		
@@ -442,7 +436,6 @@ public partial class Sprite : Entity
 	{
 		base.OnDestroy();
 
-		SceneObject?.Delete();
-		SceneObject = null;
+        SceneObject?.Delete();
 	}
 }
