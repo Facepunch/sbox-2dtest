@@ -168,7 +168,7 @@ public partial class PlayerCitizen : Thing
 		Stats[StatType.ShootFireIgniteChance] = 0f;
         Stats[StatType.FireSpreadChance] = 0f;
         Stats[StatType.ShootFreezeChance] = 0f;
-        Stats[StatType.FreezeTimeScale] = 3f;
+        Stats[StatType.FreezeLifetime] = 3f;
         Stats[StatType.FreezeTimeScale] = 0.6f;
         Stats[StatType.FreezeOnMeleeChance] = 0f;
         Stats[StatType.FreezeFireDamageMultiplier] = 1f;
