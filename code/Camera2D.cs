@@ -24,7 +24,8 @@ public partial class Camera2D
 	/// World space position of the center of the view.
 	/// </summary>
 	public Vector2 Position { get; set; }
-	public Vector2 LowerLeftWorld => ScreenToWorld( new Vector2( 0, Screen.Height ) );
+    public Vector2 TargetPosition { get; set; }
+    public Vector2 LowerLeftWorld => ScreenToWorld( new Vector2( 0, Screen.Height ) );
 	public Vector2 UpperRightWorld => ScreenToWorld( new Vector2( Screen.Width, 0 ) );
 	public Vector2 WorldSize => UpperRightWorld - LowerLeftWorld;
 
@@ -51,7 +52,12 @@ public partial class Camera2D
 		target.ZFar = ZFar;
 
 		target.Rotation = global::Rotation.FromYaw( 90f + Rotation ) * global::Rotation.FromPitch( 90f );
-		target.Position = new Vector3( Position, Depth );
+
+		Position = Vector2.Lerp(Position, TargetPosition, 0.075f);
+        var DIST = 7.3f;
+        Position = new Vector2(MathX.Clamp(Position.x, -DIST, DIST), MathX.Clamp(Position.y, -DIST, DIST));
+
+        target.Position = new Vector3( Position, Depth );
 	}
 
 	public Vector2 ScreenToWorld(Vector2 screenPos)

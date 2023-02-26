@@ -337,8 +337,7 @@ public partial class PlayerCitizen : Thing
 
 		if ( Sandbox.Game.IsClient )
 		{
-			var DIST = 7.3f;
-			Camera2D.Current.Position = new Vector2( MathX.Clamp( Position.x, -DIST, DIST ), MathX.Clamp( Position.y, -DIST, DIST ) );
+			Camera2D.Current.TargetPosition = Position;
 		}
 
 		//Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
