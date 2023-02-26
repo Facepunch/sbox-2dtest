@@ -23,7 +23,7 @@ public class MovespeedStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.MoveSpeed), GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, StatType.MoveSpeed, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

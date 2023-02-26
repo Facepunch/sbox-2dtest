@@ -23,7 +23,7 @@ public class LowHealthDamageStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.LowHealthDamageMultiplier), GetAddForLevel(Level), ModifierType.Add);
+		Player.Modify(this, StatType.LowHealthDamageMultiplier, GetAddForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

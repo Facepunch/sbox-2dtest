@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(4, 0, 1f)]
 public class NumProjectileStatus : Status
 {
 	public NumProjectileStatus()
@@ -23,8 +23,8 @@ public class NumProjectileStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.NumProjectiles), GetNumProjectilesForLevel(Level), ModifierType.Add);
-		Player.Modify(this, nameof(Player.AttackSpeed), GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, StatType.NumProjectiles, GetNumProjectilesForLevel(Level), ModifierType.Add);
+		Player.Modify(this, StatType.AttackSpeed, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

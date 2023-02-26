@@ -23,7 +23,7 @@ public class CritChanceStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.CritChance), GetAddForLevel(Level), ModifierType.Add);
+		Player.Modify(this, StatType.CritChance, GetAddForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

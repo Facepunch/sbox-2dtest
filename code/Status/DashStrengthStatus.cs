@@ -23,8 +23,8 @@ public class DashStrengthStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.DashStrength), GetMultForLevel(Level), ModifierType.Mult);
-		Player.Modify(this, nameof(Player.DashInvulnTime), GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, StatType.DashStrength, GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, StatType.DashInvulnTime, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

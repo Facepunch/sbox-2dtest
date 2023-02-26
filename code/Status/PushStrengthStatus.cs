@@ -23,7 +23,7 @@ public class PushStrengthStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.PushStrength), GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, StatType.PushStrength, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

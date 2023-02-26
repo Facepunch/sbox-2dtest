@@ -23,7 +23,7 @@ public class FreezeBurnStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.FreezeFireDamageMultiplier), GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, StatType.FreezeFireDamageMultiplier, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

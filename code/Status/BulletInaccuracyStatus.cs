@@ -23,7 +23,7 @@ public class BulletInaccuracyStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.BulletInaccuracy), GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, StatType.BulletInaccuracy, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

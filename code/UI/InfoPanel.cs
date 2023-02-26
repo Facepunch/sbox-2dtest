@@ -88,7 +88,7 @@ public class DashContainer : Panel
 		if (player == null) 
 			return;
 
-		int numDashes = (int)MathF.Round(player.NumDashes);
+		int numDashes = (int)MathF.Round(player.Stats[StatType.NumDashes]);
 		if (_icons.Count != numDashes)
 			Refresh(numDashes);
 

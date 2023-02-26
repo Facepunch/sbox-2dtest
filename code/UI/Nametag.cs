@@ -51,7 +51,7 @@ public partial class Nametag : Panel
         HpBarOverlay.Style.Width = BAR_WIDTH;
         HpBarDelta.Style.Width = BAR_WIDTH;
 
-        var player_health_ratio = Math.Clamp(Player.Health / Player.MaxHp, 0f, 1f);
+        var player_health_ratio = Math.Clamp(Player.Health / Player.Stats[StatType.MaxHp], 0f, 1f);
 
         var tr = new PanelTransform();
         tr.AddScale(new Vector3(player_health_ratio, 1f, 1f));

@@ -125,7 +125,7 @@ public partial class Bullet : Thing
 					if (!enemy.HasEnemyStatus<BurningEnemyStatus>())
 						Game.PlaySfxNearby("burn", Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 1f, maxDist: 5f);
 
-					enemy.Burn(Shooter, Shooter.FireDamage * Shooter.GetDamageMultiplier(), Shooter.FireLifetime, Shooter.FireSpreadChance);
+					enemy.Burn(Shooter, Shooter.Stats[StatType.FireDamage] * Shooter.GetDamageMultiplier(), Shooter.Stats[StatType.FireLifetime], Shooter.Stats[StatType.FireSpreadChance]);
 				}
 
 				if (FreezeChance > 0f && Sandbox.Game.Random.Float(0f, 1f) < FreezeChance)

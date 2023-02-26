@@ -23,7 +23,7 @@ public class MaxHealthStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.MaxHp), GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, StatType.MaxHp, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

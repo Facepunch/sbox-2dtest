@@ -122,7 +122,7 @@ public partial class Runner : Enemy
         {
             if(!player.IsDead)
             {
-                Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * player.PushStrength * (1f + player.TempWeight) * dt;
+                Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * player.Stats[StatType.PushStrength] * (1f + player.TempWeight) * dt;
 
                 if (IsAttacking && _damageTime > (DAMAGE_TIME / TimeScale))
                 {
@@ -130,7 +130,7 @@ public partial class Runner : Enemy
                     
                     if (damageDealt > 0f)
                     {
-                        Game.PlaySfxNearby("runner.bite", Position, pitch: Utils.Map(player.Health, player.MaxHp, 0f, 0.9f, 0.95f, EasingType.QuadIn), volume: 1f, maxDist: 5.5f);
+                        Game.PlaySfxNearby("runner.bite", Position, pitch: Utils.Map(player.Health, player.Stats[StatType.MaxHp], 0f, 0.9f, 0.95f, EasingType.QuadIn), volume: 1f, maxDist: 5.5f);
                         OnDamagePlayer(player, damageDealt);
                         //player.Velocity += (Position - player.Position).Normal * 1.5f;
                     }

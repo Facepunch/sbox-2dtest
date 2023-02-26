@@ -104,7 +104,7 @@ public partial class Fire : Thing
             {
 				if (!enemy.HasEnemyStatus<BurningEnemyStatus>())
                 {
-					enemy.Burn(Shooter, Shooter.FireDamage * Shooter.GetDamageMultiplier(), Shooter.FireLifetime, Shooter.FireSpreadChance);
+					enemy.Burn(Shooter, Shooter.Stats[StatType.FireDamage] * Shooter.GetDamageMultiplier(), Shooter.Stats[StatType.FireLifetime], Shooter.Stats[StatType.FireSpreadChance]);
 					Game.PlaySfxNearby("burn", Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.15f), volume: 1f, maxDist: 5f);
 				}
 			}
@@ -113,7 +113,7 @@ public partial class Fire : Thing
 		{
 			if (_sinceDamageTime > DAMAGE_INTERVAL)
 			{
-				player.Damage(Shooter.FireDamage * Shooter.GetDamageMultiplier());
+				player.Damage(Shooter.Stats[StatType.FireDamage] * Shooter.GetDamageMultiplier());
 				_sinceDamageTime = 0f;
 			}
 		}

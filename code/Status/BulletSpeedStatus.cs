@@ -23,7 +23,7 @@ public class BulletSpeedStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.BulletSpeed), GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, StatType.BulletSpeed, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

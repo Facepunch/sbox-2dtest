@@ -23,7 +23,7 @@ public class FreezeLifetimeStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.FreezeLifetime), GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, StatType.FreezeLifetime, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

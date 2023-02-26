@@ -23,7 +23,7 @@ public class FireSpreadStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.FireSpreadChance), GetAddForLevel(Level), ModifierType.Add);
+		Player.Modify(this, StatType.FireSpreadChance, GetAddForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

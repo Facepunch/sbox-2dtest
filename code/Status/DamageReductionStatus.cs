@@ -23,7 +23,7 @@ public class DamageReductionStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.DamageReductionPercent), GetAddForLevel(Level), ModifierType.Add);
+		Player.Modify(this, StatType.DamageReductionPercent, GetAddForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

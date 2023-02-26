@@ -23,7 +23,7 @@ public class CritMultiplierStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.CritMultiplier), GetAddForLevel(Level), ModifierType.Add);
+		Player.Modify(this, StatType.CritMultiplier, GetAddForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

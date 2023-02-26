@@ -86,7 +86,7 @@ public partial class Crate : Enemy
         {
             if(!player.IsDead)
             {
-                Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * player.PushStrength * (1f + player.TempWeight) * dt;
+                Velocity += (Position - player.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * player.Stats[StatType.PushStrength] * (1f + player.TempWeight) * dt;
             }
         }
     }
@@ -104,7 +104,7 @@ public partial class Crate : Enemy
                 coin.Velocity = (coin.Position - Position) * Sandbox.Game.Random.Float(2f, 6f);
         }
 
-        var health_pack_chance = player != null ? Utils.Map(player.Health, player.MaxHp, 0f, 0.2f, 0.75f) : 0.1f;
+        var health_pack_chance = player != null ? Utils.Map(player.Health, player.Stats[StatType.MaxHp], 0f, 0.2f, 0.75f) : 0.1f;
         if (Sandbox.Game.Random.Float(0f, 1f) < health_pack_chance)
         {
             var healthPack = new HealthPack() { Position = Position + new Vector2(Sandbox.Game.Random.Float(-RAND_POS, RAND_POS), Sandbox.Game.Random.Float(-RAND_POS, RAND_POS)) };

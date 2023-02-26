@@ -23,7 +23,7 @@ public class NumDashesStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, nameof(Player.NumDashes), GetNumDashesForLevel(Level), ModifierType.Add);
+		Player.Modify(this, StatType.NumDashes, GetNumDashesForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)
