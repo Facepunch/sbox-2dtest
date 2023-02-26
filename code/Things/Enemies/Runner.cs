@@ -75,7 +75,7 @@ public partial class Runner : Enemy
 
         if (HasTarget)
         {
-            Velocity += (closestPlayer.Position - Position).Normal * dt;
+            Velocity += (closestPlayer.Position - Position).Normal * dt * (IsFeared ? -1f : 1f);
         }
         else
         {

@@ -96,7 +96,7 @@ public partial class Exploder : Enemy
         if (closestPlayer == null)
             return;
 
-        Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
+        Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt * (IsFeared ? -1f : 1f);
 
         if(!IsExploding)
         {

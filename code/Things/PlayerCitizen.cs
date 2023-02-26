@@ -28,7 +28,7 @@ public enum StatType {
 	AttackTime, AttackSpeed, ReloadTime, ReloadSpeed, MaxAmmoCount, BulletDamage, BulletForce, Recoil, MoveSpeed, NumProjectiles, BulletSpread, BulletInaccuracy, BulletSpeed, BulletLifetime,
     BulletNumPiercing, CritChance, CritMultiplier, LowHealthDamageMultiplier, NumUpgradeChoices, HealthRegen, DamageReductionPercent, PushStrength, CoinAttractRange, CoinAttractStrength, Luck, MaxHp,
     NumDashes, DashInvulnTime, DashCooldown, DashProgress, DashStrength, ThornsPercent, ShootFireIgniteChance, FireDamage, FireLifetime, FireSpreadChance, ShootFreezeChance, FreezeLifetime,
-    FreezeTimeScale, FreezeOnMeleeChance, FreezeFireDamageMultiplier, LastAmmoDamageMultiplier, 
+    FreezeTimeScale, FreezeOnMeleeChance, FreezeFireDamageMultiplier, LastAmmoDamageMultiplier, FearLifetime, FearDamageMultiplier, FearOnMeleeChance,
 }
 
 public partial class PlayerCitizen : Thing
@@ -172,6 +172,9 @@ public partial class PlayerCitizen : Thing
         Stats[StatType.FreezeTimeScale] = 0.6f;
         Stats[StatType.FreezeOnMeleeChance] = 0f;
         Stats[StatType.FreezeFireDamageMultiplier] = 1f;
+		Stats[StatType.FearLifetime] = 4f;
+        Stats[StatType.FearDamageMultiplier] = 1f;
+        Stats[StatType.FearOnMeleeChance] = 0f;
 
         Stats[StatType.CoinAttractRange] = 1.7f;
         Stats[StatType.CoinAttractStrength] = 3.1f;
@@ -759,7 +762,9 @@ public partial class PlayerCitizen : Thing
 		if (IsDead)
 			return;
 
-		if (other is Enemy enemy && !enemy.IsDying)
+        ForEachStatus(status => status.Colliding(other, percent, dt));
+
+        if (other is Enemy enemy && !enemy.IsDying)
 		{
 			var spawnFactor = Utils.Map(enemy.ElapsedTime, 0f, enemy.SpawnTime, 0f, 1f, EasingType.QuadIn);
 			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * (1f + other.TempWeight) * spawnFactor * dt;

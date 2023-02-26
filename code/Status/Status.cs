@@ -60,7 +60,8 @@ public partial class Status : BaseNetworkable
 		return "...";
 	}
 
-	public virtual void OnDashStarted() {}
+	public virtual void Colliding(Thing other, float percent, float dt) { }
+    public virtual void OnDashStarted() {}
 	public virtual void OnDashFinished() { }
 	public virtual void OnDashRecharged() { }
 	public virtual void OnCritical(Enemy enemy) {}

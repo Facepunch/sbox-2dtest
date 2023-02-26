@@ -56,11 +56,12 @@ public abstract partial class Enemy : Thing
 	public Dictionary<TypeDescription, EnemyStatus> EnemyStatuses = new Dictionary<TypeDescription, EnemyStatus>();
 
 	private BurningVfx _burningVfx;
-
 	private FrozenVfx _frozenVfx;
-	public bool IsFrozen { get; set; }
+    private FearVfx _fearVfx;
+    public bool IsFrozen { get; set; }
+    public bool IsFeared { get; set; }
 
-	private float _animSpeed;
+    private float _animSpeed;
 	public float AnimSpeed { get { return _animSpeed; } set { _animSpeed = value; AnimationSpeed = _animSpeed * _animSpeedModifier; } }
 	private float _animSpeedModifier;
 	public float AnimSpeedModifier { get { return _animSpeedModifier; } set { _animSpeedModifier = value; AnimationSpeed = _animSpeed * _animSpeedModifier; } }
@@ -250,7 +251,7 @@ public abstract partial class Enemy : Thing
 			AnimSpeed = Utils.Map(dist_sqr, attack_dist_sqr, 0f, 1f, 4f, EasingType.Linear);
 
 			if(!IsFrozen && CanTurn)
-				Scale = new Vector2(1f * targetPlayer.Position.x < Position.x ? 1f : -1f, 1f) * ScaleFactor;
+				Scale = new Vector2((IsFeared ? -1f : 1f) * (targetPlayer.Position.x < Position.x ? 1f : -1f), 1f) * ScaleFactor;
 		}
 	}
 
@@ -325,6 +326,9 @@ public abstract partial class Enemy : Thing
 	{
 		if (IsDying)
 			return;
+
+		if (IsFeared)
+			damage *= player.Stats[StatType.FearDamageMultiplier];
 
 		Health -= damage;
 		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(1.25f, 2.55f), Sandbox.Game.Random.Float(4f, 8f)) * 0.1f, damage, isCrit ? DamageType.Crit : DamageType.Normal);
@@ -542,7 +546,23 @@ public abstract partial class Enemy : Thing
 		}
 	}
 
-	public void Burn(PlayerCitizen player, float damage, float lifetime, float spreadChance)
+    [ClientRpc]
+    public void CreateFearVfx()
+    {
+        _fearVfx = new FearVfx(this);
+    }
+
+    [ClientRpc]
+    public void RemoveFearVfx()
+    {
+        if (_fearVfx != null)
+        {
+            _fearVfx.Delete();
+            _fearVfx = null;
+        }
+    }
+
+    public void Burn(PlayerCitizen player, float damage, float lifetime, float spreadChance)
     {
         var burning = AddEnemyStatus<BurningEnemyStatus>();
         burning.Player = player;
@@ -562,7 +582,17 @@ public abstract partial class Enemy : Thing
 		frozen.SetTimeScale(player.Stats[StatType.FreezeTimeScale]);
 	}
 
-	protected virtual void OnDamagePlayer(PlayerCitizen player, float damage)
+    public void Fear(PlayerCitizen player)
+    {
+        if (IsDying)
+            return;
+
+        var fear = AddEnemyStatus<FearEnemyStatus>();
+        fear.Player = player;
+        fear.SetLifetime(player.Stats[StatType.FreezeLifetime]);
+    }
+
+    protected virtual void OnDamagePlayer(PlayerCitizen player, float damage)
 	{
 		if (player.Stats[StatType.ThornsPercent] > 0f)
 			Damage(damage * player.Stats[StatType.ThornsPercent] * player.GetDamageMultiplier(), player, false);
@@ -574,5 +604,13 @@ public abstract partial class Enemy : Thing
 
 			Freeze(player);
 		}
-	}
+
+        if (Sandbox.Game.Random.Float(0f, 1f) < player.Stats[StatType.FearOnMeleeChance])
+        {
+            if (!HasEnemyStatus<FearEnemyStatus>())
+				Game.PlaySfxNearby("fear", Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 0.6f, maxDist: 5f);
+
+            Fear(player);
+        }
+    }
 }

@@ -1,0 +1,13 @@
+{
+  "FrameRate": 2,
+  "Sequences": [
+    {
+      "PlaybackRate": 2.15,
+      "Repetitions": 1,
+      "LastFrameIndex": 4,
+      "TotalFrameCount": 5
+    }
+  ],
+  "Looping": true,
+  "Duration": 1.1627907
+}

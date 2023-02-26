@@ -122,7 +122,7 @@ public partial class Charger : Enemy
         }
         else
         {
-            Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt;
+            Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt * (IsFeared ? -1f : 1f);
 
             float speed = 0.75f * (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
             Position += Velocity * dt * speed;
