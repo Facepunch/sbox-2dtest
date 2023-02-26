@@ -279,10 +279,8 @@
 	[
 		{
 			_class = "C_OP_BasicMovement"
-			m_Gravity = [ 0.0, 50.0, 0.0 ]
-			m_fDrag = 0.999
-			m_flOpStartFadeOutTime = 0.1
-			m_flOpEndFadeOutTime = 0.4
+			m_Gravity = [ 0.0, 40.0, 0.0 ]
+			m_flOpEndFadeOutTime = 0.1
 		},
 		{
 			_class = "C_OP_SpinUpdate"
@@ -309,14 +307,15 @@
 		{
 			_class = "C_OP_VectorNoise"
 			m_nFieldOutput = "0"
-			m_vecOutputMin = [ -0.09, -0.09, -0.09 ]
-			m_vecOutputMax = [ 0.09, 0.09, 0.09 ]
+			m_vecOutputMin = [ -0.4, -0.4, -0.4 ]
+			m_vecOutputMax = [ 0.4, 0.4, 0.4 ]
 			m_bAdditive = true
 			m_fl4NoiseScale = 3.0
+			m_flOpEndFadeOutTime = 0.1
 		},
 		{
 			_class = "C_OP_BasicMovement"
-			m_Gravity = [ 0.0, -10.0, 0.0 ]
+			m_Gravity = [ 0.0, -5.0, 0.0 ]
 			m_fDrag = 0.02
 			m_flOpStartFadeInTime = 0.1
 			m_flOpEndFadeInTime = 0.5
