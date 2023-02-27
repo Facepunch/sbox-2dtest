@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(8, 0, 1f)]
 public class FireIgniteStatus : Status
 {
 	public FireIgniteStatus()

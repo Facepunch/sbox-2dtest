@@ -44,6 +44,6 @@ public class DashFearStatus : Status
 				Player.Game.PlaySfxNearby("fear", enemy.Position + (enemy.Position - Player.Position).Normal * 2f, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 0.6f, maxDist: 5f);
 
             enemy.Fear(Player);
-		}
+        }
     }
 }

@@ -116,6 +116,9 @@ public partial class BurningVfx : Sprite
 	[Event.Tick.Client]
 	public void ClientTick()
 	{
+        if (!_enemy.IsValid)
+            return;
+        
 		Position = _enemy.Position + new Vector2(0f, 0.4f);
 
         bool flip = Utils.FastSin(Time.Now * 4f) < 0f;

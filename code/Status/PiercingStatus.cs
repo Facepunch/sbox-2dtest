@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(4, 0, 1f)]
 public class PiercingStatus : Status
 {
 	public PiercingStatus()

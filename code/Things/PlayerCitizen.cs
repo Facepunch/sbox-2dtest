@@ -958,7 +958,7 @@ public partial class PlayerCitizen : Thing
 
 	public int GetExperienceReqForLevel(int level)
 	{
-		return (int)MathF.Round(Utils.Map(level, 1, 120, 3f, 900f, EasingType.SineIn));
+		return (int)MathF.Round(Utils.Map(level, 1, 120, 3f, 600f, EasingType.SineIn));
 	}
 
 	public void Flash(float time)

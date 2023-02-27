@@ -38,11 +38,11 @@ public class HealthRegenStatus : Status
 
 	public float GetAmountForLevel(int level)
     {
-		return 0.5f * level;
+		return 0.25f * level;
     }
 
 	public string GetPrintAmountForLevel(int level)
 	{
-		return GetAmountForLevel(level).ToString("#.#");
+		return GetAmountForLevel(level).ToString("#.##");
 	}
 }

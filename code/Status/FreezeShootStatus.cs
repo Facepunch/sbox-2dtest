@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(6, 0, 1f)]
+[Status(4, 0, 1f)]
 public class FreezeShootStatus : Status
 {
 	public FreezeShootStatus()
@@ -38,11 +38,11 @@ public class FreezeShootStatus : Status
 
 	public float GetAddForLevel(int level)
     {
-		return 0.15f * level + (level == 6 ? 0.1f : 0f);
+		return 0.1f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 15 * level + (level == 6 ? 10 : 0);
+		return 10 * level;
 	}
 }

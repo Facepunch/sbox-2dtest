@@ -102,6 +102,9 @@ public partial class FrozenVfx : Sprite
 	[Event.Tick.Client]
 	public void ClientTick()
 	{
+		if (!_enemy.IsValid)
+			return;
+
 		Position = _enemy.Position + new Vector2(0f, 0.4f);
 		Depth = _enemy.Depth + 2f;
 		Opacity = (0.8f + Utils.FastSin(Time.Now * 20f) * 0.2f) * Utils.Map(_enemy.DeathProgress, 0f, 1f, 1f, 0f);

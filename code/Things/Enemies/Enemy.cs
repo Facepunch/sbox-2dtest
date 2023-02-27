@@ -327,9 +327,14 @@ public abstract partial class Enemy : Thing
 		if (IsDying)
 			return;
 
-		if (IsFeared)
-			damage *= player.Stats[StatType.FearDamageMultiplier];
+		if(player != null)
+		{
+            player.ForEachStatus(status => status.OnHit(this, isCrit));
 
+            if (IsFeared)
+                damage *= player.Stats[StatType.FearDamageMultiplier];
+        }
+		
 		Health -= damage;
 		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(1.25f, 2.55f), Sandbox.Game.Random.Float(4f, 8f)) * 0.1f, damage, isCrit ? DamageType.Crit : DamageType.Normal);
 
@@ -569,7 +574,9 @@ public abstract partial class Enemy : Thing
 		burning.Damage = damage;
 		burning.Lifetime = lifetime;
 		burning.SpreadChance = spreadChance;
-	}
+
+        player.ForEachStatus(status => status.OnBurn(this));
+    }
 
 	public void Freeze(PlayerCitizen player)
 	{
@@ -580,7 +587,9 @@ public abstract partial class Enemy : Thing
 		frozen.Player = player;
 		frozen.SetLifetime(player.Stats[StatType.FreezeLifetime]);
 		frozen.SetTimeScale(player.Stats[StatType.FreezeTimeScale]);
-	}
+
+        player.ForEachStatus(status => status.OnFreeze(this));
+    }
 
     public void Fear(PlayerCitizen player)
     {
@@ -589,10 +598,12 @@ public abstract partial class Enemy : Thing
 
         var fear = AddEnemyStatus<FearEnemyStatus>();
         fear.Player = player;
-        fear.SetLifetime(player.Stats[StatType.FreezeLifetime]);
+		fear.SetLifetime(player.Stats[StatType.FreezeLifetime]);
+
+        player.ForEachStatus(status => status.OnFear(this));
     }
 
-    protected virtual void OnDamagePlayer(PlayerCitizen player, float damage)
+	protected virtual void OnDamagePlayer(PlayerCitizen player, float damage)
 	{
 		if (player.Stats[StatType.ThornsPercent] > 0f)
 			Damage(damage * player.Stats[StatType.ThornsPercent] * player.GetDamageMultiplier(), player, false);

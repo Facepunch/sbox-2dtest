@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(5, 0, 1f, typeof(FreezeShootStatus), typeof(FreezeArmorStatus))]
+[Status(3, 0, 1f, typeof(FreezeShootStatus), typeof(FreezeArmorStatus))]
 public class FreezeStrengthStatus : Status
 {
 	public FreezeStrengthStatus()
@@ -38,11 +38,11 @@ public class FreezeStrengthStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f - (0.20f * level);
+		return 1f - (0.33f * level);
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 20 * level;
+		return 33 * level;
 	}
 }
