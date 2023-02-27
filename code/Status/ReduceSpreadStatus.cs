@@ -23,7 +23,7 @@ public class ReduceSpreadStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.BulletSpread, GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, PlayerStat.BulletSpread, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

@@ -23,7 +23,7 @@ public class MaxAmmoStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.MaxAmmoCount, GetAdditionalAmmoCountForLevel(Level), ModifierType.Add);
+		Player.Modify(this, PlayerStat.MaxAmmoCount, GetAdditionalAmmoCountForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

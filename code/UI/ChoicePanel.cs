@@ -72,7 +72,7 @@ public class ChoiceModal : Panel
 
 		//List<string> statusNames = new List<string>() { "CritChanceStatus", "CritMultiplierStatus", "ReloadSpeedStatus" };
 
-		int numChoices = Math.Clamp((int)MathF.Round(player.Stats[StatType.NumUpgradeChoices]), 1, 6);
+		int numChoices = Math.Clamp((int)MathF.Round(player.Stats[PlayerStat.NumUpgradeChoices]), 1, 6);
 		List<TypeDescription> types = StatusManager.GetRandomStatuses(player, numChoices);
 
 		Style.Width = numChoices * 310f;

@@ -23,7 +23,7 @@ public class FearArmorStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.FearOnMeleeChance, GetAddForLevel(Level), ModifierType.Add);
+		Player.Modify(this, PlayerStat.FearOnMeleeChance, GetAddForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

@@ -23,7 +23,7 @@ public class DamageStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.BulletDamage, GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, PlayerStat.BulletDamage, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

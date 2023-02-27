@@ -29,6 +29,9 @@ public class DeathPanel : Panel
 
 	public void Victory()
     {
+        //TimeSpan t = TimeSpan.FromSeconds(MyGame.Current.ElapsedTime.Relative);
+        //string timeText = t.TotalSeconds > 3600 ? t.ToString(@"hh\:mm\:ss") : t.ToString(@"mm\:ss");
+        
 		DeathModal.TextLabel.Text = "Victory!";
     }
 }

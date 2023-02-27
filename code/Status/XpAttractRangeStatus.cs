@@ -23,7 +23,7 @@ public class XpAttractRangeStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.CoinAttractRange, GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, PlayerStat.CoinAttractRange, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

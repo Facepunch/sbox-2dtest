@@ -23,7 +23,7 @@ public class DashCooldownStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.DashCooldown, GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, PlayerStat.DashCooldown, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

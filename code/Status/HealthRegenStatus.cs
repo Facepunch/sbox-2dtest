@@ -23,7 +23,7 @@ public class HealthRegenStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.HealthRegen, GetAmountForLevel(Level), ModifierType.Add);
+		Player.Modify(this, PlayerStat.HealthRegen, GetAmountForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

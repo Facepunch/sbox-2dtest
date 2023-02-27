@@ -56,6 +56,8 @@ public partial class MyGame : GameManager
 	public List<Sprite> _clouds;
 	public List<Sprite> _explosions;
 
+	public bool HasSpawnedBoss { get; private set; }
+
 	public MyGame()
 	{
 		BOUNDS_MIN = new Vector2(-16f, -12f);
@@ -63,7 +65,7 @@ public partial class MyGame : GameManager
 		BOUNDS_MIN_SPAWN = new Vector2(-15.5f, -11.5f);
 		BOUNDS_MAX_SPAWN = new Vector2(15.5f, 11.5f);
 
-		if ( Sandbox.Game.IsServer )
+        if ( Sandbox.Game.IsServer )
 		{
 			for (float x = BOUNDS_MIN.x; x < BOUNDS_MAX.x; x += GRID_SIZE)
 			{
@@ -132,6 +134,12 @@ public partial class MyGame : GameManager
 		//DebugOverlay.Line(BOUNDS_MAX, new Vector2(BOUNDS_MIN.x, BOUNDS_MAX.y), 0f, false);
 
 		HandleEnemySpawn();
+
+		if(!HasSpawnedBoss && !IsGameOver && ElapsedTime > 15f * 60f - 1f)
+		{
+			SpawnBoss(new Vector2(0f, 0f));
+			HasSpawnedBoss = true;
+        }
 	}
 
 	void HandleEnemySpawn()
@@ -439,8 +447,9 @@ public partial class MyGame : GameManager
 		_enemySpawnTime = 0f;
 		ElapsedTime = 0f;
 		IsGameOver = false;
+		HasSpawnedBoss = false;
 
-		SpawnStartingThings();
+        SpawnStartingThings();
 
 		RestartClient();
 	}
@@ -500,7 +509,7 @@ public partial class MyGame : GameManager
 	[ClientRpc]
 	public void VictoryClient()
 	{
-		Hud.GameOver();
+		Hud.Victory();
 	}
 
 	public BloodSplatter SpawnBloodSplatter(Vector2 pos)

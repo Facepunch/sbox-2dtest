@@ -42,7 +42,7 @@ public class DashFireStatus : Status
 			{
 				Position = Player.Position,
 				Shooter = Player,
-				Lifetime = Player.Stats[StatType.FireLifetime],
+				Lifetime = Player.Stats[PlayerStat.FireLifetime],
 				Scale = new Vector2(1f, 1f),
 				Radius = 0.3f,
 			};

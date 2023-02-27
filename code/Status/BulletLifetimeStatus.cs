@@ -23,7 +23,7 @@ public class BulletLifetimeStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.BulletLifetime, GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, PlayerStat.BulletLifetime, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

@@ -23,7 +23,7 @@ public class FreezeShootStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.ShootFreezeChance, GetAddForLevel(Level), ModifierType.Add);
+		Player.Modify(this, PlayerStat.ShootFreezeChance, GetAddForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)

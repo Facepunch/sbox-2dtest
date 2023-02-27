@@ -23,8 +23,8 @@ public class NumProjectileStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.NumProjectiles, GetNumProjectilesForLevel(Level), ModifierType.Add);
-		Player.Modify(this, StatType.AttackSpeed, GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, PlayerStat.NumProjectiles, GetNumProjectilesForLevel(Level), ModifierType.Add);
+		Player.Modify(this, PlayerStat.AttackSpeed, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

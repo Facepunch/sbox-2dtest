@@ -23,7 +23,7 @@ public class ThornsStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.ThornsPercent, GetAddForLevel(Level), ModifierType.Add);
+		Player.Modify(this, PlayerStat.ThornsPercent, GetAddForLevel(Level), ModifierType.Add);
 	}
 
 	public override string GetDescription(int newLevel)
@@ -38,11 +38,11 @@ public class ThornsStatus : Status
 
 	public float GetAddForLevel(int level)
     {
-		return 0.25f * level + (level == 9 ? 0.25f : 0f);
+		return 0.30f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 25 * level + (level == 9 ? 25 : 0);
+		return 30 * level;
 	}
 }

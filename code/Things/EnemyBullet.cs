@@ -30,7 +30,7 @@ public partial class EnemyBullet : Thing
 
 			Scale = new Vector2(0.35f, 0.35f);
 			SpawnTime = 0f;
-			Damage = 8f;
+			Damage = 12f;
 			Radius = 0.066f;
 			BasePivotY = -1.1f;
 			HeightZ = 0f;

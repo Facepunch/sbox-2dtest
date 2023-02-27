@@ -23,7 +23,7 @@ public class FreezeStrengthStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, StatType.FreezeTimeScale, GetMultForLevel(Level), ModifierType.Mult);
+		Player.Modify(this, PlayerStat.FreezeTimeScale, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)

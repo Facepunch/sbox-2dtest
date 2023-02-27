@@ -332,7 +332,7 @@ public abstract partial class Enemy : Thing
             player.ForEachStatus(status => status.OnHit(this, isCrit));
 
             if (IsFeared)
-                damage *= player.Stats[StatType.FearDamageMultiplier];
+                damage *= player.Stats[PlayerStat.FearDamageMultiplier];
         }
 		
 		Health -= damage;
@@ -352,7 +352,7 @@ public abstract partial class Enemy : Thing
 	public virtual void DamageFire(float damage, PlayerCitizen player)
 	{
 		if (IsFrozen)
-			damage *= player.Stats[StatType.FreezeFireDamageMultiplier];
+			damage *= player.Stats[PlayerStat.FreezeFireDamageMultiplier];
 
 		Damage(damage, player);
 	}
@@ -381,7 +381,7 @@ public abstract partial class Enemy : Thing
 
 	public virtual void DropLoot(PlayerCitizen player)
 	{
-		var coin_chance = player != null ? Utils.Map(player.Stats[StatType.Luck], 0f, 10f, 0.5f, 1f) : 0.5f;
+		var coin_chance = player != null ? Utils.Map(player.Stats[PlayerStat.Luck], 0f, 10f, 0.5f, 1f) : 0.5f;
 		if (Sandbox.Game.Random.Float(0f, 1f) < coin_chance)
 		{
 			Game.SpawnCoin(Position, Sandbox.Game.Random.Int(CoinValueMin, CoinValueMax));
@@ -390,7 +390,7 @@ public abstract partial class Enemy : Thing
 		{
 			var lowest_hp_percent = 1f;
 			foreach (PlayerCitizen p in Game.AlivePlayers)
-				lowest_hp_percent = MathF.Min(lowest_hp_percent, p.Health / p.Stats[StatType.MaxHp]);
+				lowest_hp_percent = MathF.Min(lowest_hp_percent, p.Health / p.Stats[PlayerStat.MaxHp]);
 
 			var health_pack_chance = Utils.Map(lowest_hp_percent, 1f, 0f, 0f, 0.1f);
 			if (Sandbox.Game.Random.Float(0f, 1f) < health_pack_chance)
@@ -585,8 +585,8 @@ public abstract partial class Enemy : Thing
 
 		var frozen = AddEnemyStatus<FrozenEnemyStatus>();
 		frozen.Player = player;
-		frozen.SetLifetime(player.Stats[StatType.FreezeLifetime]);
-		frozen.SetTimeScale(player.Stats[StatType.FreezeTimeScale]);
+		frozen.SetLifetime(player.Stats[PlayerStat.FreezeLifetime]);
+		frozen.SetTimeScale(player.Stats[PlayerStat.FreezeTimeScale]);
 
         player.ForEachStatus(status => status.OnFreeze(this));
     }
@@ -598,17 +598,17 @@ public abstract partial class Enemy : Thing
 
         var fear = AddEnemyStatus<FearEnemyStatus>();
         fear.Player = player;
-		fear.SetLifetime(player.Stats[StatType.FreezeLifetime]);
+		fear.SetLifetime(player.Stats[PlayerStat.FreezeLifetime]);
 
         player.ForEachStatus(status => status.OnFear(this));
     }
 
 	protected virtual void OnDamagePlayer(PlayerCitizen player, float damage)
 	{
-		if (player.Stats[StatType.ThornsPercent] > 0f)
-			Damage(damage * player.Stats[StatType.ThornsPercent] * player.GetDamageMultiplier(), player, false);
+		if (player.Stats[PlayerStat.ThornsPercent] > 0f)
+			Damage(damage * player.Stats[PlayerStat.ThornsPercent] * player.GetDamageMultiplier(), player, false);
 
-		if (Sandbox.Game.Random.Float(0f, 1f) < player.Stats[StatType.FreezeOnMeleeChance])
+		if (Sandbox.Game.Random.Float(0f, 1f) < player.Stats[PlayerStat.FreezeOnMeleeChance])
 		{
 			if (!HasEnemyStatus<FrozenEnemyStatus>())
 				Game.PlaySfxNearby("frozen", Position, pitch: Sandbox.Game.Random.Float(1.1f, 1.2f), volume: 1.5f, maxDist: 5f);
@@ -616,7 +616,7 @@ public abstract partial class Enemy : Thing
 			Freeze(player);
 		}
 
-        if (Sandbox.Game.Random.Float(0f, 1f) < player.Stats[StatType.FearOnMeleeChance])
+        if (Sandbox.Game.Random.Float(0f, 1f) < player.Stats[PlayerStat.FearOnMeleeChance])
         {
             if (!HasEnemyStatus<FearEnemyStatus>())
 				Game.PlaySfxNearby("fear", Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 0.6f, maxDist: 5f);

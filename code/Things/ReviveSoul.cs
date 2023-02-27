@@ -83,10 +83,10 @@ public partial class ReviveSoul : Thing
 			foreach (PlayerCitizen player in Game.DeadPlayers)
 			{
 				var dist_sqr = (Position - player.Position).LengthSquared;
-				var req_dist_sqr = MathF.Pow(player.Stats[StatType.CoinAttractRange], 2f);
+				var req_dist_sqr = MathF.Pow(player.Stats[PlayerStat.CoinAttractRange], 2f);
 				if (dist_sqr < req_dist_sqr)
 				{
-					Velocity += (player.Position - Position).Normal * Utils.Map(dist_sqr, req_dist_sqr, 0f, 0f, 1f, EasingType.Linear) * player.Stats[StatType.CoinAttractStrength] * dt;
+					Velocity += (player.Position - Position).Normal * Utils.Map(dist_sqr, req_dist_sqr, 0f, 0f, 1f, EasingType.Linear) * player.Stats[PlayerStat.CoinAttractStrength] * dt;
 				}
 			}
 		}
@@ -112,7 +112,7 @@ public partial class ReviveSoul : Thing
 			if (player.IsDead && SpawnTime > 0.1f)
 			{
 				player.Revive();
-				Game.PlaySfxNearby("heal", Position, pitch: Utils.Map(player.Health / player.Stats[StatType.MaxHp], 0f, 1f, 1.5f, 1f), volume: 1.5f, maxDist: 5f);
+				Game.PlaySfxNearby("heal", Position, pitch: Utils.Map(player.Health / player.Stats[PlayerStat.MaxHp], 0f, 1f, 1.5f, 1f), volume: 1.5f, maxDist: 5f);
 				Remove();
 			}
 		}
