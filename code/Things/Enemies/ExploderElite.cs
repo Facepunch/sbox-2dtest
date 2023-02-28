@@ -8,7 +8,7 @@ using Sandbox;
 
 namespace Test2D;
 
-public partial class Exploder : Enemy
+public partial class ExploderElite : Enemy
 {
     private TimeSince _damageTime;
     private const float DAMAGE_TIME = 0.75f;
@@ -29,7 +29,7 @@ public partial class Exploder : Enemy
 
         if (Sandbox.Game.IsServer)
         {
-            SpriteTexture = SpriteTexture.Atlas("textures/sprites/exploder.png", 6, 6);
+            SpriteTexture = SpriteTexture.Atlas("textures/sprites/exploder_elite.png", 6, 6);
             //AnimationPath = "textures/sprites/zombie_spawn.frames";
             //AnimIdlePath = "textures/sprites/zombie_walk.frames";
             AnimSpeed = 2f;
@@ -40,25 +40,25 @@ public partial class Exploder : Enemy
             Deceleration = 1.87f;
             DecelerationAttacking = 1.53f;
 
-            Radius = 0.24f;
-            Health = 40f;
+            Radius = 0.275f;
+            Health = 75f;
             MaxHealth = Health;
-            DamageToPlayer = 12f;
+            DamageToPlayer = 16f;
             DeathTime = 0.2f;
 
-            ScaleFactor = 1.1f;
+            ScaleFactor = 1.2f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 1.05f;
+            ShadowScale = 1.08f;
             _damageTime = DAMAGE_TIME;
 
             AnimationPath = AnimSpawnPath;
 
-            CoinValueMin = 1;
-            CoinValueMax = 2;
+            CoinValueMin = 2;
+            CoinValueMax = 6;
         }
     }
 
@@ -81,7 +81,7 @@ public partial class Exploder : Enemy
                 _hasStartedLooping = true;
             }
 
-            if (!_hasExploded && _explodeStartTime > 1.5f)
+            if (!_hasExploded && _explodeStartTime > 3.5f)
                 Explode();
         }
 
@@ -98,9 +98,13 @@ public partial class Exploder : Enemy
 
         Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt * (IsFeared ? -1f : 1f);
 
-        if(!IsExploding)
+        if(IsExploding)
         {
-            float speed = (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.3f : 0.2f);
+            Position += Velocity * dt * 4f;
+        }
+        else
+        {
+            float speed = IsAttacking ? 2f : 1.3f;
             Position += Velocity * dt * speed;
         }
     }
@@ -151,7 +155,6 @@ public partial class Exploder : Enemy
         _explodeStartTime = 0f;
         AnimationPath = "textures/sprites/exploder_explode_start.frames";
         CanAttack = false;
-        CanTurn = false;
     }
 
     public void Explode()

@@ -17,7 +17,7 @@ public partial class Coin : Thing
 	public bool IsMagnetized { get; private set; }
 	public PlayerCitizen PlayerMagnetized { get; private set; }
 	public TimeSince MagnetizeTime { get; private set; }
-	private const float MAGNETIZE_DURATION = 10f;
+	private const float MAGNETIZE_DURATION = 12f;
 
 	public int Value { get; set; }
 

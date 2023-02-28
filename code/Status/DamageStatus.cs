@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(9, 0, 111f)]
 public class DamageStatus : Status
 {
 	public DamageStatus()
@@ -23,26 +23,37 @@ public class DamageStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, PlayerStat.BulletDamage, GetMultForLevel(Level), ModifierType.Mult);
-	}
+		Player.Modify(this, PlayerStat.BulletDamage, GetDamageMultForLevel(Level), ModifierType.Mult);
+        Player.Modify(this, PlayerStat.BulletSpeed, GetSpeedMultForLevel(Level), ModifierType.Mult);
+    }
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("Increase bullet damage by {0}%", GetPercentForLevel(Level));
+		return string.Format("Increase bullet damage by {0}% and decrease bullet speed by {1}%", GetDamagePercentForLevel(Level), GetSpeedPercentForLevel(Level));
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase bullet damage by {0}% → {1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase bullet damage by {0}% → {1}% and decrease bullet speed by {2}% → {3}%", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel), GetSpeedPercentForLevel(newLevel - 1), GetSpeedPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
-	public float GetMultForLevel(int level)
+	public float GetDamageMultForLevel(int level)
     {
 		return 1f + 0.15f * level;
     }
 
-	public float GetPercentForLevel(int level)
+    public float GetSpeedMultForLevel(int level)
+    {
+        return 1f - 0.10f * level;
+    }
+
+    public float GetDamagePercentForLevel(int level)
 	{
 		return 15 * level;
 	}
+
+    public float GetSpeedPercentForLevel(int level)
+    {
+        return 10 * level;
+    }
 }

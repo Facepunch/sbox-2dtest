@@ -124,7 +124,7 @@ public partial class Spitter : Enemy
         if (closestPlayer == null)
             return;
 
-        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 1.5f;
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * Sandbox.Game.Random.Float(0.5f, 1.5f);
         var dir = Utils.RotateVector((target_pos - Position).Normal, Sandbox.Game.Random.Float(-10f, 10f));
         var bullet = new EnemyBullet
         {

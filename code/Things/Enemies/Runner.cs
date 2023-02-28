@@ -35,7 +35,7 @@ public partial class Runner : Enemy
             Radius = 0.25f;
             Health = 70f;
             MaxHealth = Health;
-            DamageToPlayer = 10f;
+            DamageToPlayer = 15f;
 
             ScaleFactor = 1.0f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;

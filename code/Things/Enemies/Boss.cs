@@ -223,7 +223,7 @@ public partial class Boss : Enemy
         float currAngleOffset = -spread * 0.5f;
         float increment = spread / (float)(num_bullets - 1);
 
-        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 0.5f;
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * Sandbox.Game.Random.Float(0.25f, 1.5f);
         Vector2 aim_dir = Utils.RotateVector((target_pos - Position).Normal, Sandbox.Game.Random.Float(-15f, 15f));
 
         for (int i = 0; i < num_bullets; i++)

@@ -43,7 +43,7 @@ public partial class Charger : Enemy
             Radius = 0.275f;
             Health = 75f;
             MaxHealth = Health;
-            DamageToPlayer = 15f;
+            DamageToPlayer = 20f;
 
             PushStrength = 25f;
 
@@ -180,7 +180,7 @@ public partial class Charger : Enemy
         if (closestPlayer == null)
             return;
 
-        var target_pos = closestPlayer.Position + closestPlayer.Velocity * 1.5f;
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * Sandbox.Game.Random.Float(0.5f, 1.75f);
         _chargeDir = Utils.RotateVector((target_pos - Position).Normal, Sandbox.Game.Random.Float(-10f, 10f));
 
         IsPreparingToCharge = false;

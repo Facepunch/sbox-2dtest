@@ -29,7 +29,7 @@ public enum PlayerStat {
     BulletNumPiercing, CritChance, CritMultiplier, LowHealthDamageMultiplier, NumUpgradeChoices, HealthRegen, DamageReductionPercent, PushStrength, CoinAttractRange, CoinAttractStrength, Luck, MaxHp,
     NumDashes, DashInvulnTime, DashCooldown, DashProgress, DashStrength, ThornsPercent, ShootFireIgniteChance, FireDamage, FireLifetime, FireSpreadChance, ShootFreezeChance, FreezeLifetime,
     FreezeTimeScale, FreezeOnMeleeChance, FreezeFireDamageMultiplier, LastAmmoDamageMultiplier, FearLifetime, FearDamageMultiplier, FearOnMeleeChance, BulletDamageGrow, BulletDamageShrink,
-	BulletDistanceDamage,
+	BulletDistanceDamage, NumRerollsPerLevel, FullHealthDamageMultiplier,
 }
 
 public partial class PlayerCitizen : Thing
@@ -144,7 +144,8 @@ public partial class PlayerCitizen : Thing
         Stats[PlayerStat.CritChance] = 0.05f;
         Stats[PlayerStat.CritMultiplier] = 1.5f;
         Stats[PlayerStat.LowHealthDamageMultiplier] = 0f;
-		Stats[PlayerStat.ThornsPercent] = 0f;
+        Stats[PlayerStat.FullHealthDamageMultiplier] = 0f;
+        Stats[PlayerStat.ThornsPercent] = 0f;
 
         Stats[PlayerStat.NumDashes] = 1f;
 		NumDashesAvailable = (int)Stats[PlayerStat.NumDashes];
@@ -185,6 +186,7 @@ public partial class PlayerCitizen : Thing
         Stats[PlayerStat.BulletDamageGrow] = 0f;
         Stats[PlayerStat.BulletDamageShrink] = 0f;
         Stats[PlayerStat.BulletDistanceDamage] = 0f;
+        Stats[PlayerStat.NumRerollsPerLevel] = 1f;
 
         Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -702,7 +704,9 @@ public partial class PlayerCitizen : Thing
 		if(Stats[PlayerStat.DamageReductionPercent] > 0f)
 			damage *= (1f - MathX.Clamp(Stats[PlayerStat.DamageReductionPercent], 0f, 1f));
 
-		Health -= damage;
+        ForEachStatus(status => status.OnHurt(damage));
+
+        Health -= damage;
 		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(0.5f, 4f), Sandbox.Game.Random.Float(8.5f, 10.5f)) * 0.1f, damage, DamageType.Player);
 		Flash(0.125f);
 
@@ -750,12 +754,18 @@ public partial class PlayerCitizen : Thing
 
 	public float GetDamageMultiplier()
 	{
-		float damageMultiplier = 1f + Utils.Map(Health, Stats[PlayerStat.MaxHp], 0f, 0f, Stats[PlayerStat.LowHealthDamageMultiplier]);
+		float damageMultiplier = 1f;
 
-		if (damageMultiplier < -1f)
-			damageMultiplier = -1f;
+        if(Stats[PlayerStat.LowHealthDamageMultiplier] > 1f)
+			damageMultiplier *= Utils.Map(Health, Stats[PlayerStat.MaxHp], 0f, 1f, Stats[PlayerStat.LowHealthDamageMultiplier]);
 
-		return damageMultiplier;
+        if (Stats[PlayerStat.FullHealthDamageMultiplier] > 1f && !(Health < Stats[PlayerStat.MaxHp]))
+            damageMultiplier *= Stats[PlayerStat.FullHealthDamageMultiplier];
+
+        //if (damageMultiplier < -1f)
+        //	damageMultiplier = -1f;
+
+        return damageMultiplier;
 	}
 
 	public override void Colliding(Thing other, float percent, float dt)
@@ -932,7 +942,7 @@ public partial class PlayerCitizen : Thing
 
 		Level++;
 		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
-		NumRerollAvailable++;
+		NumRerollAvailable += (int)Stats[PlayerStat.NumRerollsPerLevel];
 
 		//Log.Info("Level Up - now level: " + Level + " IsServer: " + Sandbox.Game.IsServer);
 
