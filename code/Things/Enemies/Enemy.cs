@@ -41,7 +41,7 @@ public abstract partial class Enemy : Thing
 	public float PushStrength { get; protected set; }
 
 	public float SpawnTime { get; protected set; }
-	private float SHADOW_FULL_OPACITY = 0.8f;
+	public float ShadowFullOpacity { get; protected set; }
 
 	public string AnimSpawnPath { get; protected set; }
 	public string AnimIdlePath { get; protected set; }
@@ -85,6 +85,7 @@ public abstract partial class Enemy : Thing
 			CanAttack = true;
 			CanAttackAnim = true;
 			CanTurn = true;
+			ShadowFullOpacity = 0.8f;
 
 			AnimSpawnPath = "textures/sprites/zombie_spawn.frames";
 			AnimIdlePath = "textures/sprites/zombie_walk.frames";
@@ -281,7 +282,7 @@ public abstract partial class Enemy : Thing
 		else
 		{
 			DeathProgress = Utils.Map(DeathTimeElapsed, 0f, DeathTime, 0f, 1f);
-			ShadowOpacity = Utils.Map(DeathProgress, 0f, 1f, SHADOW_FULL_OPACITY, 0f, EasingType.QuadIn);
+			ShadowOpacity = Utils.Map(DeathProgress, 0f, 1f, ShadowFullOpacity, 0f, EasingType.QuadIn);
 		}
 	}
 
@@ -294,7 +295,7 @@ public abstract partial class Enemy : Thing
 			IsSpawning = false;
 			AnimationPath = AnimIdlePath;
 
-			ShadowOpacity = SHADOW_FULL_OPACITY;
+			ShadowOpacity = ShadowFullOpacity;
 		}
 		else
 		{
@@ -304,7 +305,7 @@ public abstract partial class Enemy : Thing
 				_spawnCloudTime = Sandbox.Game.Random.Float(0f, 0.15f);
 			}
 
-			ShadowOpacity = Utils.Map(ElapsedTime, 0f, SpawnTime, 0f, SHADOW_FULL_OPACITY);
+			ShadowOpacity = Utils.Map(ElapsedTime, 0f, SpawnTime, 0f, ShadowFullOpacity);
 		}
 	}
 
