@@ -173,6 +173,12 @@ public partial class MyGame : GameManager
         }
 
 		float spitterChance = ElapsedTime < 90f ? 0f : Utils.Map(ElapsedTime, 90f, 800f, 0.02f, 0.1f);
+        if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < spitterChance)
+        {
+            float eliteChance = ElapsedTime < 640f ? 0f : Utils.Map(ElapsedTime, 640f, 1400f, 0.05f, 1f);
+            type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(SpitterElite)) : TypeLibrary.GetType(typeof(Spitter));
+        }
+        
 		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < spitterChance)
 			type = TypeLibrary.GetType(typeof(Spitter));
 
@@ -195,7 +201,7 @@ public partial class MyGame : GameManager
 			type = TypeLibrary.GetType(typeof(ZombieElite));
         }
 
-        //type = Game.Random.Int(0, 2) == 0 ? TypeLibrary.GetType(typeof(ZombieElite)) : TypeLibrary.GetType(typeof(Zombie));
+		//type = Game.Random.Int(0, 2) == 0 ? TypeLibrary.GetType(typeof(SpitterElite)) : TypeLibrary.GetType(typeof(Spitter));
 
         SpawnEnemy(type, pos);
 	}
