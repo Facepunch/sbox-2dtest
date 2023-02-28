@@ -191,13 +191,17 @@ public partial class MyGame : GameManager
 
         // CHARGER
         float chargerChance = ElapsedTime < 420f ? 0f : Utils.Map(ElapsedTime, 420f, 800f, 0.03f, 0.075f);
-		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < chargerChance)
-			type = TypeLibrary.GetType(typeof(Charger));
-
+        if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < chargerChance)
+        {
+            float eliteChance = ElapsedTime < 740f ? 0f : Utils.Map(ElapsedTime, 740f, 1500f, 0.04f, 0.75f);
+            type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(ChargerElite)) : TypeLibrary.GetType(typeof(Charger));
+        }
+        
         // RUNNER
         float runnerChance = ElapsedTime < 500f ? 0f : Utils.Map(ElapsedTime, 500f, 800f, 0.05f, 0.15f, EasingType.QuadIn);
 		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < runnerChance)
 			type = TypeLibrary.GetType(typeof(Runner));
+
 
 		var zombieEliteChance = ElapsedTime < 380f ? 0f : Utils.Map(ElapsedTime, 380f, 1100f, 0.05f, 1f);
         if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < zombieEliteChance)
@@ -206,7 +210,7 @@ public partial class MyGame : GameManager
 			type = TypeLibrary.GetType(typeof(ZombieElite));
         }
 
-		type = Game.Random.Int(0, 2) == 0 ? TypeLibrary.GetType(typeof(SpikerElite)) : TypeLibrary.GetType(typeof(Spiker));
+		//type = Game.Random.Int(0, 2) == 0 ? TypeLibrary.GetType(typeof(ChargerElite)) : TypeLibrary.GetType(typeof(Charger));
 
         SpawnEnemy(type, pos);
 	}
