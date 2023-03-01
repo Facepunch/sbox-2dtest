@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(7, 0, 1f)]
 public class XpAttractStrengthStatus : Status
 {
 	public XpAttractStrengthStatus()
@@ -38,11 +38,11 @@ public class XpAttractStrengthStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f + 0.3f * level;
+		return 1f + 0.35f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 30 * level;
+		return 35 * level;
 	}
 }

@@ -48,6 +48,8 @@ public class ChoiceModal : Panel
 {
 	public ChoicePanel ChoicePanel { get; set; }
 
+	private List<TypeDescription> _statusTypes;
+
 	public ChoiceModal(ChoicePanel choicePanel)
     {
 		ChoicePanel = choicePanel;
@@ -73,16 +75,13 @@ public class ChoiceModal : Panel
 		//List<string> statusNames = new List<string>() { "CritChanceStatus", "CritMultiplierStatus", "ReloadSpeedStatus" };
 
 		int numChoices = Math.Clamp((int)MathF.Round(player.Stats[PlayerStat.NumUpgradeChoices]), 1, 6);
-		List<TypeDescription> types = StatusManager.GetRandomStatuses(player, numChoices);
+        _statusTypes = StatusManager.GetRandomStatuses(player, numChoices);
 
 		Style.Width = numChoices * 310f;
 
-		//Log.Info("types: " + types);
-		//Log.Info("types.Count: " + types.Count);
-
-		for(int i = 0; i < types.Count; i++)
+		for(int i = 0; i < _statusTypes.Count; i++)
         {
-			var type = types[i];
+			var type = _statusTypes[i];
 			var status = StatusManager.CreateStatus(type);
 			var currLevel = player.GetStatusLevel (type);
 			status.Level = currLevel + 1;
@@ -108,6 +107,26 @@ public class ChoiceModal : Panel
 			reroll_label.AddClass("disabled_text");
 		}
 	}
+
+    public override void Tick()
+    {
+        base.Tick();
+
+		if (Input.Pressed(InputButton.Reload))
+			ChoicePanel.Reroll();
+		else if (Input.Pressed(InputButton.Slot1))
+			ChoicePanel.OnChoiceMade(_statusTypes[0]);
+        else if (Input.Pressed(InputButton.Slot2))
+            ChoicePanel.OnChoiceMade(_statusTypes[1]);
+        else if (Input.Pressed(InputButton.Slot3))
+            ChoicePanel.OnChoiceMade(_statusTypes[2]);
+        else if (Input.Pressed(InputButton.Slot4) && _statusTypes.Count >= 4)
+            ChoicePanel.OnChoiceMade(_statusTypes[3]);
+        else if (Input.Pressed(InputButton.Slot5) && _statusTypes.Count >= 5)
+            ChoicePanel.OnChoiceMade(_statusTypes[4]);
+        else if (Input.Pressed(InputButton.Slot6) && _statusTypes.Count >= 6)
+            ChoicePanel.OnChoiceMade(_statusTypes[5]);
+    }
 }
 
 public class ChoiceButton : Panel

@@ -49,7 +49,7 @@ public partial class SpikerElite : Enemy
             Radius = 0.34f;
             Health = 220f;
             MaxHealth = Health;
-            DamageToPlayer = 24f;
+            DamageToPlayer = 20f;
 
             ScaleFactor = 2.1f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;

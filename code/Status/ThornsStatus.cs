@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(7, 0, 1f)]
 public class ThornsStatus : Status
 {
 	public ThornsStatus()
@@ -38,11 +38,11 @@ public class ThornsStatus : Status
 
 	public float GetAddForLevel(int level)
     {
-		return 0.30f * level;
+		return 0.40f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 30 * level;
+		return 40 * level;
 	}
 }

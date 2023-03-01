@@ -32,7 +32,7 @@ public partial class ZombieElite : Enemy
             Radius = 0.27f;
             Health = 55f;
             MaxHealth = Health;
-            DamageToPlayer = 14f;
+            DamageToPlayer = 10f;
 
             ScaleFactor = 0.95f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;

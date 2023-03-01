@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(4, 0, 1f)]
 public class DashStrengthStatus : Status
 {
 	public DashStrengthStatus()
@@ -39,11 +39,11 @@ public class DashStrengthStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f + 0.3f * level;
+		return 1f + 0.35f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 30 * level;
+		return 35 * level;
 	}
 }

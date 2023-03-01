@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(7, 0, 1f)]
 public class PushStrengthStatus : Status
 {
 	public PushStrengthStatus()
@@ -38,11 +38,11 @@ public class PushStrengthStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f + 0.50f * level;
+		return 1f + 0.65f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 50 * level;
+		return 65 * level;
 	}
 }

@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 111f)]
+[Status(7, 0, 1f)]
 public class DamageStatus : Status
 {
 	public DamageStatus()
@@ -44,7 +44,7 @@ public class DamageStatus : Status
 
     public float GetSpeedMultForLevel(int level)
     {
-        return 1f - 0.10f * level;
+        return 1f - 0.1f * level;
     }
 
     public float GetDamagePercentForLevel(int level)
@@ -54,6 +54,6 @@ public class DamageStatus : Status
 
     public float GetSpeedPercentForLevel(int level)
     {
-        return 10 * level;
+        return 1 * level;
     }
 }

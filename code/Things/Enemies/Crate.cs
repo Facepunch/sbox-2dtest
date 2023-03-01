@@ -112,12 +112,16 @@ public partial class Crate : Enemy
             Game.AddThing(healthPack);
         }
 
-        var magnet_chance = 0.08f;
-        if (Sandbox.Game.Random.Float(0f, 1f) < magnet_chance)
+        if(Game.TimeSinceMagnet > 50f)
         {
-            var magnet = new Magnet() { Position = Position + new Vector2(Sandbox.Game.Random.Float(-RAND_POS, RAND_POS), Sandbox.Game.Random.Float(-RAND_POS, RAND_POS)) };
-            magnet.Velocity = (magnet.Position - Position) * Sandbox.Game.Random.Float(2f, 6f);
-            Game.AddThing(magnet);
+            var magnet_chance = 0.09f * Utils.Map(Game.TimeSinceMagnet, 50f, 480f, 1f, 5.5f, EasingType.Linear);
+            if (Sandbox.Game.Random.Float(0f, 1f) < magnet_chance)
+            {
+                var magnet = new Magnet() { Position = Position + new Vector2(Sandbox.Game.Random.Float(-RAND_POS, RAND_POS), Sandbox.Game.Random.Float(-RAND_POS, RAND_POS)) };
+                magnet.Velocity = (magnet.Position - Position) * Sandbox.Game.Random.Float(2f, 6f);
+                Game.AddThing(magnet);
+                Game.TimeSinceMagnet = 0f;
+            }
         }
 
         var revive_chance = Game.DeadPlayers.ToList().Count * 0.33f;

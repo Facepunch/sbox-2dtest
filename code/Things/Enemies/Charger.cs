@@ -43,7 +43,7 @@ public partial class Charger : Enemy
             Radius = 0.275f;
             Health = 75f;
             MaxHealth = Health;
-            DamageToPlayer = 20f;
+            DamageToPlayer = 15f;
 
             PushStrength = 25f;
 

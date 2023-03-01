@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using static Test2D.MyGame;
 using Sandbox;
-
 namespace Test2D;
 
 public partial class ChargerElite : Enemy
@@ -43,7 +42,7 @@ public partial class ChargerElite : Enemy
             Radius = 0.39f;
             Health = 335f;
             MaxHealth = Health;
-            DamageToPlayer = 25f;
+            DamageToPlayer = 18f;
 
             PushStrength = 30f;
 
@@ -125,7 +124,15 @@ public partial class ChargerElite : Enemy
             Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt * (IsFeared ? -1f : 1f);
 
             float speed = 0.75f * (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f)) * (IsAttacking ? 0.66f : 0.35f);
-            Position += Velocity * dt * speed;
+            var newPos = Position + Velocity * dt * speed;
+            if(float.IsNaN(newPos.x) || float.IsNaN(newPos.y))
+            {
+                StartDying(null);
+                Flash(0.05f);
+                return;
+            }
+
+            Position = newPos;
         }
 
         var player_dist_sqr = (closestPlayer.Position - Position).LengthSquared;

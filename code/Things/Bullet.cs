@@ -67,7 +67,7 @@ public partial class Bullet : Thing
 		var damage = Stats[BulletStat.Damage];
         float scale = 0.125f + damage * 0.015f * Utils.Map(damage, 10f, 100f, 1f, 0.1f, EasingType.QuadOut);
         Scale = new Vector2(scale, scale);
-        Radius = 0.07f + scale * 0.2f * Utils.Map(damage, 10f, 100f, 1f, 0.5f);
+        Radius = 0.07f + scale * 0.2f;
     }
 
 	public override void Update(float dt)

@@ -58,6 +58,8 @@ public partial class MyGame : GameManager
 
 	public bool HasSpawnedBoss { get; private set; }
 
+	public TimeSince TimeSinceMagnet;
+
 	public MyGame()
 	{
 		BOUNDS_MIN = new Vector2(-16f, -12f);
@@ -135,7 +137,7 @@ public partial class MyGame : GameManager
 
 		HandleEnemySpawn();
 
-		if(!HasSpawnedBoss && !IsGameOver && ElapsedTime > 15f * 60f - 1f)
+		if(!HasSpawnedBoss && !IsGameOver && ElapsedTime > 15f * 60f)
 		{
 			SpawnBoss(new Vector2(0f, 0f));
 			HasSpawnedBoss = true;
@@ -144,7 +146,7 @@ public partial class MyGame : GameManager
 
 	void HandleEnemySpawn()
 	{
-		var spawnTime = Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.33f, EasingType.QuadOut) * Utils.Map(ElapsedTime, 0f, 80f, 1.5f, 1f) * Utils.Map(ElapsedTime, 0f, 250f, 3f, 1f);
+		var spawnTime = Utils.Map(EnemyCount, 0, MAX_ENEMY_COUNT, 0.05f, 0.33f, EasingType.QuadOut) * Utils.Map(ElapsedTime, 0f, 80f, 1.5f, 1f) * Utils.Map(ElapsedTime, 0f, 250f, 3f, 1f) * Utils.Map(ElapsedTime, 0f, 900f, 1.2f, 1f);
 		if (_enemySpawnTime > spawnTime)
 		{
 			SpawnEnemy();
@@ -168,18 +170,18 @@ public partial class MyGame : GameManager
 			type = TypeLibrary.GetType(typeof(Crate));
 
 		// EXPLODER
-		float exploderChance = ElapsedTime < 35f ? 0f : Utils.Map(ElapsedTime, 35f, 700f, 0.03f, 0.08f);
+		float exploderChance = ElapsedTime < 35f ? 0f : Utils.Map(ElapsedTime, 35f, 700f, 0.022f, 0.08f);
 		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < exploderChance)
 		{
-			float eliteChance = ElapsedTime < 480f ? 0f : Utils.Map(ElapsedTime, 480f, 1200f, 0.05f, 1f);
+			float eliteChance = ElapsedTime < 480f ? 0f : Utils.Map(ElapsedTime, 480f, 1200f, 0.04f, 1f);
             type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(ExploderElite)) : TypeLibrary.GetType(typeof(Exploder));
         }
 
         // SPITTER
-        float spitterChance = ElapsedTime < 90f ? 0f : Utils.Map(ElapsedTime, 90f, 800f, 0.02f, 0.1f);
+        float spitterChance = ElapsedTime < 100f ? 0f : Utils.Map(ElapsedTime, 100f, 800f, 0.015f, 0.1f);
         if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < spitterChance)
         {
-            float eliteChance = ElapsedTime < 540f ? 0f : Utils.Map(ElapsedTime, 540f, 1400f, 0.05f, 1f);
+            float eliteChance = ElapsedTime < 540f ? 0f : Utils.Map(ElapsedTime, 540f, 1400f, 0.025f, 1f);
             type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(SpitterElite)) : TypeLibrary.GetType(typeof(Spitter));
         }
 
@@ -187,28 +189,28 @@ public partial class MyGame : GameManager
         float spikerChance = ElapsedTime < 320f ? 0f : Utils.Map(ElapsedTime, 320f, 800f, 0.02f, 0.1f, EasingType.SineIn);
         if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < spikerChance)
         {
-            float eliteChance = ElapsedTime < 580f ? 0f : Utils.Map(ElapsedTime, 580f, 1300f, 0.04f, 0.75f);
+            float eliteChance = ElapsedTime < 580f ? 0f : Utils.Map(ElapsedTime, 580f, 1300f, 0.01f, 0.75f);
             type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(SpikerElite)) : TypeLibrary.GetType(typeof(Spiker));
         }
 
         // CHARGER
-        float chargerChance = ElapsedTime < 420f ? 0f : Utils.Map(ElapsedTime, 420f, 800f, 0.03f, 0.075f);
+        float chargerChance = ElapsedTime < 420f ? 0f : Utils.Map(ElapsedTime, 420f, 800f, 0.022f, 0.075f);
         if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < chargerChance)
         {
-            float eliteChance = ElapsedTime < 620f ? 0f : Utils.Map(ElapsedTime, 620f, 1400f, 0.04f, 0.75f);
+            float eliteChance = ElapsedTime < 620f ? 0f : Utils.Map(ElapsedTime, 620f, 1400f, 0.01f, 0.75f);
             type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(ChargerElite)) : TypeLibrary.GetType(typeof(Charger));
         }
         
         // RUNNER
-        float runnerChance = ElapsedTime < 500f ? 0f : Utils.Map(ElapsedTime, 500f, 800f, 0.05f, 0.15f, EasingType.QuadIn);
+        float runnerChance = ElapsedTime < 500f ? 0f : Utils.Map(ElapsedTime, 500f, 900f, 0.035f, 0.15f, EasingType.QuadIn);
         if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < runnerChance)
         {
-            float eliteChance = ElapsedTime < 680f ? 0f : Utils.Map(ElapsedTime, 680f, 1500f, 0.04f, 0.75f);
+            float eliteChance = ElapsedTime < 720f ? 0f : Utils.Map(ElapsedTime, 720f, 1500f, 0.01f, 0.5f);
             type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(RunnerElite)) : TypeLibrary.GetType(typeof(Runner));
         }
 
 		// ZOMBIE ELITE
-		var zombieEliteChance = ElapsedTime < 380f ? 0f : Utils.Map(ElapsedTime, 380f, 1100f, 0.05f, 1f);
+		var zombieEliteChance = ElapsedTime < 400f ? 0f : Utils.Map(ElapsedTime, 400f, 1100f, 0.02f, 1f);
         if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < zombieEliteChance)
         {
 			type = TypeLibrary.GetType(typeof(ZombieElite));
@@ -219,9 +221,9 @@ public partial class MyGame : GameManager
         SpawnEnemy(type, pos);
 	}
 
-	void SpawnEnemy(TypeDescription type, Vector2 pos)
+	void SpawnEnemy(TypeDescription type, Vector2 pos, bool forceSpawn = false)
 	{
-		if (EnemyCount >= MAX_ENEMY_COUNT)
+		if (EnemyCount >= MAX_ENEMY_COUNT && !forceSpawn)
 			return;
 
 		var enemy = type.Create<Enemy>();
@@ -259,7 +261,7 @@ public partial class MyGame : GameManager
 
 	public void SpawnBoss(Vector2 pos)
 	{
-		SpawnEnemy(TypeLibrary.GetType(typeof(Boss)), pos);
+		SpawnEnemy(TypeLibrary.GetType(typeof(Boss)), pos, forceSpawn: true);
 		PlaySfxNearby("boss.fanfare", pos, pitch: Sandbox.Game.Random.Float(0.7f, 0.75f), volume: 1.3f, maxDist: 15f);
 	}
 
@@ -464,6 +466,7 @@ public partial class MyGame : GameManager
 		ElapsedTime = 0f;
 		IsGameOver = false;
 		HasSpawnedBoss = false;
+		TimeSinceMagnet = 0f;
 
         SpawnStartingThings();
 

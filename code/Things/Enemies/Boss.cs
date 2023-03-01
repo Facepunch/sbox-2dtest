@@ -65,18 +65,18 @@ public partial class Boss : Enemy
             Deceleration = 1.1f;
             DecelerationAttacking = 1.1f;
 
-            Radius = 0.42f;
+            Radius = 0.45f;
             Health = 20000f;
             MaxHealth = Health;
             DamageToPlayer = 20f;
 
-            ScaleFactor = 1.85f;
+            ScaleFactor = 1.95f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 2.0f;
+            ShadowScale = 2.05f;
             _damageTime = DAMAGE_TIME;
             _shootDelayTimer = Sandbox.Game.Random.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
 
@@ -207,7 +207,7 @@ public partial class Boss : Enemy
         IsShooting = true;
         _hasShot = false;
         AnimationPath = "textures/sprites/boss_shoot.frames";
-        Game.PlaySfxNearby("boss.prepare", Position, pitch: Sandbox.Game.Random.Float(0.75f, 0.85f), volume: 1.7f, maxDist: 10f);
+        Game.PlaySfxNearby("boss.prepare", Position, pitch: Sandbox.Game.Random.Float(0.75f, 0.85f), volume: 1.7f, maxDist: 16f);
         CanAttack = false;
     }
 

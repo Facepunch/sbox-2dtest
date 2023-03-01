@@ -32,7 +32,7 @@ public partial class Zombie : Enemy
             Radius = 0.25f;
             Health = 30f;
             MaxHealth = Health;
-            DamageToPlayer = 8f;
+            DamageToPlayer = 7f;
 
             ScaleFactor = 0.85f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
@@ -45,7 +45,7 @@ public partial class Zombie : Enemy
 
             HasTarget = false;
 
-            _wanderPos = new Vector2(Sandbox.Game.Random.Float(Game.BOUNDS_MIN.x + 1f, Game.BOUNDS_MAX.x - 1f), Sandbox.Game.Random.Float(Game.BOUNDS_MIN.y + 1f, Game.BOUNDS_MAX.y - 1f));
+            _wanderPos = new Vector2(Sandbox.Game.Random.Float(Game.BOUNDS_MIN.x + 1f, Game.BOUNDS_MAX.x - 1f), Sandbox.Game.Random.Float(Game.BOUNDS_MIN.y + 1f, Game.BOUNDS_MAX.y - 2f));
 
             AnimationPath = AnimSpawnPath;
         }

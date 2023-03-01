@@ -151,9 +151,10 @@ public partial class Spiker : Enemy
             return;
 
         var target_pos = closestPlayer.Position + closestPlayer.Velocity * Sandbox.Game.Random.Float(0.1f, 2f) + new Vector2(Sandbox.Game.Random.Float(-1f, 1f), Sandbox.Game.Random.Float(-1f, 1f)) * 0.8f;
+        var BUFFER = 0.3f;
         var spike = new EnemySpike
         {
-            Position = target_pos,
+            Position = new Vector2(Math.Clamp(target_pos.x, Game.BOUNDS_MIN.x + BUFFER, Game.BOUNDS_MAX.x - BUFFER), Math.Clamp(target_pos.y, Game.BOUNDS_MIN.y + BUFFER, Game.BOUNDS_MAX.y - BUFFER)),
             Shooter = this,
         };
 

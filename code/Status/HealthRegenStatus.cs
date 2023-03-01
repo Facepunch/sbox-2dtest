@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(7, 0, 1f)]
 public class HealthRegenStatus : Status
 {
 	public HealthRegenStatus()
@@ -38,7 +38,7 @@ public class HealthRegenStatus : Status
 
 	public float GetAmountForLevel(int level)
     {
-		return 0.25f * level;
+		return 0.3f * level;
     }
 
 	public string GetPrintAmountForLevel(int level)

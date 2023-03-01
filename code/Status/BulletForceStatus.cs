@@ -6,7 +6,7 @@ using Sandbox;
 namespace Test2D;
 
 //[Status(9, 0, 1f, typeof(BulletSpeedStatus), typeof(DamageStatus))]
-[Status(9, 0, 1f)]
+[Status(5, 0, 1f)]
 public class BulletForceStatus : Status
 {
 	public BulletForceStatus()
@@ -39,11 +39,11 @@ public class BulletForceStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f + 0.25f * level;
+		return 1f + 0.40f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 25 * level;
+		return 40 * level;
 	}
 }

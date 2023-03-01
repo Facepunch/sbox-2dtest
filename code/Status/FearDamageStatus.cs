@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(5, 0, 1f, typeof(DashFearStatus))]
+[Status(7, 0, 1f, typeof(DashFearStatus))]
 public class FearDamageStatus : Status
 {
 	public FearDamageStatus()

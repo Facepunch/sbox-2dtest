@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(7, 0, 1f)]
 public class DashCooldownStatus : Status
 {
 	public DashCooldownStatus()
@@ -41,24 +41,20 @@ public class DashCooldownStatus : Status
 		switch (level)
         {
 			case 1:
-				return 0.85f;
-			case 2:
 				return 0.75f;
-			case 3:
-				return 0.65f;
-			case 4:
+			case 2:
 				return 0.55f;
-			case 5:
-				return 0.45f;
-			case 6:
-				return 0.4f;
-			case 7:
+			case 3:
 				return 0.35f;
-			case 8:
-				return 0.3f;
-			case 9:
+			case 4:
 				return 0.25f;
-		}
+			case 5:
+				return 0.15f;
+			case 6:
+				return 0.10f;
+            case 7:
+                return 0.10f;
+        }
 
 		return 1f;
     }
@@ -68,24 +64,20 @@ public class DashCooldownStatus : Status
 		switch (level)
 		{
 			case 1:
-				return 15;
-			case 2:
 				return 25;
-			case 3:
-				return 35;
-			case 4:
+			case 2:
 				return 45;
-			case 5:
-				return 55;
-			case 6:
-				return 60;
-			case 7:
+			case 3:
 				return 65;
-			case 8:
-				return 70;
-			case 9:
+			case 4:
 				return 75;
-		}
+			case 5:
+				return 85;
+			case 6:
+				return 90;
+            case 7:
+                return 95;
+        }
 
 		return 0f;
 	}

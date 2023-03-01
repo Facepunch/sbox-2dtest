@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 2, 1f)]
+[Status(7, 2, 1f)]
 public class CritMultiplierStatus : Status
 {
 	public CritMultiplierStatus()
@@ -38,11 +38,11 @@ public class CritMultiplierStatus : Status
 
 	public float GetAddForLevel(int level)
     {
-		return 0.25f * level;
+		return 0.30f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 25 * level;
+		return 30f * level;
 	}
 }

@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f, typeof(FireIgniteStatus), typeof(DashFireStatus))]
+[Status(4, 0, 1f, typeof(FireIgniteStatus), typeof(DashFireStatus))]
 public class FireSpreadStatus : Status
 {
 	public FireSpreadStatus()
@@ -38,11 +38,11 @@ public class FireSpreadStatus : Status
 
 	public float GetAddForLevel(int level)
     {
-		return 0.1f * level + (level == 9 ? 0.1f : 0f);
+		return 0.1f * level + (level == 4 ? 0.1f : 0f);
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 10 * level + (level == 10 ? 10 : 0);
+		return 10 * level + (level == 4 ? 10 : 0);
 	}
 }

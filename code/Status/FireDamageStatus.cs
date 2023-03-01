@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f, typeof(FireIgniteStatus), typeof(DashFireStatus))]
+[Status(7, 0, 1f, typeof(FireIgniteStatus), typeof(DashFireStatus))]
 public class FireDamageStatus : Status
 {
 	public FireDamageStatus()

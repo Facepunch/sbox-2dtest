@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(9, 0, 1f)]
+[Status(7, 0, 1f)]
 public class CritChanceStatus : Status
 {
 	public CritChanceStatus()
@@ -38,7 +38,7 @@ public class CritChanceStatus : Status
 
 	public float GetAddForLevel(int level)
     {
-		return 0.1f * level;
+		return 0.10f * level;
     }
 
 	public float GetPercentForLevel(int level)

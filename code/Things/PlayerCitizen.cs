@@ -29,7 +29,7 @@ public enum PlayerStat {
     BulletNumPiercing, CritChance, CritMultiplier, LowHealthDamageMultiplier, NumUpgradeChoices, HealthRegen, DamageReductionPercent, PushStrength, CoinAttractRange, CoinAttractStrength, Luck, MaxHp,
     NumDashes, DashInvulnTime, DashCooldown, DashProgress, DashStrength, ThornsPercent, ShootFireIgniteChance, FireDamage, FireLifetime, FireSpreadChance, ShootFreezeChance, FreezeLifetime,
     FreezeTimeScale, FreezeOnMeleeChance, FreezeFireDamageMultiplier, LastAmmoDamageMultiplier, FearLifetime, FearDamageMultiplier, FearOnMeleeChance, BulletDamageGrow, BulletDamageShrink,
-	BulletDistanceDamage, NumRerollsPerLevel, FullHealthDamageMultiplier,
+	BulletDistanceDamage, NumRerollsPerLevel, FullHealthDamageMultiplier, DamagePerEarlierShot,
 }
 
 public partial class PlayerCitizen : Thing
@@ -187,6 +187,7 @@ public partial class PlayerCitizen : Thing
         Stats[PlayerStat.BulletDamageShrink] = 0f;
         Stats[PlayerStat.BulletDistanceDamage] = 0f;
         Stats[PlayerStat.NumRerollsPerLevel] = 1f;
+        Stats[PlayerStat.DamagePerEarlierShot] = 0f;
 
         Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -376,26 +377,29 @@ public partial class PlayerCitizen : Thing
 				HandleFlashing(dt);
 
 				if (Stats[PlayerStat.HealthRegen] > 0f)
-				{
-					Health += Stats[PlayerStat.HealthRegen] * dt;
-					if (Health > Stats[PlayerStat.MaxHp])
-						Health = Stats[PlayerStat.MaxHp];
-				}
+					RegenHealth(Stats[PlayerStat.HealthRegen] * dt);
 			}
 		}
 
-		if (Input.Down(InputButton.Reload))
-		{
-			for (float x = Game.BOUNDS_MIN.x; x < Game.BOUNDS_MAX.x; x += Game.GRID_SIZE)
-			{
-				for (float y = Game.BOUNDS_MIN.y; y < Game.BOUNDS_MAX.y; y += Game.GRID_SIZE)
-				{
-					DebugOverlay.Box(new Vector2(x, y), new Vector2(x + Game.GRID_SIZE, y + Game.GRID_SIZE), Color.White, 0f, false);
-					DebugOverlay.Text((new Vector2(x, y)).ToString(), new Vector2(x + 0.1f, y + 0.1f));
-				}
-			}
-		}
+		//if (Input.Down(InputButton.Reload))
+		//{
+		//	for (float x = Game.BOUNDS_MIN.x; x < Game.BOUNDS_MAX.x; x += Game.GRID_SIZE)
+		//	{
+		//		for (float y = Game.BOUNDS_MIN.y; y < Game.BOUNDS_MAX.y; y += Game.GRID_SIZE)
+		//		{
+		//			DebugOverlay.Box(new Vector2(x, y), new Vector2(x + Game.GRID_SIZE, y + Game.GRID_SIZE), Color.White, 0f, false);
+		//			DebugOverlay.Text((new Vector2(x, y)).ToString(), new Vector2(x + 0.1f, y + 0.1f));
+		//		}
+		//	}
+		//}
 	}
+
+	public void RegenHealth(float amount)
+	{
+		Health += amount;
+        if (Health > Stats[PlayerStat.MaxHp])
+            Health = Stats[PlayerStat.MaxHp];
+    }
 
 	void HandleDashing(float dt)
 	{
@@ -592,7 +596,10 @@ public partial class PlayerCitizen : Thing
 			if (isLastAmmo)
 				damage *= Stats[PlayerStat.LastAmmoDamageMultiplier];
 
-			var basePivotY = Utils.Map(damage, 5f, 30f, -1.2f, -0.3f);
+			if (Stats[PlayerStat.DamagePerEarlierShot] > 0f)
+				damage += _shotNum * Stats[PlayerStat.DamagePerEarlierShot];
+
+            var basePivotY = Utils.Map(damage, 5f, 30f, -1.2f, -0.3f);
 
 			var bullet = new Bullet
 			{
@@ -971,7 +978,7 @@ public partial class PlayerCitizen : Thing
 
 	public int GetExperienceReqForLevel(int level)
 	{
-		return (int)MathF.Round(Utils.Map(level, 1, 120, 3f, 600f, EasingType.SineIn));
+		return (int)MathF.Round(Utils.Map(level, 1, 140, 3f, 400f, EasingType.SineIn));
 	}
 
 	public void Flash(float time)

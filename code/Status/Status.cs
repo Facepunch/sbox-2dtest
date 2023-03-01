@@ -68,5 +68,6 @@ public partial class Status : BaseNetworkable
     public virtual void OnBurn(Enemy enemy) { }
     public virtual void OnFreeze(Enemy enemy) { }
     public virtual void OnFear(Enemy enemy) { }
+    public virtual void OnKill(Enemy enemy) { }
     public virtual void OnHurt(float amount) { }
 }

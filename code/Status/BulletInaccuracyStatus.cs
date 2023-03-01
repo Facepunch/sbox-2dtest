@@ -23,26 +23,37 @@ public class BulletInaccuracyStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, PlayerStat.BulletInaccuracy, GetMultForLevel(Level), ModifierType.Mult);
-	}
+		Player.Modify(this, PlayerStat.BulletInaccuracy, GetInaccuracyMultForLevel(Level), ModifierType.Mult);
+        Player.Modify(this, PlayerStat.BulletSpeed, GetSpeedMultForLevel(Level), ModifierType.Mult);
+    }
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("{0}% less inaccuracy", GetPercentForLevel(Level));
+		return string.Format("{0}% less bullet inaccuracy and {1}% faster bullets", GetInaccuracyPercentForLevel(Level), GetSpeedPercentForLevel(Level));
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("{0}% → {1}% less inaccuracy", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("{0}% → {1}% less bullet inaccuracy and {1}% → {2}% faster bullets", GetInaccuracyPercentForLevel(newLevel - 1), GetInaccuracyPercentForLevel(newLevel), GetSpeedPercentForLevel(newLevel - 1), GetSpeedPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
-	public float GetMultForLevel(int level)
+	public float GetInaccuracyMultForLevel(int level)
     {
 		return level == 1 ? 0.70f : (level == 2 ? 0.40f : 0f);
 	}
 
-	public float GetPercentForLevel(int level)
+	public float GetInaccuracyPercentForLevel(int level)
 	{
 		return level == 1 ? 30 : (level == 2 ? 60 : 100);
 	}
+
+    public float GetSpeedMultForLevel(int level)
+    {
+        return 1f + 0.15f * level;
+    }
+
+    public float GetSpeedPercentForLevel(int level)
+    {
+        return 15 * level;
+    }
 }

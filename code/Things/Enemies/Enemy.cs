@@ -371,7 +371,10 @@ public abstract partial class Enemy : Thing
 
 		_deathScale = Scale;
 
-		DropLoot(player);
+		if(player != null)
+			player.ForEachStatus(status => status.OnKill(this));
+
+        DropLoot(player);
 
 		for (int i = EnemyStatuses.Count - 1; i >= 0; i--)
 			EnemyStatuses.Values.ElementAt(i).StartDying();
@@ -576,7 +579,8 @@ public abstract partial class Enemy : Thing
 		burning.Lifetime = lifetime;
 		burning.SpreadChance = spreadChance;
 
-        player.ForEachStatus(status => status.OnBurn(this));
+		if(player != null)
+			player.ForEachStatus(status => status.OnBurn(this));
     }
 
 	public void Freeze(PlayerCitizen player)
@@ -589,7 +593,8 @@ public abstract partial class Enemy : Thing
 		frozen.SetLifetime(player.Stats[PlayerStat.FreezeLifetime]);
 		frozen.SetTimeScale(player.Stats[PlayerStat.FreezeTimeScale]);
 
-        player.ForEachStatus(status => status.OnFreeze(this));
+        if (player != null)
+            player.ForEachStatus(status => status.OnFreeze(this));
     }
 
     public void Fear(PlayerCitizen player)
@@ -601,7 +606,8 @@ public abstract partial class Enemy : Thing
         fear.Player = player;
 		fear.SetLifetime(player.Stats[PlayerStat.FreezeLifetime]);
 
-        player.ForEachStatus(status => status.OnFear(this));
+        if (player != null)
+            player.ForEachStatus(status => status.OnFear(this));
     }
 
 	protected virtual void OnDamagePlayer(PlayerCitizen player, float damage)

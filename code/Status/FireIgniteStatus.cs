@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(8, 0, 1f)]
+[Status(7, 0, 1f)]
 public class FireIgniteStatus : Status
 {
 	public FireIgniteStatus()
@@ -38,11 +38,11 @@ public class FireIgniteStatus : Status
 
 	public float GetAddForLevel(int level)
     {
-		return 0.1f * level + (level == 9 ? 0.1f : 0f);
+		return 0.07f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 10 * level + (level == 9 ? 10 : 0);
+		return 7 * level;
 	}
 }
