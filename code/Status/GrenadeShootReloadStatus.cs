@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(4, 0, 111f)]
+[Status(4, 0, 1f)]
 public class GrenadeShootReloadStatus : Status
 {
 	public GrenadeShootReloadStatus()
@@ -42,7 +42,10 @@ public class GrenadeShootReloadStatus : Status
             {
                 Position = Player.Position + Player.AimDir * 0.5f,
                 ExplosionSizeMultiplier = Player.Stats[PlayerStat.ExplosionSizeMultiplier],
+				Player = Player,
+				StickyPercent = Player.Stats[PlayerStat.GrenadeStickyPercent],
             };
+
             grenade.Velocity = (grenade.Position - Player.Position) * Player.Stats[PlayerStat.GrenadeVelocity];
             MyGame.Current.AddThing(grenade);
 

@@ -18,7 +18,8 @@ public partial class Grenade : Thing
 	private const float BASE_EXPLOSION_MODIFIER = 0.6f;
 	[Net] public float ExplosionSizeMultiplier { get; set; }
 	public float Friction { get; set; }
-	public bool IsSticky { get; set; }
+	public PlayerCitizen Player { get; set; }
+	public float StickyPercent { get; set; }
 
     public Grenade()
     {
@@ -122,14 +123,12 @@ public partial class Grenade : Thing
 	{
 		base.Colliding(other, percent, dt);
 
-		float repelAmount = 30f;
-		if (SpawnTime > 0.15f && IsSticky)
-			repelAmount *= -1f;
+		float repelAmount = (SpawnTime < 0.1f || StickyPercent <= 0f) ? 30f : Utils.Map(StickyPercent, 0f, 1f, 10f, -40f);
 
         if ((other is Enemy enemy && !enemy.IsDying) || (other is PlayerCitizen player && !player.IsDead))
 		{
 			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * repelAmount * (1f + other.TempWeight) * dt;
-		} 
+		}
 	}
 
 	public void Explode()
@@ -148,18 +147,22 @@ public partial class Grenade : Thing
                 continue;
 
 			float radius = ExplosionRadius * BASE_EXPLOSION_MODIFIER * ExplosionSizeMultiplier;
+			float damage = Damage * Player?.Stats[PlayerStat.ExplosionDamageMultiplier] ?? 1f;
 
             if (thing is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime > 0.75f))
             {
                 var dist_sqr = (thing.Position - Position).LengthSquared;
                 if (dist_sqr < MathF.Pow(radius, 2f))
-                    enemy.Damage(Damage, null, false);
+                    enemy.Damage(damage, null, false);
             }
             else if (thing is PlayerCitizen player && !player.IsDead)
             {
+                if (player.Stats[PlayerStat.ExplosionDamageReductionPercent] > 0f)
+                    damage *= (1f - MathX.Clamp(player.Stats[PlayerStat.ExplosionDamageReductionPercent], 0f, 1f));
+
                 var dist_sqr = (thing.Position - Position).LengthSquared;
                 if (dist_sqr < MathF.Pow(radius, 2f) * 0.94f)
-                    player.Damage(Damage);
+                    player.Damage(damage);
             }
         }
 

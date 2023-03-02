@@ -191,9 +191,14 @@ public partial class Exploder : Enemy
             }
             else if(thing is PlayerCitizen player && !player.IsDead)
             {
+                var damage = EXPLOSION_DAMAGE;
+
+                if (player.Stats[PlayerStat.ExplosionDamageReductionPercent] > 0f)
+                    damage *= (1f - MathX.Clamp(player.Stats[PlayerStat.ExplosionDamageReductionPercent], 0f, 1f));
+
                 var dist_sqr = (thing.Position - Position).LengthSquared;
                 if (dist_sqr < MathF.Pow(EXPLOSION_RADIUS, 2f) * 0.95f)
-                    player.Damage(EXPLOSION_DAMAGE);
+                    player.Damage(damage);
             }
                 
         }

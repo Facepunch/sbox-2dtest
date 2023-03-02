@@ -29,7 +29,8 @@ public enum PlayerStat {
     BulletNumPiercing, CritChance, CritMultiplier, LowHealthDamageMultiplier, NumUpgradeChoices, HealthRegen, HealthRegenStill, DamageReductionPercent, PushStrength, CoinAttractRange, CoinAttractStrength, Luck, MaxHp,
     NumDashes, DashInvulnTime, DashCooldown, DashProgress, DashStrength, ThornsPercent, ShootFireIgniteChance, FireDamage, FireLifetime, FireSpreadChance, ShootFreezeChance, FreezeLifetime,
     FreezeTimeScale, FreezeOnMeleeChance, FreezeFireDamageMultiplier, LastAmmoDamageMultiplier, FearLifetime, FearDamageMultiplier, FearOnMeleeChance, BulletDamageGrow, BulletDamageShrink,
-	BulletDistanceDamage, NumRerollsPerLevel, FullHealthDamageMultiplier, DamagePerEarlierShot, DamageForSpeed, OverallDamageMultiplier, ExplosionSizeMultiplier, GrenadeVelocity,
+	BulletDistanceDamage, NumRerollsPerLevel, FullHealthDamageMultiplier, DamagePerEarlierShot, DamageForSpeed, OverallDamageMultiplier, ExplosionSizeMultiplier, GrenadeVelocity, ExplosionDamageMultiplier,
+    BulletDamageMultiplier, ExplosionDamageReductionPercent, GrenadeStickyPercent,
 }
 
 public partial class PlayerCitizen : Thing
@@ -80,7 +81,7 @@ public partial class PlayerCitizen : Thing
 	// STATUS
 	[Net] public IDictionary<int, Status> Statuses { get; private set; }
 
-	//private List<Status> _statusesToRemove = new List<Status>();;
+	//private List<Status> _statusesToRemove = new List<Status>();
 
 
 	// MODIFIERS
@@ -197,6 +198,10 @@ public partial class PlayerCitizen : Thing
         Stats[PlayerStat.OverallDamageMultiplier] = 1f;
 		Stats[PlayerStat.ExplosionSizeMultiplier] = 1f;
         Stats[PlayerStat.GrenadeVelocity] = 8f;
+        Stats[PlayerStat.ExplosionDamageMultiplier] = 1f;
+        Stats[PlayerStat.BulletDamageMultiplier] = 1f;
+        Stats[PlayerStat.ExplosionDamageReductionPercent] = 0f;
+        Stats[PlayerStat.GrenadeStickyPercent] = 0f;
 
         Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -611,7 +616,7 @@ public partial class PlayerCitizen : Thing
 		{
 			var dir = Utils.RotateVector(AimDir, start_angle + currAngleOffset + increment * i);
 
-			var damage = Stats[PlayerStat.BulletDamage] * GetDamageMultiplier();
+			var damage = Stats[PlayerStat.BulletDamage] * Stats[PlayerStat.BulletDamageMultiplier] * GetDamageMultiplier();
 			if (isLastAmmo)
 				damage *= Stats[PlayerStat.LastAmmoDamageMultiplier];
 
