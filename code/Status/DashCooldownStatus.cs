@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(7, 0, 1f)]
+[Status(4, 0, 1f)]
 public class DashCooldownStatus : Status
 {
 	public DashCooldownStatus()
@@ -38,47 +38,11 @@ public class DashCooldownStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		switch (level)
-        {
-			case 1:
-				return 0.75f;
-			case 2:
-				return 0.55f;
-			case 3:
-				return 0.35f;
-			case 4:
-				return 0.25f;
-			case 5:
-				return 0.15f;
-			case 6:
-				return 0.10f;
-            case 7:
-                return 0.10f;
-        }
-
-		return 1f;
+		return 1f - level * 0.15f;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		switch (level)
-		{
-			case 1:
-				return 25;
-			case 2:
-				return 45;
-			case 3:
-				return 65;
-			case 4:
-				return 75;
-			case 5:
-				return 85;
-			case 6:
-				return 90;
-            case 7:
-                return 95;
-        }
-
-		return 0f;
+		return 15 * level;
 	}
 }

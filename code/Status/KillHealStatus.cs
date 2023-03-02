@@ -5,12 +5,12 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(7, 0, 1f)]
+[Status(7, 3, 1f)]
 public class KillHealStatus : Status
 {
 	public KillHealStatus()
     {
-		Title = "Sadist";
+		Title = "Sadistic Masochist";
 		IconPath = "textures/icons/blank_icon.png";
 	}
 
@@ -22,31 +22,42 @@ public class KillHealStatus : Status
 	public override void Refresh()
     {
 		Description = GetDescription(Level);
-	}
+
+        Player.Modify(this, PlayerStat.HealthRegen, -GetHpDrainAmountForLevel(Level), ModifierType.Add);
+    }
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("Heal for {0} whenever you kill an enemy", GetPrintAmountForLevel(Level));
+		return string.Format("Heal for {0} whenever you kill an enemy but lose {1} HP/s", GetPrintAmountForLevel(Level), GetHpDrainPrintAmountForLevel(Level));
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
 	{
-		return newLevel > 1 ? string.Format("Heal for {0} → {1} whenever you kill an enemy", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Heal for {0} → {1} whenever you kill an enemy but lose {2} → {3} HP/s", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel), GetHpDrainPrintAmountForLevel(newLevel - 1), GetHpDrainPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
     public override void OnKill(Enemy enemy)
     {
 		Player.RegenHealth(GetAmountForLevel(Level));
-		// todo: sfx
     }
 
 	public float GetAmountForLevel(int level)
 	{
-		return level * 0.35f;
+		return level * 0.4f;
 	}
 
     public string GetPrintAmountForLevel(int level)
     {
         return GetAmountForLevel(level).ToString("#.##");
+    }
+
+    public float GetHpDrainAmountForLevel(int level)
+    {
+        return level * 0.3f;
+    }
+
+    public string GetHpDrainPrintAmountForLevel(int level)
+    {
+        return GetHpDrainAmountForLevel(level).ToString("#.##");
     }
 }

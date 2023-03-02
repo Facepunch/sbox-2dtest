@@ -38,11 +38,11 @@ public class FireSpreadStatus : Status
 
 	public float GetAddForLevel(int level)
     {
-		return 0.1f * level + (level == 4 ? 0.1f : 0f);
+		return 0.09f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 10 * level + (level == 4 ? 10 : 0);
+		return 9 * level;
 	}
 }

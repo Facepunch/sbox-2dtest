@@ -24,16 +24,17 @@ public class DamageReductionStatus : Status
 		Description = GetDescription(Level);
 
 		Player.Modify(this, PlayerStat.DamageReductionPercent, GetAddForLevel(Level), ModifierType.Add);
-	}
+        Player.Modify(this, PlayerStat.OverallDamageMultiplier, GetDamageMultForLevel(Level), ModifierType.Mult);
+    }
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("Reduce damage taken by {0}%", GetPercentForLevel(Level));
+		return string.Format("Reduce damage taken by {0}% but reduce damage you deal by {1}%", GetPercentForLevel(Level), GetDamagePercentForLevel(Level));
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Reduce damage taken by {0}% → {1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Reduce damage taken by {0}% → {1}% but reduce damage you deal by {2}% → {3}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel), GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAddForLevel(int level)
@@ -45,4 +46,14 @@ public class DamageReductionStatus : Status
 	{
 		return 10 * level;
 	}
+
+    public float GetDamageMultForLevel(int level)
+    {
+        return 1f - 0.05f * level;
+    }
+
+    public float GetDamagePercentForLevel(int level)
+    {
+        return 5 * level;
+    }
 }

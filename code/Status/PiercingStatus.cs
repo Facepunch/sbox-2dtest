@@ -44,11 +44,11 @@ public class PiercingStatus : Status
 
 	public float GetDamageMultForLevel(int level)
 	{
-		return 1f - 0.2f * level;
+		return 1f - 0.25f * level;
 	}
 
 	public float GetDamagePercentForLevel(int level)
 	{
-		return 20 * level;
+		return 25 * level;
 	}
 }

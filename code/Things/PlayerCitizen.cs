@@ -26,17 +26,17 @@ public class ModifierData
 
 public enum PlayerStat { 
 	AttackTime, AttackSpeed, ReloadTime, ReloadSpeed, MaxAmmoCount, BulletDamage, BulletForce, Recoil, MoveSpeed, NumProjectiles, BulletSpread, BulletInaccuracy, BulletSpeed, BulletLifetime,
-    BulletNumPiercing, CritChance, CritMultiplier, LowHealthDamageMultiplier, NumUpgradeChoices, HealthRegen, DamageReductionPercent, PushStrength, CoinAttractRange, CoinAttractStrength, Luck, MaxHp,
+    BulletNumPiercing, CritChance, CritMultiplier, LowHealthDamageMultiplier, NumUpgradeChoices, HealthRegen, HealthRegenStill, DamageReductionPercent, PushStrength, CoinAttractRange, CoinAttractStrength, Luck, MaxHp,
     NumDashes, DashInvulnTime, DashCooldown, DashProgress, DashStrength, ThornsPercent, ShootFireIgniteChance, FireDamage, FireLifetime, FireSpreadChance, ShootFreezeChance, FreezeLifetime,
     FreezeTimeScale, FreezeOnMeleeChance, FreezeFireDamageMultiplier, LastAmmoDamageMultiplier, FearLifetime, FearDamageMultiplier, FearOnMeleeChance, BulletDamageGrow, BulletDamageShrink,
-	BulletDistanceDamage, NumRerollsPerLevel, FullHealthDamageMultiplier, DamagePerEarlierShot,
+	BulletDistanceDamage, NumRerollsPerLevel, FullHealthDamageMultiplier, DamagePerEarlierShot, DamageForSpeed, OverallDamageMultiplier, ExplosionSizeMultiplier, GrenadeVelocity,
 }
 
 public partial class PlayerCitizen : Thing
 {
 	[ClientInput]
 	public Vector2 MouseOffset { get; private set; }
-	
+
 	public Arrow ArrowAimer { get; private set; }
 	public Vector2 AimDir { get; private set; }
 
@@ -46,26 +46,28 @@ public partial class PlayerCitizen : Thing
 	[Net] public bool IsReloading { get; protected set; }
 	[Net] public float ReloadProgress { get; protected set; }
 
-    public const float BASE_MOVE_SPEED = 15f;
-    private int _shotNum;
+	public const float BASE_MOVE_SPEED = 15f;
+	private int _shotNum;
 
-    [Net] public int Level { get; protected set; }
-    public int ExperienceTotal { get; protected set; }
-    [Net] public int ExperienceCurrent { get; protected set; }
-    [Net] public int ExperienceRequired { get; protected set; }
-    public bool IsChoosingLevelUpReward { get; protected set; }
+	[Net] public int Level { get; protected set; }
+	public int ExperienceTotal { get; protected set; }
+	[Net] public int ExperienceCurrent { get; protected set; }
+	[Net] public int ExperienceRequired { get; protected set; }
+	public bool IsChoosingLevelUpReward { get; protected set; }
 
-    private float _dashTimer;
-    public bool IsDashing { get; private set; }
-    private Vector2 _dashVelocity;
-    private float _dashInvulnTimer;
-    private TimeSince _dashCloudTime;
-    public float DashProgress { get; protected set; }
-    [Net] public float DashRechargeProgress { get; protected set; }
-    [Net] public int NumDashesAvailable { get; private set; }
-    public int AmmoCount { get; protected set; }
+	private float _dashTimer;
+	public bool IsDashing { get; private set; }
+	private Vector2 _dashVelocity;
+	private float _dashInvulnTimer;
+	private TimeSince _dashCloudTime;
+	public float DashProgress { get; protected set; }
+	[Net] public float DashRechargeProgress { get; protected set; }
+	[Net] public int NumDashesAvailable { get; private set; }
+	public int AmmoCount { get; protected set; }
 
-	private float _flashTimer;
+	public bool IsMoving => Velocity.LengthSquared > 0.01f && !IsDashing;
+
+    private float _flashTimer;
 	private bool _isFlashing;
 
 	public Nametag Nametag { get; private set; }
@@ -73,17 +75,17 @@ public partial class PlayerCitizen : Thing
 	[Net] public int NumRerollAvailable { get; set; }
 
 	// STATS
-	[Net] public IDictionary <PlayerStat, float> Stats { get; private set; }
+	[Net] public IDictionary<PlayerStat, float> Stats { get; private set; }
 
 	// STATUS
 	[Net] public IDictionary<int, Status> Statuses { get; private set; }
 
-    //private List<Status> _statusesToRemove = new List<Status>();;
+	//private List<Status> _statusesToRemove = new List<Status>();;
 
 
-    // MODIFIERS
-    private Dictionary<Status, Dictionary<PlayerStat, ModifierData>> _modifiers_stat = new Dictionary<Status, Dictionary<PlayerStat, ModifierData>>();
-    private Dictionary<PlayerStat, float> _original_properties_stat = new Dictionary<PlayerStat, float>();
+	// MODIFIERS
+	private Dictionary<Status, Dictionary<PlayerStat, ModifierData>> _modifiers_stat = new Dictionary<Status, Dictionary<PlayerStat, ModifierData>>();
+	private Dictionary<PlayerStat, float> _original_properties_stat = new Dictionary<PlayerStat, float>();
 
 	public override void Spawn()
 	{
@@ -119,8 +121,10 @@ public partial class PlayerCitizen : Thing
 	{
 		AnimationPath = "textures/sprites/player_idle.frames";
 		AnimationSpeed = 0.66f;
-		
-		Level = 0;
+
+		_original_properties_stat.Clear();
+
+        Level = 0;
 		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
 		ExperienceTotal = 0;
 		ExperienceCurrent = 0;
@@ -128,66 +132,71 @@ public partial class PlayerCitizen : Thing
 		Timer = Stats[PlayerStat.AttackTime];
 		AmmoCount = 5;
 		Stats[PlayerStat.MaxAmmoCount] = AmmoCount;
-        Stats[PlayerStat.ReloadTime] = 1.5f;
-        Stats[PlayerStat.ReloadSpeed] = 1f;
-        Stats[PlayerStat.AttackSpeed] = 1f;
-        Stats[PlayerStat.BulletDamage] = 5f;
-        Stats[PlayerStat.BulletForce] = 0.55f;
-        Stats[PlayerStat.Recoil] = 0f;
-        Stats[PlayerStat.MoveSpeed] = 1f;
-        Stats[PlayerStat.NumProjectiles] = 1f;
-        Stats[PlayerStat.BulletSpread] = 35f;
-        Stats[PlayerStat.BulletInaccuracy] = 5f;
-        Stats[PlayerStat.BulletSpeed] = 4.5f;
-        Stats[PlayerStat.BulletLifetime] = 0.8f;
-        Stats[PlayerStat.Luck] = 1f;
-        Stats[PlayerStat.CritChance] = 0.05f;
-        Stats[PlayerStat.CritMultiplier] = 1.5f;
-        Stats[PlayerStat.LowHealthDamageMultiplier] = 0f;
-        Stats[PlayerStat.FullHealthDamageMultiplier] = 0f;
-        Stats[PlayerStat.ThornsPercent] = 0f;
+		Stats[PlayerStat.ReloadTime] = 1.5f;
+		Stats[PlayerStat.ReloadSpeed] = 1f;
+		Stats[PlayerStat.AttackSpeed] = 1f;
+		Stats[PlayerStat.BulletDamage] = 5f;
+		Stats[PlayerStat.BulletForce] = 0.55f;
+		Stats[PlayerStat.Recoil] = 0f;
+		Stats[PlayerStat.MoveSpeed] = 1f;
+		Stats[PlayerStat.NumProjectiles] = 1f;
+		Stats[PlayerStat.BulletSpread] = 35f;
+		Stats[PlayerStat.BulletInaccuracy] = 5f;
+		Stats[PlayerStat.BulletSpeed] = 4.5f;
+		Stats[PlayerStat.BulletLifetime] = 0.8f;
+		Stats[PlayerStat.Luck] = 1f;
+		Stats[PlayerStat.CritChance] = 0.05f;
+		Stats[PlayerStat.CritMultiplier] = 1.5f;
+		Stats[PlayerStat.LowHealthDamageMultiplier] = 0f;
+		Stats[PlayerStat.FullHealthDamageMultiplier] = 0f;
+		Stats[PlayerStat.ThornsPercent] = 0f;
 
-        Stats[PlayerStat.NumDashes] = 1f;
-		NumDashesAvailable = (int)Stats[PlayerStat.NumDashes];
-        Stats[PlayerStat.DashCooldown] = 3f;
-        Stats[PlayerStat.DashInvulnTime] = 0.25f;
-        Stats[PlayerStat.DashStrength] = 3f;
-        Stats[PlayerStat.BulletNumPiercing] = 0f;
+		Stats[PlayerStat.NumDashes] = 1f;
+		NumDashesAvailable = (int)MathF.Round(Stats[PlayerStat.NumDashes]);
+		Stats[PlayerStat.DashCooldown] = 3f;
+		Stats[PlayerStat.DashInvulnTime] = 0.25f;
+		Stats[PlayerStat.DashStrength] = 3f;
+		Stats[PlayerStat.BulletNumPiercing] = 0f;
 
 		Health = 100f;
-        Stats[PlayerStat.MaxHp] = 100f;
+		Stats[PlayerStat.MaxHp] = 100f;
 		IsDead = false;
 		Radius = 0.1f;
 		GridPos = Game.GetGridSquareForPos(Position);
 		AimDir = Vector2.Up;
 		NumRerollAvailable = 0;
 
-        Stats[PlayerStat.FireDamage] = 1.0f;
-        Stats[PlayerStat.FireLifetime] = 2.0f;
+		Stats[PlayerStat.FireDamage] = 1.0f;
+		Stats[PlayerStat.FireLifetime] = 2.0f;
 		Stats[PlayerStat.ShootFireIgniteChance] = 0f;
-        Stats[PlayerStat.FireSpreadChance] = 0f;
-        Stats[PlayerStat.ShootFreezeChance] = 0f;
-        Stats[PlayerStat.FreezeLifetime] = 3f;
-        Stats[PlayerStat.FreezeTimeScale] = 0.6f;
-        Stats[PlayerStat.FreezeOnMeleeChance] = 0f;
-        Stats[PlayerStat.FreezeFireDamageMultiplier] = 1f;
+		Stats[PlayerStat.FireSpreadChance] = 0f;
+		Stats[PlayerStat.ShootFreezeChance] = 0f;
+		Stats[PlayerStat.FreezeLifetime] = 3f;
+		Stats[PlayerStat.FreezeTimeScale] = 0.6f;
+		Stats[PlayerStat.FreezeOnMeleeChance] = 0f;
+		Stats[PlayerStat.FreezeFireDamageMultiplier] = 1f;
 		Stats[PlayerStat.FearLifetime] = 4f;
-        Stats[PlayerStat.FearDamageMultiplier] = 1f;
-        Stats[PlayerStat.FearOnMeleeChance] = 0f;
+		Stats[PlayerStat.FearDamageMultiplier] = 1f;
+		Stats[PlayerStat.FearOnMeleeChance] = 0f;
 
-        Stats[PlayerStat.CoinAttractRange] = 1.7f;
-        Stats[PlayerStat.CoinAttractStrength] = 3.1f;
+		Stats[PlayerStat.CoinAttractRange] = 1.7f;
+		Stats[PlayerStat.CoinAttractStrength] = 3.1f;
 
-        Stats[PlayerStat.NumUpgradeChoices] = 3f;
-        Stats[PlayerStat.HealthRegen] = 0f;
-        Stats[PlayerStat.DamageReductionPercent] = 0f;
-        Stats[PlayerStat.PushStrength] = 50f;
-        Stats[PlayerStat.LastAmmoDamageMultiplier] = 1f;
-        Stats[PlayerStat.BulletDamageGrow] = 0f;
-        Stats[PlayerStat.BulletDamageShrink] = 0f;
-        Stats[PlayerStat.BulletDistanceDamage] = 0f;
-        Stats[PlayerStat.NumRerollsPerLevel] = 1f;
-        Stats[PlayerStat.DamagePerEarlierShot] = 0f;
+		Stats[PlayerStat.NumUpgradeChoices] = 3f;
+		Stats[PlayerStat.HealthRegen] = 0f;
+		Stats[PlayerStat.HealthRegenStill] = 0f;
+		Stats[PlayerStat.DamageReductionPercent] = 0f;
+		Stats[PlayerStat.PushStrength] = 50f;
+		Stats[PlayerStat.LastAmmoDamageMultiplier] = 1f;
+		Stats[PlayerStat.BulletDamageGrow] = 0f;
+		Stats[PlayerStat.BulletDamageShrink] = 0f;
+		Stats[PlayerStat.BulletDistanceDamage] = 0f;
+		Stats[PlayerStat.NumRerollsPerLevel] = 1f;
+		Stats[PlayerStat.DamagePerEarlierShot] = 0f;
+		Stats[PlayerStat.DamageForSpeed] = 0f;
+        Stats[PlayerStat.OverallDamageMultiplier] = 1f;
+		Stats[PlayerStat.ExplosionSizeMultiplier] = 1f;
+        Stats[PlayerStat.GrenadeVelocity] = 8f;
 
         Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -270,7 +279,7 @@ public partial class PlayerCitizen : Thing
 		}
 	}
 
-	protected override void OnSimulate( IClient cl )
+	protected override void OnSimulate(IClient cl)
 	{
 		if (Game.IsGameOver)
 			return;
@@ -279,12 +288,12 @@ public partial class PlayerCitizen : Thing
 
 		Vector2 inputVector = new Vector2(-Input.AnalogMove.y, Input.AnalogMove.x);
 
-		if(inputVector.LengthSquared > 0f)
+		if (inputVector.LengthSquared > 0f)
 			Velocity += inputVector.Normal * Stats[PlayerStat.MoveSpeed] * BASE_MOVE_SPEED * dt;
 
 		Position += Velocity * dt;
 
-		if(IsDashing)
+		if (IsDashing)
 			Position += _dashVelocity * dt;
 
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, dt);
@@ -296,7 +305,7 @@ public partial class PlayerCitizen : Thing
 		{
 			AnimationPath = "textures/sprites/player_walk.frames";
 			AnimationSpeed = Utils.Map(Velocity.Length, 0f, 2f, 1.5f, 2f);
-		} 
+		}
 		else
 		{
 			AnimationPath = "textures/sprites/player_idle.frames";
@@ -312,7 +321,7 @@ public partial class PlayerCitizen : Thing
 		if (MathF.Abs(Input.AnalogMove.y) > 0f)
 			Scale = new Vector2(1f * Input.AnalogMove.y < 0f ? -1f : 1f, 1f) * 1f;
 
-		if ( Sandbox.Game.IsClient )
+		if (Sandbox.Game.IsClient)
 		{
 			Camera2D.Current.TargetPosition = Position;
 		}
@@ -346,8 +355,8 @@ public partial class PlayerCitizen : Thing
 				AddExperience(GetExperienceReqForLevel(Level));
 
 				//for(int i = 0; i < 9; i++)
-	//            {
-	//                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
+				//            {
+				//                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
 				//}
 
 				return;
@@ -369,15 +378,13 @@ public partial class PlayerCitizen : Thing
 				}
 			}
 
-			if(!IsDead)
+			if (!IsDead)
 			{
 				HandleDashing(dt);
 				HandleStatuses(dt);
 				HandleShooting(dt);
 				HandleFlashing(dt);
-
-				if (Stats[PlayerStat.HealthRegen] > 0f)
-					RegenHealth(Stats[PlayerStat.HealthRegen] * dt);
+				HandleRegen(dt);
 			}
 		}
 
@@ -394,11 +401,23 @@ public partial class PlayerCitizen : Thing
 		//}
 	}
 
+	void HandleRegen(float dt)
+	{
+		if (Math.Abs(Stats[PlayerStat.HealthRegen]) > 0f)
+			RegenHealth(Stats[PlayerStat.HealthRegen] * dt);
+
+		if (Stats[PlayerStat.HealthRegenStill] > 0f && !IsMoving)
+			RegenHealth(Stats[PlayerStat.HealthRegenStill] * dt);
+	}
+
 	public void RegenHealth(float amount)
 	{
 		Health += amount;
         if (Health > Stats[PlayerStat.MaxHp])
             Health = Stats[PlayerStat.MaxHp];
+
+        if (Health <= 0f)
+            Die();
     }
 
 	void HandleDashing(float dt)
@@ -463,7 +482,7 @@ public partial class PlayerCitizen : Thing
 		_dashCloudTime = 0f;
 
 		ForEachStatus(status => status.OnDashStarted());
-	}
+    }
 
 	[ClientRpc]
 	public void SpawnCloudClient()
@@ -599,6 +618,14 @@ public partial class PlayerCitizen : Thing
 			if (Stats[PlayerStat.DamagePerEarlierShot] > 0f)
 				damage += _shotNum * Stats[PlayerStat.DamagePerEarlierShot];
 
+            if (Stats[PlayerStat.DamageForSpeed] > 0f)
+			{
+                damage += Stats[PlayerStat.DamageForSpeed] * Velocity.Length;
+
+				if(IsDashing)
+                    damage += Stats[PlayerStat.DamageForSpeed] * _dashVelocity.Length;
+            }
+
             var basePivotY = Utils.Map(damage, 5f, 30f, -1.2f, -0.3f);
 
 			var bullet = new Bullet
@@ -645,8 +672,10 @@ public partial class PlayerCitizen : Thing
 		_shotNum = 0;
 		ReloadProgress = 0f;
 
-		//Game.PlaySfxTarget(To.Single(Client), "reload.end", Position, pitch: 1f, volume: 0.5f);
-	}
+        ForEachStatus(status => status.OnReload());
+
+        //Game.PlaySfxTarget(To.Single(Client), "reload.end", Position, pitch: 1f, volume: 0.5f);
+    }
 
 	void HandleBounds()
 	{
@@ -720,9 +749,7 @@ public partial class PlayerCitizen : Thing
 		DamageClient(damage);
 
 		if (Health <= 0f)
-		{
 			Die();
-		}
 
 		return damage;
 	}
@@ -761,9 +788,9 @@ public partial class PlayerCitizen : Thing
 
 	public float GetDamageMultiplier()
 	{
-		float damageMultiplier = 1f;
+		float damageMultiplier = Stats[PlayerStat.OverallDamageMultiplier];
 
-        if(Stats[PlayerStat.LowHealthDamageMultiplier] > 1f)
+        if (Stats[PlayerStat.LowHealthDamageMultiplier] > 1f)
 			damageMultiplier *= Utils.Map(Health, Stats[PlayerStat.MaxHp], 0f, 1f, Stats[PlayerStat.LowHealthDamageMultiplier]);
 
         if (Stats[PlayerStat.FullHealthDamageMultiplier] > 1f && !(Health < Stats[PlayerStat.MaxHp]))
@@ -978,7 +1005,7 @@ public partial class PlayerCitizen : Thing
 
 	public int GetExperienceReqForLevel(int level)
 	{
-		return (int)MathF.Round(Utils.Map(level, 1, 140, 3f, 400f, EasingType.SineIn));
+		return (int)MathF.Round(Utils.Map(level, 1, 150, 3f, 340f, EasingType.SineIn));
 	}
 
 	public void Flash(float time)

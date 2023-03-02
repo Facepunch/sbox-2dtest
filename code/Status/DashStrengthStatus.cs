@@ -39,11 +39,11 @@ public class DashStrengthStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f + 0.35f * level;
+		return 1f + 0.18f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 35 * level;
+		return 18 * level;
 	}
 }

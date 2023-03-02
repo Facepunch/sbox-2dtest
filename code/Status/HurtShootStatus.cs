@@ -44,10 +44,10 @@ public class HurtShootStatus : Status
 
     public float GetChanceForLevel(int level)
     {
-        return level * 0.3f;
+        return level * 0.33f;
     }
     public float GetPercentForLevel(int level)
     {
-        return level * 30;
+        return level * 33;
     }
 }

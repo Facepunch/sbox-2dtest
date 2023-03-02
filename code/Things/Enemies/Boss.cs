@@ -65,18 +65,18 @@ public partial class Boss : Enemy
             Deceleration = 1.1f;
             DecelerationAttacking = 1.1f;
 
-            Radius = 0.45f;
-            Health = 20000f;
+            Radius = 0.55f;
+            Health = 25000f;
             MaxHealth = Health;
-            DamageToPlayer = 20f;
+            DamageToPlayer = 30f;
 
-            ScaleFactor = 1.95f;
+            ScaleFactor = 2.25f;
             Scale = new Vector2(1f, 1f) * ScaleFactor;
 
             CollideWith.Add(typeof(Enemy));
             CollideWith.Add(typeof(PlayerCitizen));
 
-            ShadowScale = 2.05f;
+            ShadowScale = 2.15f;
             _damageTime = DAMAGE_TIME;
             _shootDelayTimer = Sandbox.Game.Random.Float(SHOOT_DELAY_MIN, SHOOT_DELAY_MAX);
 
@@ -250,7 +250,7 @@ public partial class Boss : Enemy
         };
 
         bullet.ColorTint = Color.Yellow;
-        bullet.Speed = 1.9f;
+        bullet.Speed = 3f;
 
         if (dir.x < 0f)
             bullet.Scale = new Vector2(-bullet.Scale.x, bullet.Scale.y);

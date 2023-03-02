@@ -54,6 +54,6 @@ public class DamageStatus : Status
 
     public float GetSpeedPercentForLevel(int level)
     {
-        return 1 * level;
+        return 10 * level;
     }
 }

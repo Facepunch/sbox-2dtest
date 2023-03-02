@@ -135,7 +135,10 @@ public partial class SpitterElite : Enemy
             Shooter = this,
         };
 
-        if(dir.x < 0f)
+        bullet.ColorTint = new Color(1f, 0.2f, 0f);
+        bullet.Speed = 2.1f;
+
+        if (dir.x < 0f)
             bullet.Scale = new Vector2(-bullet.Scale.x, bullet.Scale.y);
 
         Game.AddThing(bullet);

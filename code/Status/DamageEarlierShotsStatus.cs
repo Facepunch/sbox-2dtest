@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(7, 0, 111f)]
+[Status(7, 0, 1f)]
 public class DamageEarlierShotsStatus : Status
 {
 	public DamageEarlierShotsStatus()
@@ -38,7 +38,7 @@ public class DamageEarlierShotsStatus : Status
 
 	public float GetAmountForLevel(int level)
 	{
-		return level * 0.25f;
+		return level * 0.15f;
 	}
 
     public string GetPrintAmountForLevel(int level)

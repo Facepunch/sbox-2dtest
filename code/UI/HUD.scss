@@ -73,6 +73,25 @@
                 z-index: -1;
             }
         }
+
+        .status_level_label_max {
+            position: relative;
+            left: 12px;
+            bottom: 12px;
+            font-size: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 600;
+            color: #aaaa00;
+            opacity: 1;
+
+            .status_level_label_bg {
+                color: black;
+                position: relative;
+                left: -11px;
+                bottom: -3px;
+                z-index: -1;
+            }
+        }
     }
 }
 

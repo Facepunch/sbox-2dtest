@@ -48,12 +48,17 @@ public class StatusPanel : Panel
 			icon.LevelLabel.Text = status.Level > 1 ? status.Level.ToString() : "";
 			icon.LevelLabelBg.Text = status.Level > 1 ? status.Level.ToString() : "";
 
-			//icon.AddEventListener("onclick", () =>
-			//{
-			//	Log.Info("play");
-			//});
+            if (status.Level == status.MaxLevel)
+                icon.LevelLabel.AddClass("status_level_label_max");
+            else
+                icon.LevelLabel.AddClass("status_level_label");
 
-			_statusIcons.Add(icon);
+            //icon.AddEventListener("onclick", () =>
+            //{
+            //	Log.Info("play");
+            //});
+
+            _statusIcons.Add(icon);
 		}
 	}
 }
@@ -71,8 +76,8 @@ public class StatusIcon : Panel
 	public StatusIcon()
     {
 		LevelLabel = new Label();
-		LevelLabel.AddClass("status_level_label");
-		AddChild(LevelLabel);
+
+        AddChild(LevelLabel);
 
 		LevelLabelBg = new Label();
 		LevelLabelBg.AddClass("status_level_label_bg");
