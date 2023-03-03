@@ -32,6 +32,7 @@ public enum PlayerStat {
     FreezeTimeScale, FreezeOnMeleeChance, FreezeFireDamageMultiplier, LastAmmoDamageMultiplier, FearLifetime, FearDamageMultiplier, FearOnMeleeChance, BulletDamageGrow, BulletDamageShrink,
 	BulletDistanceDamage, NumRerollsPerLevel, FullHealthDamageMultiplier, DamagePerEarlierShot, DamageForSpeed, OverallDamageMultiplier, ExplosionSizeMultiplier, GrenadeVelocity, ExplosionDamageMultiplier,
     BulletDamageMultiplier, ExplosionDamageReductionPercent, NonExplosionDamageIncreasePercent, GrenadeStickyPercent, GrenadeFearChance, FearDrainPercent, FearPainPercent, CrateChanceAdditional,
+	AttackSpeedStill, FearDropGrenadeChance, FrozenShardsNum, NoDashInvuln, BulletFlatDamageAddition,
 }
 
 public enum DamageType { Melee, Ranged, Explosion, Fire, }
@@ -70,6 +71,7 @@ public partial class PlayerCitizen : Thing
 	public int AmmoCount { get; protected set; }
 
 	public bool IsMoving => Velocity.LengthSquared > 0.01f && !IsDashing;
+    public bool IsInvulnerable => IsDashing && Stats[PlayerStat.NoDashInvuln] <= 0f;
 
     private float _flashTimer;
 	private bool _isFlashing;
@@ -208,7 +210,13 @@ public partial class PlayerCitizen : Thing
         Stats[PlayerStat.GrenadeStickyPercent] = 0f;
         Stats[PlayerStat.GrenadeFearChance] = 0f;
         Stats[PlayerStat.FearDrainPercent] = 0f;
+        Stats[PlayerStat.FearPainPercent] = 0f;
         Stats[PlayerStat.CrateChanceAdditional] = 0f;
+        Stats[PlayerStat.AttackSpeedStill] = 1f;
+        Stats[PlayerStat.FearDropGrenadeChance] = 0f;
+        Stats[PlayerStat.FrozenShardsNum] = 0f;
+        Stats[PlayerStat.NoDashInvuln] = 0f;
+        Stats[PlayerStat.BulletFlatDamageAddition] = 0f;
 
         Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -457,7 +465,8 @@ public partial class PlayerCitizen : Thing
 			}
 			else
 			{
-				ColorTint = new Color(Sandbox.Game.Random.Float(0.1f, 0.25f), Sandbox.Game.Random.Float(0.1f, 0.25f), 1f);
+				if(IsInvulnerable)
+					ColorTint = new Color(Sandbox.Game.Random.Float(0.1f, 0.25f), Sandbox.Game.Random.Float(0.1f, 0.25f), 1f);
 
 				if(_dashCloudTime > Sandbox.Game.Random.Float(0.1f, 0.2f))
 				{
@@ -572,7 +581,7 @@ public partial class PlayerCitizen : Thing
 		}
 		else
 		{
-			Timer -= dt * Stats[PlayerStat.AttackSpeed];
+            Timer -= dt * Stats[PlayerStat.AttackSpeed] * (IsMoving ? 1f : Stats[PlayerStat.AttackSpeedStill]);
 			if (Timer <= 0f)
 			{
 				Shoot(isLastAmmo: AmmoCount == 1);
@@ -622,51 +631,7 @@ public partial class PlayerCitizen : Thing
 		for (int i = 0; i < num_bullets_int; i++)
 		{
 			var dir = Utils.RotateVector(AimDir, start_angle + currAngleOffset + increment * i);
-
-			var damage = Stats[PlayerStat.BulletDamage] * Stats[PlayerStat.BulletDamageMultiplier] * GetDamageMultiplier();
-			if (isLastAmmo)
-				damage *= Stats[PlayerStat.LastAmmoDamageMultiplier];
-
-			if (Stats[PlayerStat.DamagePerEarlierShot] > 0f)
-				damage += _shotNum * Stats[PlayerStat.DamagePerEarlierShot];
-
-            if (Stats[PlayerStat.DamageForSpeed] > 0f)
-			{
-                damage += Stats[PlayerStat.DamageForSpeed] * Velocity.Length;
-
-				if(IsDashing)
-                    damage += Stats[PlayerStat.DamageForSpeed] * _dashVelocity.Length;
-            }
-
-            var basePivotY = Utils.Map(damage, 5f, 30f, -1.2f, -0.3f);
-
-			var bullet = new Bullet
-			{
-				Position = pos,
-				Depth = -1f,
-				Velocity = dir * Stats[PlayerStat.BulletSpeed],
-				Shooter = this,
-				TempWeight = 3f,
-				BasePivotY = basePivotY,
-			};
-
-			bullet.Stats[BulletStat.Damage] = damage;
-            bullet.Stats[BulletStat.Force] = Stats[PlayerStat.BulletForce];
-            bullet.Stats[BulletStat.Lifetime] = Stats[PlayerStat.BulletLifetime];
-            bullet.Stats[BulletStat.NumPiercing] = (int)MathF.Round(Stats[PlayerStat.BulletNumPiercing]);
-            bullet.Stats[BulletStat.CriticalChance] = Stats[PlayerStat.CritChance];
-            bullet.Stats[BulletStat.CriticalMultiplier] = Stats[PlayerStat.CritMultiplier];
-            bullet.Stats[BulletStat.FireIgniteChance] = Stats[PlayerStat.ShootFireIgniteChance];
-            bullet.Stats[BulletStat.FreezeChance] = Stats[PlayerStat.ShootFreezeChance];
-            bullet.Stats[BulletStat.GrowDamageAmount] = Stats[PlayerStat.BulletDamageGrow];
-            bullet.Stats[BulletStat.ShrinkDamageAmount] = Stats[PlayerStat.BulletDamageShrink];
-            bullet.Stats[BulletStat.DistanceDamageAmount] = Stats[PlayerStat.BulletDistanceDamage];
-
-            bullet.Init();
-
-			bullet.HeightZ = 0f;
-
-			Game.AddThing(bullet);
+			SpawnBullet(pos, dir, isLastAmmo);
 		}
 
 		Game.PlaySfxNearby("shoot", pos, pitch: Utils.Map(_shotNum, 0f, (float)Stats[PlayerStat.MaxAmmoCount], 1f, 1.25f), volume: 1f, maxDist: 4f);
@@ -676,6 +641,53 @@ public partial class PlayerCitizen : Thing
 		_shotNum++;
 	}
 
+	void SpawnBullet(Vector2 pos, Vector2 dir, bool isLastAmmo = false)
+	{
+        var damage = (Stats[PlayerStat.BulletDamage] * Stats[PlayerStat.BulletDamageMultiplier] + Stats[PlayerStat.BulletFlatDamageAddition]) * GetDamageMultiplier();
+        if (isLastAmmo)
+            damage *= Stats[PlayerStat.LastAmmoDamageMultiplier];
+
+        if (Stats[PlayerStat.DamagePerEarlierShot] > 0f)
+            damage += _shotNum * Stats[PlayerStat.DamagePerEarlierShot];
+
+        if (Stats[PlayerStat.DamageForSpeed] > 0f)
+        {
+            damage += Stats[PlayerStat.DamageForSpeed] * Velocity.Length;
+
+            if (IsDashing)
+                damage += Stats[PlayerStat.DamageForSpeed] * _dashVelocity.Length;
+        }
+
+        var basePivotY = Utils.Map(damage, 5f, 30f, -1.2f, -0.3f);
+
+        var bullet = new Bullet
+        {
+            Position = pos,
+            Depth = -1f,
+            Velocity = dir * Stats[PlayerStat.BulletSpeed],
+            Shooter = this,
+            TempWeight = 3f,
+            BasePivotY = basePivotY,
+        };
+
+        bullet.Stats[BulletStat.Damage] = damage;
+        bullet.Stats[BulletStat.Force] = Stats[PlayerStat.BulletForce];
+        bullet.Stats[BulletStat.Lifetime] = Stats[PlayerStat.BulletLifetime];
+        bullet.Stats[BulletStat.NumPiercing] = (int)MathF.Round(Stats[PlayerStat.BulletNumPiercing]);
+        bullet.Stats[BulletStat.CriticalChance] = Stats[PlayerStat.CritChance];
+        bullet.Stats[BulletStat.CriticalMultiplier] = Stats[PlayerStat.CritMultiplier];
+        bullet.Stats[BulletStat.FireIgniteChance] = Stats[PlayerStat.ShootFireIgniteChance];
+        bullet.Stats[BulletStat.FreezeChance] = Stats[PlayerStat.ShootFreezeChance];
+        bullet.Stats[BulletStat.GrowDamageAmount] = Stats[PlayerStat.BulletDamageGrow];
+        bullet.Stats[BulletStat.ShrinkDamageAmount] = Stats[PlayerStat.BulletDamageShrink];
+        bullet.Stats[BulletStat.DistanceDamageAmount] = Stats[PlayerStat.BulletDistanceDamage];
+
+        bullet.Init();
+
+        bullet.HeightZ = 0f;
+
+        Game.AddThing(bullet);
+    }
 
     void Reload()
 	{
@@ -743,7 +755,7 @@ public partial class PlayerCitizen : Thing
 	// returns actual damage amount taken
 	public float Damage(float damage, DamageType damageType)
 	{
-		if (IsDashing)
+		if (IsInvulnerable)
 		{
 			// show DODGED! floater
 			return 0f;
@@ -1096,5 +1108,19 @@ public partial class PlayerCitizen : Thing
 
         grenade.Velocity = velocity;
         Game.AddThing(grenade);
+    }
+
+	public void SpawnBulletRing(Vector2 pos, int numBullets)
+	{
+		Vector2 aimDir = (new Vector2(Sandbox.Game.Random.Float(-1f, 1f), Sandbox.Game.Random.Float(-1f, 1f))).Normal;
+        float increment = 360f / numBullets;
+
+        for (int i = 0; i < numBullets; i++)
+        {
+            var dir = Utils.RotateVector(aimDir, i * increment);
+            SpawnBullet(pos, dir);
+        }
+
+        Game.PlaySfxNearby("shoot", pos, pitch: 1f, volume: 1f, maxDist: 3f);
     }
 }

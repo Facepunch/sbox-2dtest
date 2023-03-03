@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(4, 0, 1f)]
+[Status(5, 0, 1f)]
 public class FreezeShootStatus : Status
 {
 	public FreezeShootStatus()

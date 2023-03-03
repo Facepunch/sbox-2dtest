@@ -59,6 +59,14 @@ public class FearEnemyStatus : EnemyStatus
 	public override void StartDying()
 	{
 		Enemy.IsFeared = false;
+
+		if(Player != null && Sandbox.Game.Random.Float(0f, 1f) < Player.Stats[PlayerStat.FearDropGrenadeChance])
+		{
+			Player.SpawnGrenade(
+				pos: Enemy.Position + new Vector2(Enemy.Radius * Sandbox.Game.Random.Float(-1f, 1f), Enemy.Radius * Sandbox.Game.Random.Float(-1f, 1f)), 
+				velocity: new Vector2(0.5f * Sandbox.Game.Random.Float(-1f, 1f), 0.5f * Sandbox.Game.Random.Float(-1f, 1f))
+			);
+		}
 	}
 
 	public override void Remove()

@@ -150,7 +150,7 @@ public partial class Spiker : Enemy
         if (closestPlayer == null)
             return;
 
-        var target_pos = closestPlayer.Position + closestPlayer.Velocity * Sandbox.Game.Random.Float(0.1f, 2f) + new Vector2(Sandbox.Game.Random.Float(-1f, 1f), Sandbox.Game.Random.Float(-1f, 1f)) * 0.8f;
+        var target_pos = closestPlayer.Position + closestPlayer.Velocity * Sandbox.Game.Random.Float(0.2f, 2f) + new Vector2(Sandbox.Game.Random.Float(-1f, 1f), Sandbox.Game.Random.Float(-1f, 1f)) * 0.4f;
         var BUFFER = 0.3f;
         var spike = new EnemySpike
         {

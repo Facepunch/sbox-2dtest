@@ -609,13 +609,15 @@ public abstract partial class Enemy : Thing
 
         var fear = AddEnemyStatus<FearEnemyStatus>();
         fear.Player = player;
-        fear.SetLifetime(player.Stats[PlayerStat.FearLifetime]);
-
-		if (player.Stats[PlayerStat.FearPainPercent] > 0f)
-			fear.PainPercent = player.Stats[PlayerStat.FearPainPercent];
+        fear.SetLifetime(player?.Stats[PlayerStat.FearLifetime] ?? 4f);
 
         if (player != null)
+		{
+            if (player.Stats[PlayerStat.FearPainPercent] > 0f)
+                fear.PainPercent = player.Stats[PlayerStat.FearPainPercent];
+
             player.ForEachStatus(status => status.OnFear(this));
+        }
     }
 
 	protected virtual void OnDamagePlayer(PlayerCitizen player, float damage)

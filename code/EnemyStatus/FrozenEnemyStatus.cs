@@ -59,7 +59,14 @@ public class FrozenEnemyStatus : EnemyStatus
 		Enemy.AnimSpeedModifier = 1f;
 		Enemy.TimeScale = 1f;
 		Enemy.IsFrozen = false;
-	}
+
+        if (Player != null && Player.Stats[PlayerStat.FrozenShardsNum] > 0f)
+        {
+			int maxShardsNum = (int)Player.Stats[PlayerStat.FrozenShardsNum];
+			int numShards = Sandbox.Game.Random.Int(1, maxShardsNum);
+			Player.SpawnBulletRing(Enemy.Position, numShards);
+        }
+    }
 
 	public override void Remove()
     {

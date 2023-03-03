@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(7, 0, 1f, typeof(GrenadeShootReloadStatus))]
+[Status(7, 0, 1f, typeof(GrenadeShootReloadStatus), typeof(FearDropGrenadeStatus))]
 public class ExplosionDmgReductionStatus : Status
 {
     public ExplosionDmgReductionStatus()

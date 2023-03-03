@@ -25,6 +25,9 @@ public class NumDashesStatus : Status
 
         Player.Modify(this, PlayerStat.NumDashes, GetNumDashesForLevel(Level), ModifierType.Add);
         Player.Modify(this, PlayerStat.MaxHp, GetHealthMultForLevel(Level), ModifierType.Mult);
+
+		if (Player.Health > Player.Stats[PlayerStat.MaxHp])
+			Player.Health = Player.Stats[PlayerStat.MaxHp];
     }
 
 	public override string GetDescription(int newLevel)

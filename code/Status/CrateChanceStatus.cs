@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(7, 0, 111f)]
+[Status(7, 0, 1f)]
 public class CrateChanceStatus : Status
 {
     public CrateChanceStatus()
@@ -28,12 +28,12 @@ public class CrateChanceStatus : Status
 
     public override string GetDescription(int newLevel)
     {
-        return string.Format("{0}% greater chance to spawn crates", GetPercentForLevel(Level));
+        return string.Format("{0}% greater chance for a crate to spawn instead of an enemy", GetPercentForLevel(Level));
     }
 
     public override string GetUpgradeDescription(int newLevel)
     {
-        return newLevel > 1 ? string.Format("{0}% → {1}% greater chance to spawn crates", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+        return newLevel > 1 ? string.Format("{0}% → {1}% greater chance for a crate to spawn instead of an enemy", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
     }
 
     public float GetAddForLevel(int level)

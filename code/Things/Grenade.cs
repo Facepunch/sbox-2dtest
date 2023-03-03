@@ -160,7 +160,7 @@ public partial class Grenade : Thing
 					if(Sandbox.Game.Random.Float(0f, 1f) < FearChance)
 					{
                         if (!enemy.HasEnemyStatus<FearEnemyStatus>())
-                            Player.Game.PlaySfxNearby("fear", enemy.Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 0.6f, maxDist: 6f);
+                            MyGame.Current.PlaySfxNearby("fear", enemy.Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 0.6f, maxDist: 6f);
 
                         enemy.Fear(Player);
                     }
