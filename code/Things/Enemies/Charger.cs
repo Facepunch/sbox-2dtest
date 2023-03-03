@@ -216,7 +216,7 @@ public partial class Charger : Enemy
 
                 if ((IsAttacking || IsCharging) && _damageTime > (DAMAGE_TIME / TimeScale))
                 {
-                    float damageDealt = player.Damage(DamageToPlayer);
+                    float damageDealt = player.Damage(DamageToPlayer, DamageType.Melee);
 
                     if (damageDealt > 0f)
                     {

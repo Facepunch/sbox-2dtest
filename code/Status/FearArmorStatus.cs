@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(5, 0, 1f, typeof(DashFearStatus))]
+[Status(4, 0, 1f, typeof(DashFearStatus), typeof(GrenadeFearStatus))]
 public class FearArmorStatus : Status
 {
 	public FearArmorStatus()
@@ -38,11 +38,11 @@ public class FearArmorStatus : Status
 
 	public float GetAddForLevel(int level)
     {
-		return 0.2f * level;
+		return level == 4 ? 1f : 0.3f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 20 * level;
+		return level == 4 ? 100 : 30 * level;
 	}
 }

@@ -319,7 +319,7 @@ public partial class Boss : Enemy
 
                 if (IsAttacking && _damageTime > (DAMAGE_TIME / TimeScale))
                 {
-                    float damageDealt = player.Damage(DamageToPlayer);
+                    float damageDealt = player.Damage(DamageToPlayer, DamageType.Melee);
 
                     if (damageDealt > 0f)
                     {

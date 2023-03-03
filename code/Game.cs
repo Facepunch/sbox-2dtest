@@ -27,9 +27,11 @@ public partial class MyGame : GameManager
 
 	public int EnemyCount { get; private set; }
 	public const float MAX_ENEMY_COUNT = 350;
-	//public const float MAX_ENEMY_COUNT = 30;
+    //public const float MAX_ENEMY_COUNT = 30;
+    public int CrateCount { get; private set; }
+    public const float MAX_CRATE_COUNT = 6;
 
-	public int CoinCount { get; private set; }
+    public int CoinCount { get; private set; }
 	public const float MAX_COIN_COUNT = 200;
 
 	private readonly List<Thing> _things = new();
@@ -164,10 +166,21 @@ public partial class MyGame : GameManager
 		// ZOMBIE (DEFAULT)
 		TypeDescription type = TypeLibrary.GetType(typeof(Zombie));
 
-		// CRATE
-		float crateChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 200f, 0.005f, 0.01f);
-		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < crateChance)
-			type = TypeLibrary.GetType(typeof(Crate));
+        // CRATE
+		if(CrateCount < MAX_CRATE_COUNT)
+		{
+            float crateChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 200f, 0.005f, 0.01f);
+            float additionalCrateChanceHighest = 0f;
+            foreach (PlayerCitizen player in AlivePlayers)
+            {
+                if (player.Stats[PlayerStat.CrateChanceAdditional] > additionalCrateChanceHighest)
+                    additionalCrateChanceHighest = player.Stats[PlayerStat.CrateChanceAdditional];
+            }
+            crateChance *= (1f + additionalCrateChanceHighest);
+
+            if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < crateChance)
+                type = TypeLibrary.GetType(typeof(Crate));
+        }
 
 		// EXPLODER
 		float exploderChance = ElapsedTime < 35f ? 0f : Utils.Map(ElapsedTime, 35f, 700f, 0.022f, 0.08f);
@@ -236,6 +249,9 @@ public partial class MyGame : GameManager
 
 		AddThing(enemy);
 		EnemyCount++;
+
+		if (type is Crate)
+			CrateCount++;
 
 		PlaySfxNearby("zombie.dirt", pos, pitch: Sandbox.Game.Random.Float(0.6f, 0.8f), volume: 0.7f, maxDist: 7.5f);
 	}
@@ -414,10 +430,17 @@ public partial class MyGame : GameManager
 			ThingGridPositions[thing.GridPos].Remove(thing);
 		}
 
-		if (thing is Enemy)
+		if (thing is Enemy) // counts Crate too
+		{
 			EnemyCount--;
+
+            if (thing is Crate)
+                CrateCount--;
+        }
 		else if (thing is Coin)
-			CoinCount--;
+		{
+            CoinCount--;
+        }
 	}
 
 	[ConCmd.Server]
@@ -461,6 +484,7 @@ public partial class MyGame : GameManager
 		}
 
 		EnemyCount = 0;
+		CrateCount = 0;
 		CoinCount = 0;
 		_enemySpawnTime = 0f;
 		ElapsedTime = 0f;

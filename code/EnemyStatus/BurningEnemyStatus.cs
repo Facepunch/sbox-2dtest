@@ -82,7 +82,7 @@ public class BurningEnemyStatus : EnemyStatus
         {
 			if(_damageOtherTime > DAMAGE_INTERVAL)
             {
-				player.Damage(Damage);
+				player.Damage(Damage, DamageType.Fire);
 				didDamage = true;
 			}
 		}

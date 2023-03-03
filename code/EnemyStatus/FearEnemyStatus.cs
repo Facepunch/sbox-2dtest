@@ -15,13 +15,17 @@ public class FearEnemyStatus : EnemyStatus
 
 	public PlayerCitizen Player { get; set; }
 
-	public override void Init(Enemy enemy)
+	public TimeSince TimeSincePain { get; set; }
+    public float PainPercent { get; set; }
+
+    public override void Init(Enemy enemy)
     {
 		base.Init(enemy);
 
 		enemy.CreateFearVfx();
 		enemy.IsFeared = true;
 		TimeScale = float.MaxValue;
+		TimeSincePain = 0f;
 	}
 
 	public void SetLifetime(float lifetime)
@@ -39,6 +43,17 @@ public class FearEnemyStatus : EnemyStatus
 
 		if (ElapsedTime > Lifetime)
 			Enemy.RemoveEnemyStatus(this);
+
+		if(TimeSincePain > 1f)
+		{
+			TimeSincePain = 0f;
+
+			if(PainPercent > 0f)
+			{
+				float damage = PainPercent * Enemy.Health;
+				Enemy.Damage(damage, null);
+			}
+		}
     }
 
 	public override void StartDying()

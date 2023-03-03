@@ -122,7 +122,7 @@ public partial class Exploder : Enemy
 
                 if (IsAttacking && _damageTime > (DAMAGE_TIME / TimeScale))
                 {
-                    float damageDealt = player.Damage(DamageToPlayer);
+                    float damageDealt = player.Damage(DamageToPlayer, DamageType.Melee);
 
                     if (damageDealt > 0f)
                     {
@@ -191,14 +191,9 @@ public partial class Exploder : Enemy
             }
             else if(thing is PlayerCitizen player && !player.IsDead)
             {
-                var damage = EXPLOSION_DAMAGE;
-
-                if (player.Stats[PlayerStat.ExplosionDamageReductionPercent] > 0f)
-                    damage *= (1f - MathX.Clamp(player.Stats[PlayerStat.ExplosionDamageReductionPercent], 0f, 1f));
-
                 var dist_sqr = (thing.Position - Position).LengthSquared;
                 if (dist_sqr < MathF.Pow(EXPLOSION_RADIUS, 2f) * 0.95f)
-                    player.Damage(damage);
+                    player.Damage(EXPLOSION_DAMAGE, DamageType.Explosion);
             }
                 
         }

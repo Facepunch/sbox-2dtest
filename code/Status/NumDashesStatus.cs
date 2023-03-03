@@ -44,11 +44,11 @@ public class NumDashesStatus : Status
 
     public float GetHealthMultForLevel(int level)
     {
-        return 1f - 0.15f * level;
+        return 1f - 0.1f * level;
     }
 
     public float GetHealthPercentForLevel(int level)
     {
-        return 15 * level;
+        return 10 * level;
     }
 }

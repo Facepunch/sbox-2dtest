@@ -71,4 +71,5 @@ public partial class Status : BaseNetworkable
     public virtual void OnFear(Enemy enemy) { }
     public virtual void OnKill(Enemy enemy) { }
     public virtual void OnHurt(float amount) { }
+    public virtual void OnLevelUp() { }
 }

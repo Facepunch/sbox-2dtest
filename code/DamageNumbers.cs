@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using Sandbox;
 
-public enum DamageType { Normal, Crit, Player }
+public enum DamageNumberType { Normal, Crit, Player }
 
 internal static class DamageNumbers
 {
-	public static void Create( Vector3 pos, float amount, DamageType damageType)
+	public static void Create( Vector3 pos, float amount, DamageNumberType damageNumberType)
 	{
 		if(amount < 1f)
         {
@@ -22,7 +22,7 @@ internal static class DamageNumbers
 				amount = MathF.Floor(amount);
 		}
 
-		var path = damageType == DamageType.Normal ? "particles/dmg_number.vpcf" : (damageType == DamageType.Crit ? "particles/dmg_number_crit.vpcf" : "particles/dmg_number_player.vpcf");
+		var path = damageNumberType == DamageNumberType.Normal ? "particles/dmg_number.vpcf" : (damageNumberType == DamageNumberType.Crit ? "particles/dmg_number_crit.vpcf" : "particles/dmg_number_player.vpcf");
 		var number = amount;
 		var particle = Particles.Create( path, pos.WithZ(400f) );
 

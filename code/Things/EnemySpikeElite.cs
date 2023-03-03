@@ -119,7 +119,7 @@ public partial class EnemySpikeElite : Thing
 
 				Game.PlaySfxNearby("spike.stab", player.Position, pitch: Sandbox.Game.Random.Float(0.85f, 0.9f), volume: 1.6f, maxDist: 6f);
 				//Game.PlaySfxNearby("splash", player.Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 1.5f, maxDist: 5f);
-				player.Damage(Damage);
+				player.Damage(Damage, DamageType.Ranged);
 				//player.Velocity += Direction * 2f;
 
 				_hitThings.Add(player);

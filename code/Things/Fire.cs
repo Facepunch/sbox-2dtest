@@ -113,7 +113,7 @@ public partial class Fire : Thing
 		{
 			if (_sinceDamageTime > DAMAGE_INTERVAL)
 			{
-				player.Damage(Shooter.Stats[PlayerStat.FireDamage] * Shooter.GetDamageMultiplier());
+				player.Damage(Shooter.Stats[PlayerStat.FireDamage] * Shooter.GetDamageMultiplier(), DamageType.Fire);
 				_sinceDamageTime = 0f;
 			}
 		}

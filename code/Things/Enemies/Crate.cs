@@ -131,5 +131,11 @@ public partial class Crate : Enemy
             reviveSoul.Velocity = (reviveSoul.Position - Position) * Sandbox.Game.Random.Float(2f, 6f);
             Game.AddThing(reviveSoul);
         }
+
+        var grenade_chance = 0.15f;
+        if (player != null && Sandbox.Game.Random.Float(0f, 1f) < grenade_chance)
+        {
+            player.SpawnGrenade(Position, Vector2.Zero);
+        }
     }
 }

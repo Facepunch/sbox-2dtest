@@ -333,11 +333,16 @@ public abstract partial class Enemy : Thing
             player.ForEachStatus(status => status.OnHit(this, isCrit));
 
             if (IsFeared)
+			{
                 damage *= player.Stats[PlayerStat.FearDamageMultiplier];
+
+				if(player.Stats[PlayerStat.FearDrainPercent] > 0f)
+					player.RegenHealth(damage * player.Stats[PlayerStat.FearDrainPercent]);
+            }
         }
 		
 		Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(1.25f, 2.55f), Sandbox.Game.Random.Float(4f, 8f)) * 0.1f, damage, isCrit ? DamageType.Crit : DamageType.Normal);
+		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(1.25f, 2.55f), Sandbox.Game.Random.Float(4f, 8f)) * 0.1f, damage, isCrit ? DamageNumberType.Crit : DamageNumberType.Normal);
 
 		if (Health <= 0f)
 		{
@@ -604,7 +609,10 @@ public abstract partial class Enemy : Thing
 
         var fear = AddEnemyStatus<FearEnemyStatus>();
         fear.Player = player;
-		fear.SetLifetime(player.Stats[PlayerStat.FreezeLifetime]);
+        fear.SetLifetime(player.Stats[PlayerStat.FearLifetime]);
+
+		if (player.Stats[PlayerStat.FearPainPercent] > 0f)
+			fear.PainPercent = player.Stats[PlayerStat.FearPainPercent];
 
         if (player != null)
             player.ForEachStatus(status => status.OnFear(this));

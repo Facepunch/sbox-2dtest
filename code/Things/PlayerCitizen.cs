@@ -5,6 +5,7 @@ using System.Linq;
 using static Test2D.MyGame;
 using System.Collections.Generic;
 using Sandbox.Diagnostics;
+using System.Numerics;
 
 namespace Test2D;
 
@@ -30,8 +31,10 @@ public enum PlayerStat {
     NumDashes, DashInvulnTime, DashCooldown, DashProgress, DashStrength, ThornsPercent, ShootFireIgniteChance, FireDamage, FireLifetime, FireSpreadChance, ShootFreezeChance, FreezeLifetime,
     FreezeTimeScale, FreezeOnMeleeChance, FreezeFireDamageMultiplier, LastAmmoDamageMultiplier, FearLifetime, FearDamageMultiplier, FearOnMeleeChance, BulletDamageGrow, BulletDamageShrink,
 	BulletDistanceDamage, NumRerollsPerLevel, FullHealthDamageMultiplier, DamagePerEarlierShot, DamageForSpeed, OverallDamageMultiplier, ExplosionSizeMultiplier, GrenadeVelocity, ExplosionDamageMultiplier,
-    BulletDamageMultiplier, ExplosionDamageReductionPercent, GrenadeStickyPercent,
+    BulletDamageMultiplier, ExplosionDamageReductionPercent, NonExplosionDamageIncreasePercent, GrenadeStickyPercent, GrenadeFearChance, FearDrainPercent, FearPainPercent, CrateChanceAdditional,
 }
+
+public enum DamageType { Melee, Ranged, Explosion, Fire, }
 
 public partial class PlayerCitizen : Thing
 {
@@ -165,7 +168,7 @@ public partial class PlayerCitizen : Thing
 		Radius = 0.1f;
 		GridPos = Game.GetGridSquareForPos(Position);
 		AimDir = Vector2.Up;
-		NumRerollAvailable = 0;
+		NumRerollAvailable = 2;
 
 		Stats[PlayerStat.FireDamage] = 1.0f;
 		Stats[PlayerStat.FireLifetime] = 2.0f;
@@ -201,7 +204,11 @@ public partial class PlayerCitizen : Thing
         Stats[PlayerStat.ExplosionDamageMultiplier] = 1f;
         Stats[PlayerStat.BulletDamageMultiplier] = 1f;
         Stats[PlayerStat.ExplosionDamageReductionPercent] = 0f;
+        Stats[PlayerStat.NonExplosionDamageIncreasePercent] = 0f;
         Stats[PlayerStat.GrenadeStickyPercent] = 0f;
+        Stats[PlayerStat.GrenadeFearChance] = 0f;
+        Stats[PlayerStat.FearDrainPercent] = 0f;
+        Stats[PlayerStat.CrateChanceAdditional] = 0f;
 
         Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -263,7 +270,7 @@ public partial class PlayerCitizen : Thing
 	public void ServerTick()
 	{
 		//Utils.DrawCircle(Position, 1.7f, 18, Time.Now, Color.Red);
-		//Log.Info("local player: " + (Game.Client != null));
+		//Log.Info("HP: " + Stats[PlayerStat.MaxHp]);
 		//DebugText("game over: " + Game.IsGameOver);
 		//DebugText(NumDashesAvailable + " / " + NumDashes + "\n\n" + _dashTimer);
 	}
@@ -734,7 +741,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	// returns actual damage amount taken
-	public float Damage(float damage)
+	public float Damage(float damage, DamageType damageType)
 	{
 		if (IsDashing)
 		{
@@ -742,13 +749,19 @@ public partial class PlayerCitizen : Thing
 			return 0f;
 		}
 
-		if(Stats[PlayerStat.DamageReductionPercent] > 0f)
+		if (Stats[PlayerStat.DamageReductionPercent] > 0f)
 			damage *= (1f - MathX.Clamp(Stats[PlayerStat.DamageReductionPercent], 0f, 1f));
+
+        if (damageType == DamageType.Explosion && Stats[PlayerStat.ExplosionDamageReductionPercent] > 0f)
+            damage *= (1f - MathX.Clamp(Stats[PlayerStat.ExplosionDamageReductionPercent], 0f, 1f));
+
+        if (damageType != DamageType.Explosion && Stats[PlayerStat.NonExplosionDamageIncreasePercent] > 0f)
+            damage *= (1f + Stats[PlayerStat.NonExplosionDamageIncreasePercent]);
 
         ForEachStatus(status => status.OnHurt(damage));
 
         Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(0.5f, 4f), Sandbox.Game.Random.Float(8.5f, 10.5f)) * 0.1f, damage, DamageType.Player);
+		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(0.5f, 4f), Sandbox.Game.Random.Float(8.5f, 10.5f)) * 0.1f, damage, DamageNumberType.Player);
 		Flash(0.125f);
 
 		DamageClient(damage);
@@ -905,6 +918,17 @@ public partial class PlayerCitizen : Thing
         if (update)
             UpdateProperty(statType);
     }
+
+	public void AdjustBaseStat(PlayerStat statType, float amount, bool update = true)
+	{
+		if (!_original_properties_stat.ContainsKey(statType))
+			_original_properties_stat.Add(statType, Stats[statType]);
+		
+		_original_properties_stat[statType] += amount;
+
+        if (update)
+            UpdateProperty(statType);
+    }
     
     void UpdateProperty(PlayerStat statType)
     {
@@ -983,9 +1007,9 @@ public partial class PlayerCitizen : Thing
 		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
 		NumRerollAvailable += (int)Stats[PlayerStat.NumRerollsPerLevel];
 
-		//Log.Info("Level Up - now level: " + Level + " IsServer: " + Sandbox.Game.IsServer);
+        ForEachStatus(status => status.OnLevelUp());
 
-		IsChoosingLevelUpReward = true;
+        IsChoosingLevelUpReward = true;
 
 		LevelUpClient();
 	}
@@ -1058,4 +1082,19 @@ public partial class PlayerCitizen : Thing
 	{
 		Nametag.SetVisible(true);
 	}
+
+	public void SpawnGrenade(Vector2 pos, Vector2 velocity)
+	{
+        var grenade = new Grenade()
+        {
+            Position = pos,
+            ExplosionSizeMultiplier = Stats[PlayerStat.ExplosionSizeMultiplier],
+            Player = this,
+            StickyPercent = Stats[PlayerStat.GrenadeStickyPercent],
+            FearChance = Stats[PlayerStat.GrenadeFearChance],
+        };
+
+        grenade.Velocity = velocity;
+        Game.AddThing(grenade);
+    }
 }

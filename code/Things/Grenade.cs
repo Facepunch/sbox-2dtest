@@ -20,6 +20,7 @@ public partial class Grenade : Thing
 	public float Friction { get; set; }
 	public PlayerCitizen Player { get; set; }
 	public float StickyPercent { get; set; }
+    public float FearChance { get; set; }
 
     public Grenade()
     {
@@ -89,7 +90,7 @@ public partial class Grenade : Thing
 
 		Depth = -Position.y * 10f;
 
-		ColorTint = Color.Lerp(Color.Red, new Color(0f, 0.01f, 0f), 0.5f + MathF.Sin(SpawnTime.Relative * Utils.Map(SpawnTime, 0f, Lifetime, 1f, 16f, EasingType.QuadIn)) * 0.5f);
+		ColorTint = Color.Lerp(StickyPercent <= 0f ? Color.Red : Color.Magenta, new Color(0f, 0.01f, 0f), 0.5f + MathF.Sin(SpawnTime.Relative * Utils.Map(SpawnTime, 0f, Lifetime, 1f, 16f, EasingType.QuadIn)) * 0.5f);
         Scale = new Vector2(1f, 1f) * 0.275f * (0.9f + MathF.Sin(SpawnTime.Relative * Utils.Map(SpawnTime, 0f, Lifetime, 1f, 16f, EasingType.QuadIn)) * 0.1f);
         
 		var gridPos = Game.GetGridSquareForPos(Position);
@@ -153,16 +154,23 @@ public partial class Grenade : Thing
             {
                 var dist_sqr = (thing.Position - Position).LengthSquared;
                 if (dist_sqr < MathF.Pow(radius, 2f))
+				{
                     enemy.Damage(damage, null, false);
+
+					if(Sandbox.Game.Random.Float(0f, 1f) < FearChance)
+					{
+                        if (!enemy.HasEnemyStatus<FearEnemyStatus>())
+                            Player.Game.PlaySfxNearby("fear", enemy.Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 0.6f, maxDist: 6f);
+
+                        enemy.Fear(Player);
+                    }
+                }
             }
             else if (thing is PlayerCitizen player && !player.IsDead)
             {
-                if (player.Stats[PlayerStat.ExplosionDamageReductionPercent] > 0f)
-                    damage *= (1f - MathX.Clamp(player.Stats[PlayerStat.ExplosionDamageReductionPercent], 0f, 1f));
-
                 var dist_sqr = (thing.Position - Position).LengthSquared;
                 if (dist_sqr < MathF.Pow(radius, 2f) * 0.94f)
-                    player.Damage(damage);
+                    player.Damage(damage, DamageType.Explosion);
             }
         }
 

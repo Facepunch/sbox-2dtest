@@ -38,16 +38,8 @@ public class GrenadeShootReloadStatus : Status
 	{
 		if(Sandbox.Game.Random.Float(0f, 1f) < GetChanceForLevel(Level))
         {
-            var grenade = new Grenade()
-            {
-                Position = Player.Position + Player.AimDir * 0.5f,
-                ExplosionSizeMultiplier = Player.Stats[PlayerStat.ExplosionSizeMultiplier],
-				Player = Player,
-				StickyPercent = Player.Stats[PlayerStat.GrenadeStickyPercent],
-            };
-
-            grenade.Velocity = (grenade.Position - Player.Position) * Player.Stats[PlayerStat.GrenadeVelocity];
-            MyGame.Current.AddThing(grenade);
+			var pos = Player.Position + Player.AimDir * 0.5f;
+            Player.SpawnGrenade(pos: pos, velocity: (pos - Player.Position) * Player.Stats[PlayerStat.GrenadeVelocity]);
 
 			// todo:
             //MyGame.Current.PlaySfxNearby("ignite", Player.Position, pitch: Sandbox.Game.Random.Float(1.05f, 1.25f), volume: 0.5f, maxDist: 4f);

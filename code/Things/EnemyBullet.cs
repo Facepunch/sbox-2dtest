@@ -103,7 +103,7 @@ public partial class EnemyBullet : Thing
 
 			if(!player.IsDead)
             {
-				player.Damage(Damage);
+				player.Damage(Damage, DamageType.Ranged);
 				player.Velocity += Direction * 2f;
 				Game.PlaySfxNearby("splash", Position, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 1f, maxDist: 4f);
 				Remove();
