@@ -22,6 +22,7 @@ public partial class Bullet : Thing
     [Net] public IDictionary<BulletStat, float> Stats { get; private set; }
     
 	public List<Thing> _hitThings = new List<Thing>();
+	private float _scaleFactor;
 
 	public override void Spawn()
 	{
@@ -59,15 +60,17 @@ public partial class Bullet : Thing
 
 	public void Init()
 	{
-		DetermineSize();
+        _scaleFactor = Utils.Map(Stats[BulletStat.Damage], 10f, 120f, 0.015f, 0.003f, EasingType.Linear);
+        DetermineSize();
     }
 
 	void DetermineSize()
 	{
 		var damage = Stats[BulletStat.Damage];
-        float scale = 0.125f + damage * 0.015f * Utils.Map(damage, 10f, 100f, 1f, 0.1f, EasingType.QuadOut);
+		float scale = 0.125f + damage * _scaleFactor;
         Scale = new Vector2(scale, scale);
         Radius = 0.07f + scale * 0.2f;
+		ShadowScale = scale * 0.8f;
     }
 
 	public override void Update(float dt)

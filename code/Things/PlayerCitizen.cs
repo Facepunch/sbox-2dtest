@@ -62,7 +62,7 @@ public partial class PlayerCitizen : Thing
 
 	private float _dashTimer;
 	public bool IsDashing { get; private set; }
-	private Vector2 _dashVelocity;
+	public Vector2 DashVelocity { get; private set; }
 	private float _dashInvulnTimer;
 	private TimeSince _dashCloudTime;
 	public float DashProgress { get; protected set; }
@@ -314,7 +314,7 @@ public partial class PlayerCitizen : Thing
 		Position += Velocity * dt;
 
 		if (IsDashing)
-			Position += _dashVelocity * dt;
+			Position += DashVelocity * dt;
 
 		Velocity = Utils.DynamicEaseTo(Velocity, Vector2.Zero, 0.2f, dt);
 		TempWeight *= (1f - dt * 4.7f);
@@ -486,7 +486,7 @@ public partial class PlayerCitizen : Thing
 			return;
 
 		Vector2 dashDir = Velocity.LengthSquared > 0f ? Velocity.Normal : AimDir;
-		_dashVelocity = dashDir * Stats[PlayerStat.DashStrength];
+		DashVelocity = dashDir * Stats[PlayerStat.DashStrength];
 		TempWeight = 2f;
 
 		if (NumDashesAvailable == (int)Stats[PlayerStat.NumDashes])
@@ -655,7 +655,7 @@ public partial class PlayerCitizen : Thing
             damage += Stats[PlayerStat.DamageForSpeed] * Velocity.Length;
 
             if (IsDashing)
-                damage += Stats[PlayerStat.DamageForSpeed] * _dashVelocity.Length;
+                damage += Stats[PlayerStat.DamageForSpeed] * DashVelocity.Length;
         }
 
         var basePivotY = Utils.Map(damage, 5f, 30f, -1.2f, -0.3f);
@@ -1110,9 +1110,8 @@ public partial class PlayerCitizen : Thing
         Game.AddThing(grenade);
     }
 
-	public void SpawnBulletRing(Vector2 pos, int numBullets)
+	public void SpawnBulletRing(Vector2 pos, int numBullets, Vector2 aimDir)
 	{
-		Vector2 aimDir = (new Vector2(Sandbox.Game.Random.Float(-1f, 1f), Sandbox.Game.Random.Float(-1f, 1f))).Normal;
         float increment = 360f / numBullets;
 
         for (int i = 0; i < numBullets; i++)

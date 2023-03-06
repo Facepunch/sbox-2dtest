@@ -64,7 +64,8 @@ public class FrozenEnemyStatus : EnemyStatus
         {
 			int maxShardsNum = (int)Player.Stats[PlayerStat.FrozenShardsNum];
 			int numShards = Sandbox.Game.Random.Int(1, maxShardsNum);
-			Player.SpawnBulletRing(Enemy.Position, numShards);
+            Vector2 aimDir = (new Vector2(Sandbox.Game.Random.Float(-1f, 1f), Sandbox.Game.Random.Float(-1f, 1f))).Normal;
+            Player.SpawnBulletRing(Enemy.Position, numShards, aimDir);
         }
     }
 

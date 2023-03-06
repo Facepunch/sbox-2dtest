@@ -190,7 +190,7 @@ public partial class Boss : Enemy
                 }
             }
 
-            if (!IsPreparingToCharge && !IsCharging && !IsShooting && !IsAttacking && player_dist_sqr < 8f * 8f)
+            if (!IsPreparingToCharge && !IsCharging && !IsShooting && !IsAttacking && player_dist_sqr < 15f * 15f)
             {
                 _chargeDelayTimer -= dt;
                 if (_chargeDelayTimer < 0f)

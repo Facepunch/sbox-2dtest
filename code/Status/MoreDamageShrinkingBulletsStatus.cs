@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(7, 0, 111f)]
+[Status(7, 0, 1f)]
 public class MoreDamageShrinkingBulletsStatus : Status
 {
 	public MoreDamageShrinkingBulletsStatus()
@@ -49,11 +49,11 @@ public class MoreDamageShrinkingBulletsStatus : Status
 
     public float GetShrinkForLevel(int level)
     {
-        return 2f * level;
+        return 2.2f * level;
     }
 
-    public float GetShrinkPrintForLevel(int level)
+    public string GetShrinkPrintForLevel(int level)
     {
-        return 2 * level;
+        return string.Format("{0:0.0}", GetShrinkForLevel(level));
     }
 }

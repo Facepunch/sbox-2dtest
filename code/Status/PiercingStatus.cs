@@ -60,7 +60,7 @@ public class PiercingStatus : Status
         switch (level)
         {
             case 1: return 25f;
-            case 2: return 4f;
+            case 2: return 40f;
             case 3: return 55f;
             case 4: return 7f;
         }
