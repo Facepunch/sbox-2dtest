@@ -1,10 +1,9 @@
-﻿using Sandbox;
-using Sandbox.UI.Construct;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using static Test2D.MyGame;
+using Sandbox;
+using Sandbox.Diagnostics;
 
 namespace Test2D;
 
@@ -250,7 +249,7 @@ public partial class MyGame : GameManager
 		AddThing(enemy);
 		EnemyCount++;
 
-		if (type is Crate)
+		if (type == TypeLibrary.GetType(typeof(Crate)))
 			CrateCount++;
 
 		PlaySfxNearby("zombie.dirt", pos, pitch: Sandbox.Game.Random.Float(0.6f, 0.8f), volume: 0.7f, maxDist: 7.5f);
@@ -278,7 +277,7 @@ public partial class MyGame : GameManager
 	public void SpawnBoss(Vector2 pos)
 	{
 		SpawnEnemy(TypeLibrary.GetType(typeof(Boss)), pos, forceSpawn: true);
-		PlaySfxNearby("boss.fanfare", pos, pitch: Sandbox.Game.Random.Float(0.7f, 0.75f), volume: 1.3f, maxDist: 15f);
+		PlaySfxNearby("boss.fanfare", pos, pitch: 1.0f, volume: 1.3f, maxDist: 30f);
 	}
 
 	public void SpawnCrate(Vector2 pos)

@@ -14,6 +14,22 @@ public partial class EnemyNametag : Panel
     public Panel HpBar { get; set; }
     public Panel HpBarOverlay { get; set; }
     public Panel HpBarDelta { get; set; }
+    public Label BossNameLabel { get; set; }
+
+    public EnemyNametag()
+    {
+        BossNameLabel = new Label();
+        BossNameLabel.Text = "BOSS";
+        BossNameLabel.Style.FontColor = new Color(1f, 1f, 1f, 0.75f);
+        BossNameLabel.Style.Top = 34 * ScaleFromScreen;
+        BossNameLabel.Style.FontSize = 18;
+        BossNameLabel.Style.AlignContent = Align.Center;
+        BossNameLabel.Style.TextAlign = TextAlign.Center;
+        BossNameLabel.Style.AlignSelf = Align.Center;
+        BossNameLabel.Style.FontWeight = 700;
+        BossNameLabel.Style.FontFamily = "serif";
+        AddChild(BossNameLabel);
+    }
 
     public override void Tick()
     {
@@ -22,12 +38,12 @@ public partial class EnemyNametag : Panel
         if (Enemy == null || !Enemy.IsValid)
             return;
 
-        var screenPos = Camera2D.Current.WorldToScreen(Enemy.Position + new Vector2(0f, 1.66f + Enemy.HeightZ)) * ScaleFromScreen;
-
+        var BAR_WIDTH = 500;
+        //var screenPos = Camera2D.Current.WorldToScreen(Enemy.Position + new Vector2(0f, 1.66f + Enemy.HeightZ)) * ScaleFromScreen;
+        var screenPos = new Vector2(Screen.Width / 2, 60) * ScaleFromScreen;
         Style.Left = screenPos.x - 150;
         Style.Top = screenPos.y;
 
-        var BAR_WIDTH = 100;
         HpBar.Style.Width = BAR_WIDTH;
         HpBarOverlay.Style.Width = BAR_WIDTH;
         HpBarDelta.Style.Width = BAR_WIDTH;

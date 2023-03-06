@@ -314,7 +314,7 @@ public abstract partial class Enemy : Thing
 		var x_min = Game.BOUNDS_MIN.x + Radius / 2f;
 		var x_max = Game.BOUNDS_MAX.x - Radius / 2f;
 		var y_min = Game.BOUNDS_MIN.y;
-		var y_max = Game.BOUNDS_MAX.y - Radius * 4.2f;
+		var y_max = Game.BOUNDS_MAX.y - Radius * 2.1f;
 		Position = new Vector2(MathX.Clamp(Position.x, x_min, x_max), MathX.Clamp(Position.y, y_min, y_max));
 	}
 

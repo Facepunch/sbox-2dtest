@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(7, 0, 111f)]
+[Status(7, 0, 1f)]
 public class BulletLifetimeDamageStatus : Status
 {
 	public BulletLifetimeDamageStatus()

@@ -706,7 +706,7 @@ public partial class PlayerCitizen : Thing
 		var x_min = Game.BOUNDS_MIN.x + Radius;
 		var x_max = Game.BOUNDS_MAX.x - Radius;
 		var y_min = Game.BOUNDS_MIN.y;
-		var y_max = Game.BOUNDS_MAX.y - Radius * 5.2f;
+		var y_max = Game.BOUNDS_MAX.y - Radius * 9.5f;
 
 		if (Position.x < x_min)
 		{
