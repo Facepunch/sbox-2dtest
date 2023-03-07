@@ -21,6 +21,8 @@ public partial class Grenade : Thing
 	public PlayerCitizen Player { get; set; }
 	public float StickyPercent { get; set; }
     public float FearChance { get; set; }
+	public float CriticalChance { get; set; }
+    public float CriticalMultiplier { get; set; }
 
     public Grenade()
     {
@@ -149,13 +151,16 @@ public partial class Grenade : Thing
 
 			float radius = ExplosionRadius * BASE_EXPLOSION_MODIFIER * ExplosionSizeMultiplier;
 			float damage = Damage * Player?.Stats[PlayerStat.ExplosionDamageMultiplier] ?? 1f;
+            bool isCrit = Sandbox.Game.Random.Float(0f, 1f) < CriticalChance;
+			if (isCrit)
+				damage *= CriticalMultiplier;
 
             if (thing is Enemy enemy && !enemy.IsDying && (!enemy.IsSpawning || enemy.ElapsedTime > 0.75f))
             {
                 var dist_sqr = (thing.Position - Position).LengthSquared;
                 if (dist_sqr < MathF.Pow(radius, 2f))
 				{
-                    enemy.Damage(damage, null, false);
+                    enemy.Damage(damage, null, isCrit);
 
 					if(Sandbox.Game.Random.Float(0f, 1f) < FearChance && !enemy.IsDying)
 					{

@@ -38,7 +38,7 @@ public class BulletDistanceDamageStatus : Status
 
     public float GetAddForLevel(int level)
     {
-        return 0.75f * level;
+        return 0.6f * level;
     }
 
     public string GetPrintAmountForLevel(int level)

@@ -10,7 +10,7 @@ namespace Test2D;
 public enum BulletStat
 {
     Damage, Force, AddTempWeight, Lifetime, NumPiercing, CriticalChance, CriticalMultiplier, FireIgniteChance, FreezeChance, BulletSpread, BulletInaccuracy, BulletSpeed, BulletLifetime,
-	GrowDamageAmount, ShrinkDamageAmount, DistanceDamageAmount,
+	GrowDamageAmount, ShrinkDamageAmount, DistanceDamageAmount, HealTeammateAmount,
 }
 
 public partial class Bullet : Thing
@@ -41,12 +41,15 @@ public partial class Bullet : Thing
             Stats[BulletStat.Force] = 0.75f;
             Stats[BulletStat.Lifetime] = 1f;
             Stats[BulletStat.NumPiercing] = 0;
-			
-			ShadowOpacity = 0.8f;
+            Stats[BulletStat.CriticalChance] = 0;
+            Stats[BulletStat.CriticalMultiplier] = 1f;
+            Stats[BulletStat.HealTeammateAmount] = 0f;
+
+            ShadowOpacity = 0.8f;
 			ShadowScale = 0.3f;
 
 			CollideWith.Add(typeof(Enemy));
-		}
+        }
 
 		Filter = SpriteFilter.Pixelated;
 	}
@@ -62,15 +65,22 @@ public partial class Bullet : Thing
 	{
         _scaleFactor = Utils.Map(Stats[BulletStat.Damage], 10f, 120f, 0.015f, 0.003f, EasingType.Linear);
         DetermineSize();
+
+		if(Stats[BulletStat.HealTeammateAmount] > 0f)
+            CollideWith.Add(typeof(PlayerCitizen));
     }
 
 	void DetermineSize()
 	{
 		var damage = Stats[BulletStat.Damage];
-		float scale = 0.125f + damage * _scaleFactor;
+		//float scale = 0.125f + damage * _scaleFactor;
+		float scale = damage < 30f
+			? Utils.Map(damage, 0f, 30f, 0.1f, 0.5f, EasingType.QuadOut)
+			: Utils.Map(damage, 30f, 150f, 0.5f, 1.75f, EasingType.QuadIn);
+
         Scale = new Vector2(scale, scale);
         Radius = 0.07f + scale * 0.2f;
-		ShadowScale = scale * 0.8f;
+		ShadowScale = scale * 1.2f;
     }
 
 	public override void Update(float dt)
@@ -189,5 +199,24 @@ public partial class Bullet : Thing
 				}
 			}
 		}
+		else if(other is PlayerCitizen player && player != Shooter && !player.IsDead)
+		{
+            if (_hitThings.Contains(player))
+                return;
+
+            player.Heal(Stats[BulletStat.HealTeammateAmount], 0.05f);
+
+            NumHits++;
+
+            if (NumHits > (int)Stats[BulletStat.NumPiercing])
+            {
+                Remove();
+                return;
+            }
+            else
+            {
+                _hitThings.Add(player);
+            }
+        }
 	}
 }

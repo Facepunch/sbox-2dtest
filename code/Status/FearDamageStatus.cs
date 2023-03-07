@@ -38,11 +38,11 @@ public class FearDamageStatus : Status
 
 	public float GetMultForLevel(int level)
     {
-		return 1f + (0.35f * level);
+		return 1f + (0.30f * level);
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 35 * level;
+		return 30 * level;
 	}
 }

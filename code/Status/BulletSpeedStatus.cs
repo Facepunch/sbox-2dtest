@@ -24,17 +24,16 @@ public class BulletSpeedStatus : Status
 		Description = GetDescription(Level);
 
 		Player.Modify(this, PlayerStat.BulletSpeed, GetMultForLevel(Level), ModifierType.Mult);
-        Player.Modify(this, PlayerStat.Recoil, GetRecoilForLevel(Level), ModifierType.Add);
     }
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("Increase bullet speed by {0}% but add {1} units of recoil", GetPercentForLevel(Level), PrintRecoilForLevel(Level));
+		return string.Format("Increase bullet speed by {0}%", GetPercentForLevel(Level));
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase bullet speed by {0}% → {1}% but add {2} → {3} units of recoil", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel), PrintRecoilForLevel(newLevel - 1), PrintRecoilForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase bullet speed by {0}% → {1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetMultForLevel(int level)
@@ -46,14 +45,4 @@ public class BulletSpeedStatus : Status
 	{
 		return 35 * level;
 	}
-
-    public float GetRecoilForLevel(int level)
-    {
-        return 0.75f * level;
-    }
-
-    public string PrintRecoilForLevel(int level)
-    {
-        return string.Format("{0:0.00}", GetRecoilForLevel(level));
-    }
 }

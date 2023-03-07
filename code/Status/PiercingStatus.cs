@@ -49,7 +49,7 @@ public class PiercingStatus : Status
 			case 1: return 0.75f;
             case 2: return 0.6f;
             case 3: return 0.45f;
-            case 4: return 0.3f;
+            case 4: return 0.35f;
         }
 
 		return 1f;
@@ -62,7 +62,7 @@ public class PiercingStatus : Status
             case 1: return 25f;
             case 2: return 40f;
             case 3: return 55f;
-            case 4: return 7f;
+            case 4: return 65f;
         }
 
         return 1f;

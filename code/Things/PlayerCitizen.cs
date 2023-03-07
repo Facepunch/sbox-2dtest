@@ -32,7 +32,7 @@ public enum PlayerStat {
     FreezeTimeScale, FreezeOnMeleeChance, FreezeFireDamageMultiplier, LastAmmoDamageMultiplier, FearLifetime, FearDamageMultiplier, FearOnMeleeChance, BulletDamageGrow, BulletDamageShrink,
 	BulletDistanceDamage, NumRerollsPerLevel, FullHealthDamageMultiplier, DamagePerEarlierShot, DamageForSpeed, OverallDamageMultiplier, ExplosionSizeMultiplier, GrenadeVelocity, ExplosionDamageMultiplier,
     BulletDamageMultiplier, ExplosionDamageReductionPercent, NonExplosionDamageIncreasePercent, GrenadeStickyPercent, GrenadeFearChance, FearDrainPercent, FearPainPercent, CrateChanceAdditional,
-	AttackSpeedStill, FearDropGrenadeChance, FrozenShardsNum, NoDashInvuln, BulletFlatDamageAddition,
+	AttackSpeedStill, FearDropGrenadeChance, FrozenShardsNum, NoDashInvuln, BulletFlatDamageAddition, GrenadesCanCrit, BulletHealTeammateAmount,
 }
 
 public enum DamageType { Melee, Ranged, Explosion, Fire, }
@@ -217,6 +217,8 @@ public partial class PlayerCitizen : Thing
         Stats[PlayerStat.FrozenShardsNum] = 0f;
         Stats[PlayerStat.NoDashInvuln] = 0f;
         Stats[PlayerStat.BulletFlatDamageAddition] = 0f;
+        Stats[PlayerStat.GrenadesCanCrit] = 0f;
+        Stats[PlayerStat.BulletHealTeammateAmount] = 0f;
 
         Statuses.Clear();
 		//_statusesToRemove.Clear();
@@ -674,13 +676,18 @@ public partial class PlayerCitizen : Thing
         bullet.Stats[BulletStat.Force] = Stats[PlayerStat.BulletForce];
         bullet.Stats[BulletStat.Lifetime] = Stats[PlayerStat.BulletLifetime];
         bullet.Stats[BulletStat.NumPiercing] = (int)MathF.Round(Stats[PlayerStat.BulletNumPiercing]);
-        bullet.Stats[BulletStat.CriticalChance] = Stats[PlayerStat.CritChance];
-        bullet.Stats[BulletStat.CriticalMultiplier] = Stats[PlayerStat.CritMultiplier];
         bullet.Stats[BulletStat.FireIgniteChance] = Stats[PlayerStat.ShootFireIgniteChance];
         bullet.Stats[BulletStat.FreezeChance] = Stats[PlayerStat.ShootFreezeChance];
         bullet.Stats[BulletStat.GrowDamageAmount] = Stats[PlayerStat.BulletDamageGrow];
         bullet.Stats[BulletStat.ShrinkDamageAmount] = Stats[PlayerStat.BulletDamageShrink];
         bullet.Stats[BulletStat.DistanceDamageAmount] = Stats[PlayerStat.BulletDistanceDamage];
+        bullet.Stats[BulletStat.HealTeammateAmount] = Stats[PlayerStat.BulletHealTeammateAmount];
+
+        if (Stats[PlayerStat.GrenadesCanCrit] <= 0f)
+		{
+            bullet.Stats[BulletStat.CriticalChance] = Stats[PlayerStat.CritChance];
+            bullet.Stats[BulletStat.CriticalMultiplier] = Stats[PlayerStat.CritMultiplier];
+        }
 
         bullet.Init();
 
@@ -843,12 +850,15 @@ public partial class PlayerCitizen : Thing
 
         if (other is Enemy enemy && !enemy.IsDying)
 		{
-			var spawnFactor = Utils.Map(enemy.ElapsedTime, 0f, enemy.SpawnTime, 0f, 1f, EasingType.QuadIn);
-			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * (1f + other.TempWeight) * spawnFactor * dt;
+			if(!Position.Equals(other.Position))
+			{
+                var spawnFactor = Utils.Map(enemy.ElapsedTime, 0f, enemy.SpawnTime, 0f, 1f, EasingType.QuadIn);
+                Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * (1f + other.TempWeight) * spawnFactor * dt;
+            }
 		}
 		else if(other is PlayerCitizen player)
 		{
-			if(!player.IsDead)
+			if(!player.IsDead && !Position.Equals(other.Position))
 			{
 				Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 100f) * (1f + other.TempWeight) * dt;
 			}
@@ -865,7 +875,7 @@ public partial class PlayerCitizen : Thing
 
 	public void AddStatus(TypeDescription type)
 	{
-		Log.Info("AddStatus: " + type.TargetType.ToString());
+		//Log.Info("AddStatus: " + type.TargetType.ToString());
 
 		Status status = null;
 		var typeIdentity = type.Identity;
@@ -998,6 +1008,8 @@ public partial class PlayerCitizen : Thing
 		ExperienceTotal += xp;
 		ExperienceCurrent += xp;
 
+		ForEachStatus(status => status.OnGainExperience(xp));
+
 		if (!IsChoosingLevelUpReward)
 			CheckForLevelUp();
 	}
@@ -1042,7 +1054,9 @@ public partial class PlayerCitizen : Thing
 		var player = ConsoleSystem.Caller.Pawn as PlayerCitizen;
 		player.NumRerollAvailable--;
 		player.LevelUpClient();
-	}
+
+        player.ForEachStatus(status => status.OnReroll());
+    }
 
 	public int GetExperienceReqForLevel(int level)
 	{
@@ -1059,11 +1073,11 @@ public partial class PlayerCitizen : Thing
 		_flashTimer = time;
 	}
 
-	public void Heal (float amount)
+	public void Heal(float amount, float flashTime)
 	{
 		ColorTint = new Color(0f, 1f, 0f);
 		_isFlashing = true;
-		_flashTimer = 0.2f;
+		_flashTimer = flashTime;
 
 		Health += amount;
 		if (Health > Stats[PlayerStat.MaxHp])
@@ -1105,6 +1119,12 @@ public partial class PlayerCitizen : Thing
             StickyPercent = Stats[PlayerStat.GrenadeStickyPercent],
             FearChance = Stats[PlayerStat.GrenadeFearChance],
         };
+
+		if(Stats[PlayerStat.GrenadesCanCrit] > 0f)
+		{
+			grenade.CriticalChance = Stats[PlayerStat.CritChance];
+            grenade.CriticalMultiplier = Stats[PlayerStat.CritMultiplier];
+        }
 
         grenade.Velocity = velocity;
         Game.AddThing(grenade);

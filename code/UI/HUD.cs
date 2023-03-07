@@ -98,6 +98,12 @@ public partial class HUD : RootPanel
 
 	public void Victory()
 	{
+        if (_bossNametag != null)
+        {
+            _bossNametag.Delete();
+            _bossNametag = null;
+        }
+        
 		DeathPanel = AddChild<DeathPanel>("death_panel_root");
 		DeathPanel.Victory();
 

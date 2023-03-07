@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(3, 0, 1f)]
+[Status(3, 0, 111f)]
 public class MoreRerollsStatus : Status
 {
 	public MoreRerollsStatus()
