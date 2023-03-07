@@ -11,7 +11,7 @@ public class ExplosionDamageStatus : Status
     public ExplosionDamageStatus()
     {
         Title = "Gunpowder Expert";
-        IconPath = "textures/icons/blank_icon.png";
+        IconPath = "textures/icons/explosion_damage.png";
     }
 
     public override void Init(PlayerCitizen player)

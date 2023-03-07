@@ -11,7 +11,7 @@ public class FearLifetimeStatus : Status
 	public FearLifetimeStatus()
     {
 		Title = "Long Nightmares";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/fear_lifetime.png";
 	}
 
 	public override void Init(PlayerCitizen player)

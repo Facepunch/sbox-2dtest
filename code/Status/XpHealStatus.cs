@@ -11,7 +11,7 @@ public class XpHealStatus : Status
 	public XpHealStatus()
     {
 		Title = "XP Recovery";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/xp_heal.png";
 	}
 
 	public override void Init(PlayerCitizen player)
@@ -41,11 +41,11 @@ public class XpHealStatus : Status
 
 	public float GetAmountForLevel(int level)
 	{
-		return level * 1f;
+		return level * 0.3f;
 	}
 
     public string GetPrintAmountForLevel(int level)
     {
-        return GetAmountForLevel(level).ToString("#.##");
+        return string.Format("{0:0.0}", GetAmountForLevel(level));
     }
 }

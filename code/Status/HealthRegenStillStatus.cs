@@ -11,7 +11,7 @@ public class HealthRegenStillStatus : Status
 	public HealthRegenStillStatus()
     {
 		Title = "Meditation";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/health_regen_still.png";
 	}
 
 	public override void Init(PlayerCitizen player)

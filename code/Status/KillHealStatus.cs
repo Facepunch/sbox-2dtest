@@ -11,7 +11,7 @@ public class KillHealStatus : Status
 	public KillHealStatus()
     {
 		Title = "Sadistic Masochist";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/kill_heal.png";
 	}
 
 	public override void Init(PlayerCitizen player)

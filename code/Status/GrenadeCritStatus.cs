@@ -11,7 +11,7 @@ public class GrenadeCritStatus : Status
     public GrenadeCritStatus()
     {
         Title = "Critical Grenades";
-        IconPath = "textures/icons/blank_icon.png";
+        IconPath = "textures/icons/grenade_crit.png";
     }
 
     public override void Init(PlayerCitizen player)

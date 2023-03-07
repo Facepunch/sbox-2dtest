@@ -11,7 +11,7 @@ public class MoreDamageShrinkingBulletsStatus : Status
 	public MoreDamageShrinkingBulletsStatus()
     {
 		Title = "Frontloaded";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/more_damage_shrinking_bullets.png";
 	}
 
 	public override void Init(PlayerCitizen player)

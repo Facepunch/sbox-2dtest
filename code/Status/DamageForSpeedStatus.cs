@@ -11,7 +11,7 @@ public class DamageForSpeedStatus : Status
 	public DamageForSpeedStatus()
     {
 		Title = "Momentum";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/damage_for_speed.png";
 	}
 
 	public override void Init(PlayerCitizen player)

@@ -11,7 +11,7 @@ public class DamageMinusBulletsStatus : Status
 	public DamageMinusBulletsStatus()
     {
 		Title = "Consolidate";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/damage_minus_bullets.png";
 	}
 
 	public override void Init(PlayerCitizen player)

@@ -11,7 +11,7 @@ public class HurtShootStatus : Status
 	public HurtShootStatus()
     {
 		Title = "Rage Engine";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/hurt_shoot.png";
 	}
 
 	public override void Init(PlayerCitizen player)

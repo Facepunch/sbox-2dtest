@@ -11,7 +11,7 @@ public class GrenadeShootReloadStatus : Status
 	public GrenadeShootReloadStatus()
     {
 		Title = "Reload Grenade";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/grenade_shoot_reload.png";
 	}
 
 	public override void Init(PlayerCitizen player)

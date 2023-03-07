@@ -11,7 +11,7 @@ public class MoreChoicesStatus : Status
 	public MoreChoicesStatus()
     {
 		Title = "More Choices";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/more_choices.png";
 	}
 
 	public override void Init(PlayerCitizen player)

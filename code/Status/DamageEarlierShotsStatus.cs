@@ -11,7 +11,7 @@ public class DamageEarlierShotsStatus : Status
 	public DamageEarlierShotsStatus()
     {
 		Title = "Build Up";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/damage_earlier_shots.png";
 	}
 
 	public override void Init(PlayerCitizen player)

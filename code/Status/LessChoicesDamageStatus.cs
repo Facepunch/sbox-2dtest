@@ -11,7 +11,7 @@ public class LessChoicesDamageStatus : Status
 	public LessChoicesDamageStatus()
     {
 		Title = "Strong Faith";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/less_choices_damage.png";
 	}
 
 	public override void Init(PlayerCitizen player)

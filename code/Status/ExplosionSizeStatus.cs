@@ -11,7 +11,7 @@ public class ExplosionSizeStatus : Status
     public ExplosionSizeStatus()
     {
         Title = "Bigger Booms";
-        IconPath = "textures/icons/blank_icon.png";
+        IconPath = "textures/icons/explosion_size.png";
     }
 
     public override void Init(PlayerCitizen player)

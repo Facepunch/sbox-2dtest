@@ -11,7 +11,7 @@ public class GrenadeFearStatus : Status
     public GrenadeFearStatus()
     {
         Title = "Terrorism";
-        IconPath = "textures/icons/blank_icon.png";
+        IconPath = "textures/icons/grenade_fear.png";
     }
 
     public override void Init(PlayerCitizen player)

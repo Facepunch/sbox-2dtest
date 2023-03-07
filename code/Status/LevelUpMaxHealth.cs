@@ -11,7 +11,7 @@ public class LevelUpMaxHealth : Status
 	public LevelUpMaxHealth()
     {
 		Title = "Cardio";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/level_up_max_health.png";
 	}
 
 	public override void Init(PlayerCitizen player)

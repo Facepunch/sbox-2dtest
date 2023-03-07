@@ -11,7 +11,7 @@ public class AttackSpeedStillStatus : Status
 	public AttackSpeedStillStatus()
     {
 		Title = "Dig In";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/attack_speed_still.png";
 	}
 
 	public override void Init(PlayerCitizen player)

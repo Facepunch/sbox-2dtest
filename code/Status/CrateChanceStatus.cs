@@ -11,7 +11,7 @@ public class CrateChanceStatus : Status
     public CrateChanceStatus()
     {
         Title = "More Crates";
-        IconPath = "textures/icons/blank_icon.png";
+        IconPath = "textures/icons/more_crates.png";
     }
 
     public override void Init(PlayerCitizen player)

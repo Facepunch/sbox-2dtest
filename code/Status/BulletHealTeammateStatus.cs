@@ -5,13 +5,13 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(7, 0, 111f)]
+[Status(7, 0, 1f)]
 public class BulletHealTeammateStatus : Status
 {
 	public BulletHealTeammateStatus()
     {
 		Title = "Healing Darts";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/bullet_heal_teammate.png";
 	}
 
 	public override void Init(PlayerCitizen player)
@@ -39,7 +39,7 @@ public class BulletHealTeammateStatus : Status
 
 	public float GetAddForLevel(int level)
     {
-		return 0.75f * level;
+		return 0.6f * level;
     }
 
 	public string GetPrintForLevel(int level)

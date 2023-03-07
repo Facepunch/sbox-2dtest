@@ -11,7 +11,7 @@ public class RerollHealStatus : Status
 	public RerollHealStatus()
     {
 		Title = "Reroll Recovery";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/reroll_heal.png";
 	}
 
 	public override void Init(PlayerCitizen player)
@@ -41,11 +41,11 @@ public class RerollHealStatus : Status
 
 	public float GetAmountForLevel(int level)
 	{
-		return level * 2f;
+		return level * 1.2f;
 	}
 
     public string GetPrintAmountForLevel(int level)
     {
-        return GetAmountForLevel(level).ToString("#.##");
+        return string.Format("{0:0.0}", GetAmountForLevel(level));
     }
 }

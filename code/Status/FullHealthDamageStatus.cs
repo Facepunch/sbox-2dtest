@@ -11,7 +11,7 @@ public class FullHealthDamageStatus : Status
 	public FullHealthDamageStatus()
     {
 		Title = "Perfectionist";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/full_health_damage.png";
 	}
 
 	public override void Init(PlayerCitizen player)

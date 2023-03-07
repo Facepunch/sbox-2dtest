@@ -11,7 +11,7 @@ public class ExplosionDmgReductionStatus : Status
     public ExplosionDmgReductionStatus()
     {
         Title = "Bombproof Armor";
-        IconPath = "textures/icons/blank_icon.png";
+        IconPath = "textures/icons/explosion_dmg_reduction.png";
     }
 
     public override void Init(PlayerCitizen player)

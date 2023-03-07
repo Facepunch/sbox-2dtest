@@ -11,7 +11,7 @@ public class FreezeShardsStatus : Status
 	public FreezeShardsStatus()
     {
 		Title = "Frozen Shards";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/freeze_shards.png";
 	}
 
 	public override void Init(PlayerCitizen player)

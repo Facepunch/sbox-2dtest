@@ -11,7 +11,7 @@ public class MoreDamageLessHealthStatus : Status
 	public MoreDamageLessHealthStatus()
     {
 		Title = "Crystal Cannon";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/more_damage_less_health.png";
 	}
 
 	public override void Init(PlayerCitizen player)

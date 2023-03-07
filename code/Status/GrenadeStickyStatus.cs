@@ -11,7 +11,7 @@ public class GrenadeStickyStatus : Status
     public GrenadeStickyStatus()
     {
         Title = "Sticky Bombs";
-        IconPath = "textures/icons/blank_icon.png";
+        IconPath = "textures/icons/grenade_sticky.png";
     }
 
     public override void Init(PlayerCitizen player)

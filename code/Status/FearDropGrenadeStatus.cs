@@ -11,7 +11,7 @@ public class FearDropGrenadeStatus : Status
     public FearDropGrenadeStatus()
     {
         Title = "Bomb Curse";
-        IconPath = "textures/icons/blank_icon.png";
+        IconPath = "textures/icons/fear_drop_grenade.png";
     }
 
     public override void Init(PlayerCitizen player)

@@ -9,8 +9,8 @@ public class XpDamage : Status
 {
 	public XpDamage()
     {
-		Title = "Knowledge Power";
-		IconPath = "textures/icons/blank_icon.png";
+		Title = "XP Shrapnel";
+		IconPath = "textures/icons/xp_damage.png";
 	}
 
 	public override void Init(PlayerCitizen player)

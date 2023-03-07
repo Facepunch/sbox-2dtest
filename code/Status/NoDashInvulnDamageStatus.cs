@@ -11,7 +11,7 @@ public class NoDashInvulnDamageStatus : Status
 	public NoDashInvulnDamageStatus()
     {
 		Title = "Overconfidence";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/no_dash_invuln_damage_status.png";
 	}
 
 	public override void Init(PlayerCitizen player)

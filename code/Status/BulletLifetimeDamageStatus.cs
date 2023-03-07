@@ -11,7 +11,7 @@ public class BulletLifetimeDamageStatus : Status
 	public BulletLifetimeDamageStatus()
     {
 		Title = "Growing Bullets";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/bullet_lifetime_damage.png";
 	}
 
 	public override void Init(PlayerCitizen player)

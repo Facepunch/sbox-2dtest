@@ -11,7 +11,7 @@ public class FearPainStatus : Status
 	public FearPainStatus()
     {
 		Title = "Killer Stress";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/fear_pain.png";
 	}
 
 	public override void Init(PlayerCitizen player)

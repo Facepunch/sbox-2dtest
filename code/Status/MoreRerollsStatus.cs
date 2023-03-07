@@ -5,13 +5,13 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(3, 0, 111f)]
+[Status(3, 0, 1f)]
 public class MoreRerollsStatus : Status
 {
 	public MoreRerollsStatus()
     {
 		Title = "More Rerolls";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/more_rerolls.png";
 	}
 
 	public override void Init(PlayerCitizen player)

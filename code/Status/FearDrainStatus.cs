@@ -11,7 +11,7 @@ public class FearDrainStatus : Status
 	public FearDrainStatus()
     {
 		Title = "Soul Drainer";
-		IconPath = "textures/icons/blank_icon.png";
+		IconPath = "textures/icons/fear_drain.png";
 	}
 
 	public override void Init(PlayerCitizen player)
