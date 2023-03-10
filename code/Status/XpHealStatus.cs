@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(3, 0, 1f)]
+[Status(7, 0, 1f)]
 public class XpHealStatus : Status
 {
 	public XpHealStatus()
@@ -41,7 +41,7 @@ public class XpHealStatus : Status
 
 	public float GetAmountForLevel(int level)
 	{
-		return level * 0.3f;
+		return level * 0.2f;
 	}
 
     public string GetPrintAmountForLevel(int level)

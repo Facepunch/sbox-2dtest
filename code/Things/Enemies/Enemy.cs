@@ -330,8 +330,6 @@ public abstract partial class Enemy : Thing
 
 		if(player != null)
 		{
-            player.ForEachStatus(status => status.OnHit(this, isCrit));
-
             if (IsFeared)
 			{
                 damage *= player.Stats[PlayerStat.FearDamageMultiplier];

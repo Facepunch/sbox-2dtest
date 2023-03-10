@@ -29,12 +29,12 @@ public class DamageMinusBulletsStatus : Status
 
 	public override string GetDescription(int newLevel)
 	{
-		return string.Format("Increase bullet damage by {0}% but shoot {1} less bullet per mag", GetDamagePercentForLevel(Level), GetAmmoForLevel(Level));
+		return string.Format("Increase bullet damage by {0}% but shoot {1} less ammo per mag", GetDamagePercentForLevel(Level), GetAmmoForLevel(Level));
 	}
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase bullet damage by {0}% → {1}% but shoot {2} → {3} less bullets per mag", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel), GetAmmoForLevel(newLevel - 1), GetAmmoForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase bullet damage by {0}% → {1}% but shoot {2} → {3} less ammo per mag", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel), GetAmmoForLevel(newLevel - 1), GetAmmoForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetDamageMultForLevel(int level)

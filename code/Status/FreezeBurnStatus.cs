@@ -10,7 +10,7 @@ public class FreezeBurnStatus : Status
 {
 	public FreezeBurnStatus()
     {
-		Title = "FreezerBurn";
+		Title = "Freezer Burn";
 		IconPath = "textures/icons/freeze_burn.png";
 	}
 

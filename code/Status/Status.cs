@@ -65,7 +65,6 @@ public partial class Status : BaseNetworkable
 	public virtual void OnDashFinished() { }
 	public virtual void OnDashRecharged() { }
     public virtual void OnReload() { }
-    public virtual void OnHit(Enemy enemy, bool isCritical) {}
     public virtual void OnBurn(Enemy enemy) { }
     public virtual void OnFreeze(Enemy enemy) { }
     public virtual void OnFear(Enemy enemy) { }

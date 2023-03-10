@@ -57,7 +57,7 @@ public class XpDamage : Status
                 var dist_sqr = (thing.Position - Player.Position).LengthSquared;
                 if (dist_sqr < MathF.Pow(radius, 2f))
                 {
-                    enemy.Damage(damage, null, false);
+                    enemy.Damage(damage, Player, false);
                 }
             }
         }
@@ -65,11 +65,11 @@ public class XpDamage : Status
 
     public float GetAmountForLevel(int level)
 	{
-		return level * 1f;
+		return level * 0.85f;
 	}
 
     public string GetPrintAmountForLevel(int level)
     {
-        return GetAmountForLevel(level).ToString("#.##");
+        return string.Format("{0:0.00}", GetAmountForLevel(level));
     }
 }

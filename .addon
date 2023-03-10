@@ -1,7 +1,7 @@
 {
   "Title": "Sausage Survivors",
   "Type": "game",
-  "Org": "ryleigh",
+  "Org": "facepunch",
   "Ident": "sausagesurvivors",
   "Tags": null,
   "Schema": 1,
@@ -28,6 +28,10 @@
     "GameCategory": "Retro",
     "ControlModes": {
       "Keyboard": true
-    }
+    },
+    "CsProjName": "",
+    "Summary": "arena shooter action roguelike",
+    "Description": "",
+    "Public": false
   }
 }

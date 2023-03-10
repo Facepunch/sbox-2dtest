@@ -48,16 +48,16 @@ public class KillHealStatus : Status
 
     public string GetPrintAmountForLevel(int level)
     {
-        return GetAmountForLevel(level).ToString("#.##");
+        return string.Format("{0:0.00}", GetAmountForLevel(level));
     }
 
     public float GetHpDrainAmountForLevel(int level)
     {
-        return level * 0.3f;
+        return level * 0.25f;
     }
 
     public string GetHpDrainPrintAmountForLevel(int level)
     {
-        return GetHpDrainAmountForLevel(level).ToString("#.##");
+        return string.Format("{0:0.00}", GetHpDrainAmountForLevel(level));
     }
 }

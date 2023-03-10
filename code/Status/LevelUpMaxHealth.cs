@@ -10,7 +10,7 @@ public class LevelUpMaxHealth : Status
 {
 	public LevelUpMaxHealth()
     {
-		Title = "Cardio";
+		Title = "HP Growth";
 		IconPath = "textures/icons/level_up_max_health.png";
 	}
 

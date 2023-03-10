@@ -92,7 +92,8 @@ public partial class Coin : Thing
 			}
 			else
             {
-				Velocity += (PlayerMagnetized.Position - Position).Normal * 0.125f * Utils.Map(MagnetizeTime, 0f, MAGNETIZE_DURATION, 1f, 0f, EasingType.QuadIn);
+				if(!PlayerMagnetized.Position.Equals(Position))
+					Velocity += (PlayerMagnetized.Position - Position).Normal * 0.125f * Utils.Map(MagnetizeTime, 0f, MAGNETIZE_DURATION, 1f, 0f, EasingType.QuadIn);
             }
         }
 
@@ -116,7 +117,8 @@ public partial class Coin : Thing
 			var req_dist_sqr = MathF.Pow(player.Stats[PlayerStat.CoinAttractRange], 2f);
 			if (dist_sqr < req_dist_sqr)
 			{
-				Velocity += (player.Position - Position).Normal * Utils.Map(dist_sqr, req_dist_sqr, 0f, 0f, 1f, EasingType.Linear) * player.Stats[PlayerStat.CoinAttractStrength] * dt;
+				if(!player.Position.Equals(Position))
+					Velocity += (player.Position - Position).Normal * Utils.Map(dist_sqr, req_dist_sqr, 0f, 0f, 1f, EasingType.Linear) * player.Stats[PlayerStat.CoinAttractStrength] * dt;
 			}
 		}
 
@@ -140,7 +142,8 @@ public partial class Coin : Thing
 
 		if (other is Enemy enemy && !enemy.IsDying)
 		{
-			Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 20f * (1f + other.TempWeight) * dt;
+			if(!Position.Equals(other.Position))
+				Velocity += (Position - other.Position).Normal * Utils.Map(percent, 0f, 1f, 0f, 1f) * 20f * (1f + other.TempWeight) * dt;
 		} 
 		else if (other is PlayerCitizen player)
 		{

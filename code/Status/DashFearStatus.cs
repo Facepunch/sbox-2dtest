@@ -41,7 +41,10 @@ public class DashFearStatus : Status
 		if(Player.IsDashing && other is Enemy enemy)
 		{
             if (!enemy.HasEnemyStatus<FearEnemyStatus>())
-				Player.Game.PlaySfxNearby("fear", enemy.Position + (enemy.Position - Player.Position).Normal * 2f, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 0.6f, maxDist: 5f);
+			{
+				var pos = enemy.Position + (!enemy.Position.Equals(Player.Position) ? (enemy.Position - Player.Position).Normal * 2f : Vector2.Zero);
+                Player.Game.PlaySfxNearby("fear", pos, pitch: Sandbox.Game.Random.Float(0.95f, 1.05f), volume: 0.6f, maxDist: 5f);
+            }
 
             enemy.Fear(Player);
         }

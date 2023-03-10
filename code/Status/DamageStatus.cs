@@ -39,12 +39,12 @@ public class DamageStatus : Status
 
 	public float GetDamageMultForLevel(int level)
     {
-		return 1f + 0.13f * level;
+		return 1f + 0.12f * level;
     }
 
     public float GetDamagePercentForLevel(int level)
     {
-        return 13 * level;
+        return 12 * level;
     }
 
     public float GetSpeedMultForLevel(int level)

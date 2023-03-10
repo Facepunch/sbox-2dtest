@@ -173,7 +173,8 @@ public partial class Boss : Enemy
             }
             else
             {
-                Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt * (IsFeared ? -1f : 1f);
+                if(!closestPlayer.Position.Equals(Position))
+                    Velocity += (closestPlayer.Position - Position).Normal * 1.0f * dt * (IsFeared ? -1f : 1f);
             }
 
             float speed = 1.66f * (IsAttacking ? 1.3f : 0.7f) + Utils.FastSin(MoveTimeOffset + Time.Now * (IsAttacking ? 15f : 7.5f));
