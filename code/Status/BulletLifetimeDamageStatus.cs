@@ -43,6 +43,6 @@ public class BulletLifetimeDamageStatus : Status
 
     public string GetPrintAmountForLevel(int level)
     {
-        return GetAddForLevel(level).ToString("#.#");
+        return string.Format("{0:0.0}", GetAddForLevel(level));
     }
 }

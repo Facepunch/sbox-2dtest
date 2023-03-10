@@ -43,6 +43,6 @@ public class DamageEarlierShotsStatus : Status
 
     public string GetPrintAmountForLevel(int level)
     {
-        return GetAmountForLevel(level).ToString("#.##");
+        return string.Format("{0:0.00}", GetAmountForLevel(level));
     }
 }

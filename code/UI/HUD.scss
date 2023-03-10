@@ -209,21 +209,21 @@
 
     .choice_modal {
         width: 900px;
-        height: 480px;
+        height: 280px;
         background-color: #00000033;
         border: 3px solid #ffffff33;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         background-color: #00003399;
-        margin-bottom: 22px;
+        margin-bottom: 12px;
 
         .choice_lvl_label {
             color: #66ffaa;
-            font-size: 32px;
+            font-size: 20px;
             //margin-top: 6px;
-            margin-bottom: 12px;
-            padding-top: 8px;
+            margin-bottom:1px;
+            padding-top: 1px;
         }
 
         .choice_button_container {
@@ -232,12 +232,12 @@
             //flex-wrap: nowrap;
             //overflow: clip;
             //align-items: stretch;
-            margin-bottom: 20px;
+            margin-bottom: 2px;
         }
 
         .choice_button {
             width: 280px;
-            height: 300px;
+            height: 200px;
             background-color: #000000cc;
             pointer-events: all;
             border: 3px solid #ffffff55;
@@ -262,7 +262,7 @@
                 color: #66ff66;
                 font-size: 22px;
                 //border: 1px solid green;
-                margin: 6px;
+                margin: 4px;
                 padding: 4px;
             }
 
@@ -270,14 +270,14 @@
                 width: 100px;
                 height: 100px;
                 //border: 1px solid #ffffff22;
-                margin-bottom: 4px;
+                margin-bottom: 2px;
                 border-radius: 150px;
                 image-rendering: pixelated;
             }
 
             .choice_description {
                 font-style: italic;
-                font-size: 18px;
+                font-size: 16px;
                 color: #ffffffaa;
                 padding: 8px;
                 //border: 1px solid blue;
@@ -285,13 +285,13 @@
         }
 
         .reroll_button {
-            width: 240px;
-            height: 80px;
+            width: 160px;
+            height: 40px;
             background-color: #000000cc;
             pointer-events: all;
             border: 3px solid white;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            margin-top: 4px;
+            margin-bottom: 4px;
             align-items: center;
             justify-content: center;
 
@@ -307,7 +307,7 @@
 
             .reroll_button_label {
                 color: #aaaaaa;
-                font-size: 24px;
+                font-size: 18px;
                 pointer-events: none;
             }
 

@@ -41,11 +41,11 @@ public class XpHealStatus : Status
 
 	public float GetAmountForLevel(int level)
 	{
-		return level * 0.2f;
+		return level * 0.22f;
 	}
 
     public string GetPrintAmountForLevel(int level)
     {
-        return string.Format("{0:0.0}", GetAmountForLevel(level));
+        return string.Format("{0:0.00}", GetAmountForLevel(level));
     }
 }

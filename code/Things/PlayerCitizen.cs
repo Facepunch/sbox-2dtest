@@ -105,7 +105,7 @@ public partial class PlayerCitizen : Thing
 
 		if (Sandbox.Game.IsServer)
 		{
-			SpriteTexture = SpriteTexture.Atlas("textures/sprites/player_spritesheet.png", 2, 2);
+			SpriteTexture = SpriteTexture.Atlas($"textures/sprites/player_spritesheet_{Sandbox.Game.Random.Int(1, 4)}.png", 2, 2);
 			BasePivotY = 0.05f;
 			HeightZ = 0f;
 			//Pivot = new Vector2(0.5f, 0.05f);

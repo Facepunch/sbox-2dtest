@@ -43,6 +43,6 @@ public class BulletDistanceDamageStatus : Status
 
     public string GetPrintAmountForLevel(int level)
     {
-        return GetAddForLevel(level).ToString("#.##");
+        return string.Format("{0:0.00}", GetAddForLevel(level));
     }
 }
