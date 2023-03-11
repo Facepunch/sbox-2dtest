@@ -351,9 +351,24 @@ public partial class MyGame : GameManager
 
 		PlayerList.Add(player);
 		AddThing(player);
-	}
 
-	public IEnumerable<PlayerCitizen> Players => Sandbox.Game.Clients
+        BoomerChatBox.AddInformation(To.Everyone, $"{client.Name} has joined", $"avatar:{client.SteamId}");
+    }
+
+    public override void ClientDisconnect(IClient cl, NetworkDisconnectionReason reason)
+    {
+        BoomerChatBox.AddInformation(To.Everyone, $"{cl.Name} has left ({reason})", $"avatar:{cl.SteamId}");
+
+        var player = cl.Pawn as PlayerCitizen;
+        if (player != null && player.IsValid())
+        {
+            PlayerList.Remove(player);
+			RemoveThing(player);
+            player.Delete();
+        }
+    }
+
+    public IEnumerable<PlayerCitizen> Players => Sandbox.Game.Clients
 		.Select(x => x.Pawn)
 		.OfType<PlayerCitizen>();
 

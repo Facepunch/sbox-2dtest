@@ -23,7 +23,7 @@ public class FullHealthDamageStatus : Status
     {
 		Description = GetDescription(Level);
 
-		Player.Modify(this, PlayerStat.FullHealthDamageMultiplier, GetAddForLevel(Level), ModifierType.Add);
+		Player.Modify(this, PlayerStat.FullHealthDamageMultiplier, GetMultForLevel(Level), ModifierType.Mult);
 	}
 
 	public override string GetDescription(int newLevel)
@@ -36,9 +36,9 @@ public class FullHealthDamageStatus : Status
 		return newLevel > 1 ? string.Format("Deal {0}% → {1}% more damage when you have full HP", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
-	public float GetAddForLevel(int level)
+	public float GetMultForLevel(int level)
     {
-		return 0.30f * level;
+		return 1f + 0.30f * level;
     }
 
 	public float GetPercentForLevel(int level)

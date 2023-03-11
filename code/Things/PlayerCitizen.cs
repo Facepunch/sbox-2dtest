@@ -153,8 +153,8 @@ public partial class PlayerCitizen : Thing
 		Stats[PlayerStat.Luck] = 1f;
 		Stats[PlayerStat.CritChance] = 0.05f;
 		Stats[PlayerStat.CritMultiplier] = 1.5f;
-		Stats[PlayerStat.LowHealthDamageMultiplier] = 0f;
-		Stats[PlayerStat.FullHealthDamageMultiplier] = 0f;
+		Stats[PlayerStat.LowHealthDamageMultiplier] = 1f;
+		Stats[PlayerStat.FullHealthDamageMultiplier] = 1f;
 		Stats[PlayerStat.ThornsPercent] = 0f;
 
 		Stats[PlayerStat.NumDashes] = 1f;
@@ -246,7 +246,7 @@ public partial class PlayerCitizen : Thing
 		//AddStatus("MovespeedStatus");
 
 		InitializeStatsClient();
-		RefreshStatusHud();
+		RefreshStatusHud(To.Single(Client));
 	}
 
 	[ClientRpc]
@@ -374,7 +374,7 @@ public partial class PlayerCitizen : Thing
 			if (Input.Pressed(InputButton.Run))
 			{
 				//Game.Restart();
-				AddExperience(GetExperienceReqForLevel(Level));
+				//AddExperience(GetExperienceReqForLevel(Level));
 
 				//for(int i = 0; i < 9; i++)
 				//            {
@@ -783,7 +783,7 @@ public partial class PlayerCitizen : Thing
 		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(0.5f, 4f), Sandbox.Game.Random.Float(8.5f, 10.5f)) * 0.1f, damage, DamageNumberType.Player);
 		Flash(0.125f);
 
-		DamageClient(damage);
+		SpawnBloodClient(damage);
 
 		if (Health <= 0f)
 			Die();
@@ -792,7 +792,7 @@ public partial class PlayerCitizen : Thing
 	}
 
 	[ClientRpc]
-	public void DamageClient(float damage)
+	public void SpawnBloodClient(float damage)
 	{
 		var blood = Game.SpawnBloodSplatter(Position);
 		blood.Scale *= Utils.Map(damage, 1f, 20f, 0.3f, 0.5f, EasingType.QuadIn) * Sandbox.Game.Random.Float(0.8f, 1.2f);
@@ -814,16 +814,22 @@ public partial class PlayerCitizen : Thing
 
 		Game.PlaySfxNearby("die", Position, pitch: Sandbox.Game.Random.Float(1f, 1.2f), volume: 1.5f, maxDist: 12f);
 		DieClient();
-	}
+        DieClientSingle(To.Single(Client));
+    }
 
 	[ClientRpc]
 	public void DieClient()
 	{
 		Nametag.SetVisible(false);
-		Game.Hud.RemoveChoicePanel();
 	}
 
-	public float GetDamageMultiplier()
+    [ClientRpc]
+    public void DieClientSingle()
+    {
+        Game.Hud.RemoveChoicePanel();
+    }
+
+    public float GetDamageMultiplier()
 	{
 		float damageMultiplier = Stats[PlayerStat.OverallDamageMultiplier];
 
@@ -1035,7 +1041,7 @@ public partial class PlayerCitizen : Thing
 
         IsChoosingLevelUpReward = true;
 
-		LevelUpClient();
+		LevelUpClient(To.Single(Client));
 	}
 
 	[ClientRpc]

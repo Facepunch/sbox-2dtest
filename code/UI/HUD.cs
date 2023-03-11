@@ -51,10 +51,12 @@ public partial class HUD : RootPanel
 		InfoPanel = AddChild<InfoPanel>("info_panel");
 		XpBarPanel = AddChild<XpBarPanel>("xp_bar_panel");
 		TimerPanel = AddChild<TimerPanel>("timer_panel");
-		//var modal = AddChild<Modal>("modal");
 
-		//AddChild<PlayerCursor>("cursor");
-	}
+        AddChild<BoomerChatBox>();
+        //var modal = AddChild<Modal>("modal");
+
+        //AddChild<PlayerCursor>("cursor");
+    }
 
 	public void SpawnChoicePanel()
     {
