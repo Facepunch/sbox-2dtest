@@ -338,6 +338,8 @@ public partial class Boss : Enemy
     {
         base.StartDying(player);
 
+        ColorFill = new ColorHsv(0f, 0f, 0f, 0f);
+
         Game.PlaySfxNearby("boss.die", Position, pitch: Sandbox.Game.Random.Float(0.75f, 0.8f), volume: 1.5f, maxDist: 15f);
         Game.Victory();
     }

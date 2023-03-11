@@ -67,7 +67,10 @@ public partial class Bullet : Thing
         DetermineSize();
 
 		if(Stats[BulletStat.HealTeammateAmount] > 0f)
+		{
             CollideWith.Add(typeof(PlayerCitizen));
+			ColorTint = Color.Green;
+        }
     }
 
 	void DetermineSize()
