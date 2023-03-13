@@ -60,14 +60,14 @@ public partial class PlayerCitizen : Thing
 	[Net] public int ExperienceRequired { get; protected set; }
 	public bool IsChoosingLevelUpReward { get; protected set; }
 
-	private float _dashTimer;
-	public bool IsDashing { get; private set; }
-	public Vector2 DashVelocity { get; private set; }
-	private float _dashInvulnTimer;
-	private TimeSince _dashCloudTime;
+    [Net, Predicted] public float DashTimer { get; private set; }
+	[Net, Predicted] public bool IsDashing { get; private set; }
+    [Net, Predicted] public Vector2 DashVelocity { get; private set; }
+    [Net, Predicted] public float DashInvulnTimer { get; private set; }
+    private TimeSince _dashCloudTime;
 	public float DashProgress { get; protected set; }
-	[Net] public float DashRechargeProgress { get; protected set; }
-	[Net] public int NumDashesAvailable { get; private set; }
+	[Net, Predicted] public float DashRechargeProgress { get; protected set; }
+	[Net, Predicted] public int NumDashesAvailable { get; private set; }
 	public int AmmoCount { get; protected set; }
 
 	public bool IsMoving => Velocity.LengthSquared > 0.01f && !IsDashing;
@@ -369,6 +369,11 @@ public partial class PlayerCitizen : Thing
 			MouseOffset = new Vector2(Sandbox.Game.Random.Float(-10f, 10f), Sandbox.Game.Random.Float(-10f, 10f));
 		}
 
+		if (!IsDead)
+		{
+			HandleDashing(dt);
+		}
+		
 		if (Sandbox.Game.IsServer)
 		{
 			if (Input.Pressed(InputButton.Run))
@@ -402,7 +407,6 @@ public partial class PlayerCitizen : Thing
 
 			if (!IsDead)
 			{
-				HandleDashing(dt);
 				HandleStatuses(dt);
 				HandleShooting(dt);
 				HandleFlashing(dt);
@@ -447,19 +451,19 @@ public partial class PlayerCitizen : Thing
 		int numDashes = (int)MathF.Round(Stats[PlayerStat.NumDashes]);
 		if (NumDashesAvailable < numDashes)
 		{
-			_dashTimer -= dt;
-			DashRechargeProgress = Utils.Map(_dashTimer, Stats[PlayerStat.DashCooldown], 0f, 0f, 1f);
-			if (_dashTimer <= 0f)
+			DashTimer -= dt;
+			DashRechargeProgress = Utils.Map(DashTimer, Stats[PlayerStat.DashCooldown], 0f, 0f, 1f);
+			if (DashTimer <= 0f)
 			{
 				DashRecharged();
 			}
 		}
 
-		if (_dashInvulnTimer > 0f)
+		if (DashInvulnTimer > 0f)
 		{
-			_dashInvulnTimer -= dt;
-			DashProgress = Utils.Map(_dashInvulnTimer, Stats[PlayerStat.DashInvulnTime], 0f, 0f, 1f);
-			if (_dashInvulnTimer <= 0f)
+			DashInvulnTimer -= dt;
+			DashProgress = Utils.Map(DashInvulnTimer, Stats[PlayerStat.DashInvulnTime], 0f, 0f, 1f);
+			if (DashInvulnTimer <= 0f)
 			{
 				IsDashing = false;
 				ColorTint = Color.White;
@@ -492,11 +496,11 @@ public partial class PlayerCitizen : Thing
 		TempWeight = 2f;
 
 		if (NumDashesAvailable == (int)Stats[PlayerStat.NumDashes])
-			_dashTimer = Stats[PlayerStat.DashCooldown];
+			DashTimer = Stats[PlayerStat.DashCooldown];
 
 		NumDashesAvailable--;
 		IsDashing = true;
-		_dashInvulnTimer = Stats[PlayerStat.DashInvulnTime];
+		DashInvulnTimer = Stats[PlayerStat.DashInvulnTime];
 		DashProgress = 0f;
 		DashRechargeProgress = 0f;
 
@@ -527,7 +531,7 @@ public partial class PlayerCitizen : Thing
 
 		if(NumDashesAvailable < numDashes)
 		{
-			_dashTimer = Stats[PlayerStat.DashCooldown];
+			DashTimer = Stats[PlayerStat.DashCooldown];
 			DashRechargeProgress = 0f;
 		}
 		else
