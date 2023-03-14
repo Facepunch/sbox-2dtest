@@ -11,11 +11,9 @@ public partial class TimerPanel : Panel
 {
     public Label TimerLabel { get; set; }
 
-    public TimeSince ElapsedTime { get; set; }
-
     public TimerPanel()
     {
-        ElapsedTime = 0f;
+        
     }
 
     public override void Tick()
@@ -25,7 +23,7 @@ public partial class TimerPanel : Panel
         if (MyGame.Current.IsGameOver)
             return;
 
-        TimeSpan t = TimeSpan.FromSeconds(ElapsedTime.Relative);
+        TimeSpan t = TimeSpan.FromSeconds(MyGame.Current.ElapsedTime.Relative);
         TimerLabel.Text = t.TotalSeconds > 3600 ? t.ToString(@"hh\:mm\:ss") : t.ToString(@"mm\:ss");
     }
 
@@ -39,6 +37,6 @@ public partial class TimerPanel : Panel
 
     public void Restart()
     {
-        ElapsedTime = 0f;
+        
     }
 }
