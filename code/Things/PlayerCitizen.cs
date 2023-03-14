@@ -75,8 +75,9 @@ public partial class PlayerCitizen : Thing
 
     private float _flashTimer;
 	private bool _isFlashing;
+    public float TimeSinceHurt { get; private set; }
 
-	public Nametag Nametag { get; private set; }
+    public Nametag Nametag { get; private set; }
 
 	[Net] public int NumRerollAvailable { get; set; }
 
@@ -105,8 +106,8 @@ public partial class PlayerCitizen : Thing
 
 		if (Sandbox.Game.IsServer)
 		{
-			SpriteTexture = SpriteTexture.Atlas($"textures/sprites/player_spritesheet_{Sandbox.Game.Random.Int(1, 4)}.png", 2, 2);
-			BasePivotY = 0.05f;
+            SpriteTexture = SpriteTexture.Atlas($"textures/sprites/player_spritesheet_{Sandbox.Game.Random.Int(1, 5)}.png", 4, 4);
+            BasePivotY = 0.05f;
 			HeightZ = 0f;
 			//Pivot = new Vector2(0.5f, 0.05f);
 
@@ -235,6 +236,7 @@ public partial class PlayerCitizen : Thing
 		DashRechargeProgress = 1f;
 		TempWeight = 0f;
 		_shotNum = 0;
+		TimeSinceHurt = 999f;
 
 		ShadowOpacity = 0.8f;
 		ShadowScale = 1.12f;
@@ -253,7 +255,7 @@ public partial class PlayerCitizen : Thing
 	public void InitializeStatsClient()
 	{
 		Nametag?.SetVisible(true);
-	}
+    }
 
 	public override void ClientSpawn()
 	{
@@ -323,17 +325,6 @@ public partial class PlayerCitizen : Thing
 
 		ShadowScale = IsDashing ? Utils.MapReturn(DashProgress, 0f, 1f, 1.12f, 0.75f, EasingType.SineInOut) : 1.12f;
 
-		if (Velocity.LengthSquared > 0.01f && inputVector.LengthSquared > 0.1f)
-		{
-			AnimationPath = "textures/sprites/player_walk.frames";
-			AnimationSpeed = Utils.Map(Velocity.Length, 0f, 2f, 1.5f, 2f);
-		}
-		else
-		{
-			AnimationPath = "textures/sprites/player_idle.frames";
-			AnimationSpeed = 0.66f;
-		}
-
 		HandleBounds();
 
 		Rotation = Velocity.Length * MathF.Cos(Time.Now * MathF.PI * 7f) * 1.5f;
@@ -376,18 +367,35 @@ public partial class PlayerCitizen : Thing
 		
 		if (Sandbox.Game.IsServer)
 		{
-			if (Input.Pressed(InputButton.Run))
-			{
-				//Game.Restart();
-				//AddExperience(GetExperienceReqForLevel(Level));
+			bool hurting = TimeSinceHurt < 0.15f;
+			bool attacking = !IsReloading;
+			bool moving = Velocity.LengthSquared > 0.01f && inputVector.LengthSquared > 0.1f;
 
-				//for(int i = 0; i < 9; i++)
-				//            {
-				//                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
-				//}
+            string stateStr = "";
+			if (hurting && attacking)
+				stateStr = "hurt_attack_";
+			else if(hurting)
+                stateStr = "hurt_";
+            else if (attacking)
+                stateStr = "attack_";
 
-				return;
-			}
+            AnimationPath = $"textures/sprites/player_{stateStr}{(moving ? "walk" : "idle")}.frames";
+            AnimationSpeed = moving ? Utils.Map(Velocity.Length, 0f, 2f, 1.5f, 2f) : 0.66f;
+
+			TimeSinceHurt += dt;
+            
+			//if (Input.Pressed(InputButton.Run))
+			//{
+			//	//Game.Restart();
+			//	//AddExperience(GetExperienceReqForLevel(Level));
+
+			//	//for(int i = 0; i < 9; i++)
+			//	//            {
+			//	//                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
+			//	//}
+
+			//	return;
+			//}
 
 			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
@@ -772,7 +780,9 @@ public partial class PlayerCitizen : Thing
 			return 0f;
 		}
 
-		if (Stats[PlayerStat.DamageReductionPercent] > 0f)
+		TimeSinceHurt = 0f;
+
+        if (Stats[PlayerStat.DamageReductionPercent] > 0f)
 			damage *= (1f - MathX.Clamp(Stats[PlayerStat.DamageReductionPercent], 0f, 1f));
 
         if (damageType == DamageType.Explosion && Stats[PlayerStat.ExplosionDamageReductionPercent] > 0f)

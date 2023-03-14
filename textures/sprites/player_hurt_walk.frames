@@ -1,0 +1,14 @@
+{
+  "FrameRate": 4,
+  "Sequences": [
+    {
+      "PlaybackRate": 1,
+      "Repetitions": 1,
+      "FirstFrameIndex": 10,
+      "LastFrameIndex": 11,
+      "TotalFrameCount": 2
+    }
+  ],
+  "Looping": true,
+  "Duration": 0.5
+}
