@@ -45,7 +45,7 @@ public partial class PlayerCitizen : Thing
 	public Arrow ArrowAimer { get; private set; }
 	public Vector2 AimDir { get; private set; }
 
-	public bool IsDead { get; private set; }
+	[Net] public bool IsDead { get; private set; }
 
 	public float Timer { get; protected set; }
 	[Net] public bool IsReloading { get; protected set; }
@@ -106,7 +106,7 @@ public partial class PlayerCitizen : Thing
 
 		if (Sandbox.Game.IsServer)
 		{
-            SpriteTexture = SpriteTexture.Atlas($"textures/sprites/player_spritesheet_{Sandbox.Game.Random.Int(1, 5)}.png", 4, 4);
+            SpriteTexture = SpriteTexture.Atlas($"textures/sprites/player_spritesheet_{Sandbox.Game.Random.Int(1, 5)}.png", 5, 4);
             BasePivotY = 0.05f;
 			HeightZ = 0f;
 			//Pivot = new Vector2(0.5f, 0.05f);
@@ -379,7 +379,7 @@ public partial class PlayerCitizen : Thing
             else if (attacking)
                 stateStr = "attack_";
 
-            AnimationPath = $"textures/sprites/player_{stateStr}{(moving ? "walk" : "idle")}.frames";
+            AnimationPath = IsDead ? $"textures/sprites/player_ghost_{(moving ? "walk" : "idle")}.frames" : $"textures/sprites/player_{stateStr}{(moving ? "walk" : "idle")}.frames";
             AnimationSpeed = moving ? Utils.Map(Velocity.Length, 0f, 2f, 1.5f, 2f) : 0.66f;
 
 			TimeSinceHurt += dt;
@@ -546,15 +546,18 @@ public partial class PlayerCitizen : Thing
 		{
 			DashRechargeProgress = 1f;
 		}
-			
-		ForEachStatus(status => status.OnDashRecharged());
+
+        ForEachStatus(status => status.OnDashRecharged());
 
 		Game.PlaySfxTarget(To.Single(Client), "player.dash.recharge", Position, pitch: Utils.Map(NumDashesAvailable, 1, numDashes, 1f, 1.2f), volume: 0.2f);
 	}
 
 	public void ForEachStatus(Action<Status> action)
 	{
-		foreach (var (_, status) in Statuses)
+		if (Sandbox.Game.IsClient)
+			return;
+
+        foreach (var (_, status) in Statuses)
 		{
 			action(status);
 		}
@@ -835,6 +838,9 @@ public partial class PlayerCitizen : Thing
 	public void DieClient()
 	{
 		Nametag.SetVisible(false);
+
+		if(ArrowAimer != null)
+			ArrowAimer.Opacity = 0f;
 	}
 
     [ClientRpc]
@@ -1127,6 +1133,9 @@ public partial class PlayerCitizen : Thing
 	public void ReviveClient()
 	{
 		Nametag.SetVisible(true);
+
+        if (ArrowAimer != null)
+            ArrowAimer.Opacity = 1f;
 	}
 
 	public void SpawnGrenade(Vector2 pos, Vector2 velocity)
