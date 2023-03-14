@@ -15,7 +15,7 @@ public class ChoicePanel : Panel
 		var modal = new ChoiceModal(this);
 		modal.AddClass("choice_modal");
 		AddChild(modal);
-	}
+    }
 
 	public void OnChoiceMade(TypeDescription type)
 	{
@@ -28,7 +28,14 @@ public class ChoicePanel : Panel
 		MyGame.Current.Hud.ChoicePanel = null;
 	}
 
-	public void Reroll()
+    public override void Tick()
+    {
+        base.Tick();
+
+		Style.AlignItems = MyGame.Current.LocalPlayer.Position.y < -9.5f ? Align.FlexStart : Align.FlexEnd;
+    }
+
+    public void Reroll()
 	{
 		var player = MyGame.Current.LocalPlayer;
 
