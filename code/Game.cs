@@ -45,7 +45,7 @@ public partial class MyGame : GameManager
 
 	private TimeSince _enemySpawnTime;
 
-	public TimeSince ElapsedTime { get; set; }
+	[Net] public TimeSince ElapsedTime { get; set; }
 
 	[Net] public bool IsGameOver { get; private set; }
 
@@ -364,6 +364,7 @@ public partial class MyGame : GameManager
         {
             PlayerList.Remove(player);
 			RemoveThing(player);
+			player.Nametag?.Delete();
             player.Delete();
         }
     }
