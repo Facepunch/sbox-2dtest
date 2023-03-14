@@ -79,7 +79,9 @@ public partial class PlayerCitizen : Thing
 
     public Nametag Nametag { get; private set; }
 
-	[Net] public int NumRerollAvailable { get; set; }
+    private ShieldVfx _shieldVfx;
+
+    [Net] public int NumRerollAvailable { get; set; }
 
 	// STATS
 	[Net] public IDictionary<PlayerStat, float> Stats { get; private set; }
@@ -130,6 +132,8 @@ public partial class PlayerCitizen : Thing
 		AnimationSpeed = 0.66f;
 
 		_original_properties_stat.Clear();
+
+		RemoveShieldVfx();
 
         Level = 0;
 		ExperienceRequired = GetExperienceReqForLevel(Level + 1);
@@ -255,6 +259,9 @@ public partial class PlayerCitizen : Thing
 	public void InitializeStatsClient()
 	{
 		Nametag?.SetVisible(true);
+
+        if (ArrowAimer != null)
+            ArrowAimer.Opacity = 1f;
     }
 
 	public override void ClientSpawn()
@@ -384,18 +391,18 @@ public partial class PlayerCitizen : Thing
 
 			TimeSinceHurt += dt;
             
-			//if (Input.Pressed(InputButton.Run))
-			//{
-			//	//Game.Restart();
-			//	//AddExperience(GetExperienceReqForLevel(Level));
+			if (Input.Pressed(InputButton.Run))
+			{
+				//Game.Restart();
+				AddExperience(GetExperienceReqForLevel(Level));
 
-			//	//for(int i = 0; i < 9; i++)
-			//	//            {
-			//	//                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
-			//	//}
+				//for(int i = 0; i < 9; i++)
+				//            {
+				//                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
+				//}
 
-			//	return;
-			//}
+				return;
+			}
 
 			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)
@@ -783,6 +790,16 @@ public partial class PlayerCitizen : Thing
 			return 0f;
 		}
 
+		if(HasStatus(TypeLibrary.GetType(typeof(ShieldStatus))))
+		{
+			var shieldStatus = GetStatus(TypeLibrary.GetType(typeof(ShieldStatus))) as ShieldStatus;
+            if (shieldStatus != null && shieldStatus.IsShielded)
+			{
+				shieldStatus.LoseShield();
+				return 0f;
+			}
+		}
+
 		TimeSinceHurt = 0f;
 
         if (Stats[PlayerStat.DamageReductionPercent] > 0f)
@@ -946,6 +963,14 @@ public partial class PlayerCitizen : Thing
 	public bool HasStatus(TypeDescription type)
 	{
 		return Statuses.ContainsKey(type.Identity);
+	}
+
+	public Status GetStatus(TypeDescription type)
+	{
+        if (Statuses.ContainsKey(type.Identity))
+            return Statuses[type.Identity];
+
+		return null;
 	}
 
 	public int GetStatusLevel(TypeDescription type)
@@ -1170,5 +1195,22 @@ public partial class PlayerCitizen : Thing
         }
 
         Game.PlaySfxNearby("shoot", pos, pitch: 1f, volume: 1f, maxDist: 3f);
+    }
+
+    [ClientRpc]
+    public void CreateShieldVfx()
+    {
+		RemoveShieldVfx();
+        _shieldVfx = new ShieldVfx(this);
+    }
+
+    [ClientRpc]
+    public void RemoveShieldVfx()
+    {
+        if (_shieldVfx != null)
+        {
+            _shieldVfx.Delete();
+            _shieldVfx = null;
+        }
     }
 }
