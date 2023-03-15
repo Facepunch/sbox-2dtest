@@ -124,7 +124,7 @@ public partial class Crate : Enemy
             }
         }
 
-        var revive_chance = Game.DeadPlayers.ToList().Count * 0.33f;
+        var revive_chance = Game.DeadPlayers.ToList().Count * 0.4f;
         if (Sandbox.Game.Random.Float(0f, 1f) < revive_chance)
         {
             var reviveSoul = new ReviveSoul() { Position = Position + new Vector2(Sandbox.Game.Random.Float(-RAND_POS, RAND_POS), Sandbox.Game.Random.Float(-RAND_POS, RAND_POS)) };

@@ -39,8 +39,8 @@ public class NumProjectileStatus : Status
 	}
 
 	public float GetNumProjectilesForLevel(int level) { return level; }
-	public float GetAttackSpeedMultForLevel(int level) { return 1f - 0.24f * level; }
-	public float GetAttackSpeedPercentForLevel(int level) { return 24 * level; }
-    public float GetMoveSpeedMultForLevel(int level) { return 1f - 0.1f * level; }
-    public float GetMoveSpeedPercentForLevel(int level) { return 10 * level; }
+	public float GetAttackSpeedMultForLevel(int level) { return 1f - 0.2f * level; }
+	public float GetAttackSpeedPercentForLevel(int level) { return 20 * level; }
+    public float GetMoveSpeedMultForLevel(int level) { return 1f - 0.12f * level; }
+    public float GetMoveSpeedPercentForLevel(int level) { return 12 * level; }
 }

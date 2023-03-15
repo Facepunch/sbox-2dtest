@@ -839,7 +839,8 @@ public partial class PlayerCitizen : Thing
 			return;
 
 		IsDead = true;
-		Game.PlayerDied(this);
+		AnimationPath = $"textures/sprites/player_ghost_idle.frames";
+        Game.PlayerDied(this);
 		//EnableDrawing = false;
 		ColorTint = new Color(1f, 1f, 1f, 0.05f);
 		ShadowOpacity = 0.1f;
@@ -1212,5 +1213,16 @@ public partial class PlayerCitizen : Thing
             _shieldVfx.Delete();
             _shieldVfx = null;
         }
+    }
+
+    protected override void OnDestroy()
+    {
+		if(Sandbox.Game.IsClient)
+		{
+            Nametag.Delete();
+            Nametag = null;
+        }
+
+        base.OnDestroy();
     }
 }

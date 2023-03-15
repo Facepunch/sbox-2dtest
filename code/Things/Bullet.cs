@@ -88,7 +88,13 @@ public partial class Bullet : Thing
 
 	public override void Update(float dt)
 	{
-		if (Game.IsGameOver)
+        if (Shooter == null || !Shooter.IsValid)
+		{
+			Delete();
+            return;
+        }
+
+        if (Game.IsGameOver)
 			return;
 
 		base.Update(dt);
@@ -154,6 +160,9 @@ public partial class Bullet : Thing
 	public override void Colliding(Thing other, float percent, float dt)
 	{
 		base.Colliding(other, percent, dt);
+
+		if (Shooter == null || !Shooter.IsValid)
+			return;
 
 		if (typeof(Enemy).IsAssignableFrom(other.GetType()))
 		{

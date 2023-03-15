@@ -364,7 +364,6 @@ public partial class MyGame : GameManager
         {
             PlayerList.Remove(player);
 			RemoveThing(player);
-			player.Nametag?.Delete();
             player.Delete();
         }
     }

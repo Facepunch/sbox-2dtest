@@ -77,7 +77,7 @@ public class ShieldStatus : Status
 
 	public float GetTimeForLevel(int level)
 	{
-		return 60 - level * 8;
+		return 58 - level * 8;
 	}
 
     public override void Remove()
