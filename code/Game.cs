@@ -353,6 +353,9 @@ public partial class MyGame : GameManager
 		AddThing(player);
 
         BoomerChatBox.AddInformation(To.Everyone, $"{client.Name} has joined", $"avatar:{client.SteamId}");
+
+		if (IsGameOver)
+			GameOverClient(To.Single(client));
     }
 
     public override void ClientDisconnect(IClient cl, NetworkDisconnectionReason reason)
@@ -366,6 +369,10 @@ public partial class MyGame : GameManager
 			RemoveThing(player);
             player.Delete();
         }
+
+        int numPlayersAlive = PlayerList.Where(x => !x.IsDead).Count();
+        if (numPlayersAlive == 0)
+            GameOver();
     }
 
     public IEnumerable<PlayerCitizen> Players => Sandbox.Game.Clients
@@ -534,9 +541,7 @@ public partial class MyGame : GameManager
 	{
 		int numPlayersAlive = Players.Where(x => !x.IsDead).Count();
 		if(numPlayersAlive == 0)
-		{
 			GameOver();
-		}
 	}
 
 	public void GameOver()
