@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(3, 0, 1f)]
+[Status(4, 0, 1f)]
 public class BulletSpeedStatus : Status
 {
 	public BulletSpeedStatus()
@@ -33,16 +33,16 @@ public class BulletSpeedStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase bullet speed by {0}% → {1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase bullet speed by {0}%→{1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetMultForLevel(int level)
     {
-		return 1f + 0.35f * level;
+		return 1f + 0.3f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 35 * level;
+		return 30 * level;
 	}
 }

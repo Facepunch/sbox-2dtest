@@ -34,7 +34,7 @@ public class DamageReductionStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Reduce damage taken by {0}% → {1}% but reduce damage you deal by {2}% → {3}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel), GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Reduce damage taken by {0}%→{1}% but reduce damage you deal by {2}%→{3}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel), GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAddForLevel(int level)

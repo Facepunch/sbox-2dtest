@@ -34,7 +34,7 @@ public class NoDashInvulnDamageStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Deal {0}% → {1}% more damage but you're no longer invulnerable while dashing", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Deal {0}%→{1}% more damage but you're no longer invulnerable while dashing", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
     public float GetDamageMultForLevel(int level)

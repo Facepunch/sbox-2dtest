@@ -31,7 +31,7 @@ public class DashShootStatus : Status
 
     public override string GetUpgradeDescription(int newLevel)
     {
-        return newLevel > 1 ? string.Format("Launch {0} → {1} bullets when you dash", GetAmountForLevel(newLevel - 1), GetAmountForLevel(newLevel)) : GetDescription(newLevel);
+        return newLevel > 1 ? string.Format("Launch {0}→{1} bullets when you dash", GetAmountForLevel(newLevel - 1), GetAmountForLevel(newLevel)) : GetDescription(newLevel);
     }
 
 	public override void OnDashStarted()
@@ -44,6 +44,6 @@ public class DashShootStatus : Status
 
     public float GetAmountForLevel(int level)
     {
-        return level * 1f + 2f;
+        return level * 2;
     }
 }

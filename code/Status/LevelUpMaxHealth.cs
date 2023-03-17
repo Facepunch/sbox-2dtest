@@ -31,7 +31,7 @@ public class LevelUpMaxHealth : Status
 
     public override string GetUpgradeDescription(int newLevel)
     {
-        return newLevel > 1 ? string.Format("Gain +{0} → +{1} max HP whenever you level up", PrintForLevel(newLevel - 1), PrintForLevel(newLevel)) : GetDescription(newLevel);
+        return newLevel > 1 ? string.Format("Gain +{0}→+{1} max HP whenever you level up", PrintForLevel(newLevel - 1), PrintForLevel(newLevel)) : GetDescription(newLevel);
     }
 
     public override void OnLevelUp()

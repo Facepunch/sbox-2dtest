@@ -88,9 +88,9 @@ public partial class Bullet : Thing
 
 	public override void Update(float dt)
 	{
-        if (Shooter == null || !Shooter.IsValid)
+		if (Shooter == null || !Shooter.IsValid || Shooter.IsDead)
 		{
-			Delete();
+			Remove();
             return;
         }
 
@@ -155,9 +155,18 @@ public partial class Bullet : Thing
 					return;
 			}
 		}
+
+        //DebugText($"{Name} shooter: {Shooter} IsRemoved: {IsRemoved} IsValid: {IsValid}");
     }
 
-	public override void Colliding(Thing other, float percent, float dt)
+  //  [Event.Tick.Client]
+  //  public void ClientTick()
+  //  {
+  //      //DebugOverlay.Line(Position, Position + new Vector2(0.1f, 0.1f), 0f, false);
+		////DebugText($"\n{Name} shooter: {Shooter} IsRemoved: {IsRemoved} IsValid: {IsValid}");
+  //  }
+
+    public override void Colliding(Thing other, float percent, float dt)
 	{
 		base.Colliding(other, percent, dt);
 

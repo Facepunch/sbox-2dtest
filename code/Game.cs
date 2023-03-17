@@ -28,7 +28,7 @@ public partial class MyGame : GameManager
 	public const float MAX_ENEMY_COUNT = 350;
     //public const float MAX_ENEMY_COUNT = 30;
     public int CrateCount { get; private set; }
-    public const float MAX_CRATE_COUNT = 6;
+    public const float MAX_CRATE_COUNT = 7;
 
     public int CoinCount { get; private set; }
 	public const float MAX_COIN_COUNT = 200;
@@ -169,13 +169,13 @@ public partial class MyGame : GameManager
 		if(CrateCount < MAX_CRATE_COUNT)
 		{
             float crateChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 200f, 0.005f, 0.01f);
-            float additionalCrateChanceHighest = 0f;
+            float additionalCrateChance = 0f;
             foreach (PlayerCitizen player in AlivePlayers)
             {
-                if (player.Stats[PlayerStat.CrateChanceAdditional] > additionalCrateChanceHighest)
-                    additionalCrateChanceHighest = player.Stats[PlayerStat.CrateChanceAdditional];
+                if (player.Stats[PlayerStat.CrateChanceAdditional] > 0f)
+                    additionalCrateChance += player.Stats[PlayerStat.CrateChanceAdditional];
             }
-            crateChance *= (1f + additionalCrateChanceHighest);
+            crateChance *= (1f + additionalCrateChance);
 
             if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < crateChance)
                 type = TypeLibrary.GetType(typeof(Crate));
@@ -516,7 +516,7 @@ public partial class MyGame : GameManager
         SpawnStartingThings();
 
 		RestartClient();
-	}
+    }
 
 	[ClientRpc]
 	public void RestartClient()
@@ -535,9 +535,9 @@ public partial class MyGame : GameManager
 		foreach (var explosion in _explosions)
 			explosion.Delete();
 		_explosions.Clear();
-	}
+    }
 
-	public void PlayerDied(PlayerCitizen player)
+    public void PlayerDied(PlayerCitizen player)
 	{
 		int numPlayersAlive = Players.Where(x => !x.IsDead).Count();
 		if(numPlayersAlive == 0)

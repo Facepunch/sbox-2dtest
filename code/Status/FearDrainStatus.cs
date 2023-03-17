@@ -33,7 +33,7 @@ public class FearDrainStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("You heal for {0}% → {1}% of the damage you do to scared enemies", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("You heal for {0}%→{1}% of the damage you do to scared enemies", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAddForLevel(int level)

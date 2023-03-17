@@ -33,16 +33,16 @@ public class ThornsStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Reflect {0}% → {1}% of melee damage you take", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Reflect {0}%→{1}% of melee damage you take", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAddForLevel(int level)
     {
-		return 0.40f * level;
+		return 0.45f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 40 * level;
+		return 45 * level;
 	}
 }

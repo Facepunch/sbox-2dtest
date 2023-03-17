@@ -72,7 +72,7 @@ public class ShieldStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
 	{
-		return newLevel > 1 ? string.Format("Gain a shield that prevents a single hit and recharges in {0}s → {1}s", GetTimeForLevel(newLevel - 1), GetTimeForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Gain a shield that prevents a single hit and recharges in {0}s→{1}s", GetTimeForLevel(newLevel - 1), GetTimeForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetTimeForLevel(int level)

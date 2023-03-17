@@ -34,7 +34,7 @@ public class LessChoicesDamageStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Deal {0}% → {1}% more damage but see {2} → {3} less upgrade choices", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel), GetAddForLevel(newLevel - 1), GetAddForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Deal {0}%→{1}% more damage but see {2}→{3} less upgrade choices", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel), GetAddForLevel(newLevel - 1), GetAddForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAddForLevel(int level)

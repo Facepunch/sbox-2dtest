@@ -33,7 +33,7 @@ public class MoreRerollsStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Gain {0} → {1} addition rerolls each level", GetAddForLevel(newLevel - 1), GetAddForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Gain {0}→{1} addition rerolls each level", GetAddForLevel(newLevel - 1), GetAddForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAddForLevel(int level)

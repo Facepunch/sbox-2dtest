@@ -34,7 +34,7 @@ public class BulletForceStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase bullet knockback by {0}% → {1}% and add {2} → {3} units of recoil", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel), PrintRecoilForLevel(newLevel - 1), PrintRecoilForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase bullet knockback by {0}%→{1}% and add {2}→{3} units of recoil", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel), PrintRecoilForLevel(newLevel - 1), PrintRecoilForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetMultForLevel(int level)

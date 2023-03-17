@@ -391,18 +391,18 @@ public partial class PlayerCitizen : Thing
 
 			TimeSinceHurt += dt;
             
-			if (Input.Pressed(InputButton.Run))
-			{
-				//Game.Restart();
-				AddExperience(GetExperienceReqForLevel(Level));
+			//if (Input.Pressed(InputButton.Run))
+			//{
+			//	//Game.Restart();
+			//	AddExperience(GetExperienceReqForLevel(Level));
 
-				//for(int i = 0; i < 9; i++)
-				//            {
-				//                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
-				//}
+			//	//for(int i = 0; i < 9; i++)
+			//	//            {
+			//	//                AddStatus(TypeLibrary.GetDescription(typeof(FreezeShootStatus)));
+			//	//}
 
-				return;
-			}
+			//	return;
+			//}
 
 			var gridPos = Game.GetGridSquareForPos(Position);
 			if (gridPos != GridPos)

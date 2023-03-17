@@ -5,7 +5,7 @@ using Sandbox;
 
 namespace Test2D;
 
-[Status(5, 0, 1f)]
+[Status(4, 0, 1f)]
 public class FreezeArmorStatus : Status
 {
 	public FreezeArmorStatus()
@@ -33,16 +33,16 @@ public class FreezeArmorStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("{0}% → {1}% chance to freeze enemy melee attackers", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("{0}%→{1}% chance to freeze enemy melee attackers", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAddForLevel(int level)
     {
-		return 0.2f * level;
+		return 0.25f * level;
     }
 
 	public float GetPercentForLevel(int level)
 	{
-		return 20 * level;
+		return 25 * level;
 	}
 }

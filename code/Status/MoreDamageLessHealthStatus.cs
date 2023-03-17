@@ -37,7 +37,7 @@ public class MoreDamageLessHealthStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Deal {0}% → {1}% more damage but reduce your max health by {2}% → {3}%", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel), GetHealthPercentForLevel(newLevel - 1), GetHealthPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Deal {0}%→{1}% more damage but reduce your max health by {2}%→{3}%", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel), GetHealthPercentForLevel(newLevel - 1), GetHealthPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
     public float GetDamageMultForLevel(int level)

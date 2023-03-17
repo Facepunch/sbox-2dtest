@@ -34,7 +34,7 @@ public class BulletHealTeammateStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Your bullets heal allies for {0} → {1} HP but you deal {2}% → {3}% less damage", GetPrintForLevel(newLevel - 1), GetPrintForLevel(newLevel), GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Your bullets heal allies for {0}→{1} HP but you deal {2}%→{3}% less damage", GetPrintForLevel(newLevel - 1), GetPrintForLevel(newLevel), GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAddForLevel(int level)

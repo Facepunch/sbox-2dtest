@@ -31,7 +31,7 @@ public class XpHealStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
 	{
-		return newLevel > 1 ? string.Format("When you gain XP, heal for {0} → {1} per point", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("When you gain XP, heal for {0}→{1} per point", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
     public override void OnGainExperience(int xp)

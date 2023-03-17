@@ -31,7 +31,7 @@ public class RerollHealStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
 	{
-		return newLevel > 1 ? string.Format("When you reroll, heal for {0} → {1}", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("When you reroll, heal for {0}→{1}", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
     public override void OnReroll()

@@ -31,7 +31,7 @@ public class GrenadeShootReloadStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
 	{
-		return newLevel > 1 ? string.Format("{0}% → {1}% chance to launch a grenade when you reload", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("{0}%→{1}% chance to launch a grenade when you reload", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public override void OnReload()

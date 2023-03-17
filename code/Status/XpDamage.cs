@@ -30,7 +30,7 @@ public class XpDamage : Status
 
 	public override string GetUpgradeDescription(int newLevel)
 	{
-		return newLevel > 1 ? string.Format("When you gain XP, hurt nearby enemies for {0} → {1} per point", GetAmountForLevel(newLevel - 1), GetAmountForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("When you gain XP, hurt nearby enemies for {0}→{1} per point", GetAmountForLevel(newLevel - 1), GetAmountForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
     public override void OnGainExperience(int xp)

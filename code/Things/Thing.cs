@@ -30,12 +30,15 @@ public partial class Thing : Sprite
 	public Thing()
 	{
 		TimeScale = 1f;
-	}
+        //Transmit = TransmitType.Always;
+    }
 
 	public override void Spawn()
 	{
 		base.Spawn();
-	}
+
+		Transmit = TransmitType.Always;
+    }
 
 	public virtual void Update(float dt)
 	{

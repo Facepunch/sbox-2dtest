@@ -33,7 +33,7 @@ public class BulletLifetimeDamageStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Bullets grow their damage by {0} → {1} per second", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Bullets grow their damage by {0}→{1} per second", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
     public float GetAddForLevel(int level)

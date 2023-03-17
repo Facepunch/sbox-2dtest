@@ -127,17 +127,27 @@ public partial class EnemySpike : Thing
 		}
 	}
 
-	public override void Remove()
-	{
-		RemoveClient();
-		base.Remove();
-	}
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
 
-	[ClientRpc]
-	public void RemoveClient()
-	{
-		Background.Delete();
-	}
+		if(Sandbox.Game.IsClient)
+		{
+            Background.Delete();
+        }
+    }
+
+ //   public override void Remove()
+	//{
+	//	RemoveClient();
+	//	base.Remove();
+	//}
+
+	//[ClientRpc]
+	//public void RemoveClient()
+	//{
+	//	Background.Delete();
+	//}
 }
 
 public partial class SpikeBackground : Sprite

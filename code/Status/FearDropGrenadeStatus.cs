@@ -33,7 +33,7 @@ public class FearDropGrenadeStatus : Status
 
     public override string GetUpgradeDescription(int newLevel)
     {
-        return newLevel > 1 ? string.Format("Enemies you scare have a {0}% → {1}% chance to drop a grenade on death", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+        return newLevel > 1 ? string.Format("Enemies you scare have a {0}%→{1}% chance to drop a grenade on death", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
     }
 
     public float GetAddForLevel(int level)

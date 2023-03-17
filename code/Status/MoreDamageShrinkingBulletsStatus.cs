@@ -34,7 +34,7 @@ public class MoreDamageShrinkingBulletsStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format(" Your bullets do +{0} → +{1} damage but shrink by {2} → {3} damage per second", GetDamageAddPrint(newLevel - 1), GetDamageAddPrint(newLevel), GetShrinkPrintForLevel(newLevel - 1), GetShrinkPrintForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format(" Your bullets do +{0}→+{1} damage but shrink by {2}→{3} damage per second", GetDamageAddPrint(newLevel - 1), GetDamageAddPrint(newLevel), GetShrinkPrintForLevel(newLevel - 1), GetShrinkPrintForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
     public float GetDamageAdd(int level)

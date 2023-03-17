@@ -31,7 +31,7 @@ public class DashFireStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
 	{
-		return newLevel > 1 ? string.Format("{0}% → {1}% chance to start a fire when you dash", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("{0}%→{1}% chance to start a fire when you dash", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public override void OnDashStarted()

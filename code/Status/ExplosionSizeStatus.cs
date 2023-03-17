@@ -33,7 +33,7 @@ public class ExplosionSizeStatus : Status
 
     public override string GetUpgradeDescription(int newLevel)
     {
-        return newLevel > 1 ? string.Format("Increase the size of your explosions by {0}% → {1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
+        return newLevel > 1 ? string.Format("Increase the size of your explosions by {0}%→{1}%", GetPercentForLevel(newLevel - 1), GetPercentForLevel(newLevel)) : GetDescription(newLevel);
     }
 
     public float GetMultForLevel(int level)

@@ -33,7 +33,7 @@ public class HealthRegenStillStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase health regen by {0}/s → {1}/s when you're not moving", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase health regen by {0}/s→{1}/s when you're not moving", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAmountForLevel(int level)

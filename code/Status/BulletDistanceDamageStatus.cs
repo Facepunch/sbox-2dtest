@@ -33,12 +33,12 @@ public class BulletDistanceDamageStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase bullet damage by {0} → {1} per metre traveled", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase bullet damage by {0}→{1} per metre traveled", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
     public float GetAddForLevel(int level)
     {
-        return 0.6f * level;
+        return 0.5f * level;
     }
 
     public string GetPrintAmountForLevel(int level)

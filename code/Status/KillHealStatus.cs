@@ -33,7 +33,7 @@ public class KillHealStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
 	{
-		return newLevel > 1 ? string.Format("Heal for {0} → {1} whenever you kill an enemy but lose {2} → {3} HP/s", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel), GetHpDrainPrintAmountForLevel(newLevel - 1), GetHpDrainPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Heal for {0}→{1} whenever you kill an enemy but lose {2}→{3} HP/s", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel), GetHpDrainPrintAmountForLevel(newLevel - 1), GetHpDrainPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
     public override void OnKill(Enemy enemy)

@@ -33,7 +33,7 @@ public class MoreChoicesStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("See {0} → {1} extra upgrade choices", GetAddForLevel(newLevel - 1), GetAddForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("See {0}→{1} extra upgrade choices", GetAddForLevel(newLevel - 1), GetAddForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAddForLevel(int level)

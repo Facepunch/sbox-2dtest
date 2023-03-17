@@ -34,7 +34,7 @@ public class ExplosionDamageStatus : Status
 
     public override string GetUpgradeDescription(int newLevel)
     {
-        return newLevel > 1 ? string.Format("Your explosions deal {0}% → {1}% extra damage but your bullets deal {2}% → {3}% less", GetExplosionPercentForLevel(newLevel - 1), GetExplosionPercentForLevel(newLevel), GetBulletPercentForLevel(newLevel - 1), GetBulletPercentForLevel(newLevel)) : GetDescription(newLevel);
+        return newLevel > 1 ? string.Format("Your explosions deal {0}%→{1}% extra damage but your bullets deal {2}%→{3}% less", GetExplosionPercentForLevel(newLevel - 1), GetExplosionPercentForLevel(newLevel), GetBulletPercentForLevel(newLevel - 1), GetBulletPercentForLevel(newLevel)) : GetDescription(newLevel);
     }
 
     public float GetExplosionMultForLevel(int level) { return 1f + 0.2f * level; }

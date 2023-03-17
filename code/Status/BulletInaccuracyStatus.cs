@@ -34,7 +34,7 @@ public class BulletInaccuracyStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("{0}% → {1}% less bullet inaccuracy and {1}% → {2}% faster bullets", GetInaccuracyPercentForLevel(newLevel - 1), GetInaccuracyPercentForLevel(newLevel), GetSpeedPercentForLevel(newLevel - 1), GetSpeedPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("{0}%→{1}% less bullet inaccuracy and {1}%→{2}% faster bullets", GetInaccuracyPercentForLevel(newLevel - 1), GetInaccuracyPercentForLevel(newLevel), GetSpeedPercentForLevel(newLevel - 1), GetSpeedPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetInaccuracyMultForLevel(int level)

@@ -33,7 +33,7 @@ public class DamageEarlierShotsStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
 	{
-		return newLevel > 1 ? string.Format("Bullets deal {0} → {1} more damage for each time you've shot (reset when you reload)", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Bullets deal {0}→{1} more damage for each time you've shot (reset when you reload)", GetPrintAmountForLevel(newLevel - 1), GetPrintAmountForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetAmountForLevel(int level)

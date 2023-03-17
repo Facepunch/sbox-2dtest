@@ -34,7 +34,7 @@ public class DamageStatus : Status
 
 	public override string GetUpgradeDescription(int newLevel)
     {
-		return newLevel > 1 ? string.Format("Increase bullet damage by {0}% → {1}% and decrease bullet speed by {2}% → {3}%", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel), GetSpeedPercentForLevel(newLevel - 1), GetSpeedPercentForLevel(newLevel)) : GetDescription(newLevel);
+		return newLevel > 1 ? string.Format("Increase bullet damage by {0}%→{1}% and decrease bullet speed by {2}%→{3}%", GetDamagePercentForLevel(newLevel - 1), GetDamagePercentForLevel(newLevel), GetSpeedPercentForLevel(newLevel - 1), GetSpeedPercentForLevel(newLevel)) : GetDescription(newLevel);
 	}
 
 	public float GetDamageMultForLevel(int level)
