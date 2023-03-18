@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace Test2D;
 
-[UseTemplate]
 public partial class EnemyNametag : Panel
 {
     public Enemy Enemy { get; set; }
@@ -18,6 +17,12 @@ public partial class EnemyNametag : Panel
 
     public EnemyNametag()
     {
+        StyleSheet.Load("/UI/EnemyNametag.scss");
+
+        HpBar = Add.Panel("hpbar");
+        HpBarDelta = Add.Panel("hpbardelta");
+        HpBarOverlay = Add.Panel("hpbaroverlay");
+
         BossNameLabel = new Label();
         BossNameLabel.Text = "BOSS";
         BossNameLabel.Style.FontColor = new Color(1f, 1f, 1f, 0.75f);

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace Test2D;
 
-[UseTemplate]
 public partial class Nametag : Panel
 {
     public PlayerCitizen Player { get; set; }
@@ -18,6 +17,27 @@ public partial class Nametag : Panel
     public Panel HpBarDelta { get; set; }
     public Panel ReloadBar { get; set; }
     public Panel ReloadBarTickRight { get; set; }
+
+    public Nametag()
+    {
+        StyleSheet.Load("/UI/Nametag.scss");
+
+        NameLabel = new Label();
+        NameLabel.AddClass("name");
+        AddChild(NameLabel);
+
+        HpBar = new Panel();
+        HpBar.AddClass("hpbar");
+        AddChild(HpBar);
+
+        HpBarDelta = new Panel();
+        HpBarDelta.AddClass("hpbardelta");
+        AddChild(HpBarDelta);
+
+        HpBarOverlay = new Panel();
+        HpBarOverlay.AddClass("hpbaroverlay");
+        AddChild(HpBarOverlay);
+    }
 
     public void AddReloadBar()
     {

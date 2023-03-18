@@ -6,7 +6,6 @@ using System.Linq;
 
 namespace Test2D;
 
-[UseTemplate]
 internal class Tippy : Panel
 {
 	public Label TitleLabel { get; set; }
@@ -16,6 +15,26 @@ internal class Tippy : Panel
 
 	private Panel Target;
 	private Pivots Pivot;
+
+	public Tippy()
+	{
+        StyleSheet.Load("/UI/Tippy.scss");
+
+        var titlebar = Add.Panel("title_bar");
+
+        TitleLabel = titlebar.Add.Label("tippy_title");
+		TitleLabel.Style.FontColor = new Color(0.3f, 1f, 0.3f);
+		TitleLabel.Style.FontSize = 22;
+
+        LevelLabel = titlebar.Add.Label("tippy_level");
+        LevelLabel.Style.FontColor = new Color(1f, 1f, 1f, 0.35f);
+        LevelLabel.Style.FontSize = 22;
+        LevelLabel.Style.PaddingLeft = 8;
+
+        DescLabel = Add.Label("tippy_description");
+		DescLabel.Style.FontSize = 18;
+		DescLabel.Style.FontStyle = FontStyle.Italic;
+    }
 
 	//public Panel Canvas { get; set; }
 
