@@ -24,7 +24,9 @@ public partial class TimerPanel : Panel
             return;
 
         TimeSpan t = TimeSpan.FromSeconds(MyGame.Current.ElapsedTime.Relative);
-        TimerLabel.Text = t.TotalSeconds > 3600 ? t.ToString(@"hh\:mm\:ss") : t.ToString(@"mm\:ss");
+
+        if(TimerLabel != null)
+            TimerLabel.Text = t.TotalSeconds > 3600 ? t.ToString(@"hh\:mm\:ss") : t.ToString(@"mm\:ss");
     }
 
     public void SetVisible(bool visible)

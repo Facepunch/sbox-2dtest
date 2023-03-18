@@ -35,13 +35,13 @@ public partial class Nametag : Panel
     {
         base.Tick();
 
-        if (Player == null || !Player.IsValid)
+        if (Player == null || !Player.IsValid || NameLabel == null || HpBar == null || HpBarOverlay == null || HpBarDelta == null)
             return;
 
         var name = Player.Client.Name;
         NameLabel.Text = name[..Math.Min(name.Length, 14)] + " [" + Player.Level.ToString() + "]";
 
-        var screenPos = Camera2D.Current.WorldToScreen((Vector2) Player.SceneObject.Position + new Vector2(0f, 1.42f + Player.HeightZ)) * ScaleFromScreen;
+        var screenPos = Camera2D.Current.WorldToScreen((Vector2)Player.SceneObject.Position + new Vector2(0f, 1.42f + Player.HeightZ)) * ScaleFromScreen;
 
         Style.Left = screenPos.x - 150;
         Style.Top = screenPos.y;

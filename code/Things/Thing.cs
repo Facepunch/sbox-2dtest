@@ -30,7 +30,6 @@ public partial class Thing : Sprite
 	public Thing()
 	{
 		TimeScale = 1f;
-        //Transmit = TransmitType.Always;
     }
 
 	public override void Spawn()
