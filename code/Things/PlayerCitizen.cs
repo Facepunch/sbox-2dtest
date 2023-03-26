@@ -310,11 +310,11 @@ public partial class PlayerCitizen : Thing
 		}
 	}
     //Use this to store last known controller look dir.
-	Vector2 LastAimDir;
+    Vector2 LastAimDir = Vector2.Up;
     protected override void OnSimulate(IClient cl)
 	{
 		if (Game.IsGameOver)
-			return;
+			return;	
 
 		float dt = Time.Delta;
 
