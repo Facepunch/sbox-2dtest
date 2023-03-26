@@ -51,18 +51,37 @@ public class DeathModal : Panel
 		//titleLabel.Text = "Title";
 		AddChild(TextLabel);
 
-		var button = Add.Panel("death_button");
-		button.AddEventListener("onclick", () => DeathPanel.OnDeathButtonClicked());
+		var button = Add.Panel("death_button");    
+        button.AddEventListener("onclick", () => DeathPanel.OnDeathButtonClicked());
+    
+        Label button_label = new Label();
+        button_label.AddClass("death_button_label");
+        
+		if (Input.UsingController)
+		{
+            button_label.Text = "Press Duck to Restart";
+        }
+		else
+		{
+        button_label.Text = "Retry";
+		}
+        
+        button.AddChild(button_label);
 
-		Label button_label = new Label();
-		button_label.AddClass("death_button_label");
-		button_label.Text = "Retry";
-		button.AddChild(button_label);
-
-		if(!Sandbox.Game.LocalClient.IsListenServerHost)
+        if (!Sandbox.Game.LocalClient.IsListenServerHost)
         {
 			button.AddClass("disabled");
 			button_label.Text += " (Host only)";
 		}
 	}
+
+    public override void Tick()
+    {
+        base.Tick();
+		
+        if (Input.Down(InputButton.Duck))
+        {
+            DeathPanel.OnDeathButtonClicked();
+        }
+    }
 }
