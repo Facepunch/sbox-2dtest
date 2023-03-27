@@ -11,7 +11,8 @@
     "/textures/sprites/*",
     "/textures/icons/*",
     "/shaders/*",
-    "/particles/*"
+    "/particles/*",
+    "/sounds/*"
   ],
   "HasCode": true,
   "CodePath": "/code/",
@@ -30,8 +31,8 @@
       "Keyboard": true
     },
     "CsProjName": "",
-    "Summary": "arena shooter action roguelike",
-    "Description": "",
+    "Summary": "Monster-killing action-roguelike arena-shooter.",
+    "Description": "Survive until 15:00 then kill the Boss!\n\n1-4 Players\n\n======== Controls ========\n- Movement: WASD\n- Aim: MOUSE\n- Dash: SPACE\n- Reroll Upgrades: R\n- Buy Upgrade: MOUSE CLICK or NUMKEYS\n\n======== Tips ========\n- to revive after death (in multiplayer), look for a new soul in crates\n- xp gems never disappear, but items do",
     "Public": false
   }
 }
