@@ -309,15 +309,21 @@ public partial class PlayerCitizen : Thing
 			};
 		}
 	}
-
-	protected override void OnSimulate(IClient cl)
+    //Use this to store last known controller look dir.
+    Vector2 LastAimDir = Vector2.Up;
+    protected override void OnSimulate(IClient cl)
 	{
 		if (Game.IsGameOver)
-			return;
+			return;	
 
 		float dt = Time.Delta;
 
 		Vector2 inputVector = new Vector2(-Input.AnalogMove.y, Input.AnalogMove.x);
+
+        if(Input.UsingController)
+		{
+            inputVector = new Vector2(Input.GetAnalog(InputAnalog.Move).x, Input.GetAnalog(InputAnalog.Move).y);
+        }
 
 		if (inputVector.LengthSquared > 0f)
 			Velocity += inputVector.Normal * Stats[PlayerStat.MoveSpeed] * BASE_MOVE_SPEED * dt;
@@ -346,17 +352,32 @@ public partial class PlayerCitizen : Thing
 			Camera2D.Current.TargetPosition = Position;
 		}
 
-		//Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
-		//Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
+        //Rotation = (MathF.Atan2(MouseOffset.y, MouseOffset.x) * (180f / MathF.PI)) - 90f;
+        //Scale = new Vector2( MathF.Sin( Time.Now * 4f ) * 1f + 2f, MathF.Sin( Time.Now * 3f ) * 1f + 2f );
 
-		//DebugOverlay.Text(Position.ToString(), Position);
+        //DebugOverlay.Text(Position.ToString(), Position);
 
-		//DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
-		//DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
+        //DebugOverlay.Text(Position.ToString() + "\n" + Game.GetGridSquareForPos(Position).ToString(), Position + new Vector2(0.2f, 0f));
+        //DebugOverlay.Line(Position, Position + new Vector2(0.01f, 0.01f), 0f, false);
 
-		AimDir = MouseOffset.Normal;
+        if (Input.UsingController)
+		{        
+            AimDir = LastAimDir;
+			if (Input.GetAnalog(InputAnalog.Look).Length > 0f)
+			{
+				LastAimDir = new Vector2(Input.GetAnalog(InputAnalog.Look).x, Input.GetAnalog(InputAnalog.Look).y).Normal;
+			}
+			else
+			{
+                LastAimDir = AimDir;
+            }
+		}
+		else
+		{
+            AimDir = MouseOffset.Normal;
+        }
 
-		if (ArrowAimer != null)
+        if (ArrowAimer != null)
 		{
 			ArrowAimer.LocalRotation = (MathF.Atan2(AimDir.y, AimDir.x) * (180f / MathF.PI));
 			ArrowAimer.Position = Position + new Vector2(0f, 0.4f) + AimDir * 0.65f;
