@@ -85,7 +85,7 @@ namespace Test2D
 		[Event.Client.BuildInput]
 		private void OnBuildInput()
 		{
-			if ( Sandbox.Input.Pressed( InputButton.Chat ) )
+			if ( Sandbox.Input.Pressed( "Chat" ) )
 			{
 				IsOpen = !IsOpen;
 			}

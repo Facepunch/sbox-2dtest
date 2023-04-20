@@ -518,7 +518,7 @@ public partial class PlayerCitizen : Thing
 			}
 		}
 
-		if (Input.Pressed(InputButton.Jump) || Input.Pressed(InputButton.PrimaryAttack))
+		if (Input.Pressed("Jump") || Input.Pressed("attack1"))
 			Dash();
 	}
 

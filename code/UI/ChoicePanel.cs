@@ -119,19 +119,19 @@ public class ChoiceModal : Panel
     {
         base.Tick();
 
-		if (Input.Pressed(InputButton.Reload))
+		if (Input.Pressed("reload"))
 			ChoicePanel.Reroll();
-		else if (Input.Pressed(InputButton.Slot1))
+		else if (Input.Pressed("Slot1"))
 			ChoicePanel.OnChoiceMade(_statusTypes[0]);
-        else if (Input.Pressed(InputButton.Slot2))
+        else if (Input.Pressed("Slot2"))
             ChoicePanel.OnChoiceMade(_statusTypes[1]);
-        else if (Input.Pressed(InputButton.Slot3))
+        else if (Input.Pressed("Slot3"))
             ChoicePanel.OnChoiceMade(_statusTypes[2]);
-        else if (Input.Pressed(InputButton.Slot4) && _statusTypes.Count >= 4)
+        else if (Input.Pressed("Slot4") && _statusTypes.Count >= 4)
             ChoicePanel.OnChoiceMade(_statusTypes[3]);
-        else if (Input.Pressed(InputButton.Slot5) && _statusTypes.Count >= 5)
+        else if (Input.Pressed("Slot5") && _statusTypes.Count >= 5)
             ChoicePanel.OnChoiceMade(_statusTypes[4]);
-        else if (Input.Pressed(InputButton.Slot6) && _statusTypes.Count >= 6)
+        else if (Input.Pressed("Slot6") && _statusTypes.Count >= 6)
             ChoicePanel.OnChoiceMade(_statusTypes[5]);
     }
 }

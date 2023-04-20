@@ -79,7 +79,7 @@ public class DeathModal : Panel
     {
         base.Tick();
 		
-        if (Input.Down(InputButton.Duck))
+        if (Input.Down("Duck"))
         {
             DeathPanel.OnDeathButtonClicked();
         }
