@@ -7,13 +7,8 @@
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "ResourcePaths": [
-    "/textures/sprites/*",
-    "/textures/icons/*",
-    "/shaders/*",
-    "/particles/*",
-    "/sounds/*"
-  ],
+  "Resources": null,
+  "MenuResources": "GameMenu/*\nmenu/*.sound\nmenu/*.png",
   "HasCode": true,
   "CodePath": "/code/",
   "PackageReferences": [],
@@ -213,6 +208,7 @@
           "GroupName": "Other"
         }
       ]
-    }
+    },
+    "HttpAllowList": null
   }
 }

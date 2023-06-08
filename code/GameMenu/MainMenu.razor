@@ -1,0 +1,75 @@
+@using System
+@using Sandbox;
+@using Sandbox.UI;
+@attribute [StyleSheet]
+@inherits RootPanel
+@namespace GameMenu
+@implements Sandbox.Menu.IGameMenuPanel
+
+<root class="mygamemenu">
+
+    <div class="keyart"></div>
+
+    <div class="options">
+
+        @if ( Game.InGame )
+        {
+            <div class="row">
+                <div class="option" onclick="@(() => Game.Menu.HideMenu() )">Return To Game</div>
+            </div>
+
+            <div class="row">
+                <div class="option" onclick="@(() => Game.Menu.LeaveServer( "End Game" ) )">End Game</div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="option" onclick="@(() => Game.Menu.StartServerAsync( 4, "My Sausage Server", "<empty>" ))">Play Game</div>
+            </div>
+        }
+
+        <div class="row spacer">
+            <div class="option"></div>
+        </div>
+
+        <div class="row">
+            <div class="option" onclick="@Game.Menu.Close">Quit</div>
+        </div>  
+        
+    </div>
+
+</root>
+
+@code
+{
+    public override void Tick()
+    {
+        base.Tick();
+
+        SetClass( "ingame", Game.InGame );
+
+        UpdateMusic();
+    }
+
+    SoundHandle MenuMusic;
+
+    void UpdateMusic()
+    {
+        if (Game.InGame)
+        {
+            MenuMusic.Stop(true);
+            return;
+        }
+
+        if (!MenuMusic.IsPlaying)
+        {
+            MenuMusic = Audio.Play("menu/menumusic.sound");
+        }
+    }
+
+    protected override int BuildHash()
+    {
+        return HashCode.Combine( Game.InGame );
+    }
+}
