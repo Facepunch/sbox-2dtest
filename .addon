@@ -7,7 +7,7 @@
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "Resources": null,
+  "Resources": "*.png\n*.html\n*.scss",
   "MenuResources": "GameMenu/*\nmenu/*.sound\nmenu/*.png",
   "HasCode": true,
   "CodePath": "/code/",
