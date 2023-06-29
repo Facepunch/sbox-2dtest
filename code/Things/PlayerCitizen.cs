@@ -1085,6 +1085,9 @@ public partial class PlayerCitizen : Thing
 
 		if (!IsChoosingLevelUpReward)
 			CheckForLevelUp();
+
+		Client.Stats.Increment("coins", 1);
+		Client.Stats.Increment("xp", xp);
 	}
 
 	public void CheckForLevelUp()

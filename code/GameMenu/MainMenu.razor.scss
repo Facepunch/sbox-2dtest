@@ -1,39 +1,29 @@
 
 .mygamemenu
 {
-
 	width: 100%;
 	height: 100%;
-	align-items: center;
+	align-items: flex-start;
 	flex-direction: column;
 	font-family: poppins;
+	background-color: #25281b;
 
 	&.ingame
 	{
 		backdrop-filter: blur( 10px );
-		background-image-tint: #fff4;
+		background-color: #25281b55;
 	}
 }
 
-.keyart
+.title
 {
-	background-image: url( "menu/background.png" );
-	background-size: cover;
-	background-position: center;
-	position: absolute;
-	left: 400px;
-	right: 0px;
-	top: 0px;
-	bottom: 0px;
-	transform: scale( 1 );
-	transition: all 25s ease-out;
-
-	&:intro
-	{
-		transform: scale( 1.1 );
-	}
+	font-size: 80px;
+	font-family: Poppins;
+	font-weight: bold;
+	color: #ff5a;
+	margin-top: 200px;
+	margin-left: 200px;
 }
-
 
 .options
 {
@@ -41,17 +31,14 @@
 	gap: 8px;
 	pointer-events: all;
 	color: white;
-	align-items: flex-end;
+	align-items: flex-start;
 	justify-content: flex-end;
 	padding: 50px;
 	padding-bottom: 100px;
-	padding-top: 300px;
 	position: absolute;
-	left: 0px;
-	width: 400px;
-	top: 0px;
-	bottom: 0px;
-	background-color: #111;
+	left: 200px;
+	top: 400px;
+	bottom: 200px;
 	backdrop-filter: blur( 10px );
 
 	.spacer
@@ -61,14 +48,13 @@
 
 	.option
 	{
-		font-size: 30px;
+		font-size: 50px;
 		color: #fff;
 		text-transform: uppercase;
 		cursor: pointer;
 		font-weight: bold;
 		padding-bottom: 2px;
 		opacity: 0.6;
-		text-stroke: 5px black;
 
 		&:hover
 		{

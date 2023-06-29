@@ -374,8 +374,13 @@ public abstract partial class Enemy : Thing
 
 		_deathScale = Scale;
 
-		if(player != null)
+		if (player is not null)
+		{
 			player.ForEachStatus(status => status.OnKill(this));
+			player.Client.Stats.Increment( "kills", 1 );
+		}
+
+
 
         DropLoot(player);
 
