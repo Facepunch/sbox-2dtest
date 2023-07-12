@@ -377,7 +377,7 @@ public abstract partial class Enemy : Thing
 		if (player is not null)
 		{
 			player.ForEachStatus(status => status.OnKill(this));
-			player.Client.Stats.Increment( "kills", 1 );
+            Sandbox.Services.Stats.Increment( player.Client, "kills", 1, $"{GetType().Name.ToLowerInvariant()}" );
 		}
 
 

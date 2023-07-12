@@ -7,11 +7,16 @@
 	flex-direction: column;
 	font-family: poppins;
 	background-color: #25281b;
+	background-image: url( 'https://files.facepunch.com/garry/02d0afbb-2f3c-4798-9487-90b0644f91c8.jpg' );
+	background-position: center;
+	background-size: cover;
+	background-tint: #7a4;
 
 	&.ingame
 	{
 		backdrop-filter: blur( 10px );
 		background-color: #25281b55;
+		background-image: none;
 	}
 }
 
@@ -20,9 +25,11 @@
 	font-size: 80px;
 	font-family: Poppins;
 	font-weight: bold;
-	color: #ff5a;
+	color: #ff1;
+	text-shadow: 4px 4px 0px black;
 	margin-top: 200px;
 	margin-left: 200px;
+	transform: rotate( -5deg );
 }
 
 .options
@@ -39,7 +46,6 @@
 	left: 200px;
 	top: 400px;
 	bottom: 200px;
-	backdrop-filter: blur( 10px );
 
 	.spacer
 	{
@@ -49,18 +55,21 @@
 	.option
 	{
 		font-size: 50px;
-		color: #fff;
+		color: #ddd;
+		background-color: black;
 		text-transform: uppercase;
 		cursor: pointer;
 		font-weight: bold;
-		padding-bottom: 2px;
-		opacity: 0.6;
+		padding: 10px 20px;
+		opacity: 1;
+		transform: rotate( -3deg );
 
 		&:hover
 		{
 			color: #fff;
 			opacity: 1;
 			sound-in: "sounds/levelup.sound";
+			transform: scale( 1.1 ) rotate( -2deg );
 		}
 
 		&:active
@@ -76,5 +85,26 @@
 		font-size: 21px;
 		color: #555;
 		font-weight: normal;
+	}
+}
+
+.leaderboards
+{
+	position: absolute;
+	right: 0px;
+	flex-direction: column;
+	padding: 100px 50px;
+	top: 0px;
+	bottom: 0px;
+	justify-content: space-between;
+
+	h1
+	{
+		color: #fff;
+		justify-content: center;
+		font-family: Poppins;
+		font-size: 24px;
+		text-transform: uppercase;
+		letter-spacing: 6px;
 	}
 }

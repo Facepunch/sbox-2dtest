@@ -958,7 +958,9 @@ public partial class PlayerCitizen : Thing
 			status.Init(this);
 		}
 
-		status.Refresh();
+        Sandbox.Services.Stats.Increment( Client, "status", 1, $"{type.Name.ToLowerInvariant()}", new { Status = type.Name.ToLowerInvariant(), Level = status.Level } );
+
+        status.Refresh();
 
 		//ClearStatusesClient();
 		//foreach (KeyValuePair<TypeDescription, Status> pair in Statuses)
@@ -1086,8 +1088,8 @@ public partial class PlayerCitizen : Thing
 		if (!IsChoosingLevelUpReward)
 			CheckForLevelUp();
 
-		Client.Stats.Increment("coins", 1);
-		Client.Stats.Increment("xp", xp);
+		Sandbox.Services.Stats.Increment(Client, "coins", 1);
+		Sandbox.Services.Stats.Increment(Client, "xp", xp);
 	}
 
 	public void CheckForLevelUp()

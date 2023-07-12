@@ -1,0 +1,66 @@
+@using System
+@using Sandbox;
+@using Sandbox.UI;
+@using Sandbox.Menu;
+@using System.Threading.Tasks;
+@inherits Panel
+@attribute [StyleSheet]
+
+@if ( Board is null )
+{
+    <div>LOADING</div>
+    return;
+}
+
+<root class="leaderboard-panel">
+
+    <h2>@Board.Title</h2>
+
+    @foreach (var entry in Board.Entries )
+    {
+        var c = entry.Me ? "me" : "";
+
+        <div class="entry @c">
+            <div class="rank">@entry.Rank</div>
+            <div class="name">@entry.DisplayName</div>
+            <div class="value">@entry.Value.ToString( "n0" )</div>
+        </div>
+    }
+
+</root>
+
+@code
+{
+    public string BoardName { get; set; }
+    public string Group { get; set; }
+
+    Sandbox.Services.Leaderboards.Board Board;
+
+    RealTimeSince timeSinceUpdated;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Board = Sandbox.Services.Leaderboards.Get(BoardName);
+        Board.MaxEntries = 6;
+        Board.Group = Group;
+
+        await UpdateScores();
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if ( timeSinceUpdated > 2 )
+        {
+            _ = UpdateScores();
+        }
+    }
+
+    async Task UpdateScores()
+    {
+        timeSinceUpdated = 0;
+        await Board.Refresh();
+        StateHasChanged();
+    }
+}
