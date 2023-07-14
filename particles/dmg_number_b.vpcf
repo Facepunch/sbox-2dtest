@@ -169,8 +169,9 @@
 			_class = "C_INIT_InitVecCollection"
 			m_InputValue = 
 			{
-				m_nType = "PVEC_TYPE_LITERAL_COLOR"
+				m_nType = "PVEC_TYPE_NAMED_VALUE"
 				m_vLiteralValue = [ 0.0, 0.0, 0.0 ]
+				m_NamedValue = "Color"
 				m_LiteralColor = [ 255, 255, 255, 255 ]
 				m_nVectorAttribute = 6
 				m_vVectorAttributeScale = [ 1.0, 1.0, 1.0 ]
@@ -182,6 +183,7 @@
 				{
 					m_nType = "PF_TYPE_LITERAL"
 					m_nMapType = "PF_MAP_TYPE_DIRECT"
+					m_NamedValue = ""
 					m_flLiteralValue = 0.0
 					m_nControlPoint = 0
 					m_nScalarAttribute = 3
@@ -227,6 +229,7 @@
 				{
 					m_nType = "PF_TYPE_LITERAL"
 					m_nMapType = "PF_MAP_TYPE_DIRECT"
+					m_NamedValue = ""
 					m_flLiteralValue = 0.0
 					m_nControlPoint = 0
 					m_nScalarAttribute = 3
@@ -272,6 +275,7 @@
 				{
 					m_nType = "PF_TYPE_LITERAL"
 					m_nMapType = "PF_MAP_TYPE_DIRECT"
+					m_NamedValue = ""
 					m_flLiteralValue = 0.0
 					m_nControlPoint = 0
 					m_nScalarAttribute = 3
@@ -317,6 +321,7 @@
 				{
 					m_nType = "PF_TYPE_LITERAL"
 					m_nMapType = "PF_MAP_TYPE_DIRECT"
+					m_NamedValue = ""
 					m_flLiteralValue = 0.0
 					m_nControlPoint = 0
 					m_nScalarAttribute = 3
@@ -394,6 +399,7 @@
 		{
 			_class = "C_OP_ColorInterpolate"
 			m_flFadeEndTime = 0.6
+			m_bDisableOperator = true
 		},
 		{
 			_class = "C_OP_InheritFromParentParticlesV2"

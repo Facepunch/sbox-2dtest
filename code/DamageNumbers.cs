@@ -22,9 +22,10 @@ internal static class DamageNumbers
 				amount = MathF.Floor(amount);
 		}
 
-		var path = damageNumberType == DamageNumberType.Normal ? "particles/dmg_number.vpcf" : (damageNumberType == DamageNumberType.Crit ? "particles/dmg_number_crit.vpcf" : "particles/dmg_number_player.vpcf");
 		var number = amount;
-		var particle = Particles.Create( path, pos.WithZ(400f) );
+		var particle = Particles.Create("particles/dmg_number.vpcf", pos.WithZ(400f) );
+
+		particle.Set("Color", damageNumberType == DamageNumberType.Normal ? Color.White : (damageNumberType == DamageNumberType.Crit ? Color.Yellow : Color.Red));
 
 		if ( amount < 10 )
 		{
