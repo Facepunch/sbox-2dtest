@@ -1,0 +1,37 @@
+@using System
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace GameMenu
+
+<root class="velocityNumber">
+    @_value.ToString( "n0" )
+</root>
+
+@code
+{
+    public double Value { get; set; }
+    public double Velocity { get; set; }
+
+    double _prevValue;
+    double _value;
+    double _velocityPerSecond;
+
+    protected override void OnParametersSet()
+    {
+        _value = Value - Velocity;
+        _velocityPerSecond = Velocity / 60.0 / 60.0;
+    }
+
+    public override void Tick()
+    {
+        _value += _velocityPerSecond * RealTime.Delta;
+    }
+
+    protected override int BuildHash()
+    {
+        return HashCode.Combine( _value.ToString( "n0") );
+    }
+
+
+}

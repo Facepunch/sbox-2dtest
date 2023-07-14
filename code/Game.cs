@@ -1,9 +1,8 @@
-﻿using System;
+﻿global using System.Threading.Tasks;
+using Sandbox;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Test2D.MyGame;
-using Sandbox;
-using Sandbox.Diagnostics;
 
 namespace Test2D;
 
@@ -17,20 +16,20 @@ namespace Test2D;
 public partial class MyGame : GameManager
 {
 	public new static MyGame Current => GameManager.Current as MyGame;
-	
+
 	public HUD Hud { get; private set; }
 
 	public PlayerCitizen LocalPlayer => Sandbox.Game.LocalClient.Pawn as PlayerCitizen; // ONLY FOR CLIENT USE
-	
+
 	public readonly List<PlayerCitizen> PlayerList = new();
 
 	public int EnemyCount { get; private set; }
 	public const float MAX_ENEMY_COUNT = 350;
-    //public const float MAX_ENEMY_COUNT = 30;
-    public int CrateCount { get; private set; }
-    public const float MAX_CRATE_COUNT = 7;
+	//public const float MAX_ENEMY_COUNT = 30;
+	public int CrateCount { get; private set; }
+	public const float MAX_CRATE_COUNT = 7;
 
-    public int CoinCount { get; private set; }
+	public int CoinCount { get; private set; }
 	public const float MAX_COIN_COUNT = 200;
 
 	private readonly List<Thing> _things = new();
@@ -68,7 +67,7 @@ public partial class MyGame : GameManager
 		BOUNDS_MIN_SPAWN = new Vector2(-15.5f, -11.5f);
 		BOUNDS_MAX_SPAWN = new Vector2(15.5f, 11.5f);
 
-        if ( Sandbox.Game.IsServer )
+		if (Sandbox.Game.IsServer)
 		{
 			for (float x = BOUNDS_MIN.x; x < BOUNDS_MAX.x; x += GRID_SIZE)
 			{
@@ -100,14 +99,14 @@ public partial class MyGame : GameManager
 	{
 		base.ClientSpawn();
 
-        Camera2D.Current = new Camera2D();
+		Camera2D.Current = new Camera2D();
 
-        BackgroundManager?.Restart();
+		BackgroundManager?.Restart();
 	}
 
 	public void SpawnStartingThings()
 	{
-		for(int i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			var pos = new Vector2(Sandbox.Game.Random.Float(BOUNDS_MIN_SPAWN.x, BOUNDS_MAX_SPAWN.x), Sandbox.Game.Random.Float(BOUNDS_MIN_SPAWN.y, BOUNDS_MAX_SPAWN.y));
 			SpawnCrate(pos);
@@ -124,7 +123,7 @@ public partial class MyGame : GameManager
 
 		var dt = Time.Delta;
 
-		for(int i = _things.Count - 1; i >= 0; i--)
+		for (int i = _things.Count - 1; i >= 0; i--)
 		{
 			var thing = _things[i];
 			if (!thing.IsRemoved)
@@ -138,11 +137,11 @@ public partial class MyGame : GameManager
 
 		HandleEnemySpawn();
 
-		if(!HasSpawnedBoss && !IsGameOver && ElapsedTime > 15f * 60f)
+		if (!HasSpawnedBoss && !IsGameOver && ElapsedTime > 15f * 60f)
 		{
 			SpawnBoss(new Vector2(0f, 0f));
 			HasSpawnedBoss = true;
-        }
+		}
 	}
 
 	void HandleEnemySpawn()
@@ -165,72 +164,72 @@ public partial class MyGame : GameManager
 		// ZOMBIE (DEFAULT)
 		TypeDescription type = TypeLibrary.GetType(typeof(Zombie));
 
-        // CRATE
-		if(CrateCount < MAX_CRATE_COUNT)
+		// CRATE
+		if (CrateCount < MAX_CRATE_COUNT)
 		{
-            float crateChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 200f, 0.005f, 0.01f);
-            float additionalCrateChance = 0f;
-            foreach (PlayerCitizen player in AlivePlayers)
-            {
-                if (player.Stats[PlayerStat.CrateChanceAdditional] > 0f)
-                    additionalCrateChance += player.Stats[PlayerStat.CrateChanceAdditional];
-            }
-            crateChance *= (1f + additionalCrateChance);
+			float crateChance = ElapsedTime < 20f ? 0f : Utils.Map(ElapsedTime, 20f, 200f, 0.005f, 0.01f);
+			float additionalCrateChance = 0f;
+			foreach (PlayerCitizen player in AlivePlayers)
+			{
+				if (player.Stats[PlayerStat.CrateChanceAdditional] > 0f)
+					additionalCrateChance += player.Stats[PlayerStat.CrateChanceAdditional];
+			}
+			crateChance *= (1f + additionalCrateChance);
 
-            if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < crateChance)
-                type = TypeLibrary.GetType(typeof(Crate));
-        }
+			if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < crateChance)
+				type = TypeLibrary.GetType(typeof(Crate));
+		}
 
 		// EXPLODER
 		float exploderChance = ElapsedTime < 35f ? 0f : Utils.Map(ElapsedTime, 35f, 700f, 0.022f, 0.08f);
 		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < exploderChance)
 		{
 			float eliteChance = ElapsedTime < 480f ? 0f : Utils.Map(ElapsedTime, 480f, 1200f, 0.025f, 1f, EasingType.SineIn);
-            type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(ExploderElite)) : TypeLibrary.GetType(typeof(Exploder));
-        }
+			type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(ExploderElite)) : TypeLibrary.GetType(typeof(Exploder));
+		}
 
-        // SPITTER
-        float spitterChance = ElapsedTime < 100f ? 0f : Utils.Map(ElapsedTime, 100f, 800f, 0.015f, 0.1f);
-        if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < spitterChance)
-        {
-            float eliteChance = ElapsedTime < 540f ? 0f : Utils.Map(ElapsedTime, 540f, 1200f, 0.025f, 1f, EasingType.QuadIn);
-            type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(SpitterElite)) : TypeLibrary.GetType(typeof(Spitter));
-        }
+		// SPITTER
+		float spitterChance = ElapsedTime < 100f ? 0f : Utils.Map(ElapsedTime, 100f, 800f, 0.015f, 0.1f);
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < spitterChance)
+		{
+			float eliteChance = ElapsedTime < 540f ? 0f : Utils.Map(ElapsedTime, 540f, 1200f, 0.025f, 1f, EasingType.QuadIn);
+			type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(SpitterElite)) : TypeLibrary.GetType(typeof(Spitter));
+		}
 
-        // SPIKER
-        float spikerChance = ElapsedTime < 320f ? 0f : Utils.Map(ElapsedTime, 320f, 800f, 0.018f, 0.1f, EasingType.SineIn);
-        if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < spikerChance)
-        {
-            float eliteChance = ElapsedTime < 580f ? 0f : Utils.Map(ElapsedTime, 580f, 1300f, 0.008f, 1f, EasingType.SineIn);
-            type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(SpikerElite)) : TypeLibrary.GetType(typeof(Spiker));
-        }
+		// SPIKER
+		float spikerChance = ElapsedTime < 320f ? 0f : Utils.Map(ElapsedTime, 320f, 800f, 0.018f, 0.1f, EasingType.SineIn);
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < spikerChance)
+		{
+			float eliteChance = ElapsedTime < 580f ? 0f : Utils.Map(ElapsedTime, 580f, 1300f, 0.008f, 1f, EasingType.SineIn);
+			type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(SpikerElite)) : TypeLibrary.GetType(typeof(Spiker));
+		}
 
-        // CHARGER
-        float chargerChance = ElapsedTime < 420f ? 0f : Utils.Map(ElapsedTime, 420f, 800f, 0.022f, 0.075f);
-        if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < chargerChance)
-        {
-            float eliteChance = ElapsedTime < 660f ? 0f : Utils.Map(ElapsedTime, 660f, 1400f, 0.008f, 1f, EasingType.SineIn);
-            type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(ChargerElite)) : TypeLibrary.GetType(typeof(Charger));
-        }
-        
-        // RUNNER
-        float runnerChance = ElapsedTime < 500f ? 0f : Utils.Map(ElapsedTime, 500f, 900f, 0.035f, 0.15f, EasingType.QuadIn);
-        if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < runnerChance)
-        {
-            float eliteChance = ElapsedTime < 720f ? 0f : Utils.Map(ElapsedTime, 720f, 1500f, 0.01f, 1f, EasingType.QuadIn);
-            type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(RunnerElite)) : TypeLibrary.GetType(typeof(Runner));
-        }
+		// CHARGER
+		float chargerChance = ElapsedTime < 420f ? 0f : Utils.Map(ElapsedTime, 420f, 800f, 0.022f, 0.075f);
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < chargerChance)
+		{
+			float eliteChance = ElapsedTime < 660f ? 0f : Utils.Map(ElapsedTime, 660f, 1400f, 0.008f, 1f, EasingType.SineIn);
+			type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(ChargerElite)) : TypeLibrary.GetType(typeof(Charger));
+		}
+
+		// RUNNER
+		float runnerChance = ElapsedTime < 500f ? 0f : Utils.Map(ElapsedTime, 500f, 900f, 0.035f, 0.15f, EasingType.QuadIn);
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < runnerChance)
+		{
+			float eliteChance = ElapsedTime < 720f ? 0f : Utils.Map(ElapsedTime, 720f, 1500f, 0.01f, 1f, EasingType.QuadIn);
+			type = Sandbox.Game.Random.Float(0f, 1f) < eliteChance ? TypeLibrary.GetType(typeof(RunnerElite)) : TypeLibrary.GetType(typeof(Runner));
+		}
 
 		// ZOMBIE ELITE
 		var zombieEliteChance = ElapsedTime < 400f ? 0f : Utils.Map(ElapsedTime, 400f, 1200f, 0.0175f, 1f, EasingType.SineIn);
-        if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < zombieEliteChance)
-        {
+		if (type == TypeLibrary.GetType(typeof(Zombie)) && Sandbox.Game.Random.Float(0f, 1f) < zombieEliteChance)
+		{
 			type = TypeLibrary.GetType(typeof(ZombieElite));
-        }
+		}
 
 		//type = Game.Random.Int(0, 2) == 0 ? TypeLibrary.GetType(typeof(RunnerElite)) : TypeLibrary.GetType(typeof(Runner));
 
-        SpawnEnemy(type, pos);
+		SpawnEnemy(type, pos);
 	}
 
 	void SpawnEnemy(TypeDescription type, Vector2 pos, bool forceSpawn = false)
@@ -294,7 +293,7 @@ public partial class MyGame : GameManager
 		if (things.Count == 0)
 			return;
 
-		for(int i = things.Count - 1; i >= 0; i--)
+		for (int i = things.Count - 1; i >= 0; i--)
 		{
 			if (i >= things.Count)
 				continue;
@@ -308,9 +307,9 @@ public partial class MyGame : GameManager
 				continue;
 
 			bool isValidType = false;
-			foreach(var t in thing.CollideWith)
+			foreach (var t in thing.CollideWith)
 			{
-				if(t.IsAssignableFrom(other.GetType()))
+				if (t.IsAssignableFrom(other.GetType()))
 				{
 					isValidType = true;
 					break;
@@ -342,9 +341,9 @@ public partial class MyGame : GameManager
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
 	/// </summary>
-	public override void ClientJoined( IClient client )
+	public override void ClientJoined(IClient client)
 	{
-		base.ClientJoined( client );
+		base.ClientJoined(client);
 
 		var player = new PlayerCitizen();
 		client.Pawn = player;
@@ -352,30 +351,30 @@ public partial class MyGame : GameManager
 		PlayerList.Add(player);
 		AddThing(player);
 
-        BoomerChatBox.AddInformation(To.Everyone, $"{client.Name} has joined", $"avatar:{client.SteamId}");
+		BoomerChatBox.AddInformation(To.Everyone, $"{client.Name} has joined", $"avatar:{client.SteamId}");
 
 		if (IsGameOver)
 			GameOverClient(To.Single(client));
-    }
+	}
 
-    public override void ClientDisconnect(IClient cl, NetworkDisconnectionReason reason)
-    {
-        BoomerChatBox.AddInformation(To.Everyone, $"{cl.Name} has left ({reason})", $"avatar:{cl.SteamId}");
+	public override void ClientDisconnect(IClient cl, NetworkDisconnectionReason reason)
+	{
+		BoomerChatBox.AddInformation(To.Everyone, $"{cl.Name} has left ({reason})", $"avatar:{cl.SteamId}");
 
-        var player = cl.Pawn as PlayerCitizen;
-        if (player != null && player.IsValid())
-        {
-            PlayerList.Remove(player);
+		var player = cl.Pawn as PlayerCitizen;
+		if (player != null && player.IsValid())
+		{
+			PlayerList.Remove(player);
 			RemoveThing(player);
-            player.Delete();
-        }
+			player.Delete();
+		}
 
-        int numPlayersAlive = PlayerList.Where(x => !x.IsDead).Count();
-        if (numPlayersAlive == 0)
-            GameOver();
-    }
+		int numPlayersAlive = PlayerList.Where(x => !x.IsDead).Count();
+		if (numPlayersAlive == 0)
+			GameOver();
+	}
 
-    public IEnumerable<PlayerCitizen> Players => Sandbox.Game.Clients
+	public IEnumerable<PlayerCitizen> Players => Sandbox.Game.Clients
 		.Select(x => x.Pawn)
 		.OfType<PlayerCitizen>();
 
@@ -410,7 +409,7 @@ public partial class MyGame : GameManager
 
 	public List<Thing> GetThingsInGridSquare(GridSquare gridSquare)
 	{
-		if(ThingGridPositions.ContainsKey(gridSquare))
+		if (ThingGridPositions.ContainsKey(gridSquare))
 		{
 			return ThingGridPositions[gridSquare];
 		}
@@ -455,13 +454,13 @@ public partial class MyGame : GameManager
 		{
 			EnemyCount--;
 
-            if (thing is Crate)
-                CrateCount--;
-        }
+			if (thing is Crate)
+				CrateCount--;
+		}
 		else if (thing is Coin)
 		{
-            CoinCount--;
-        }
+			CoinCount--;
+		}
 	}
 
 	[ConCmd.Server]
@@ -476,7 +475,7 @@ public partial class MyGame : GameManager
 		for (int i = _things.Count - 1; i >= 0; i--)
 		{
 			var thing = _things[i];
-			if(thing is not PlayerCitizen)
+			if (thing is not PlayerCitizen)
 			{
 				//thing.Delete();
 				thing.Remove();
@@ -488,7 +487,7 @@ public partial class MyGame : GameManager
 		for (int i = PlayerList.Count - 1; i >= 0; i--)
 		{
 			var player = PlayerList[i];
-			if(player == null || !player.IsValid)
+			if (player == null || !player.IsValid)
 			{
 				PlayerList.Remove(player);
 				continue;
@@ -513,18 +512,18 @@ public partial class MyGame : GameManager
 		HasSpawnedBoss = false;
 		TimeSinceMagnet = 0f;
 
-        SpawnStartingThings();
+		SpawnStartingThings();
 
 		RestartClient();
-    }
+	}
 
 	[ClientRpc]
 	public void RestartClient()
 	{
 		Hud.Restart();
 		BackgroundManager.Restart();
-		
-		foreach(var blood in _bloodSplatters)
+
+		foreach (var blood in _bloodSplatters)
 			blood.Delete();
 		_bloodSplatters.Clear();
 
@@ -535,12 +534,12 @@ public partial class MyGame : GameManager
 		foreach (var explosion in _explosions)
 			explosion.Delete();
 		_explosions.Clear();
-    }
+	}
 
-    public void PlayerDied(PlayerCitizen player)
+	public void PlayerDied(PlayerCitizen player)
 	{
 		int numPlayersAlive = Players.Where(x => !x.IsDead).Count();
-		if(numPlayersAlive == 0)
+		if (numPlayersAlive == 0)
 			GameOver();
 	}
 
@@ -551,15 +550,15 @@ public partial class MyGame : GameManager
 
 		IsGameOver = true;
 		GameOverClient();
-    }
+	}
 
 	[ClientRpc]
 	public void GameOverClient()
 	{
 		Hud.GameOver();
-        Sandbox.Services.Stats.Increment("failures", 1);
-        Sandbox.Services.Stats.SetValue("failure-time", ElapsedTime.Relative);
-    }
+		Sandbox.Services.Stats.Increment("failures", 1);
+		Sandbox.Services.Stats.SetValue("failure-time", ElapsedTime.Relative);
+	}
 
 	public void Victory()
 	{
@@ -574,9 +573,9 @@ public partial class MyGame : GameManager
 	public void VictoryClient()
 	{
 		Hud.Victory();
-        Sandbox.Services.Stats.Increment("victories", 1);
-        Sandbox.Services.Stats.SetValue("victory-time", ElapsedTime.Relative );
-    }
+		Sandbox.Services.Stats.Increment("victories", 1);
+		Sandbox.Services.Stats.SetValue("victory-time", ElapsedTime.Relative);
+	}
 
 	public BloodSplatter SpawnBloodSplatter(Vector2 pos)
 	{
@@ -594,7 +593,7 @@ public partial class MyGame : GameManager
 
 	public void RemoveBloodSplatter(BloodSplatter blood)
 	{
-		if(_bloodSplatters.Contains(blood))
+		if (_bloodSplatters.Contains(blood))
 			_bloodSplatters.Remove(blood);
 	}
 
@@ -701,8 +700,8 @@ public partial class MyGame : GameManager
 	}
 
 	[Event.Client.Frame]
-    public void ClientFrame()
-    {
-        Camera2D.Current?.Update();
-    }
+	public void ClientFrame()
+	{
+		Camera2D.Current?.Update();
+	}
 }

@@ -102,9 +102,20 @@
 	{
 		color: #fff;
 		justify-content: center;
-		font-family: Poppins;
-		font-size: 24px;
+		font-family: "Cascadia Mono", monospace;
+		font-size: 34px;
+		font-weight: bolder;
 		text-transform: uppercase;
 		letter-spacing: 6px;
+	}
+
+	> h2
+	{
+		color: #fff;
+		justify-content: center;
+		font-family: Poppins;
+		font-size: 18px;
+		text-transform: uppercase;
+		letter-spacing: 7px;
 	}
 }

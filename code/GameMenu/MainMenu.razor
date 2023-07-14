@@ -41,7 +41,12 @@
 
     <div class="leaderboards">
 
-        <h1>Zombies Killed</h1>
+        @{
+            var stat = Sandbox.Services.Stats.Global.Get( "kills" );
+            <h1><VelocityNumber Value="@stat.Value" Velocity="@stat.Velocity" /></h1>
+        }
+        
+        <h2>Zombies Killed</h2>
 
         <LeaderboardPanel BoardName="kills" Group="global"></LeaderboardPanel>
         <LeaderboardPanel BoardName="kills" Group="country"></LeaderboardPanel>
@@ -53,6 +58,11 @@
 
 @code
 {
+    protected override async Task OnParametersSetAsync()
+    {
+
+    }
+
     public override void Tick()
     {
         base.Tick();
