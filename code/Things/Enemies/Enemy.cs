@@ -340,7 +340,7 @@ public abstract partial class Enemy : Thing
         }
 		
 		Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(1.25f, 2.55f), Sandbox.Game.Random.Float(4f, 8f)) * 0.1f, damage, isCrit ? DamageNumberType.Crit : DamageNumberType.Normal);
+		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(2.25f, 4.55f), Sandbox.Game.Random.Float(4f, 8f)) * 0.1f, damage, isCrit ? DamageNumberType.Crit : DamageNumberType.Normal);
 
 		if (Health <= 0f)
 		{

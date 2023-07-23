@@ -835,7 +835,7 @@ public partial class PlayerCitizen : Thing
         ForEachStatus(status => status.OnHurt(damage));
 
         Health -= damage;
-		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(0.5f, 4f), Sandbox.Game.Random.Float(8.5f, 10.5f)) * 0.1f, damage, DamageNumberType.Player);
+		DamageNumbers.Create(Position + new Vector2(Sandbox.Game.Random.Float(2.5f, 5.5f), Sandbox.Game.Random.Float(8.5f, 10.5f)) * 0.1f, damage, DamageNumberType.Player);
 		Flash(0.125f);
 
 		SpawnBloodClient(damage);

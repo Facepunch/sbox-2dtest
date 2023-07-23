@@ -112,6 +112,12 @@ public partial class MyGame : GameManager
 			SpawnCrate(pos);
 		}
 
+		//for(int i = 0; i < 555; i++)
+		//{
+		//	var pos = new Vector2(Sandbox.Game.Random.Float(BOUNDS_MIN_SPAWN.x, BOUNDS_MAX_SPAWN.x), Sandbox.Game.Random.Float(BOUNDS_MIN_SPAWN.y, BOUNDS_MAX_SPAWN.y));
+		//	SpawnEnemy(TypeLibrary.GetType(typeof(Zombie)), pos);
+		//}
+
 		//SpawnBoss(new Vector2(3, 3f));
 	}
 
