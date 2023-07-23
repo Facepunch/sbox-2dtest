@@ -6,7 +6,7 @@
 		"CDmeInputTexture"
 		{
 			"m_name" "string" "0"
-			"m_fileName" "string" "particles/sprites/dmg_numbers/dmg_numbers.mks"
+			"m_fileName" "string" "particles/sprites/dmg_numbers_ss2/dmg_numbers.mks"
 			"m_colorSpace" "string" "linear"
 			"m_typeString" "string" "2D"
 			"m_imageProcessorArray" "element_array" 
