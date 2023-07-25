@@ -102,7 +102,8 @@ public partial class MyGame : GameManager
 		Camera2D.Current = new Camera2D();
 
 		BackgroundManager?.Restart();
-	}
+		_ = UpdatePlayerStats();
+    }
 
 	public void SpawnStartingThings()
 	{
@@ -540,7 +541,10 @@ public partial class MyGame : GameManager
 		foreach (var explosion in _explosions)
 			explosion.Delete();
 		_explosions.Clear();
-	}
+
+		_ = UpdatePlayerStats();
+
+    }
 
 	public void PlayerDied(PlayerCitizen player)
 	{
@@ -712,4 +716,14 @@ public partial class MyGame : GameManager
 	{
 		Camera2D.Current?.Update();
 	}
+
+	public static Sandbox.Services.Stats.PlayerStats StartStats;
+
+	async Task UpdatePlayerStats()
+	{
+        StartStats = Sandbox.Services.Stats.LocalPlayer.Copy();
+		await StartStats.Refresh();
+
+		Log.Info( $"Start round with {StartStats["kills"].ValueString} kills" );
+    }
 }

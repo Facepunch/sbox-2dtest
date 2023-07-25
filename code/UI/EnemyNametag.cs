@@ -20,20 +20,12 @@ public partial class EnemyNametag : Panel
         StyleSheet.Load("/UI/EnemyNametag.scss");
 
         HpBar = Add.Panel("hpbar");
-        HpBarDelta = Add.Panel("hpbardelta");
-        HpBarOverlay = Add.Panel("hpbaroverlay");
+        HpBarDelta = HpBar.Add.Panel("hpbardelta");
+        HpBarOverlay = HpBar.Add.Panel("hpbaroverlay");
 
         BossNameLabel = new Label();
         BossNameLabel.Text = "BOSS";
-        BossNameLabel.Style.FontColor = new Color(1f, 1f, 1f, 0.75f);
-        BossNameLabel.Style.Top = 34 * ScaleFromScreen;
-        BossNameLabel.Style.FontSize = 18;
-        BossNameLabel.Style.AlignContent = Align.Center;
-        BossNameLabel.Style.TextAlign = TextAlign.Center;
-        BossNameLabel.Style.AlignSelf = Align.Center;
-        BossNameLabel.Style.FontWeight = 700;
-        BossNameLabel.Style.FontFamily = "serif";
-        AddChild(BossNameLabel);
+        HpBar.AddChild(BossNameLabel);
     }
 
     public override void Tick()
@@ -42,11 +34,6 @@ public partial class EnemyNametag : Panel
 
         if (Enemy == null || !Enemy.IsValid)
             return;
-
-        //var screenPos = Camera2D.Current.WorldToScreen(Enemy.Position + new Vector2(0f, 1.66f + Enemy.HeightZ)) * ScaleFromScreen;
-        var screenPos = new Vector2(Screen.Width / 2, 60) * ScaleFromScreen;
-        Style.Left = screenPos.x - 150;
-        Style.Top = screenPos.y;
 
         var health_ratio = Math.Clamp(Enemy.Health / Enemy.MaxHealth, 0f, 1f);
 
@@ -70,12 +57,10 @@ public partial class EnemyNametag : Panel
         if (visible)
         {
             HpBar.RemoveClass("invisible");
-            HpBarOverlay.RemoveClass("invisible");
         }
         else
         {
             HpBar.AddClass("invisible");
-            HpBarOverlay.AddClass("invisible");
         }
     }
 }

@@ -22,22 +22,11 @@ public partial class TimerPanel : Panel
         if (MyGame.Current.IsGameOver)
             return;
 
-        TimeSpan t = TimeSpan.FromSeconds(MyGame.Current.ElapsedTime.Relative);
+        TimeSpan t = TimeSpan.FromMinutes( 15 ) - TimeSpan.FromSeconds(MyGame.Current.ElapsedTime.Relative);
 
-        if(TimerLabel != null)
+        SetClass( "invisible", t.TotalMinutes < 0 );
+
+        if (TimerLabel != null)
             TimerLabel.Text = t.TotalSeconds > 3600 ? t.ToString(@"hh\:mm\:ss") : t.ToString(@"mm\:ss");
-    }
-
-    public void SetVisible(bool visible)
-    {
-        if (visible)
-            RemoveClass("invisible");
-        else
-            AddClass("invisible");
-    }
-
-    public void Restart()
-    {
-        
     }
 }

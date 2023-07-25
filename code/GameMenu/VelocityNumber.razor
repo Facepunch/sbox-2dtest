@@ -17,15 +17,25 @@
     double _value;
     double _velocityPerSecond;
 
+    RealTimeSince timeSinceUpdated;
+
     protected override void OnParametersSet()
     {
         _value = Value - Velocity;
         _velocityPerSecond = Velocity / 60.0 / 60.0;
+        timeSinceUpdated = 0;
     }
 
     public override void Tick()
     {
-        _value += _velocityPerSecond * RealTime.Delta;
+        if (timeSinceUpdated < 0.2f)
+            return;
+
+        if (Random.Shared.Float(0, 100) < 98)
+            return;
+
+        _value += _velocityPerSecond * timeSinceUpdated.Relative;
+        timeSinceUpdated = 0;
     }
 
     protected override int BuildHash()

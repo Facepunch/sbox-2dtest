@@ -123,8 +123,6 @@ public partial class HUD : RootPanel
 
 	public void Restart()
     {
-		TimerPanel.Restart();
-
 		if (ChoicePanel != null)
         {
 			ChoicePanel.Delete();

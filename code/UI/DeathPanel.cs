@@ -31,7 +31,22 @@ public class DeathPanel : Panel
 	{
 		await Sandbox.Services.Stats.FlushAsync();
 
-		Log.Info( "Stats Done!" );
+		await Sandbox.Services.Stats.LocalPlayer.Refresh();
+
+		//
+		// Stats from the start of the game vs stats
+		// at the end of the game. We can use this to 
+		// show +7575 kills, +34543543 xp etc.
+		//
+
+		var now = Sandbox.Services.Stats.LocalPlayer;
+		var then = MyGame.StartStats;
+
+		var addedKills = now["kills"].Value - then["kills"].Value;
+		var destroyedCrates = now["crates"].Value - then["crates"].Value;
+
+        Log.Info( $"You killed {addedKills:n0} zombies this game!" );
+        Log.Info( $"You opened {destroyedCrates:n0} crates!" );
 	}
 
 

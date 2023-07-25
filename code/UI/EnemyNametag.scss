@@ -1,75 +1,74 @@
 //@import "/UI/Theme.scss";
 
-EnemyNametag {
+EnemyNametag
+{
     position: absolute;
-    //border: 1px solid white;
-    width: 300px;
+    bottom: 5%;
+    left: 0px;
+    right: 0px;
     flex-direction: column;
-    //text-align: center;
-    //flex-direction: column;
-    //align-content: center;
-    //text-anchor: middle;
-    //align-items: center;
     justify-content: center;
-    //&.invisible {
-    //    display: none;
-    //}
 
-    &.invisible {
+    &.invisible
+    {
         display: none;
     }
 
-    .hpbar {
-        width: 100px;
-        height: 8px;
-        //border: 2px solid blue;
-        background-color: #00000099;
+    .hpbar
+    {
+        width: 600px;
+        height: 32px;
+        background-color: #000a;
         align-self: center;
-        position: absolute;
-        bottom: -12px;
+        border-radius: 3px;
+        overflow: hidden;
 
-        &.invisible {
+        &.invisible
+        {
             display: none;
+        }
+
+        .hpbaroverlay
+        {
+            background-color: green;
+            position: absolute;
+            bottom: 0px;
+            top: 0px;
+            left: 0px;
+            transition: width 0.1s ease-out, opacity 0.25s linear, background-color 0.25s linear;
+
+            &.invisible
+            {
+                display: none;
+            }
+        }
+
+        .hpbardelta
+        {
+            position: absolute;
+            bottom: 0px;
+            top: 0px;
+            left: 0px;
+            background-color: white;
+            position: absolute;
+            align-self: center;
+            transform-origin: left;
+            transition: width 0.8s ease-out;
+            opacity: 1;
         }
     }
 
-    .hpbaroverlay {
-        width: 0px;
-        height: 8px;
-        //border: 2px solid blue;
-        background-color: green;
-        //text-anchor: initial;
+    .label
+    {
         position: absolute;
-        bottom: -12px;
-        align-self: center;
-        transform-origin: left;
-        //transform: scaleX(0.5);
-        transition: transform 0.1s ease-out, opacity 0.25s linear, background-color 0.25s linear;
-        opacity: 1;
-        //z-index: 2;
-
-        &.invisible {
-            display: none;
-        }
-    }
-
-    .hpbardelta {
-        width: 0px;
-        height: 8px;
-        //border: 2px solid blue;
-        background-color: white;
-        //text-anchor: initial;
-        position: absolute;
-        bottom: -12px;
-        align-self: center;
-        transform-origin: left;
-        //transform: scaleX(0.5);
-        transition: transform 0.4s ease-out;
-        opacity: 1;
-        //z-index: 1;
-
-        &.invisible {
-            display: none;
-        }
+        color: white;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        font-family: Poppins;
+        font-weight: bold;
+        font-size: 22px;
+        text-stroke: 5px black;
+        opacity: 0.7;
     }
 }
