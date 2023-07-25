@@ -1,112 +1,108 @@
-//@import "/UI/Theme.scss";
-
-Nametag {
+Nametag
+{
     position: absolute;
-    //border: 1px solid white;
-    width: 300px;
     flex-direction: column;
-    //text-align: center;
-    //flex-direction: column;
-    //align-content: center;
-    //text-anchor: middle;
-    //align-items: center;
     justify-content: center;
-    //&.invisible {
-    //    display: none;
-    //}
+    border-radius: 5px;
+    background-color: #0006;
+    backdrop-filter: blur( 10px );
+    transform: translateX( -50% );
+    overflow: hidden;
 
-    .name {
+    .name, .level
+    {
+        font-family: Poppins;
         opacity: 1;
-        color: #00000044;
-        font-size: 22px;
-        align-self: center;
+        color: white;
+        font-size: 13px;
+        padding: 4px 10px;
+        font-weight: bold;
     }
 
-    &.invisible {
+    .level
+    {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+    }
+
+    &.invisible
+    {
         display: none;
     }
 
-    .hpbar {
+    .hpbar
+    {
         width: 100px;
         height: 8px;
-        //border: 2px solid blue;
-        background-color: #00000099;
-        align-self: center;
-        position: absolute;
-        bottom: -12px;
+        background-color: #000a;
+        margin: 5px;
+        margin-top: 0;
+        border-radius: 3px;
+        overflow: hidden;
 
-        &.invisible {
+        &.invisible
+        {
             display: none;
+        }
+
+        .hpbaroverlay
+        {
+            top: 0px;
+            bottom: 0px;
+            width: 0px;
+            background-color: green;
+            position: absolute;
+            align-self: center;
+            transform-origin: left;
+            transition: transform 0.1s ease-out, opacity 0.25s linear, background-color 0.25s linear;
+            opacity: 1;
+
+            &.invisible
+            {
+                display: none;
+            }
+        }
+
+        .hpbardelta
+        {
+            top: 0px;
+            bottom: 0px;
+            width: 0px;
+            //border: 2px solid blue;
+            background-color: white;
+            //text-anchor: initial;
+            position: absolute;
+            align-self: center;
+            transform-origin: left;
+            //transform: scaleX(0.5);
+            transition: transform 0.4s ease-out;
+            opacity: 1;
+            //z-index: 1;
+
+            &.invisible
+            {
+                display: none;
+            }
         }
     }
 
-    .hpbaroverlay {
-        width: 0px;
-        height: 8px;
-        //border: 2px solid blue;
-        background-color: green;
-        //text-anchor: initial;
-        position: absolute;
-        bottom: -12px;
-        align-self: center;
-        transform-origin: left;
-        //transform: scaleX(0.5);
-        transition: transform 0.1s ease-out, opacity 0.25s linear, background-color 0.25s linear;
-        opacity: 1;
-        //z-index: 2;
-
-        &.invisible {
-            display: none;
-        }
-    }
-
-    .hpbardelta {
-        width: 0px;
-        height: 8px;
-        //border: 2px solid blue;
-        background-color: white;
-        //text-anchor: initial;
-        position: absolute;
-        bottom: -12px;
-        align-self: center;
-        transform-origin: left;
-        //transform: scaleX(0.5);
-        transition: transform 0.4s ease-out;
-        opacity: 1;
-        //z-index: 1;
-
-        &.invisible {
-            display: none;
-        }
-    }
-
-    .reload_bar {
-        width: 100px;
-        height: 2px;
-        background-color: #ffffff44;
+    .reload_bar
+    {
+        z-index: -1;
+        width: 100%;
+        background-color: #84c34322;
         align-self: center;
         position: absolute;
-        bottom: -19px;
+        left: 0px;
+        top: 0px;
+        bottom: 0px;
         transform-origin: left;
         transition: opacity 0.075s ease-out;
         opacity: 0;
 
-        &.showing {
-            opacity: 1;
-        }
-    }
-
-    .reload_bar_tick_right {
-        width: 2px;
-        height: 7px;
-        background-color: #ffffffff;
-        position: absolute;
-        bottom: -22px;
-        left: 0px;
-        transition: opacity 0.175s ease-out;
-        opacity: 0;
-
-        &.showing {
+        &.showing
+        {
             opacity: 1;
         }
     }

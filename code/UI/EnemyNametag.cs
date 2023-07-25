@@ -43,22 +43,15 @@ public partial class EnemyNametag : Panel
         if (Enemy == null || !Enemy.IsValid)
             return;
 
-        var BAR_WIDTH = 500;
         //var screenPos = Camera2D.Current.WorldToScreen(Enemy.Position + new Vector2(0f, 1.66f + Enemy.HeightZ)) * ScaleFromScreen;
         var screenPos = new Vector2(Screen.Width / 2, 60) * ScaleFromScreen;
         Style.Left = screenPos.x - 150;
         Style.Top = screenPos.y;
 
-        HpBar.Style.Width = BAR_WIDTH;
-        HpBarOverlay.Style.Width = BAR_WIDTH;
-        HpBarDelta.Style.Width = BAR_WIDTH;
-
         var health_ratio = Math.Clamp(Enemy.Health / Enemy.MaxHealth, 0f, 1f);
 
-        var tr = new PanelTransform();
-        tr.AddScale(new Vector3(health_ratio, 1f, 1f));
-        HpBarOverlay.Style.Transform = tr;
-        HpBarDelta.Style.Transform = tr;
+        HpBarOverlay.Style.Width = Length.Fraction(health_ratio);
+        HpBarDelta.Style.Width = Length.Fraction(health_ratio);
 
         var color = Lerp3(new Color(0f, 0.75f, 0f), new Color(0.75f, 0.75f, 0f), new Color(1f, 0f, 0f), 1f - health_ratio);
         HpBarOverlay.Style.BackgroundColor = color;

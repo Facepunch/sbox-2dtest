@@ -32,7 +32,7 @@ public class ChoicePanel : Panel
     {
         base.Tick();
 
-		Style.AlignItems = MyGame.Current.LocalPlayer.Position.y < -9.5f ? Align.FlexStart : Align.FlexEnd;
+		//Style.AlignItems = MyGame.Current.LocalPlayer.Position.y < -9.5f ? Align.FlexStart : Align.FlexEnd;
     }
 
     public void Reroll()
@@ -84,8 +84,6 @@ public class ChoiceModal : Panel
 		int numChoices = Math.Clamp((int)MathF.Round(player.Stats[PlayerStat.NumUpgradeChoices]), 1, 6);
         _statusTypes = StatusManager.GetRandomStatuses(player, numChoices);
 
-		Style.Width = numChoices * 310f;
-
 		for(int i = 0; i < _statusTypes.Count; i++)
         {
 			var type = _statusTypes[i];
@@ -93,7 +91,7 @@ public class ChoiceModal : Panel
 			var currLevel = player.GetStatusLevel (type);
 			status.Level = currLevel + 1;
 
-			var button = new ChoiceButton(status);
+			var button = new ChoiceButton(i, status);
 			button.AddClass("choice_button");
 			button.AddEventListener("onclick", () => ChoicePanel.OnChoiceMade(type));
 			button.status = status;
@@ -143,11 +141,11 @@ public class ChoiceButton : Panel
 	//public string Title;
 	//public string Description;
 
-    public ChoiceButton(Status status)
+    public ChoiceButton(int order, Status status)
 	{
 		Label titleLabel = new Label();
 		titleLabel.AddClass("choice_title");
-		titleLabel.Text = status.Title + (status.Level > 1 ? " [" + status.Level + "]" : "");
+		titleLabel.Text = $"{order+1}. " + status.Title + (status.Level > 1 ? " [" + status.Level + "]" : "");
         //titleLabel.Text = "Title";
 		AddChild(titleLabel);
 

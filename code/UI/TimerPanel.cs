@@ -13,9 +13,6 @@ public partial class TimerPanel : Panel
     {
         StyleSheet.Load("/UI/TimerPanel.scss");
         TimerLabel = Add.Label("timer_label");
-        TimerLabel.Style.PaddingTop = 20;
-        TimerLabel.Style.FontColor = new Color(1f, 1f, 1f, 0.6f);
-        TimerLabel.Style.FontSize = 42;
     }
 
     public override void Tick()

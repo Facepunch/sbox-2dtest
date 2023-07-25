@@ -13,7 +13,11 @@ public class XpBarPanel : Panel
 	public XpBarPanel()
 	{
 		OverlayPanel = Add.Panel("overlay_panel");
-	}
+
+        var label = new Label();
+        label.Text = "XP";
+        AddChild(label);
+    }
 
 	public override void Tick()
 	{
@@ -24,7 +28,6 @@ public class XpBarPanel : Panel
 			return;
 
 		float xp_percent = player.ExperienceCurrent / (float)player.ExperienceRequired;
-		OverlayPanel.Style.Width = Length.Percent(xp_percent * 100f);
-		//OverlayPanel.AddClass(
+		OverlayPanel.Style.Width = Length.Fraction(xp_percent);
 	}
 }

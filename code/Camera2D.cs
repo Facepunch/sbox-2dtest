@@ -54,8 +54,9 @@ public partial class Camera2D
 		target.Rotation = global::Rotation.FromYaw( 90f + Rotation ) * global::Rotation.FromPitch( 90f );
 
 		Position = Vector2.Lerp(Position, TargetPosition, 0.075f);
-        var DIST = 7.3f;
-        Position = new Vector2(MathX.Clamp(Position.x, -DIST, DIST), MathX.Clamp(Position.y, -DIST, DIST));
+        var XDIST = 10.3f;
+        var YDIST = 8.3f;
+        Position = new Vector2(MathX.Clamp(Position.x, -XDIST, XDIST), MathX.Clamp(Position.y, -YDIST, YDIST));
 
         target.Position = new Vector3( Position, Depth );
 	}

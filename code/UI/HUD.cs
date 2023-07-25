@@ -31,7 +31,6 @@ public partial class HUD : RootPanel
 
 	public StatusPanel StatusPanel { get; private set; }
 	public InfoPanel InfoPanel { get; private set; }
-	public XpBarPanel XpBarPanel { get; private set; }
 	public TimerPanel TimerPanel { get; private set; }
 	public ChoicePanel ChoicePanel { get; set; }
 	public DeathPanel DeathPanel{ get; set; }
@@ -49,7 +48,6 @@ public partial class HUD : RootPanel
 
 		StatusPanel = AddChild<StatusPanel>("status_panel");
 		InfoPanel = AddChild<InfoPanel>("info_panel");
-		XpBarPanel = AddChild<XpBarPanel>("xp_bar_panel");
 		TimerPanel = AddChild<TimerPanel>("timer_panel");
 
         AddChild<BoomerChatBox>();
@@ -94,8 +92,10 @@ public partial class HUD : RootPanel
 	public void GameOver()
     {
 		DeathPanel = AddChild<DeathPanel>("death_panel_root");
+		DeathPanel.FailureAsync();
 
-		RemoveChoicePanel();
+
+        RemoveChoicePanel();
 	}
 
 	public void Victory()
@@ -107,7 +107,7 @@ public partial class HUD : RootPanel
         }
         
 		DeathPanel = AddChild<DeathPanel>("death_panel_root");
-		DeathPanel.Victory();
+		DeathPanel.VictoryAsync();
 
 		RemoveChoicePanel();
 	}

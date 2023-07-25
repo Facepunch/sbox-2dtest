@@ -27,12 +27,31 @@ public class DeathPanel : Panel
 		}
 	}
 
-	public void Victory()
+	async Task SubmitStats()
+	{
+		await Sandbox.Services.Stats.FlushAsync();
+
+		Log.Info( "Stats Done!" );
+	}
+
+
+    public async Task FailureAsync()
     {
+		await SubmitStats();
+
         //TimeSpan t = TimeSpan.FromSeconds(MyGame.Current.ElapsedTime.Relative);
         //string timeText = t.TotalSeconds > 3600 ? t.ToString(@"hh\:mm\:ss") : t.ToString(@"mm\:ss");
-        
-		DeathModal.TextLabel.Text = "Victory!";
+
+    }
+
+    public async Task VictoryAsync()
+    {
+        DeathModal.TextLabel.Text = "Victory!";
+
+        await SubmitStats();
+
+        //TimeSpan t = TimeSpan.FromSeconds(MyGame.Current.ElapsedTime.Relative);
+        //string timeText = t.TotalSeconds > 3600 ? t.ToString(@"hh\:mm\:ss") : t.ToString(@"mm\:ss");
     }
 }
 

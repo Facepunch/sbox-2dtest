@@ -561,10 +561,11 @@ public partial class MyGame : GameManager
 	[ClientRpc]
 	public void GameOverClient()
 	{
-		Hud.GameOver();
 		Sandbox.Services.Stats.Increment("failures", 1);
 		Sandbox.Services.Stats.SetValue("failure-time", ElapsedTime.Relative);
-	}
+
+        Hud.GameOver();
+    }
 
 	public void Victory()
 	{
@@ -578,10 +579,11 @@ public partial class MyGame : GameManager
 	[ClientRpc]
 	public void VictoryClient()
 	{
-		Hud.Victory();
 		Sandbox.Services.Stats.Increment("victories", 1);
 		Sandbox.Services.Stats.SetValue("victory-time", ElapsedTime.Relative);
-	}
+
+        Hud.Victory();
+    }
 
 	public BloodSplatter SpawnBloodSplatter(Vector2 pos)
 	{

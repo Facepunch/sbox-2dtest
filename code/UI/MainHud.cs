@@ -22,13 +22,10 @@ public class MainHud : RootPanel
         Style.PointerEvents = PointerEvents.All;
 
         StyleSheet.Load("Resource/styles/hud.scss");
-        SetTemplate("Resource/templates/hud.html");
 
         TestLabel = Add.Label("test", "testlabel");
         TestPanel = Add.Panel("testpanel");
         TestButton = TestPanel.Add.Button("T", () => { ButtonClicked(); });
-
-        AddChild<Modal>();
     }
 
     public override void Tick()

@@ -1,5 +1,6 @@
 
-.status_panel {
+.status_panel 
+{
     display: flex;
     cursor: default;
     pointer-events: all;
@@ -11,19 +12,9 @@
     bottom: 10px;
     justify-content: flex-end;
     align-items: center;
-    //padding: 0px 50px 0px 50px;
     overflow: scroll;
-    //Style .FlexWrap = Wrap.Wrap;
-    //Style .JustifyContent = Justify.Center;
-    //Style .AlignItems = Align.Center;
-    //Style .AlignContent = Align.Center;
     flex-wrap: nowrap;
-    //flex-wrap: wrap;
     align-content: stretch;
-    //align-content: center;
-    //align-items: center;
-    //justify-content: center;
-    //border: 2px solid white;
 
 
     .status_icon {
@@ -108,92 +99,81 @@
     //position:relative;
 }
 
-.info_panel {
+.info_panel
+{
     position: absolute;
     width: 180px;
-    height: 100%;
-    right: 0px;
+    right: 5%;
+    bottom: 5%;
+    top: 32px;
     align-self: flex-end;
-    //background-color: #00005533;
     pointer-events: none;
     justify-content: flex-start;
-    flex-direction: column;
-    //border: 3px solid white;
+    flex-direction: column-reverse;
+    gap: 16px;
 
-    //.info_name {
-    //    color: #ffffff77;
-    //}
-
-    //.stats_label {
-    //}
-
-    .info_dash_outer_container {
-        //background-color: #00008811;
+    .info_dash_container
+    {
         width: 100%;
-        height: 100%;
-        align-items: flex-end;
-    }
-
-    .info_dash_container {
-        //background-color: #00FF8833;
-        width: 100%;
-        height: 480px;
         flex-direction: column-reverse;
         align-items: center;
-        margin-bottom: 43px;
-        margin-right: 24px;
+        gap: 8px;
     }
 
-    .info_dash_icon {
-        width: 95%;
-        height: 30px;
-        //padding: 4px;
-        margin: 4px;
-        background-color: #00000055;
-        border: 2px solid #ffffff88;
-        pointer-events: all;
-        align-items: center;
-        justify-content: center;
-
-        &:hover {
-            opacity: 0.8;
-            border: 2px solid #ffffff44;
-        }
-
-        .dash_icon_overlay {
-            width: 100%;
-            height: 100%;
+    .info_dash_icon
+    {
+        .dash_icon_overlay
+        {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            bottom: 0px;
             transform-origin: left;
-            //transform: scaleX( 0.8 );
             background-color: #00ff0055;
             pointer-events: none;
         }
 
-        .recharge {
+        .recharge
+        {
             background-color: #00ff4411;
-        }
-
-        .dash_icon_label {
-            color: #00000022;
-            font-size: 18px;
-            position: absolute;
         }
     }
 
-    .recharge_icon {
-        border: 2px solid #ffffff11;
+    .recharge_icon
+    {
+        
     }
 }
 
-.xp_bar_panel {
-    position: absolute;
+.xp_bar_panel, .info_dash_icon
+{
     width: 100%;
-    height: 16px;
-    bottom: 0px;
-    background-color: #00000033;
-    pointer-events: none;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 28px;
+    background-color: #0005;
+    pointer-events: all;
+    align-items: center;
+    justify-content: center;
 
-    .overlay_panel {
+    .label
+    {
+        color: #fff;
+        font-size: 18px;
+        font-weight: bolder;
+        font-family: poppins;
+        text-align: right;
+        width: 100%;
+        padding: 0px 10px;
+        position: absolute;
+        text-stroke: 5px black;
+        opacity: 0.7;
+    }
+
+    .overlay_panel
+    {
+        position: absolute;
+        left: 0px;
         width: 100%;
         height: 100%;
         background-color: #8888ff33;
@@ -201,122 +181,130 @@
     }
 }
 
-.choice_panel_root {
-    width: 100%;
-    height: 100%;
-    align-items: flex-end;
-    justify-content: center;
+.choice_panel_root
+{
+    position: absolute;
+    left: 0;
+    right: 32px;
+    bottom: 0;
+    top: 0;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: row;
 
-    .choice_modal {
-        width: 900px;
-        height: 280px;
-        background-color: #00000033;
-        border: 3px solid #ffffff33;
+    .choice_modal
+    {
+        border-radius: 5px;
+        backdrop-filter: blur( 10px );
+        padding: 10px;
+        gap: 10px;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-color: #00003399;
-        margin-bottom: 12px;
+        background-color: #000a;
 
-        .choice_lvl_label {
-            color: #66ffaa;
-            font-size: 20px;
-            //margin-top: 6px;
-            margin-bottom:1px;
-            padding-top: 1px;
+        .choice_lvl_label
+        {
+            color: #fffe;
+            font-size: 30px;
+            font-weight: bold;
+            font-family: Poppins;
         }
 
-        .choice_button_container {
-            flex-direction: row;
-            //flex-shrink: 1;
-            //flex-wrap: nowrap;
-            //overflow: clip;
-            //align-items: stretch;
-            margin-bottom: 2px;
-        }
-
-        .choice_button {
-            width: 280px;
-            height: 200px;
-            background-color: #000000cc;
-            pointer-events: all;
-            border: 3px solid #ffffff55;
-            margin-left: 5px;
-            margin-right: 5px;
+        .choice_button_container
+        {
             flex-direction: column;
-            align-items: center;
-            //justify-content: center;
-            //flex-shrink: 1;
+            gap: 16px;
+        }
 
-            &:hover {
-                border: 3px solid #ffffffee;
-                background-color: #000000ee;
+        .choice_button
+        {
+            max-width: 300px;
+            min-height: 90px;
+            
+            pointer-events: all;
+            flex-direction: column;
+            align-items: flex-start;
+            cursor: pointer;
+            padding: 10px;
+            padding-left: 100px;
+            opacity: 1;
+            gap: 5px;
+
+            &:hover
+            {
+                opacity: 1;
+                filter: brightness( 2 );
+                background-color: #fff3;
             }
 
-            &:active {
-                border: 3px solid #ffffffdd;
+            &:active
+            {
                 background-color: #000033ff;
             }
 
-            .choice_title {
+            .choice_title
+            {
                 color: #66ff66;
                 font-size: 22px;
-                //border: 1px solid green;
-                margin: 4px;
-                padding: 4px;
             }
 
-            .choice_icon {
-                width: 100px;
-                height: 100px;
-                //border: 1px solid #ffffff22;
-                margin-bottom: 2px;
-                border-radius: 150px;
+            .choice_icon
+            {
+                position: absolute;
+                left: 8px;
+                top: 8px;
+                width: 80px;
+                height: 80px;
                 image-rendering: pixelated;
             }
 
-            .choice_description {
-                font-style: italic;
-                font-size: 16px;
-                color: #ffffffaa;
-                padding: 8px;
+            .choice_description
+            {
+                font-size: 14px;
+                color: #fffe;
+                padding: 4px;
                 //border: 1px solid blue;
             }
         }
 
-        .reroll_button {
-            width: 160px;
+        .reroll_button
+        {
+            width: 100%;
+            border-radius: 4px;
             height: 40px;
             background-color: #000000cc;
             pointer-events: all;
-            border: 3px solid white;
             margin-top: 4px;
             margin-bottom: 4px;
             align-items: center;
             justify-content: center;
 
-            &:hover {
-                border: 3px solid #66669999;
+            &:hover
+            {
                 background-color: #000000ff;
             }
 
-            &:active {
+            &:active
+            {
                 border: 3px solid #88880099;
-                background-color: #000033ff;
             }
 
-            .reroll_button_label {
+            .reroll_button_label
+            {
                 color: #aaaaaa;
                 font-size: 18px;
                 pointer-events: none;
             }
 
-            .disabled_text {
+            .disabled_text
+            {
                 color: #aaaaaa22;
             }
         }
 
-        .disabled {
+        .disabled
+        {
             pointer-events: none;
             border: 3px solid #ffffff11;
         }

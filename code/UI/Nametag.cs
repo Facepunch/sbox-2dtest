@@ -11,12 +11,12 @@ public partial class Nametag : Panel
     public PlayerCitizen Player { get; set; }
 
     public Label NameLabel { get; set; }
+    public Label LevelLabel { get; set; }
 
     public Panel HpBar { get; set; }
     public Panel HpBarOverlay { get; set; }
     public Panel HpBarDelta { get; set; }
     public Panel ReloadBar { get; set; }
-    public Panel ReloadBarTickRight { get; set; }
 
     public Nametag()
     {
@@ -26,17 +26,21 @@ public partial class Nametag : Panel
         NameLabel.AddClass("name");
         AddChild(NameLabel);
 
+        LevelLabel = new Label();
+        LevelLabel.AddClass("level");
+        AddChild(LevelLabel);
+
         HpBar = new Panel();
         HpBar.AddClass("hpbar");
         AddChild(HpBar);
 
         HpBarDelta = new Panel();
         HpBarDelta.AddClass("hpbardelta");
-        AddChild(HpBarDelta);
+        HpBar.AddChild(HpBarDelta);
 
         HpBarOverlay = new Panel();
         HpBarOverlay.AddClass("hpbaroverlay");
-        AddChild(HpBarOverlay);
+        HpBar.AddChild(HpBarOverlay);
     }
 
     public void AddReloadBar()
@@ -44,39 +48,28 @@ public partial class Nametag : Panel
         ReloadBar = new Panel();
         ReloadBar.AddClass("reload_bar");
         AddChild(ReloadBar);
-
-        ReloadBarTickRight = new Panel();
-        ReloadBarTickRight.AddClass("reload_bar_tick_right");
-        AddChild(ReloadBarTickRight);
-        //ReloadBarTickRight.Style.Opacity = 0f;
     }
 
     public override void Tick()
     {
         base.Tick();
 
-        if (Player == null || !Player.IsValid || NameLabel == null || HpBar == null || HpBarOverlay == null || HpBarDelta == null)
+        if (LevelLabel == null || Player == null || !Player.IsValid || NameLabel == null || HpBar == null || HpBarOverlay == null || HpBarDelta == null)
             return;
 
         var name = Player.Client.Name;
-        NameLabel.Text = name[..Math.Min(name.Length, 14)] + " [" + Player.Level.ToString() + "]";
+        NameLabel.Text = name.Truncate( 12, ".." );
+        LevelLabel.Text = Player.Level.ToString();
 
         var screenPos = Camera2D.Current.WorldToScreen((Vector2)Player.SceneObject.Position + new Vector2(0f, 1.42f + Player.HeightZ)) * ScaleFromScreen;
 
-        Style.Left = screenPos.x - 150;
+        Style.Left = screenPos.x;
         Style.Top = screenPos.y;
-
-        var BAR_WIDTH = 100;
-        HpBar.Style.Width = BAR_WIDTH;
-        HpBarOverlay.Style.Width = BAR_WIDTH;
-        HpBarDelta.Style.Width = BAR_WIDTH;
 
         var player_health_ratio = Math.Clamp(Player.Health / Player.Stats[PlayerStat.MaxHp], 0f, 1f);
 
-        var tr = new PanelTransform();
-        tr.AddScale(new Vector3(player_health_ratio, 1f, 1f));
-        HpBarOverlay.Style.Transform = tr;
-        HpBarDelta.Style.Transform = tr;
+        HpBarOverlay.Style.Width = Length.Fraction(player_health_ratio);
+        HpBarDelta.Style.Width = Length.Fraction(player_health_ratio);
 
         //var colors = new List<Color>() { Color.Green, Color.Yellow, Color.Red };
         //var t = 1f - player_health_ratio;
@@ -94,20 +87,14 @@ public partial class Nametag : Panel
             if(Player.IsReloading)
             {
                 ReloadBar.AddClass("showing");
-                ReloadBarTickRight.AddClass("showing");
 
-                var progress = Utils.EasePercent(Player.ReloadProgress, EasingType.SineInOut);
+                var progress = Utils.EasePercent(Player.ReloadProgress, EasingType.CubicInOut);
 
-                var rtr = new PanelTransform();
-                rtr.AddScale(new Vector3(progress, 1f, 1f));
-                ReloadBar.Style.Transform = rtr;
-
-                ReloadBarTickRight.Style.Left = Utils.Map(progress, 0f, 1f, 99f, 199f);
+                ReloadBar.Style.Width = Length.Fraction(progress);
             }
             else
             {
                 ReloadBar.RemoveClass("showing");
-                ReloadBarTickRight.RemoveClass("showing");
             }
         }
     }
