@@ -27,7 +27,7 @@ public class BackgroundManager
         _tiles.Add( new BackgroundTile
         {
 	        Depth = -512f,
-	        Scale = boundsSize,
+	        Scale = boundsSize + new Vector2(-7.8f, -7.9f),
 	        UvRect = new Rect( 0f, boundsSize / new Vector2( TILE_WIDTH, TILE_HEIGHT ) )
         } );
 	}
