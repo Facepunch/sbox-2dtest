@@ -310,14 +310,16 @@ ChoicePanel
     }
 }
 
-.death_panel_root {
+DeathPanel
+{
     width: 100%;
     height: 100%;
     position: absolute;
     align-items: center;
     justify-content: center;
 
-    .death_panel {
+    .death_panel
+    {
         width: 630px;
         height: 330px;
         border: 3px solid white;
@@ -331,13 +333,15 @@ ChoicePanel
         justify-content: center;
         margin-bottom: 200px;
 
-        .death_label {
+        .death_label
+        {
             color: #66ffaa;
             font-size: 32px;
             margin-bottom: 42px;
         }
 
-        .death_button {
+        .death_button
+        {
             width: 240px;
             height: 80px;
             background-color: #000000cc;
@@ -348,24 +352,28 @@ ChoicePanel
             align-items: center;
             justify-content: center;
 
-            &:hover {
+            &:hover
+            {
                 border: 3px solid #66669999;
                 background-color: #000000ff;
             }
 
-            &:active {
+            &:active
+            {
                 border: 3px solid #88880099;
                 background-color: #000033ff;
             }
 
-            .death_button_label {
+            .death_button_label
+            {
                 color: #aaaaaa;
                 font-size: 24px;
                 pointer-events: none;
             }
         }
 
-        .disabled {
+        .disabled
+        {
             pointer-events: none;
             opacity: 0.5;
         }

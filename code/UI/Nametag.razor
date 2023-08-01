@@ -1,46 +1,53 @@
-using Sandbox;
-using Sandbox.UI;
-using Sandbox.UI.Construct;
-using System;
-using System.Collections.Generic;
+﻿@using System
+@using Sandbox
+@using Sandbox.UI
+@namespace Test2D
+@inherits Panel
+@attribute [StyleSheet]
 
-namespace Test2D;
+@if ( !Player.IsValid() )
+    return;
 
-public partial class Nametag : Panel
+<root>
+
+    <label class="name">
+        @Player.Client.Name.Truncate( 12, ".." )
+    </label>
+
+    <label class="level">
+        @Player.Level.ToString()
+    </label>
+
+    @if (!Hidden)
+    {
+        <div class="hpbar">
+            <div @ref="HpBarDelta" class="hpbardelta"></div>
+            <div @ref="HpBarOverlay" class="hpbaroverlay"></div>
+        </div>
+    }
+
+</root>
+
+@code
 {
     public PlayerCitizen Player { get; set; }
 
-    public Label NameLabel { get; set; }
-    public Label LevelLabel { get; set; }
-
-    public Panel HpBar { get; set; }
     public Panel HpBarOverlay { get; set; }
     public Panel HpBarDelta { get; set; }
     public Panel ReloadBar { get; set; }
 
+    public bool Hidden;
+
     public Nametag()
     {
-        StyleSheet.Load("/UI/Nametag.scss");
+    }
 
-        NameLabel = new Label();
-        NameLabel.AddClass("name");
-        AddChild(NameLabel);
+    public void InitForPlayer( PlayerCitizen player )
+    {
+        Player = player;
 
-        LevelLabel = new Label();
-        LevelLabel.AddClass("level");
-        AddChild(LevelLabel);
-
-        HpBar = new Panel();
-        HpBar.AddClass("hpbar");
-        AddChild(HpBar);
-
-        HpBarDelta = new Panel();
-        HpBarDelta.AddClass("hpbardelta");
-        HpBar.AddChild(HpBarDelta);
-
-        HpBarOverlay = new Panel();
-        HpBarOverlay.AddClass("hpbaroverlay");
-        HpBar.AddChild(HpBarOverlay);
+        if ( player == MyGame.Current.LocalPlayer )
+            AddReloadBar();
     }
 
     public void AddReloadBar()
@@ -54,12 +61,11 @@ public partial class Nametag : Panel
     {
         base.Tick();
 
-        if (LevelLabel == null || Player == null || !Player.IsValid || NameLabel == null || HpBar == null || HpBarOverlay == null || HpBarDelta == null)
+        if ( !Player.IsValid() )
             return;
 
-        var name = Player.Client.Name;
-        NameLabel.Text = name.Truncate( 12, ".." );
-        LevelLabel.Text = Player.Level.ToString();
+        if (HpBarOverlay == null || HpBarDelta == null)
+            return;
 
         var screenPos = Camera2D.Current.WorldToScreen((Vector2)Player.SceneObject.Position + new Vector2(0f, 1.42f + Player.HeightZ)) * ScaleFromScreen;
 
@@ -82,9 +88,9 @@ public partial class Nametag : Panel
         var color = Lerp3(new Color(0f, 0.75f, 0f), new Color(0.75f, 0.75f, 0f), new Color(1f, 0f, 0f), 1f - player_health_ratio);
         HpBarOverlay.Style.BackgroundColor = color;
 
-        if(ReloadBar != null)
+        if (ReloadBar != null)
         {
-            if(Player.IsReloading)
+            if (Player.IsReloading)
             {
                 ReloadBar.AddClass("showing");
 
@@ -109,15 +115,13 @@ public partial class Nametag : Panel
 
     public void SetVisible(bool visible)
     {
-        if (visible)
-        {
-            HpBar?.RemoveClass("invisible");
-            HpBarOverlay?.RemoveClass("invisible");
-        }
-        else
-        {
-            HpBar?.AddClass("invisible");
-            HpBarOverlay?.AddClass("invisible");
-        }
+        Hidden = !visible;
+        StateHasChanged();
     }
+
+    protected override int BuildHash()
+    {
+        return HashCode.Combine( Player?.Level );
+    }
+
 }

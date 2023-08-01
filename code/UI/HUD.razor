@@ -34,10 +34,8 @@
 	public Nametag SpawnNametag(PlayerCitizen player)
 	{
 		var nametag = AddChild<Nametag>();
-		nametag.Player = player;
+		nametag.InitForPlayer( player );
 
-		if (player == MyGame.Current.LocalPlayer)
-			nametag.AddReloadBar();
 
 		return nametag;
 	}
@@ -58,7 +56,7 @@
 
 	public void GameOver()
 	{
-		DeathPanel = AddChild<DeathPanel>("death_panel_root");
+		DeathPanel = AddChild<DeathPanel>();
 		DeathPanel.FailureAsync();
 
 
@@ -73,7 +71,7 @@
 			_bossNametag = null;
 		}
 
-		DeathPanel = AddChild<DeathPanel>("death_panel_root");
+		DeathPanel = AddChild<DeathPanel>();
 		DeathPanel.VictoryAsync();
 
 		RemoveChoicePanel();
