@@ -1,0 +1,112 @@
+﻿@using Sandbox
+@using Sandbox.UI
+@namespace Test2D
+@inherits RootPanel
+@attribute [StyleSheet]
+
+<root>
+	<StatusPanel></StatusPanel>
+	<InfoPanel></InfoPanel>
+	<TimerPanel></TimerPanel>
+	<BoomerChatBox></BoomerChatBox>
+</root>
+
+@code
+{
+	public ChoicePanel ChoicePanel { get; set; }
+	public DeathPanel DeathPanel { get; set; }
+	private EnemyNametag _bossNametag;
+
+	public HUD()
+	{
+		Sandbox.Game.RootPanel = this;
+	}
+
+	public void SpawnChoicePanel()
+	{
+		if (MyGame.Current.IsGameOver)
+			return;
+
+		ChoicePanel = AddChild<ChoicePanel>();
+	}
+
+
+	public Nametag SpawnNametag(PlayerCitizen player)
+	{
+		var nametag = AddChild<Nametag>();
+		nametag.Player = player;
+
+		if (player == MyGame.Current.LocalPlayer)
+			nametag.AddReloadBar();
+
+		return nametag;
+	}
+
+	public EnemyNametag SpawnEnemyNametag(Enemy enemy)
+	{
+		if (_bossNametag != null)
+		{
+			_bossNametag.Delete();
+			_bossNametag = null;
+		}
+
+		_bossNametag = AddChild<EnemyNametag>();
+		_bossNametag.Enemy = enemy;
+
+		return _bossNametag;
+	}
+
+	public void GameOver()
+	{
+		DeathPanel = AddChild<DeathPanel>("death_panel_root");
+		DeathPanel.FailureAsync();
+
+
+		RemoveChoicePanel();
+	}
+
+	public void Victory()
+	{
+		if (_bossNametag != null)
+		{
+			_bossNametag.Delete();
+			_bossNametag = null;
+		}
+
+		DeathPanel = AddChild<DeathPanel>("death_panel_root");
+		DeathPanel.VictoryAsync();
+
+		RemoveChoicePanel();
+	}
+
+	public void RemoveChoicePanel()
+	{
+		if (ChoicePanel != null)
+		{
+			ChoicePanel.Delete();
+			ChoicePanel = null;
+		}
+	}
+
+	public void Restart()
+	{
+		if (ChoicePanel != null)
+		{
+			ChoicePanel.Delete();
+			ChoicePanel = null;
+		}
+
+		if (DeathPanel != null)
+		{
+			DeathPanel.Delete();
+			DeathPanel = null;
+		}
+
+		if (_bossNametag != null)
+		{
+			_bossNametag.Delete();
+			_bossNametag = null;
+		}
+	}
+
+}

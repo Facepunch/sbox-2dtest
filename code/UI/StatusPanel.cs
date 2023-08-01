@@ -8,11 +8,13 @@ namespace Test2D;
 
 public class StatusPanel : Panel
 {
+	public static StatusPanel Current { get; set; }
+
 	private List<StatusIcon> _statusIcons = new List<StatusIcon>();
 
 	public StatusPanel()
 	{
-		
+		Current = this;
 	}
 
 	public void Refresh()

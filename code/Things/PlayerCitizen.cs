@@ -594,7 +594,7 @@ public partial class PlayerCitizen : Thing
 	[ClientRpc]
 	public void RefreshStatusHud()
 	{
-		Game.Hud.StatusPanel.Refresh();
+		StatusPanel.Current?.Refresh();
 	}
 
 	void HandleStatuses(float dt)
