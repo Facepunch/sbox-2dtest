@@ -25,7 +25,7 @@
         else
         {
             <div class="row">
-                <div class="option" onclick="@(() => Game.Menu.StartServerAsync( 4, $"{Game.UserName}'s Sausage Survivor Game", "<empty>" ))">Create Game</div>
+                <div class="option" onclick="@CreateNewGame">Create Game</div>
             </div>
 
             <div class="row">
@@ -90,6 +90,24 @@
         {
             MenuMusic = Audio.Play("menu/menumusic.sound");
         }
+    }
+
+    void CreateNewGame()
+    {
+        var options = new Sandbox.Modals.GameCreateModalOptions();
+        options.Cookie = $"sausagesurvivors.serverconfig";
+        options.ModalTitle = "Create Game";
+        options.MinPlayers = 1;
+        options.MaxPlayers = 4;
+        options.MapSelection = false;
+        options.Default.GameTitle = $"{Game.UserName}'s Sausage Survival";
+
+        options.OnStartGame = (setup) =>
+        {
+            Game.Menu.StartServerAsync( setup.MaxPlayers, setup.GameTitle, "<empty>" );
+        };
+
+        Game.Overlay.ShowCreateGame(options);
     }
 
     void OpenServerList()
