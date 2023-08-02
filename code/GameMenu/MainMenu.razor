@@ -25,7 +25,11 @@
         else
         {
             <div class="row">
-                <div class="option" onclick="@(() => Game.Menu.StartServerAsync( 4, "My Sausage Server", "<empty>" ))">Play Game</div>
+                <div class="option" onclick="@(() => Game.Menu.StartServerAsync( 4, $"{Game.UserName}'s Sausage Survivor Game", "<empty>" ))">Create Game</div>
+            </div>
+
+            <div class="row">
+                <div class="option" onclick="@OpenServerList">Join Game</div>
             </div>
         }
 
@@ -88,8 +92,23 @@
         }
     }
 
+    void OpenServerList()
+    {
+        var options = new Sandbox.Modals.ServerListModalOptions();
+        options.ModalTitle = "Sausages Surviving";
+        options.TargetGame = "facepunch.sausagesurvivors";
+        options.OnSelected = (server) =>
+        {
+            Game.Menu.ConnectToServer(server.SteamId);
+        };
+
+        Game.Overlay.ShowServerList( options );
+    }
+
     protected override int BuildHash()
     {
         return HashCode.Combine( Game.InGame );
     }
+
+
 }
